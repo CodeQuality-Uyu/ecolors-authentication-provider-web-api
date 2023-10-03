@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.WebApi", "CQ.AuthProvider.WebApi\CQ.AuthProvider.WebApi.csproj", "{31A62A59-AB76-4A0D-936E-5F23F00BC20E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.AuthProvider.BusinessLogic", "CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj", "{21873A53-216E-4107-AFAC-6692E09442CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.BusinessLogic", "CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj", "{21873A53-216E-4107-AFAC-6692E09442CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.AuthProvider.Utility", "CQ.AuthProvider.Utility\CQ.AuthProvider.Utility.csproj", "{782287C5-8512-4263-8BD2-98F25D13AAF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{21873A53-216E-4107-AFAC-6692E09442CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21873A53-216E-4107-AFAC-6692E09442CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21873A53-216E-4107-AFAC-6692E09442CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{782287C5-8512-4263-8BD2-98F25D13AAF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{782287C5-8512-4263-8BD2-98F25D13AAF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{782287C5-8512-4263-8BD2-98F25D13AAF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{782287C5-8512-4263-8BD2-98F25D13AAF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

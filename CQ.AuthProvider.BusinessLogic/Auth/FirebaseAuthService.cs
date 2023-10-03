@@ -1,4 +1,5 @@
-﻿using FirebaseAdmin.Auth;
+﻿using CQ.AuthProvider.Utility;
+using FirebaseAdmin.Auth;
 using Newtonsoft.Json;
 using PlayerFinder.Auth.Core.Exceptions;
 using System.Net.Http.Json;
@@ -19,10 +20,18 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             var auth = new Auth
             {
-                Id = Guid.NewGuid().ToString().Replace("-", ""),
+                Id = Guard.NewId(),
                 Email = newAuth.Email,
                 Name = newAuth.FullName()
             };
+
+            var userWithEmail= await this._firebaseAuth.GetUserByEmailAsync(auth.Email).ConfigureAwait(false);
+            var emailInUse = userWithEmail != null;
+
+            if (emailInUse) 
+            {
+                throw new DuplicatedEmailException(newAuth.Email);
+            }
 
             var userRecords = new UserRecordArgs
             {
