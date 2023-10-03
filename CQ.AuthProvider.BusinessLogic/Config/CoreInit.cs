@@ -1,4 +1,5 @@
-﻿using dotenv.net.Utilities;
+﻿using CQ.AuthProvider.BusinessLogic.Config.Firebase;
+using dotenv.net.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

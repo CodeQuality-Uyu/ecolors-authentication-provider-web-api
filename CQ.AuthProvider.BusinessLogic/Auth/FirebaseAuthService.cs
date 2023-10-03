@@ -18,32 +18,63 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task<Auth> CreateAsync(CreateAuth newAuth)
         {
-            var auth = new Auth
-            {
-                Id = Guard.NewId(),
-                Email = newAuth.Email,
-                Name = newAuth.FullName()
-            };
-
-            var userWithEmail= await this._firebaseAuth.GetUserByEmailAsync(auth.Email).ConfigureAwait(false);
-            var emailInUse = userWithEmail != null;
-
-            if (emailInUse) 
-            {
-                throw new DuplicatedEmailException(newAuth.Email);
-            }
+            await this.AssertEmailInUse(newAuth.Email).ConfigureAwait(false);
 
             var userRecords = new UserRecordArgs
             {
-                Uid = auth.Id,
-                Email = auth.Email,
+                Uid = Guard.NewId(),
+                Email = newAuth.Email,
                 Password = newAuth.Password,
-                DisplayName = auth.Name,
+                DisplayName = newAuth.FullName(),
             };
 
-            var firebaseAuth = await this._firebaseAuth.CreateUserAsync(userRecords).ConfigureAwait(false);
+            await this.CreateAuthAsync(userRecords).ConfigureAwait(false);
 
-            return auth;  
+            return new Auth
+            {
+                Id = userRecords.Uid,
+                Email = newAuth.Email,
+                Name = userRecords.DisplayName
+            };
+        }
+
+        private async Task AssertEmailInUse(string email)
+        {
+            try
+            {
+                var userWithEmail = await this._firebaseAuth.GetUserByEmailAsync(email).ConfigureAwait(false);
+                var emailInUse = userWithEmail != null;
+
+                if (emailInUse)
+                {
+                    throw new DuplicatedEmailException(email);
+                }
+            }
+            catch (FirebaseAuthException ex)
+            {
+
+                if (ex.AuthErrorCode != AuthErrorCode.UserNotFound)
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task CreateAuthAsync(UserRecordArgs userRecords)
+        {
+            try
+            {
+                var firebaseAuth = await this._firebaseAuth.CreateUserAsync(userRecords).ConfigureAwait(false);
+            }
+            catch (FirebaseAuthException ex)
+            {
+                if (ex.AuthErrorCode == AuthErrorCode.EmailAlreadyExists)
+                {
+                    throw new DuplicatedEmailException(userRecords.Email);
+                }
+
+                throw;
+            }
         }
 
         public async Task<string> LoginAsync(string email, string password)

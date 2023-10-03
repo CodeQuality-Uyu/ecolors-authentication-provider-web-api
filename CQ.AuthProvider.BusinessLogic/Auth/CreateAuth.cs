@@ -36,7 +36,7 @@ namespace CQ.AuthProvider.BusinessLogic
             Guard.ThrowPasswordFormat(Password);
         }
 
-        public string FullName()
+        public string? FullName()
         {
             var fullName = $"{this.FirstName} {this.LastName}";
 
@@ -44,7 +44,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
             if (string.IsNullOrEmpty(withoutSpace))
             {
-                return string.Empty;
+                return null;
             }
 
             return withoutSpace;

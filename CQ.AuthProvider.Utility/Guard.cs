@@ -51,7 +51,7 @@ namespace CQ.AuthProvider.Utility
         {
             string specialCharacterPattern = @"[!@#$%^&*(),.?""\:{ }|<>]";
             string numberPattern = @"\d";
-            if (Regex.IsMatch(password, specialCharacterPattern) && Regex.IsMatch(password, numberPattern))
+            if (!Regex.IsMatch(password, specialCharacterPattern) || !Regex.IsMatch(password, numberPattern))
             {
                 throw new ArgumentException("Password must have at least one number and special character");
             }

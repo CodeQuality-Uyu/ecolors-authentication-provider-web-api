@@ -12,7 +12,11 @@ DotEnv.Load();
 // builder.Services.AddExceptionFilter<CQExceptionFilter>();
 
 // Avoids returning an automatic response when missing a prop in the body
-builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
 
 builder.Services.AddCQAuthProviderServices();
 
