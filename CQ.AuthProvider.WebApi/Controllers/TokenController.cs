@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CQ.AuthProvider.BusinessLogic;
+using Microsoft.AspNetCore.Mvc;
 using PlayerFinder.Auth.Core;
 
-namespace PlayerFinder.Auth.Api.Controllers
+namespace CQ.AuthProvider.WebApi.Controllers
 {
     [ApiController]
     [Route("token")]

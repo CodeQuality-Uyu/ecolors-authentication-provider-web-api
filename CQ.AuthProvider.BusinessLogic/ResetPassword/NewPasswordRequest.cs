@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerFinder.Auth.Core
+namespace CQ.AuthProvider.BusinessLogic
 {
     public class NewPasswordRequest
     {

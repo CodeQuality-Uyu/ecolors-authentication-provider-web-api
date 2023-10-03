@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CQ.AuthProvider.BusinessLogic;
+using Microsoft.AspNetCore.Mvc;
 using PlayerFinder.Auth.Core;
-using static PlayerFinder.Auth.Api.Controllers.AuthController;
 
-namespace PlayerFinder.Auth.Api.Controllers
+namespace CQ.AuthProvider.WebApi.Controllers
 {
     [ApiController]
     [Route("reset-password")]

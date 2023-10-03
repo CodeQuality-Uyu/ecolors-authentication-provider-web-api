@@ -1,22 +1,21 @@
-﻿using PlayerFinder.Auth.Core.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerFinder.Auth.Core
+namespace CQ.AuthProvider.BusinessLogic
 {
     public interface IAuthService
     {
-        Task<User> CreateAsync(AuthUser auth);
+        Task<Auth> CreateAsync(CreateAuth auth);
 
         Task<string> LoginAsync(string email, string password);
 
-        Task<User> DeserializeTokenAsync(string token);
+        Task<Auth> DeserializeTokenAsync(string token);
 
-        Task UpdatePasswordAsync(string password, User userLogged);
+        Task UpdatePasswordAsync(string password, Auth userLogged);
 
-        Task<User> GetByEmailAsync(string email);
+        Task<Auth> GetByEmailAsync(string email);
     }
 }
