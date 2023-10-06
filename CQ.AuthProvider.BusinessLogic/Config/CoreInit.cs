@@ -13,7 +13,7 @@ namespace CQ.AuthProvider.BusinessLogic.Config
     {
         public static void AddCQAuthProviderServices(this IServiceCollection services)
         {
-            services.AddFirebase();
+            AddAuthService(services);
 
             //var connectionToUse = Environment.GetEnvironmentVariable("mongo-db:default");
             //var connectionStringEnvVariable = string.IsNullOrEmpty(connectionToUse) ? "mongo-db:connection-string" : $"mongo-db:{connectionToUse}-connection-string";
@@ -24,8 +24,23 @@ namespace CQ.AuthProvider.BusinessLogic.Config
 
             //services.AddUnitOfWork(Orms.MONGO_DB);
 
-            services.AddTransient<IAuthService, FirebaseAuthService>();
             services.AddTransient<IResetPasswordService, ResetPasswordService>();
+        }
+
+        private static void AddAuthService(IServiceCollection services)
+        {
+            var authService = Environment.GetEnvironmentVariable("auth-service") ?? AuthServiceOptions.Firebase;
+
+            if (authService == AuthServiceOptions.Firebase)
+            {
+                ConfigFirebaseAuth(services);
+            }
+        }
+
+        private static void ConfigFirebaseAuth(this IServiceCollection services)
+        {
+            services.AddFirebase();
+            services.AddTransient<IAuthService, FirebaseAuthService>();
         }
     }
 }
