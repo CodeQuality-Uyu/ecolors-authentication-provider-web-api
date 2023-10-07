@@ -1,6 +1,7 @@
 ﻿// using CQ.ApiFilters.Core;
 using dotenv.net.Utilities;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Principal;
@@ -26,7 +27,7 @@ namespace PlayerFinder.Auth.Api.Filters
     //            return false;
     //        }
     //    }
-        
+
     //    private TokenValidationParameters GetValidationParameters()
     //    {
     //        var firebasePrivateKey = Environment.GetEnvironmentVariable("firebase:private-key");

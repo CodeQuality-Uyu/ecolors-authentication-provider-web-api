@@ -11,7 +11,7 @@ namespace CQ.AuthProvider.BusinessLogic.Config
 {
     public static class CoreInit
     {
-        public static void AddCQAuthProviderServices(this IServiceCollection services)
+        public static void AddCQServices(this IServiceCollection services)
         {
             AddAuthService(services);
 

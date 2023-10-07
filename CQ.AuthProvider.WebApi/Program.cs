@@ -3,22 +3,28 @@ using dotenv.net;
 using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.BusinessLogic.Config;
+using CQ.ApiElements.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
 DotEnv.Load();
 
-// Add services to the container.
-// builder.Services.AddExceptionFilter<CQExceptionFilter>();
 
+builder.Services.AddControllers(
+    (options) =>
+{
+    options.AddExceptionFilter();
+})
 // Avoids returning an automatic response when missing a prop in the body
-builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
         options.SuppressModelStateInvalidFilter = true;
     });
 
-builder.Services.AddCQAuthProviderServices();
+// Add services to the container.
+builder.Services.AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Transient);
+
+builder.Services.AddCQServices();
 
 var app = builder.Build();
 
