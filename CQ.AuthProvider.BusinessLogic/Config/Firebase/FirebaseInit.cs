@@ -1,5 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Config.Firebase.Exceptions;
-using CQ.AuthProvider.Utility;
+using CQ.Utility;
 using dotenv.net.Utilities;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;

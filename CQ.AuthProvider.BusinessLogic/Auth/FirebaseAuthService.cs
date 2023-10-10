@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.Utility;
+﻿using CQ.Utility;
 using FirebaseAdmin.Auth;
 using Newtonsoft.Json;
 using PlayerFinder.Auth.Core.Exceptions;
@@ -22,7 +22,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
             var userRecords = new UserRecordArgs
             {
-                Uid = Guard.NewId(),
+                Uid = Db.NewId(),
                 Email = newAuth.Email,
                 Password = newAuth.Password,
                 DisplayName = newAuth.FullName(),

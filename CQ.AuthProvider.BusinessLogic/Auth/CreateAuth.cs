@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.Utility;
+﻿using CQ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
