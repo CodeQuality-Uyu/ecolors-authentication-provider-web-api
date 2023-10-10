@@ -1,11 +1,13 @@
-﻿using System;
+﻿using CQ.ApiElements.Dtos;
+using CQ.AuthProvider.BusinessLogic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.WebApi.Controllers
 {
-    public record CreateAuthRequest
+    public class CreateAuthRequest : Request<CreateAuth>
     {
         public string? Email { get; set; }
 
@@ -14,5 +16,14 @@ namespace CQ.AuthProvider.WebApi.Controllers
         public string? FirstName { get; set; }
 
         public string? LastName { get; set; }
+
+        protected override CreateAuth InnerMap()
+        {
+            return new CreateAuth(
+               Email,
+               Password,
+               FirstName,
+                LastName);
+        }
     }
 }

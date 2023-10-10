@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.BusinessLogic.Config;
 using CQ.ApiElements.Config;
+using CQ.ServiceExtension;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ builder.Services.AddControllers(
     });
 
 // Add services to the container.
-builder.Services.AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Transient);
+builder.Services.AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Transient, LifeTime.Transient);
 
 builder.Services.AddCQServices();
 

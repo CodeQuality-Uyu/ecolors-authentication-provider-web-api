@@ -20,11 +20,7 @@ namespace CQ.AuthProvider.WebApi.Controllers
         [HttpPost("credentials")]
         public async Task<IActionResult> CreateAsync(CreateAuthRequest request)
         {
-            var createAuth = new CreateAuth(
-               request.Email,
-               request.Password,
-               request.FirstName,
-                request.LastName);
+            var createAuth = request.Map();
 
             var auth = await this._authService.CreateAsync(createAuth);
 
