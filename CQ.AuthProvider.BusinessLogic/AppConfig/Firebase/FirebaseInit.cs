@@ -16,7 +16,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
     internal static class FirebaseInit
     {
-        public static void AddFirebase(this IServiceCollection services)
+        public static IServiceCollection AddFirebase(this IServiceCollection services)
         {
             var credentials = BuildCredentials();
             var projectId = Environment.GetEnvironmentVariable("firebase:projectId");
@@ -42,12 +42,15 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 
                 return firebaseAuth;
             });
+
+            return services;
         }
 
         private static GoogleCredential BuildCredentials()
         {
             var projectId = Environment.GetEnvironmentVariable("firebase:projectId");
             Guard.ThrowIsNullOrEmpty(projectId, "firebase:projectId");
+
             var privateKeyId = Environment.GetEnvironmentVariable("firebase:private-key-id");
             Guard.ThrowIsNullOrEmpty(projectId, "firebase:private-key-id");
 
@@ -74,6 +77,9 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 
             var universeDomain = Environment.GetEnvironmentVariable("firebase:universe-domain");
             Guard.ThrowIsNullOrEmpty(projectId, "firebase:universe-domain");
+
+            var apiKey = Environment.GetEnvironmentVariable("firebase:api-key");
+            Guard.ThrowIsNullOrEmpty(apiKey, "firebase:api-key");
 
 
             var credentials = GoogleCredential.FromJson($@"

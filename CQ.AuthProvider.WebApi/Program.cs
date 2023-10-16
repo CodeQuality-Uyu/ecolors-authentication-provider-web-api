@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 DotEnv.Load();
 
-
 builder.Services.AddControllers(
     (options) =>
 {
@@ -23,9 +22,9 @@ builder.Services.AddControllers(
     });
 
 // Add services to the container.
-builder.Services.AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Transient, LifeTime.Transient);
-
-builder.Services.AddCQServices();
+builder.Services
+    .AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Transient, LifeTime.Transient)
+    .AddCQServices();
 
 var app = builder.Build();
 

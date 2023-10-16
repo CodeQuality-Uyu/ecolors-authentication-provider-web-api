@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.AppConfig.Firebase;
+using CQ.Utility;
 using dotenv.net.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,9 +12,43 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
     public static class CoreInit
     {
-        public static void AddCQServices(this IServiceCollection services)
+        public static IServiceCollection AddCQServices(this IServiceCollection services)
         {
-            AddAuthService(services);
+            services
+                .AddAuthService()
+                .AddTransient<IResetPasswordService, ResetPasswordService>();
+
+            return services;
+        }
+
+        private static IServiceCollection AddAuthService(this IServiceCollection services)
+        {
+            var authService = Environment.GetEnvironmentVariable("auth-service") ?? AuthServiceOptions.Firebase;
+
+            if (authService == AuthServiceOptions.Firebase)
+            {
+                services.ConfigFirebaseAuth();
+            }
+
+            return services;
+        }
+
+        private static IServiceCollection ConfigFirebaseAuth(this IServiceCollection services)
+        {
+            services
+                .AddFirebase()
+                .AddTransient<IAuthService, AuthFirebaseService>()
+                .AddTransient((serviceProvider) =>
+            {
+                return new HttpClientAdapter("https://identitytoolkit.googleapis.com/v1");
+            })
+                .AddTransient<ISessionService, SessionFirebaseService>();
+
+            return services;
+        }
+
+        private static IServiceCollection ConfigMongoAuth(this IServiceCollection services)
+        {
 
             //var connectionToUse = Environment.GetEnvironmentVariable("mongo-db:default");
             //var connectionStringEnvVariable = string.IsNullOrEmpty(connectionToUse) ? "mongo-db:connection-string" : $"mongo-db:{connectionToUse}-connection-string";
@@ -24,24 +59,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 
             //services.AddUnitOfWork(Orms.MONGO_DB);
 
-            services.AddTransient<IResetPasswordService, ResetPasswordService>();
-        }
-
-        private static void AddAuthService(IServiceCollection services)
-        {
-            var authService = Environment.GetEnvironmentVariable("auth-service") ?? AuthServiceOptions.Firebase;
-
-            if (authService == AuthServiceOptions.Firebase)
-            {
-                ConfigFirebaseAuth(services);
-            }
-        }
-
-        private static void ConfigFirebaseAuth(this IServiceCollection services)
-        {
-            services.AddFirebase();
-            services.AddTransient<IAuthService, AuthFirebaseService>();
-            services.AddTransient<ISessionService, SessionFirebaseService>();
+            return services;
         }
     }
 }

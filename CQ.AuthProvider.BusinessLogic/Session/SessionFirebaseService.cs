@@ -1,4 +1,5 @@
-﻿using FirebaseAdmin.Auth;
+﻿using CQ.Utility;
+using FirebaseAdmin.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,25 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public class SessionFirebaseService : ISessionService
     {
-        private readonly FirebaseAuth _firebaseAuth;
+        private readonly HttpClientAdapter _firebaseApi;
 
-        public SessionFirebaseService(FirebaseAuth firebaseAuth)
+        public SessionFirebaseService(HttpClientAdapter firebaseApi)
         {
-            this._firebaseAuth = firebaseAuth;
+            this._firebaseApi = firebaseApi;
         }
 
-        public Task<Session> CreateAsync(CreateSessionCredentials credentials)
+        public async Task<Session> CreateAsync(CreateSessionCredentials credentials)
         {
-            throw new NotImplementedException();
+            var apiKey = Environment.GetEnvironmentVariable("firebase:api-key");
+
+            var response = await this._firebaseApi.PostAsync<SessionFirebase, object>($"accounts:signInWithPassword?key={apiKey}", new { email = credentials.Email, password = credentials.Password, returnSecureToken = true }).ConfigureAwait(false);
+
+            return new Session
+            {
+                Id = response.LocalId,
+                Email = response.Email,
+                Token = response.RefreshToken,
+            };
         }
     }
 }
