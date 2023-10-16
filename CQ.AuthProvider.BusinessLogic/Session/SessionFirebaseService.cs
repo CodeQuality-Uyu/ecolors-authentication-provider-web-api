@@ -21,6 +21,9 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             var apiKey = Environment.GetEnvironmentVariable("firebase:api-key");
 
+            try
+            {
+
             var response = await this._firebaseApi.PostAsync<SessionFirebase, object>($"accounts:signInWithPassword?key={apiKey}", new { email = credentials.Email, password = credentials.Password, returnSecureToken = true }).ConfigureAwait(false);
 
             return new Session
@@ -29,6 +32,10 @@ namespace CQ.AuthProvider.BusinessLogic
                 Email = response.Email,
                 Token = response.RefreshToken,
             };
+            }catch(Exception ex) {
+
+                throw;
+            }
         }
     }
 }

@@ -18,22 +18,19 @@ namespace CQ.AuthProvider.BusinessLogic
         public string? LastName { get; }
 
         public CreateAuth(
-            string? email, 
-            string? password, 
-            string? firstName, 
-            string? lastName)
+            string email, 
+            string password, 
+            string firstName, 
+            string lastName)
         {
-            Email = Guard.Encode(email?.Trim() ?? string.Empty);
-            Password = Guard.Encode(password?.Trim() ?? string.Empty);
-            FirstName = Guard.Encode(firstName?.Trim() ?? string.Empty);
-            LastName = Guard.Encode(lastName?.Trim() ?? string.Empty);
+            Email = Guard.Encode(email.Trim());
+            Password = Guard.Encode(password.Trim());
+            FirstName = Guard.Encode(firstName.Trim());
+            LastName = Guard.Encode(lastName.Trim());
 
-            Guard.ThrowIsNullOrEmpty(Email, "email");
-            Guard.ThrowEmailFormat(Email);
+            Guard.ThrowIsInputInvalidEmail(Email);
 
-            Guard.ThrowIsNullOrEmpty(Password, "password");
-            Guard.ThrowMinimumLength(Password, 8, "password");
-            Guard.ThrowPasswordFormat(Password);
+            Guard.ThrowIsInputInvalidPassword(Password);
         }
 
         public string? FullName()

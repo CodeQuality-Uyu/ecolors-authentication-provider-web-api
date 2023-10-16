@@ -20,10 +20,10 @@ namespace CQ.AuthProvider.WebApi.Controllers
         protected override CreateAuth InnerMap()
         {
             return new CreateAuth(
-               Email,
-               Password,
-               FirstName,
-                LastName);
+               Email ?? string.Empty,
+               Password ?? string.Empty,
+               FirstName ?? string.Empty,
+                LastName ?? string.Empty);
         }
     }
 }
