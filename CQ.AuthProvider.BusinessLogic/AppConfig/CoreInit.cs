@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Config.Firebase;
+﻿using CQ.AuthProvider.BusinessLogic.AppConfig.Firebase;
 using dotenv.net.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Config
+namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
     public static class CoreInit
     {
@@ -40,7 +40,8 @@ namespace CQ.AuthProvider.BusinessLogic.Config
         private static void ConfigFirebaseAuth(this IServiceCollection services)
         {
             services.AddFirebase();
-            services.AddTransient<IAuthService, FirebaseAuthService>();
+            services.AddTransient<IAuthService, AuthFirebaseService>();
+            services.AddTransient<ISessionService, SessionFirebaseService>();
         }
     }
 }

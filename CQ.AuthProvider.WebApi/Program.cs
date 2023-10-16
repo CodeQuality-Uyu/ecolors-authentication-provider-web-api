@@ -2,7 +2,7 @@
 using dotenv.net;
 using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
-using CQ.AuthProvider.BusinessLogic.Config;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.ApiElements.Config;
 using CQ.ServiceExtension;
 

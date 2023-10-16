@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Config
+namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
     internal static class AuthServiceOptions
     {

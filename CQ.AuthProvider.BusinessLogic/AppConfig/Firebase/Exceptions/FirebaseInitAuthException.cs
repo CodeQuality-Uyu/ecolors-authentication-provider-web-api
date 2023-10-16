@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Config.Firebase.Exceptions
+namespace CQ.AuthProvider.BusinessLogic.AppConfig.Firebase.Exceptions
 {
     internal class FirebaseInitAuthException : FirebaseInitAppException
     {

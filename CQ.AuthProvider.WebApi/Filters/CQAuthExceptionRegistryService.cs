@@ -8,36 +8,15 @@ namespace CQ.AuthProvider.WebApi.Filters
     {
         protected override void RegisterBusinessExceptions(ExceptionStoreService exceptionStoreService)
         {
-            exceptionStoreService.RegisterMapping<DuplicatedEmailException>(
-                (exception, context) =>
-            {
-                var customException = exception as DuplicatedEmailException;
-
-                if (customException != null) 
-                {
-                    return "Email is duplicated";
-                }
-
-                return $"Email '{customException.Email}' is duplicated";
-            },
-                (exception, context) =>new
-                {
-                    Source = context.ControllerName,
-                    Email = exception.Email
-                },
-                HttpStatusCode.Conflict,
-                (exception, context) =>
-                {
-                    var customException = exception as DuplicatedEmailException;
-
-                    if (customException != null)
+            exceptionStoreService.RegisterException(
+                new DinamicExceptionMapping<DuplicatedEmailException>(
+   (exception, context) =>
                     {
-                        return "Email is duplicated";
-                    }
+                        return $"Email '{exception.Email}' is duplicated";
 
-                    return $"Email '{customException.Email}' is duplicated";
-                },
-                "DuplicatedEmail");
+                    },
+   "DuplicatedEmail",
+   HttpStatusCode.Conflict));
         }
     }
 }

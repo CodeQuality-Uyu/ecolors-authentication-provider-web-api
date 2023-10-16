@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Config.Firebase.Exceptions;
+﻿using CQ.AuthProvider.BusinessLogic.AppConfig.Firebase.Exceptions;
 using CQ.Utility;
 using dotenv.net.Utilities;
 using FirebaseAdmin;
@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Config
+namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
     internal static class FirebaseInit
     {

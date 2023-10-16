@@ -7,11 +7,11 @@ using System.Security.Authentication;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    internal class FirebaseAuthService : IAuthService
+    internal class AuthFirebaseService : IAuthService
     {
         private readonly FirebaseAuth _firebaseAuth;
 
-        public FirebaseAuthService(FirebaseAuth firebaseAuth)
+        public AuthFirebaseService(FirebaseAuth firebaseAuth)
         {
             this._firebaseAuth = firebaseAuth;
         }
