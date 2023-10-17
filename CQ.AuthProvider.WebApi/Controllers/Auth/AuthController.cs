@@ -26,18 +26,6 @@ namespace CQ.AuthProvider.WebApi.Controllers
 
             return Ok(auth);
         }
-        
-
-        [HttpPut("password")]
-        // [AuthenticationHandlerFilter]
-        public async Task<IActionResult> UpdatePasswordAsync([FromHeader] string authorization, UpdatePasswordRequest request)
-        {
-            var userLogged = await this._authService.DeserializeTokenAsync(authorization).ConfigureAwait(false);
-
-            await this._authService.UpdatePasswordAsync(request.Password, userLogged).ConfigureAwait(false);
-
-            return NoContent();
-        }
     }
 
     public class ResetPasswordRequestUnauthenticated

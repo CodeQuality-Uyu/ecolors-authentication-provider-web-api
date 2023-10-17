@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public class InvalidCredentialsException : Exception
+    public sealed class InvalidCredentialsException : Exception
     {
-        public string Origin { get; }
+        public FirebaseAuthErrorCode Origin { get; }
 
         public string Email { get; }
 
         public InvalidCredentialsException(string email, FirebaseAuthErrorCode code)
         {
             Email = email;
-            Origin = code.Value;
+            Origin = code;
         }
     }
 }

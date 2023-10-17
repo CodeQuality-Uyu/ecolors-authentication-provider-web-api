@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public record class FirebaseAuthErrorCode
+    public sealed record class FirebaseAuthErrorCode
     {
         public static FirebaseAuthErrorCode EmailNotFound = new("EMAIL_NOT_FOUND");
 

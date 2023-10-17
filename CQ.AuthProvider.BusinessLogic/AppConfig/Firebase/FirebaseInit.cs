@@ -16,10 +16,10 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
     internal static class FirebaseInit
     {
-        public static IServiceCollection AddFirebase(this IServiceCollection services)
+        public static IServiceCollection AddFirebase(this IServiceCollection services, ISettingsService settingsService)
         {
-            var credentials = BuildCredentials();
-            var projectId = Environment.GetEnvironmentVariable("firebase:projectId");
+            var credentials = BuildCredentials(settingsService);
+            var projectId = settingsService.GetValue(EnvironmentVariable.Firebase.ProjectId);
 
             var playerFinderApp = FirebaseApp.Create(new AppOptions
             {
@@ -46,40 +46,29 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
             return services;
         }
 
-        private static GoogleCredential BuildCredentials()
+        private static GoogleCredential BuildCredentials(ISettingsService settingsService)
         {
-            var projectId = Environment.GetEnvironmentVariable("firebase:projectId");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:projectId");
+            var firebaseConfig = EnvironmentVariable.Firebase;
 
-            var privateKeyId = Environment.GetEnvironmentVariable("firebase:private-key-id");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:private-key-id");
+            var projectId = settingsService.GetValue(firebaseConfig.ProjectId);
 
-            var privateKey = Environment.GetEnvironmentVariable("firebase:private-key");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:private-key");
+            var privateKeyId = settingsService.GetValue(firebaseConfig.PrivateKeyId);
 
-            var clientEmail = Environment.GetEnvironmentVariable("firebase:client-email");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:client-email");
+            var privateKey = settingsService.GetValue(firebaseConfig.PrivateKey);
 
-            var clientId = Environment.GetEnvironmentVariable("firebase:client-id");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:client-id");
+            var clientEmail = settingsService.GetValue(firebaseConfig.ClientEmail);
 
-            var authUri = Environment.GetEnvironmentVariable("firebase:auth-uri");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:auth-uri");
+            var clientId = settingsService.GetValue(firebaseConfig.ClientId);
 
-            var tokenUri = Environment.GetEnvironmentVariable("firebase:token-uri");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:token-uri");
+            var authUri = settingsService.GetValue(firebaseConfig.AuthUri);
 
-            var authProvider = Environment.GetEnvironmentVariable("firebase:auth-provider");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:auth-provider");
+            var tokenUri = settingsService.GetValue(firebaseConfig.TokenUri);
 
-            var clientCert = Environment.GetEnvironmentVariable("firebase:client-cert");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:client-cert");
+            var authProvider = settingsService.GetValue(firebaseConfig.AuthProvider);
 
-            var universeDomain = Environment.GetEnvironmentVariable("firebase:universe-domain");
-            Guard.ThrowIsNullOrEmpty(projectId, "firebase:universe-domain");
+            var clientCert = settingsService.GetValue(firebaseConfig.ClientCert);
 
-            var apiKey = Environment.GetEnvironmentVariable("firebase:api-key");
-            Guard.ThrowIsNullOrEmpty(apiKey, "firebase:api-key");
+            var universeDomain = settingsService.GetValue(firebaseConfig.UniverseDomain);
 
 
             var credentials = GoogleCredential.FromJson($@"

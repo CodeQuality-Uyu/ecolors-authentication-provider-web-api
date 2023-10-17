@@ -10,6 +10,6 @@ namespace CQ.AuthProvider.BusinessLogic
     {
         public string Email { get; }
 
-        public DuplicatedEmailException(string email) : base($"Email {email} is in use") { Email = email; }
+        public DuplicatedEmailException(string email) : base($"Email is registered") { Email = email; }
     }
 }

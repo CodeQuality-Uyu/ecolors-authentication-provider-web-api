@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public record CreateAuth
+    public record class CreateAuth
     {
         public string Email { get; }
 

@@ -6,21 +6,47 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
-    internal record EnvironmentVariable
+    public sealed record class EnvironmentVariable
     {
         public static EnvironmentVariable ApiUrl = new("api-url");
 
-        public static EnvironmentVariable FirebaseApiKey = new("firebase:api-key");
+        public static FirebaseVariable Firebase = new();
         
         public static EnvironmentVariable AuthType = new("auth-type");
 
-        public static EnvironmentVariable FirebaseApiUrl = new("firebase:api-url");
 
         public string Value { get; }
 
-        public EnvironmentVariable(string value)
+        internal EnvironmentVariable(string value)
         {
             Value = value;
         }
+    }
+
+    public sealed record class FirebaseVariable
+    {
+        public EnvironmentVariable ProjectId = new("firebase:projectId");
+
+        public EnvironmentVariable PrivateKeyId = new("firebase:private-key-id");
+
+        public EnvironmentVariable PrivateKey = new("firebase:private-key");
+
+        public EnvironmentVariable ClientEmail = new("firebase:client-email");
+
+        public EnvironmentVariable ClientId = new("firebase:client-id");
+
+        public EnvironmentVariable AuthUri = new("firebase:auth-uri");
+
+        public EnvironmentVariable TokenUri = new("firebase:token-uri");
+        
+        public EnvironmentVariable AuthProvider = new("firebase:auth-provider");
+        
+        public EnvironmentVariable ClientCert = new("firebase:client-cert");
+        
+        public EnvironmentVariable UniverseDomain = new("firebase:universe-domain");
+        
+        public EnvironmentVariable ApiKey = new("firebase:api-key");
+        
+        public EnvironmentVariable ApiUrl = new("firebase:api-url");
     }
 }

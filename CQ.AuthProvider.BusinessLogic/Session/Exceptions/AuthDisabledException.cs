@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public class AuthDisabledException : Exception
+    public sealed class AuthDisabledException : Exception
     {
         public string Email { get; }
 

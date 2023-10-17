@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    internal class SessionFirebase
+    internal sealed record class SessionFirebase
     {
         public string IdToken { get; set; }
 

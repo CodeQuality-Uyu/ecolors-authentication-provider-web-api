@@ -30,12 +30,10 @@ namespace CQ.AuthProvider.BusinessLogic
 
             await this.CreateAuthAsync(userRecords).ConfigureAwait(false);
 
-            return new Auth
-            {
-                Id = userRecords.Uid,
-                Email = newAuth.Email,
-                Name = userRecords.DisplayName
-            };
+            return new Auth(
+                userRecords.Uid,
+                newAuth.Email,
+                userRecords.DisplayName);
         }
 
         private async Task AssertEmailInUse(string email)
@@ -52,11 +50,7 @@ namespace CQ.AuthProvider.BusinessLogic
             }
             catch (FirebaseAuthException ex)
             {
-
-                if (ex.AuthErrorCode != AuthErrorCode.UserNotFound)
-                {
-                    throw;
-                }
+                if (ex.AuthErrorCode != AuthErrorCode.UserNotFound) throw;
             }
         }
 
@@ -77,26 +71,6 @@ namespace CQ.AuthProvider.BusinessLogic
             }
         }
 
-        public async Task<string> LoginAsync(string email, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Auth> DeserializeTokenAsync(string token)
-        {
-            var session = await this._firebaseAuth.VerifyIdTokenAsync(token).ConfigureAwait(false);
-            var uid = session.Uid;
-
-            var user = await this._firebaseAuth.GetUserAsync(uid).ConfigureAwait(false);
-
-            return new Auth
-            {
-                Id = uid,
-                Email = user.Email,
-                Name = user.DisplayName,
-            };
-        }
-
         public async Task UpdatePasswordAsync(string newPassword, Auth userLogged)
         {
             var userUpdated = new UserRecordArgs
@@ -106,18 +80,6 @@ namespace CQ.AuthProvider.BusinessLogic
             };
 
             var userRecord = await this._firebaseAuth.UpdateUserAsync(userUpdated).ConfigureAwait(false);
-        }
-
-        public async Task<Auth> GetByEmailAsync(string email)
-        {
-            var firebaseUser = await this._firebaseAuth.GetUserByEmailAsync(email).ConfigureAwait(false);
-
-            return new Auth
-            {
-                Id = firebaseUser.Uid,
-                Email = firebaseUser.Email,
-                Name = firebaseUser.DisplayName,
-            };
         }
     }
 }

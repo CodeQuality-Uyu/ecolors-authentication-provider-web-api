@@ -6,10 +6,17 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
-    internal static class AuthTypeOption
+    internal sealed record class AuthTypeOption
     {
-        public static readonly string Firebase = "firebase";
-        public static readonly string OAuth2 = "oauth2";
-        public static readonly string Custom = "custom";
+        public static AuthTypeOption Firebase = new("firebase");
+        public static AuthTypeOption OAuth2 = new("oauth2");
+        public static AuthTypeOption Custom = new("custom");
+
+        public string Value { get; }
+
+        private AuthTypeOption(string value)
+        {
+            this.Value = value;
+        }
     }
 }

@@ -6,12 +6,5 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public class Auth
-    {
-        public string Id { get; set; }
-
-        public string Email { get; set; }
-
-        public string? Name { get; set; }
-    }
+    public record class Auth(string Id, string Email, string? Name);
 }

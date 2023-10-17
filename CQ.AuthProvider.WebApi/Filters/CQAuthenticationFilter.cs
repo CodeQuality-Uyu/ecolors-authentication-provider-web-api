@@ -1,4 +1,5 @@
 ﻿using CQ.ApiElements.Filters;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using dotenv.net.Utilities;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -30,7 +31,7 @@ namespace PlayerFinder.Auth.Api.Filters
 
         private TokenValidationParameters GetValidationParameters()
         {
-            var firebasePrivateKey = Environment.GetEnvironmentVariable("firebase:private-key");
+            var firebasePrivateKey = Environment.GetEnvironmentVariable(EnvironmentVariable.Firebase.PrivateKey.Value);
             return new TokenValidationParameters()
             {
                 ValidateLifetime = false, // Because there is no expiration in the generated token

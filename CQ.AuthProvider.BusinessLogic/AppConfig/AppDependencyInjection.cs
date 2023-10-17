@@ -14,38 +14,38 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
     {
         public static IServiceCollection AddCQServices(this IServiceCollection services)
         {
+            var settingsService = new SettingsService();
+
             services
                 .AddSingleton<ISettingsService, SettingsService>()
-                .AddAuthService()
+                .AddAuthService(settingsService)
                 .AddTransient<IResetPasswordService, ResetPasswordService>();
-            
+
             return services;
         }
 
-        private static IServiceCollection AddAuthService(this IServiceCollection services)
+        private static IServiceCollection AddAuthService(this IServiceCollection services, ISettingsService settingsService)
         {
-            var authService = Environment.GetEnvironmentVariable(EnvironmentVariable.AuthType.Value) ?? AuthTypeOption.Firebase;
+            var authType = settingsService.GetValue(EnvironmentVariable.AuthType);
+            var authService = !string.IsNullOrEmpty(authType) ? new AuthTypeOption(authType) : AuthTypeOption.Firebase;
 
             if (authService == AuthTypeOption.Firebase)
             {
-                services.ConfigFirebaseAuth();
+                services.ConfigFirebaseAuth(settingsService);
             }
 
             return services;
         }
 
-        private static IServiceCollection ConfigFirebaseAuth(this IServiceCollection services)
+        private static IServiceCollection ConfigFirebaseAuth(this IServiceCollection services, ISettingsService settingsService)
         {
             services
-                .AddFirebase()
+                .AddFirebase(settingsService)
                 .AddTransient<IAuthService, AuthFirebaseService>()
                 .AddTransient<HttpClientAdapter>((serviceProvider) =>
             {
-                var apiUrl = Environment.GetEnvironmentVariable(EnvironmentVariable.ApiUrl.Value);
-                Guard.ThrowIsNullOrEmpty(apiUrl, EnvironmentVariable.ApiUrl.Value);
-
-                var baseUrl = Environment.GetEnvironmentVariable(EnvironmentVariable.FirebaseApiUrl.Value);
-                Guard.ThrowIsNullOrEmpty(baseUrl, EnvironmentVariable.FirebaseApiUrl.Value);
+                var apiUrl = settingsService.GetValue(EnvironmentVariable.ApiUrl);
+                var baseUrl = settingsService.GetValue(EnvironmentVariable.Firebase.ApiUrl);
 
                 var baseHeaders = new List<(string, string)>
                 {

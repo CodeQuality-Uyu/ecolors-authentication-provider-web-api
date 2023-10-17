@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public class CreateSessionCredentials
+    public sealed record class CreateSessionCredentials
     {
-        public string Email { get; set; }
+        public string Email { get; }
 
-        public string Password { get; set; }
+        public string Password { get; }
 
         public CreateSessionCredentials(string email, string password)
         {
@@ -19,7 +19,6 @@ namespace CQ.AuthProvider.BusinessLogic
             Password = Guard.Encode(password.Trim());
 
             Guard.ThrowIsInvalidEmailFormat(Email);
-            Guard.ThrowIsInputInvalidPassword(Password);
         }
     }
 }
