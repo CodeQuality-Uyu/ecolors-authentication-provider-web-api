@@ -10,22 +10,23 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
-    public static class CoreInit
+    public static class AppDependencyInjection
     {
         public static IServiceCollection AddCQServices(this IServiceCollection services)
         {
             services
+                .AddSingleton<ISettingsService, SettingsService>()
                 .AddAuthService()
                 .AddTransient<IResetPasswordService, ResetPasswordService>();
-
+            
             return services;
         }
 
         private static IServiceCollection AddAuthService(this IServiceCollection services)
         {
-            var authService = Environment.GetEnvironmentVariable("auth-service") ?? AuthServiceOptions.Firebase;
+            var authService = Environment.GetEnvironmentVariable(EnvironmentVariable.AuthType.Value) ?? AuthTypeOption.Firebase;
 
-            if (authService == AuthServiceOptions.Firebase)
+            if (authService == AuthTypeOption.Firebase)
             {
                 services.ConfigFirebaseAuth();
             }
@@ -38,9 +39,20 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
             services
                 .AddFirebase()
                 .AddTransient<IAuthService, AuthFirebaseService>()
-                .AddTransient((serviceProvider) =>
+                .AddTransient<HttpClientAdapter>((serviceProvider) =>
             {
-                return new HttpClientAdapter("https://identitytoolkit.googleapis.com/v1");
+                var apiUrl = Environment.GetEnvironmentVariable(EnvironmentVariable.ApiUrl.Value);
+                Guard.ThrowIsNullOrEmpty(apiUrl, EnvironmentVariable.ApiUrl.Value);
+
+                var baseUrl = Environment.GetEnvironmentVariable(EnvironmentVariable.FirebaseApiUrl.Value);
+                Guard.ThrowIsNullOrEmpty(baseUrl, EnvironmentVariable.FirebaseApiUrl.Value);
+
+                var baseHeaders = new List<(string, string)>
+                {
+                    ("Referer", apiUrl)
+                };
+
+                return new HttpClientAdapter(baseUrl, baseHeaders);
             })
                 .AddTransient<ISessionService, SessionFirebaseService>();
 

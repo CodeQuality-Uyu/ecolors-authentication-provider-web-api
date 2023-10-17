@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
-    internal static class AuthServiceOptions
+    internal static class AuthTypeOption
     {
         public static readonly string Firebase = "firebase";
         public static readonly string OAuth2 = "oauth2";
