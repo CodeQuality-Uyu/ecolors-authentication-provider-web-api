@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    internal sealed record class LoginFirebaseError
+    internal sealed record class FirebaseError
     {
-        public LoginError Error { get; set; }
+        public ConcreteFirebaseError Error { get; set; }
     }
 
-    internal sealed record class LoginError
+    internal sealed record class ConcreteFirebaseError
     {
-        public string Code { get; set; }
+        public int Code { get; set; }
 
         public FirebaseAuthErrorCode AuthCode { get { return new FirebaseAuthErrorCode(Message); } }
 

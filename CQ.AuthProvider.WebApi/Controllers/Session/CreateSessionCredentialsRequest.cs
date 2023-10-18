@@ -3,7 +3,7 @@ using CQ.AuthProvider.BusinessLogic;
 
 namespace CQ.AuthProvider.WebApi.Controllers
 {
-    internal sealed class CreateSessionCredentialsRequest : Request<CreateSessionCredentials>
+    public sealed record class CreateSessionCredentialsRequest : Request<CreateSessionCredentials>
     {
         public string? Email { get; set; }
 

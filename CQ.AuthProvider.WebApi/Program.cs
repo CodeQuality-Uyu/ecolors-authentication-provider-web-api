@@ -23,7 +23,7 @@ builder.Services.AddControllers(
 
 // Add services to the container.
 builder.Services
-    .AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Transient, LifeTime.Transient)
+    .AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Singleton, LifeTime.Singleton)
     .AddCQServices();
 
 var app = builder.Build();
@@ -33,8 +33,6 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-
-app.UseAuthorization();
 
 app.MapControllers();
 

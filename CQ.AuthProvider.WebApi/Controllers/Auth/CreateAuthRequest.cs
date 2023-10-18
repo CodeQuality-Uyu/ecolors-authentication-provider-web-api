@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.WebApi.Controllers
 {
-    internal sealed class CreateAuthRequest : Request<CreateAuth>
+    public sealed record class CreateAuthRequest : Request<CreateAuth>
     {
         public string? Email { get; set; }
 

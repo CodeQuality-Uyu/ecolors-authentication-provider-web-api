@@ -17,6 +17,10 @@ namespace CQ.AuthProvider.WebApi.Filters
                     },
    "DuplicatedEmail",
    HttpStatusCode.Conflict));
+
+
+            exceptionStoreService.RegisterException(new StaticExceptionMapping<InvalidCredentialsException>("Email or password incorrect", "InvalidCredentials", HttpStatusCode.BadRequest));
+            exceptionStoreService.RegisterException(new StaticExceptionMapping<AuthDisabledException>("Auth of email is disabled", "AuthDisabled", HttpStatusCode.Conflict));
         }
     }
 }

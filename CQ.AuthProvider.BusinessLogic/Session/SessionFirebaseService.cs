@@ -24,9 +24,9 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task<Session> CreateAsync(CreateSessionCredentials credentials)
         {
-            var apiKey = _settingsService.GetValue(EnvironmentVariable.Firebase.ApiUrl);
+            var apiKey = _settingsService.GetValue(EnvironmentVariable.Firebase.ApiKey);
 
-            var response = await this._firebaseApi.PostAsync<SessionFirebase, LoginFirebaseError>(
+            var response = await this._firebaseApi.PostAsync<SessionFirebase, FirebaseError>(
                 $"v1/accounts:signInWithPassword?key={apiKey}",
                 new { email = credentials.Email, password = credentials.Password, returnSecureToken = true },
                 (error) =>
@@ -38,7 +38,7 @@ namespace CQ.AuthProvider.BusinessLogic
             return new Session(
                 response.LocalId,
                 response.Email,
-                response.RefreshToken);
+                response.IdToken);
         }
 
         private void ProcessLoginError(dynamic error, CreateSessionCredentials credentials)

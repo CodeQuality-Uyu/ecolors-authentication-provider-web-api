@@ -14,7 +14,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 
         public string Value { get; }
 
-        private AuthTypeOption(string value)
+        public AuthTypeOption(string value)
         {
             this.Value = value;
         }
