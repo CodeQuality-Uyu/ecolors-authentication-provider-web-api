@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
-    public record struct EnvironmentVariable
+    public sealed record class EnvironmentVariable
     {
         public static EnvironmentVariable ApiUrl = new("api-url");
 
@@ -25,7 +25,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
         }
     }
 
-    public record struct FirebaseVariable
+    public sealed record class FirebaseVariable
     {
         public EnvironmentVariable ProjectId = new("firebase-projectId");
 
@@ -50,16 +50,12 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
         public EnvironmentVariable ApiKey = new("firebase-api-key");
         
         public EnvironmentVariable ApiUrl = new("firebase-api-url");
-        
-        public FirebaseVariable() { }
     }
 
-    public record struct MongoVariable
+    public sealed record class MongoVariable
     {
         public EnvironmentVariable ConnectionString = new("mongo-connection-string");
 
         public EnvironmentVariable DataBaseName = new("mongo-database-name");
-
-        public MongoVariable() { }
     }
 }

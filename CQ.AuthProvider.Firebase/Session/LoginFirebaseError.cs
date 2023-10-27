@@ -20,7 +20,7 @@ namespace CQ.AuthProvider.Firebase
         public string Message { get; set; }
     }
 
-    internal record struct FirebaseAuthErrorCode
+    internal sealed record class FirebaseAuthErrorCode
     {
         public static FirebaseAuthErrorCode EmailNotFound = new("EMAIL_NOT_FOUND");
 

@@ -32,6 +32,10 @@ namespace CQ.AuthProvider.Mongo.AppConfig
 
             services.AddUnitOfWork(LifeTime.Singleton);
 
+            services
+                .AddSingleton<IAuthRepository, AuthRepository>()
+                .AddSingleton<ISessionRepository, SessionRepository>();
+
             return services;
         }
     }
