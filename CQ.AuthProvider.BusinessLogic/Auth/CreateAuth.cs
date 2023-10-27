@@ -35,7 +35,10 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public string? FullName()
         {
-            var fullName = $"{this.FirstName} {this.LastName}";
+            var firstNameNormalize = Normalize(this.FirstName);
+            var lastNameNormalize = Normalize(this.LastName);
+
+            var fullName = $"{firstNameNormalize} {lastNameNormalize}";
 
             var withoutSpace = fullName.Trim();
 
@@ -45,6 +48,13 @@ namespace CQ.AuthProvider.BusinessLogic
             }
 
             return withoutSpace;
+        }
+
+        private string? Normalize(string? input)
+        {
+            var normalized = !string.IsNullOrEmpty(input) ? $"{char.ToUpper(input[0])}{input[1..]}" : null;
+
+            return normalized;
         }
     }
 }

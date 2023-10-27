@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic
+namespace CQ.AuthProvider.Firebase
 {
     internal sealed record class SessionFirebase
     {

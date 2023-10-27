@@ -11,6 +11,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
         public static AuthTypeOption Firebase = new("firebase");
         public static AuthTypeOption OAuth2 = new("oauth2");
         public static AuthTypeOption Custom = new("custom");
+        public static AuthTypeOption Mongo = new("mongo");
 
         public string Value { get; }
 

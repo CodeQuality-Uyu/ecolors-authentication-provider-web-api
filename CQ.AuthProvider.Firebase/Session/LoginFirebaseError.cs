@@ -4,9 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic
+namespace CQ.AuthProvider.Firebase
 {
-    public sealed record class FirebaseAuthErrorCode
+    internal sealed record class FirebaseError
+    {
+        public ConcreteFirebaseError Error { get; set; }
+    }
+
+    internal sealed record class ConcreteFirebaseError
+    {
+        public int Code { get; set; }
+
+        public FirebaseAuthErrorCode AuthCode { get { return new FirebaseAuthErrorCode(Message); } }
+
+        public string Message { get; set; }
+    }
+
+    internal record struct FirebaseAuthErrorCode
     {
         public static FirebaseAuthErrorCode EmailNotFound = new("EMAIL_NOT_FOUND");
 

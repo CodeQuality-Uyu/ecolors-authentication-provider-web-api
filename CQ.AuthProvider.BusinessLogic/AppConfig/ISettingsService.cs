@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
-    internal interface ISettingsService
+    public interface ISettingsService
     {
-        string? GetValue(EnvironmentVariable variable);
+        string GetValue(EnvironmentVariable variable);
+
+        string? GetValueOrDefault(EnvironmentVariable variable);
     }
 }

@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.AppConfig;
+﻿using CQ.AuthProvider.BusinessLogic;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.Utility;
 using FirebaseAdmin.Auth;
 using System;
@@ -7,14 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic
+namespace CQ.AuthProvider.Firebase
 {
-    internal class SessionFirebaseService : ISessionService
+    internal class SessionRepository : ISessionRepository
     {
         private readonly ISettingsService _settingsService;
         private readonly HttpClientAdapter _firebaseApi;
 
-        public SessionFirebaseService(
+        public SessionRepository(
             ISettingsService settingsService,
             HttpClientAdapter firebaseApi)
         {
@@ -41,10 +42,10 @@ namespace CQ.AuthProvider.BusinessLogic
                 response.IdToken);
         }
 
-        private void ProcessLoginError(dynamic error, CreateSessionCredentials credentials)
+        private void ProcessLoginError(FirebaseError error, CreateSessionCredentials credentials)
         {
             if (error.Error.AuthCode == FirebaseAuthErrorCode.EmailNotFound ||
-            error.Error.AuthCode == FirebaseAuthErrorCode.InvalidPassword) throw new InvalidCredentialsException(credentials.Email, error.Error.AuthCode);
+            error.Error.AuthCode == FirebaseAuthErrorCode.InvalidPassword) throw new InvalidCredentialsException(credentials.Email);
 
             if (error.Error.AuthCode == FirebaseAuthErrorCode.UserDisabled) throw new AuthDisabledException(credentials.Email);
         }

@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="CQ.ApiElements" Version="1.2.1" />
-    <PackageReference Include="CQ.Utility" Version="1.0.9" />
     <PackageReference Include="dotenv.net" Version="3.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.2" />
@@ -18,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />
+    <ProjectReference Include="..\CQ.AuthProvider.DataAccess\CQ.AuthProvider.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

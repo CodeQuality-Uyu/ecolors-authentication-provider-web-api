@@ -8,14 +8,11 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public sealed class InvalidCredentialsException : Exception
     {
-        public FirebaseAuthErrorCode Origin { get; }
-
         public string Email { get; }
 
-        public InvalidCredentialsException(string email, FirebaseAuthErrorCode code)
+        public InvalidCredentialsException(string email)
         {
             Email = email;
-            Origin = code;
         }
     }
 }

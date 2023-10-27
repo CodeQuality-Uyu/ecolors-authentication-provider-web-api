@@ -1,6 +1,6 @@
-﻿using CQ.AuthProvider.BusinessLogic.AppConfig.Firebase.Exceptions;
+﻿using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.AuthProvider.Firebase.AppConfig.Exceptions;
 using CQ.Utility;
-using dotenv.net.Utilities;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.AppConfig
+namespace CQ.AuthProvider.Firebase.AppConfig
 {
     internal static class FirebaseInit
     {
@@ -31,7 +31,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
                 throw new FirebaseInitAppException(projectId);
             }
 
-            services.AddTransient((serviceProvider) =>
+            services.AddSingleton((serviceProvider) =>
             {
                 var firebaseAuth = FirebaseAuth.GetAuth(playerFinderApp);
 

@@ -5,6 +5,7 @@ using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.ApiElements.Config;
 using CQ.ServiceExtension;
+using CQ.AuthProvider.DataAccess.AppConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,9 @@ builder.Services.AddControllers(
 // Add services to the container.
 builder.Services
     .AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Singleton, LifeTime.Singleton)
-    .AddCQServices();
+    .AddCQServices()
+    .AddCQDataAccess();
+
 
 var app = builder.Build();
 

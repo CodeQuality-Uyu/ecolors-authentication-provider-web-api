@@ -6,5 +6,21 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public sealed record class Session(string Id, string Email, string Token);
+    public sealed record class Session
+    {
+        public string AuthId { get; init; }
+
+        public string Email { get; init; }
+
+        public string Token { get; init; }
+
+        public Session() { }
+
+        public Session(string authId, string email, string token)
+        {
+            AuthId = authId;
+            Email = email;
+            Token = token;
+        }
+    }
 }
