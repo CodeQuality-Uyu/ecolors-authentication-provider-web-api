@@ -19,8 +19,7 @@ namespace PlayerFinder.Auth.Api.Filters
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var validationParameters = GetValidationParameters();
 
-                SecurityToken validatedToken;
-                IPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+                IPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
                 return true;
             }
             catch (Exception)

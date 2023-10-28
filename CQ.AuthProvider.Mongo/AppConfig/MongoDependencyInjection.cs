@@ -27,9 +27,8 @@ namespace CQ.AuthProvider.Mongo.AppConfig
             LifeTime.Singleton, 
             LifeTime.Singleton);
 
-            services
-                .AddSingleton<IAuthRepository, AuthRepository>()
-                .AddSingleton<ISessionRepository, SessionRepository>();
+            services.AddMongoRepository<Auth, AuthRepository>(LifeTime.Singleton);
+            services.AddMongoRepository<Session, SessionRepository>(LifeTime.Singleton);
 
             return services;
         }

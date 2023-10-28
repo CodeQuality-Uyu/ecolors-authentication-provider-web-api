@@ -8,16 +8,7 @@ namespace CQ.AuthProvider.WebApi.Filters
     {
         protected override void RegisterBusinessExceptions(ExceptionStoreService exceptionStoreService)
         {
-            exceptionStoreService.RegisterException(
-                new DinamicExceptionMapping<DuplicatedEmailException>(
-   (exception, context) =>
-                    {
-                        return $"Email '{exception.Email}' is duplicated";
-
-                    },
-   "DuplicatedEmail",
-   HttpStatusCode.Conflict));
-
+            exceptionStoreService.RegisterException(new DinamicExceptionMapping<DuplicatedEmailException>((exception, context) => $"Email '{exception.Email}' is duplicated", "DuplicatedEmail", HttpStatusCode.Conflict));
 
             exceptionStoreService.RegisterException(new StaticExceptionMapping<InvalidCredentialsException>("Email or password incorrect", "InvalidCredentials", HttpStatusCode.BadRequest));
             exceptionStoreService.RegisterException(new StaticExceptionMapping<AuthDisabledException>("Auth of email is disabled", "AuthDisabled", HttpStatusCode.Conflict));

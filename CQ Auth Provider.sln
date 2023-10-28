@@ -23,7 +23,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.AuthProvider.DataAccess", "CQ.AuthProvider.DataAccess\CQ.AuthProvider.DataAccess.csproj", "{C48FE703-B595-4AF8-8DE4-EEBB40A9F3AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.DataAccess", "CQ.AuthProvider.DataAccess\CQ.AuthProvider.DataAccess.csproj", "{C48FE703-B595-4AF8-8DE4-EEBB40A9F3AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1- WebApi", "1- WebApi", "{A98EB16E-B0AC-4567-8F9B-6D54F5A4FC84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2- Infraestructure", "2- Infraestructure", "{AE89C2F9-FE2C-47DC-8256-6B1B44F8D947}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3- Application", "3- Application", "{4E0E1FB7-A423-422D-821D-53D1A3EAADC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +60,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31A62A59-AB76-4A0D-936E-5F23F00BC20E} = {A98EB16E-B0AC-4567-8F9B-6D54F5A4FC84}
+		{21873A53-216E-4107-AFAC-6692E09442CE} = {4E0E1FB7-A423-422D-821D-53D1A3EAADC4}
+		{4E3D9612-1C1A-4870-9EA4-5955BB460FE8} = {AE89C2F9-FE2C-47DC-8256-6B1B44F8D947}
+		{25FF1897-9C46-42C6-AFE9-A586B9CD4BEC} = {AE89C2F9-FE2C-47DC-8256-6B1B44F8D947}
+		{C48FE703-B595-4AF8-8DE4-EEBB40A9F3AA} = {AE89C2F9-FE2C-47DC-8256-6B1B44F8D947}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1E735191-9CD7-4B16-A9B1-296B3D817C3F}
