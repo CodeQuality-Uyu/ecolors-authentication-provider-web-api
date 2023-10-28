@@ -13,7 +13,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
         Task<bool> ExistByEmailAsync(string email);
 
-        Task<CreateAuthResult> CreateAsync(Auth auth);
+        Task<Auth> CreateAsync(Auth auth);
 
         Task UpdateAsync(Auth auth);
     }

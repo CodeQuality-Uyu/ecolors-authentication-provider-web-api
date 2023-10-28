@@ -11,9 +11,12 @@ namespace CQ.AuthProvider.BusinessLogic
     {
         private readonly IAuthRepository _authRepRepository;
 
-        public AuthService(IAuthRepository authRepRepository)
+        private readonly ISessionService _sessionService;
+
+        public AuthService(IAuthRepository authRepRepository, ISessionService sessionService)
         {
             _authRepRepository = authRepRepository;
+            _sessionService = sessionService;
         }
 
         public async Task<CreateAuthResult> CreateAsync(CreateAuth newAuth)
@@ -27,7 +30,9 @@ namespace CQ.AuthProvider.BusinessLogic
 
             var authCreated = await _authRepRepository.CreateAsync(auth).ConfigureAwait(false);
 
-            return authCreated;
+            var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAuth.Email, newAuth.Password)).ConfigureAwait(false);
+
+            return new CreateAuthResult(authCreated.Id, authCreated.Email, authCreated.Name, session.Token);
         }
 
         private async Task AssertEmailInUse(string email)
@@ -42,7 +47,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task UpdatePasswordAsync(string newPassword, Auth userLogged)
         {
-            var updated = userLogged with { Password= newPassword };
+            var updated = userLogged with { Password = newPassword };
 
             await _authRepRepository.UpdateAsync(updated).ConfigureAwait(false);
         }

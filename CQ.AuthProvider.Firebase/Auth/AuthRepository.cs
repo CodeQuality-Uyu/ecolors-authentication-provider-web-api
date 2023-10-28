@@ -12,12 +12,9 @@ namespace CQ.AuthProvider.Firebase
     {
         private readonly FirebaseAuth _firebaseAuth;
 
-        private readonly ISessionRepository _sessionRepository;
-
-        public AuthRepository(FirebaseAuth firebaseAuth, ISessionRepository sessionRepository)
+        public AuthRepository(FirebaseAuth firebaseAuth)
         {
             _firebaseAuth = firebaseAuth;
-            _sessionRepository = sessionRepository;
         }
 
         public async Task<Auth> GetByEmailAsync(string email)
@@ -54,7 +51,7 @@ namespace CQ.AuthProvider.Firebase
             catch (AuthNotFoundException) { return false; }
         }
 
-        public async Task<CreateAuthResult> CreateAsync(Auth newAuth)
+        public async Task<Auth> CreateAsync(Auth newAuth)
         {
             var userRecords = new UserRecordArgs
             {
@@ -66,13 +63,7 @@ namespace CQ.AuthProvider.Firebase
 
             var firebaseAuth = await CreateAuthAsync(userRecords).ConfigureAwait(false);
 
-            var session = await _sessionRepository.CreateAsync(new CreateSessionCredentials(newAuth.Email, newAuth.Password)).ConfigureAwait(false);
-
-            return new CreateAuthResult(
-                userRecords.Uid,
-                newAuth.Email,
-                userRecords.DisplayName,
-                session.Token);
+            return newAuth;
         }
 
         private async Task<UserRecord> CreateAuthAsync(UserRecordArgs userRecords)
