@@ -14,8 +14,6 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 
         public static readonly MongoVariable Mongo = new();
 
-        public static readonly EnvironmentVariable AuthType = new("auth-type");
-
 
         public string Value { get; }
 

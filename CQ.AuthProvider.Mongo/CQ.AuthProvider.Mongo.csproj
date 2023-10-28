@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CQ.UnitOfWork" Version="2.2.1" />
-    <PackageReference Include="CQ.UnitOfWork.MongoDriver" Version="2.2.1" />
+    <PackageReference Include="CQ.UnitOfWork.MongoDriver" Version="2.2.2" />
   </ItemGroup>
 
   <ItemGroup>

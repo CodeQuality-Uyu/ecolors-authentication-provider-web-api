@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.ApiElements.Config;
-using CQ.ServiceExtension;
 using CQ.AuthProvider.DataAccess.AppConfig;
+using CQ.ServiceExtension;
 
 var builder = WebApplication.CreateBuilder(args);
 

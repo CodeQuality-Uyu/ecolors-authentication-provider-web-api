@@ -16,7 +16,8 @@ namespace CQ.AuthProvider.Mongo.AppConfig
     {
         public static IServiceCollection AddMongoServices(this IServiceCollection services, ISettingsService settingsService, string connectionString)
         {
-            services.AddMongoContext(new MongoConfig
+            services
+                .AddMongoContext(new MongoConfig
             {
                 DatabaseConnection = new DatabaseConfig
                 {
@@ -25,10 +26,9 @@ namespace CQ.AuthProvider.Mongo.AppConfig
                 },
             }, 
             LifeTime.Singleton, 
-            LifeTime.Singleton);
-
-            services.AddMongoRepository<Auth, AuthRepository>(LifeTime.Singleton);
-            services.AddMongoRepository<Session, SessionRepository>(LifeTime.Singleton);
+            LifeTime.Singleton)
+                .AddCustomMongoRepository<Auth, IAuthRepository, AuthRepository>(LifeTime.Singleton)
+                .AddCustomMongoRepository<Session, ISessionRepository, SessionRepository>(LifeTime.Singleton);
 
             return services;
         }

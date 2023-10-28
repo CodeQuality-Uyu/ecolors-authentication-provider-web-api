@@ -10,4 +10,7 @@ firebase-client-cert=
 firebase-universe-domain=
 firebase:api-key=
 
-api-url=
+mongo-connection-string=
+mongo-database-name=
+
+api-url=https://localhost:7049
