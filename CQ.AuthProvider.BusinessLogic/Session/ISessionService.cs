@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public interface IAuthService
+    public interface ISessionService
     {
-        Task<CreateAuthResult> CreateAsync(CreateAuth auth);
+        Task<Session> CreateAsync(CreateSessionCredentials credentials);
     }
 }

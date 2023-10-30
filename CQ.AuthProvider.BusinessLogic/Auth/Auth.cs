@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CQ.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,12 +7,27 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public class Auth
+    public sealed record class Auth
     {
-        public string Id { get; set; }
+        public string Id { get; init; }
 
-        public string Email { get; set; }
+        public string Email { get; init; }
 
-        public string Name { get; set; }
+        public string Password { get; init; }
+
+        public string? Name { get; init; }
+
+        public Auth()
+        {
+            Id = Db.NewId();
+        }
+
+        public Auth(string email, string password, string? name)
+        {
+            Id = Db.NewId();
+            Email = email;
+            Password = password;
+            Name = name;
+        }
     }
 }

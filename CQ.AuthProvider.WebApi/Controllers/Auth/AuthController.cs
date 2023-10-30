@@ -20,25 +20,11 @@ namespace CQ.AuthProvider.WebApi.Controllers
         [HttpPost("credentials")]
         public async Task<IActionResult> CreateAsync(CreateAuthRequest request)
         {
-            var auth = await this._authService.CreateAsync(new CreateAuth(
-               request.Email,
-               request.Password,
-               request.FirstName,
-                request.LastName));
+            var createAuth = request.Map();
+
+            var auth = await this._authService.CreateAsync(createAuth);
 
             return Ok(auth);
-        }
-        
-
-        [HttpPut("password")]
-        // [AuthenticationHandlerFilter]
-        public async Task<IActionResult> UpdatePasswordAsync([FromHeader] string authorization, UpdatePasswordRequest request)
-        {
-            var userLogged = await this._authService.DeserializeTokenAsync(authorization).ConfigureAwait(false);
-
-            await this._authService.UpdatePasswordAsync(request.Password, userLogged).ConfigureAwait(false);
-
-            return NoContent();
         }
     }
 

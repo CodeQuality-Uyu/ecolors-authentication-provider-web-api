@@ -10,4 +10,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />
+    <ProjectReference Include="..\CQ.AuthProvider.Firebase\CQ.AuthProvider.Firebase.csproj" />
+    <ProjectReference Include="..\CQ.AuthProvider.Mongo\CQ.AuthProvider.Mongo.csproj" />
+  </ItemGroup>
+
 </Project>

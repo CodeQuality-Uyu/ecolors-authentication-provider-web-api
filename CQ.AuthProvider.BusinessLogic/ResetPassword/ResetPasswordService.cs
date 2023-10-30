@@ -1,5 +1,4 @@
-﻿using FirebaseAdmin.Auth;
-using PlayerFinder.Auth.Core.Exceptions;
+﻿using PlayerFinder.Auth.Core.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
