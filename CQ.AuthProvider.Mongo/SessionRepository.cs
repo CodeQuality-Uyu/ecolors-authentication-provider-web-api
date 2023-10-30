@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic;
+﻿using Amazon.SecurityToken.Model;
+using CQ.AuthProvider.BusinessLogic;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.MongoDriver;
 using System;
@@ -31,7 +32,25 @@ namespace CQ.AuthProvider.Mongo
                 throw new InvalidCredentialsException(credentials.Email);
             }
 
-            var session = new Session(auth.Id, credentials.Email, Guid.NewGuid().ToString());
+            var sessionOfUser = await base.GetOrDefaultAsync(s => s.AuthId == auth.Id).ConfigureAwait(false);
+
+            if (sessionOfUser == null)
+            {
+                sessionOfUser = await CreateNewAsync(auth).ConfigureAwait(false);
+            }
+            else
+            {
+                sessionOfUser = sessionOfUser with { Token = Guid.NewGuid().ToString() };
+
+                await base.UpdateByPropAsync(sessionOfUser.Id, new { Token = sessionOfUser.Token }).ConfigureAwait(false);
+            }
+
+            return sessionOfUser;
+        }
+
+        private async Task<Session> CreateNewAsync(Auth auth)
+        {
+            var session = new Session(auth.Id, auth.Email, Guid.NewGuid().ToString());
 
             var sessionCreated = await base.CreateAsync(session).ConfigureAwait(false);
 

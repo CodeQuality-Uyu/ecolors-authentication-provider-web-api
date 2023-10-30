@@ -47,9 +47,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task UpdatePasswordAsync(string newPassword, Auth userLogged)
         {
-            var updated = userLogged with { Password = newPassword };
-
-            await _authRepRepository.UpdateAsync(updated).ConfigureAwait(false);
+            await _authRepRepository.UpdatePasswordAsync(newPassword, userLogged).ConfigureAwait(false);
         }
     }
 }

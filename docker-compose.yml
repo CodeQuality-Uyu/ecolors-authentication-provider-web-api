@@ -6,6 +6,8 @@ services:
     ports:
       - "27018:27017"
   web-api:
+    depends_on: 
+      - mongo-server
     restart: always
     env_file:
       - CQ.AuthProvider.WebApi/.env

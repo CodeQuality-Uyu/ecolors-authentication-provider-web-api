@@ -15,6 +15,6 @@ namespace CQ.AuthProvider.BusinessLogic
 
         Task<Auth> CreateAsync(Auth auth);
 
-        Task UpdateAsync(Auth auth);
+        Task UpdatePasswordAsync(string newPassword, Auth auth);
     }
 }

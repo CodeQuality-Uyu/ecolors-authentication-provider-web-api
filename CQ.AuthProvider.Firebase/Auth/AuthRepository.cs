@@ -85,12 +85,12 @@ namespace CQ.AuthProvider.Firebase
             }
         }
 
-        public async Task UpdateAsync(Auth userLogged)
+        public async Task UpdatePasswordAsync(string newPassword, Auth userLogged)
         {
             var userUpdated = new UserRecordArgs
             {
                 Uid = userLogged.Id,
-                Password = userLogged.Password,
+                Password = newPassword,
             };
 
             var userRecord = await _firebaseAuth.UpdateUserAsync(userUpdated).ConfigureAwait(false);

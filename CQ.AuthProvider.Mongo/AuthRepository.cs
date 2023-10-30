@@ -12,11 +12,6 @@ namespace CQ.AuthProvider.Mongo
     {
         public AuthRepository(MongoContext context) : base(context, "Auths") { }
 
-        public async Task<Auth> CreateAsync(Auth auth)
-        {
-            return await base.CreateAsync(auth).ConfigureAwait(false);
-        }
-
         public async Task<bool> ExistByEmailAsync(string email)
         {
             return await base.ExistAsync(a => a.Email == email).ConfigureAwait(false);
@@ -26,7 +21,7 @@ namespace CQ.AuthProvider.Mongo
         {
             var auth = await base.GetOrDefaultAsync(a => a.Email == email).ConfigureAwait(false);
 
-            if(auth == null)
+            if (auth == null)
             {
                 throw new AuthNotFoundException(email);
             }
@@ -34,9 +29,9 @@ namespace CQ.AuthProvider.Mongo
             return auth;
         }
 
-        public async Task UpdateAsync(Auth auth)
+        public async Task UpdatePasswordAsync(string newPassword, Auth auth)
         {
-            await base.UpdateByPropAsync(auth.Id, auth).ConfigureAwait(false);
+            await base.UpdateByPropAsync(auth.Id, new { Password = newPassword }).ConfigureAwait(false);
         }
     }
 }
