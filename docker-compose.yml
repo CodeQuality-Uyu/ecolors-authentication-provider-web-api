@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mongo-server:
+    image: mongo
+    restart: always
+    ports:
+      - "27018:27017"
+  web-api:
+    depends_on: 
+      - mongo-server
+    restart: always
+    env_file:
+      - CQ.AuthProvider.WebApi/.env
+    build: .
+    ports:
+      - "7049:80"

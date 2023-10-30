@@ -1,0 +1,16 @@
+firebase-projectId=
+firebase-private-key-id=
+firebase-private-key=
+firebase-client-email=
+firebase-client-id=
+firebase-auth-uri=
+firebase-token-uri=
+firebase-auth-provider=
+firebase-client-cert=
+firebase-universe-domain=
+firebase:api-key=
+
+mongo-connection-string=
+mongo-database-name=
+
+api-url=https://localhost:7049

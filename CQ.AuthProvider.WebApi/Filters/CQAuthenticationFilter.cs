@@ -1,0 +1,45 @@
+﻿using CQ.ApiElements.Filters;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
+using dotenv.net.Utilities;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Principal;
+using System.Text;
+
+namespace PlayerFinder.Auth.Api.Filters
+{
+    internal class CQAuthenticationFilter : AuthenticationFilter
+    {
+        protected override bool IsFormatOfTokenValid(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var validationParameters = GetValidationParameters();
+
+                IPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private TokenValidationParameters GetValidationParameters()
+        {
+            var firebasePrivateKey = Environment.GetEnvironmentVariable(EnvironmentVariable.Firebase.PrivateKey.Value);
+            return new TokenValidationParameters()
+            {
+                ValidateLifetime = false, // Because there is no expiration in the generated token
+                ValidateAudience = false, // Because there is no audiance in the generated token
+                ValidateIssuer = false,   // Because there is no issuer in the generated token
+                ValidIssuer = "Sample",
+                ValidAudience = "Sample",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(firebasePrivateKey)) // The same key as the one that generate the token
+            };
+        }
+    }
+}
