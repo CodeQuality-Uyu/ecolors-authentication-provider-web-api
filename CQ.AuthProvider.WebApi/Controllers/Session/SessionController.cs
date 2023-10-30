@@ -24,7 +24,9 @@ namespace CQ.AuthProvider.WebApi.Controllers
 
             var session = await this._sessionService.CreateAsync(createAuth);
 
-            return Ok(session);
+            var response = new CreateSessionResponse(session);
+            
+            return Ok(response);
         }
     }
 }
