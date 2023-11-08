@@ -1,4 +1,6 @@
-﻿using CQ.Utility;
+﻿using CQ.AuthProvider.BusinessLogic.Exceptions;
+using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,45 +11,86 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     internal sealed class AuthService : IAuthService
     {
-        private readonly IAuthRepository _authRepRepository;
+        private readonly IIdentityProviderRepository _identityProviderRepository;
+
+        private readonly IRepository<Auth> _authRepository;
 
         private readonly ISessionService _sessionService;
 
-        public AuthService(IAuthRepository authRepRepository, ISessionService sessionService)
+        private readonly IRoleInternalService _roleService;
+
+        public AuthService(
+            IIdentityProviderRepository identityProviderRepository,
+            ISessionService sessionService,
+            IRepository<Auth> cqAuthRepository,
+            IRoleInternalService roleService)
         {
-            _authRepRepository = authRepRepository;
-            _sessionService = sessionService;
+            this._identityProviderRepository = identityProviderRepository;
+            this._sessionService = sessionService;
+            this._authRepository = cqAuthRepository;
+            this._roleService = roleService;
         }
 
         public async Task<CreateAuthResult> CreateAsync(CreateAuth newAuth)
         {
             await AssertEmailInUse(newAuth.Email).ConfigureAwait(false);
 
-            var auth = new Auth(
-                newAuth.Email,
-               newAuth.Password,
-               newAuth.FullName());
-
-            var authCreated = await _authRepRepository.CreateAsync(auth).ConfigureAwait(false);
+            var auth = await SaveAuthAsync(newAuth);
 
             var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAuth.Email, newAuth.Password)).ConfigureAwait(false);
 
-            return new CreateAuthResult(authCreated.Id, authCreated.Email, authCreated.Name, session.Token);
+            return new CreateAuthResult(auth.Id, auth.Email, auth.Name, session.Token);
         }
 
         private async Task AssertEmailInUse(string email)
         {
-            var existAuth = await _authRepRepository.ExistByEmailAsync(email).ConfigureAwait(false);
+            var existAuth = await this._authRepository.ExistAsync(a => a.Email == email).ConfigureAwait(false);
 
             if (existAuth)
             {
-                throw new DuplicatedEmailException(email);
+                throw new ResourceDuplicatedException(email);
             }
+        }
+
+        private async Task<Auth> SaveAuthAsync(CreateAuth newAuth)
+        {
+            var identity = new Identity(
+                newAuth.Email,
+                newAuth.Password);
+
+            await _identityProviderRepository.CreateAsync(identity).ConfigureAwait(false);
+
+            var auth = new Auth(newAuth.Email, newAuth.FullName(), newAuth.Role)
+            {
+                Id = identity.Id
+            };
+
+            await this._authRepository.CreateAsync(auth).ConfigureAwait(false);
+
+            return auth;
         }
 
         public async Task UpdatePasswordAsync(string newPassword, Auth userLogged)
         {
-            await _authRepRepository.UpdatePasswordAsync(newPassword, userLogged).ConfigureAwait(false);
+            Guard.ThrowIsInputInvalidPassword(newPassword, "newPassword");
+
+            await _identityProviderRepository.UpdatePasswordAsync(newPassword, userLogged.Id).ConfigureAwait(false);
+        }
+
+        public async Task<Auth> GetMeAsync(string token)
+        {
+            var session = await this._sessionService.GetByTokenAsync(token).ConfigureAwait(false);
+
+            var auth = await this._authRepository.GetByPropAsync<ResourceNotFoundException>(this._authRepository.GetByPropAsync,session.AuthId).ConfigureAwait(false);
+
+            return auth;
+        }
+
+        public async Task<bool> HasPermissionAsync(string permission, Auth userlogged)
+        {
+            var role = await this._roleService.GetByKeyAsync(userlogged.ConcreteRole()).ConfigureAwait(false);
+
+            return role.HasPermission(permission);
         }
     }
 }

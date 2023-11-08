@@ -7,27 +7,24 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public sealed record class Session
+    public sealed record class Identity
     {
         public string Id { get; init; }
 
-        public string AuthId { get; init; }
-
         public string Email { get; init; }
 
-        public string Token { get; init; }
+        public string Password { get; init; }
 
-        public Session() 
+        public Identity()
         {
             Id = Db.NewId();
         }
 
-        public Session(string authId, string email, string token)
+        public Identity(string email, string password)
         {
             Id = Db.NewId();
-            AuthId = authId;
             Email = email;
-            Token = token;
+            Password = password;
         }
     }
 }

@@ -13,21 +13,23 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public string Email { get; init; }
 
-        public string Password { get; init; }
+        public string? Name { get; init; }    
 
-        public string? Name { get; init; }
+        public string Role { get; init; }
 
         public Auth()
         {
             Id = Db.NewId();
         }
 
-        public Auth(string email, string password, string? name)
+        public Roles ConcreteRole() => new(Role);
+
+        public Auth(string email, string? name, Roles role)
         {
             Id = Db.NewId();
             Email = email;
-            Password = password;
             Name = name;
+            Role = role.Value;
         }
     }
 }

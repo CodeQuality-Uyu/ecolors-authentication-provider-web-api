@@ -15,7 +15,10 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
             services
                 .AddSingleton<ISettingsService, SettingsService>()
                 .AddSingleton<IAuthService, AuthService>()
-                .AddSingleton<ISessionService, SessionService>();
+                .AddSingleton<IRoleService, RoleService>()
+                .AddSingleton<IRoleInternalService, RoleService>()
+                .AddSingleton<IPermissionInternalService, PermissionService>()
+                .AddSingleton<IPermissionService, PermissionService>();
 
             return services;
         }

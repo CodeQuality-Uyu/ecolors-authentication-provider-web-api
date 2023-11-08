@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace CQ.AuthProvider.WebApi.Controllers
 {
     [ApiController]
-    [Route("session")]
+    [Route("sessions")]
     public class SessionController: ControllerBase
     {
         private readonly ISessionService _sessionService;

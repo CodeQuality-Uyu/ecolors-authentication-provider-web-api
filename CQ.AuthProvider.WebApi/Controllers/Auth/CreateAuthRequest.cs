@@ -9,13 +9,15 @@ namespace CQ.AuthProvider.WebApi.Controllers
 {
     public sealed record class CreateAuthRequest : Request<CreateAuth>
     {
-        public string? Email { get; set; }
+        public string? Email { get; init; }
 
-        public string? Password { get; set; }
+        public string? Password { get; init; }
 
-        public string? FirstName { get; set; }
+        public string? FirstName { get; init; }
 
-        public string? LastName { get; set; }
+        public string? LastName { get; init; }
+
+        public string? Role { get; init; }
 
         protected override CreateAuth InnerMap()
         {
@@ -23,7 +25,8 @@ namespace CQ.AuthProvider.WebApi.Controllers
                Email ?? string.Empty,
                Password ?? string.Empty,
                FirstName ?? string.Empty,
-                LastName ?? string.Empty);
+                LastName ?? string.Empty,
+                Role ?? string.Empty);
         }
     }
 }

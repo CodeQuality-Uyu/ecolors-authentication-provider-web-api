@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public interface ISessionRepository
+    public interface IIdentityProviderHealthService
     {
-        Task<Session> CreateAsync(CreateSessionCredentials credentials);
+        string GetName();
+
+        bool Ping();
     }
 }

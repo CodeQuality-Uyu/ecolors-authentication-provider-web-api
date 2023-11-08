@@ -1,6 +1,10 @@
-﻿using CQ.AuthProvider.BusinessLogic.AppConfig;
+﻿using CQ.AuthProvider.BusinessLogic;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.Firebase.AppConfig;
 using CQ.AuthProvider.Mongo.AppConfig;
+using CQ.ServiceExtension;
+using CQ.UnitOfWork;
+using CQ.UnitOfWork.MongoDriver;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -16,7 +20,30 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
         {
             var settingsService = new SettingsService();
 
-            var mongoConnection = settingsService.GetValueOrDefault(EnvironmentVariable.Mongo.ConnectionString);
+            services
+                .AddMongoContext(new MongoConfig
+                {
+                    DatabaseConnection = new DatabaseConfig
+                    {
+                        ConnectionString = settingsService.GetValue(EnvironmentVariable.MongoAuth.ConnectionString),
+                        DatabaseName = settingsService.GetValue(EnvironmentVariable.MongoAuth.DataBaseName)
+                    },
+                    UseDefaultQueryLogger = true,
+                    DefaultToUse = true
+                },
+                LifeTime.Singleton,
+                LifeTime.Singleton)
+                .AddMongoRepository<Auth>(lifeTime: LifeTime.Singleton)
+                .AddMongoRepository<Role>(lifeTime: LifeTime.Singleton)
+                .AddMongoRepository<Permission>(lifeTime: LifeTime.Singleton)
+                .AddIdentityProvider(settingsService);
+
+            return services;
+        }
+
+        private static IServiceCollection AddIdentityProvider(this IServiceCollection services, ISettingsService settingsService)
+        {
+            var mongoConnection = settingsService.GetValueOrDefault(EnvironmentVariable.MongoIdentityProvider.ConnectionString);
 
             if (!string.IsNullOrEmpty(mongoConnection))
             {
