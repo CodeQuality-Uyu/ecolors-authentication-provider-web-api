@@ -11,7 +11,7 @@ namespace CQ.AuthProvider.WebApi.Filters
 {
     internal class CQAuthenticationAttribute : AuthenticationAsyncAttributeFilter
     {
-        protected IAuthService _authService { get; private set;}
+        protected IAuthService _authService { get; private set; } = null!;
         
         protected override async Task<bool> IsFormatOfTokenValidAsync(string token, AuthorizationFilterContext context)
         {
