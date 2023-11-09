@@ -17,9 +17,12 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public string Role { get; init; }
 
+        public DateTime CreatedAt { get; init; }
+
         public Auth()
         {
             Id = Db.NewId();
+            CreatedAt= DateTime.UtcNow;
         }
 
         public Roles ConcreteRole() => new(Role);
@@ -30,6 +33,7 @@ namespace CQ.AuthProvider.BusinessLogic
             Email = email;
             Name = name;
             Role = role.Value;
+            CreatedAt= DateTime.UtcNow;
         }
     }
 }

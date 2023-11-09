@@ -24,25 +24,6 @@ namespace CQ.AuthProvider.WebApi.Controllers
 
             return Ok(auth);
         }
-
-        [HttpPost("check-permission")]
-        [CQAuthentication]
-        public async Task<IActionResult> CreateAsync(CheckPermissionRequest request)
-        {
-            var hastPermission = await this._authService.HasPermissionAsync(request.Permission, this.GetAuthLogged());
-
-            return Ok(new
-            {
-                hastPermission,
-            });
-        }
-
-        [HttpGet("me")]
-        [CQAuthentication]
-        public IActionResult Get()
-        {
-            return Ok(this.GetAuthLogged());
-        }
     }
 
     internal static class ControllerBaseExtensions
