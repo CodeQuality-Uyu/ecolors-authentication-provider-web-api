@@ -5,11 +5,11 @@ namespace CQ.AuthProvider.WebApi.Controllers
 {
     public sealed record class CreateSessionResponse : Response<Session>
     {
-        public string Id { get; set; }
+        public string Id { get; private set; }
 
-        public string Email { get; set; }
+        public string Email { get; private set; }
 
-        public string Token { get; set; }
+        public string Token { get; private set; }
         
         public CreateSessionResponse(Session session) : base(session) { }
 

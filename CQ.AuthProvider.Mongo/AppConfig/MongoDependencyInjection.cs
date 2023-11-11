@@ -16,19 +16,24 @@ namespace CQ.AuthProvider.Mongo.AppConfig
     {
         public static IServiceCollection AddMongoServices(this IServiceCollection services, ISettingsService settingsService, string connectionString)
         {
+            var databaseName = settingsService.GetValue(EnvironmentVariable.MongoIdentityProvider.DataBaseName);
             services
-                .AddMongoContext(new MongoConfig
-            {
-                DatabaseConnection = new DatabaseConfig
+                .AddMongoContext<IdentityProviderMongoContext>(new MongoConfig
                 {
-                    ConnectionString = connectionString,
-                    DatabaseName = settingsService.GetValue(EnvironmentVariable.Mongo.DataBaseName)
+                    DatabaseConnection = new DatabaseConfig
+                    {
+                        ConnectionString = connectionString,
+                        DatabaseName = databaseName
+                    },
+                    UseDefaultQueryLogger = true
                 },
-            }, 
-            LifeTime.Singleton, 
+            LifeTime.Singleton,
             LifeTime.Singleton)
-                .AddCustomMongoRepository<Auth, IAuthRepository, AuthRepository>(LifeTime.Singleton)
-                .AddCustomMongoRepository<Session, ISessionRepository, SessionRepository>(LifeTime.Singleton);
+                .AddMongoRepository<Session>(databaseName, LifeTime.Singleton)
+                .AddCustomMongoRepository<Identity, IIdentityProviderRepository, IdentityRepository>(databaseName, LifeTime.Singleton)
+                .AddSingleton<IIdentityProviderHealthService, IdentityRepository>()
+                .AddSingleton<ISessionService, SessionService>();
+
 
             return services;
         }

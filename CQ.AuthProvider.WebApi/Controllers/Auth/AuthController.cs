@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.WebApi.Filters;
-using System.ComponentModel.DataAnnotations;
 
 namespace CQ.AuthProvider.WebApi.Controllers
 {
     [ApiController]
-    [Route("auth")]
+    [Route("auths")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -25,6 +23,14 @@ namespace CQ.AuthProvider.WebApi.Controllers
             var auth = await this._authService.CreateAsync(createAuth);
 
             return Ok(auth);
+        }
+    }
+
+    internal static class ControllerBaseExtensions
+    {
+        public static Auth? GetAuthLogged(this ControllerBase controller)
+        {
+            return controller.HttpContext.Items[Items.Auth] as Auth;
         }
     }
 

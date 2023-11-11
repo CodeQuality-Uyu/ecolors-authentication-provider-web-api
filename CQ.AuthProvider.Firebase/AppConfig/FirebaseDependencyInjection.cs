@@ -2,11 +2,6 @@
 using CQ.AuthProvider.BusinessLogic;
 using CQ.Utility;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.Firebase.AppConfig
 {
@@ -16,20 +11,22 @@ namespace CQ.AuthProvider.Firebase.AppConfig
         {
             services
                 .AddFirebase(settingsService)
-                .AddSingleton<IAuthRepository, AuthRepository>()
+                .AddSingleton<IIdentityProviderRepository, AuthRepository>()
+                .AddSingleton<IIdentityProviderHealthService, AuthRepository>()
                 .AddTransient<HttpClientAdapter>((serviceProvider) =>
                 {
-                    var apiUrl = settingsService.GetValue(EnvironmentVariable.ApiUrl);
+                    var apiUrl = settingsService.GetValue(EnvironmentVariable.Firebase.RefererApiUrl);
                     var baseUrl = settingsService.GetValue(EnvironmentVariable.Firebase.ApiUrl);
 
-                    var baseHeaders = new List<(string, string)>
+                    var baseHeaders = new List<Header>
                 {
-                    ("Referer", apiUrl)
+                    new ("Referer", apiUrl)
                 };
 
                     return new HttpClientAdapter(baseUrl, baseHeaders);
                 })
-                .AddSingleton<ISessionRepository, SessionRepository>();
+                .AddSingleton<ISessionService, SessionService>();
+
 
             return services;
         }

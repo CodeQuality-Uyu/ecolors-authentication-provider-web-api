@@ -9,7 +9,7 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public sealed record class Session
     {
-        public string Id { get; set; }
+        public string Id { get; init; }
 
         public string AuthId { get; init; }
 

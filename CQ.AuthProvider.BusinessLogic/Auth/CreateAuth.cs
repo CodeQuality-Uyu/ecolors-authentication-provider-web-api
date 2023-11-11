@@ -9,24 +9,28 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public record class CreateAuth
     {
-        public string Email { get; }
+        public readonly string Email;
 
-        public string Password { get; }
+        public readonly string Password;
 
-        public string? FirstName { get; }
+        public readonly string? FirstName;
 
-        public string? LastName { get; }
+        public readonly string? LastName;
+
+        public readonly Roles Role;
 
         public CreateAuth(
             string email, 
             string password, 
             string firstName, 
-            string lastName)
+            string lastName,
+            string role)
         {
             Email = Guard.Encode(email.Trim());
             Password = Guard.Encode(password.Trim());
             FirstName = Guard.Encode(firstName.Trim());
             LastName = Guard.Encode(lastName.Trim());
+            Role = new(role);
 
             Guard.ThrowIsInputInvalidEmail(Email);
 

@@ -1,4 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.AuthProvider.BusinessLogic.Exceptions;
 using CQ.Utility;
 using FirebaseAdmin.Auth;
 using Newtonsoft.Json;
@@ -8,13 +10,15 @@ using System.Security.Authentication;
 
 namespace CQ.AuthProvider.Firebase
 {
-    internal class AuthRepository : IAuthRepository
+    internal class AuthRepository : IIdentityProviderRepository, IIdentityProviderHealthService
     {
         private readonly FirebaseAuth _firebaseAuth;
+        private readonly ISettingsService _settingsService;
 
-        public AuthRepository(FirebaseAuth firebaseAuth)
+        public AuthRepository(FirebaseAuth firebaseAuth, ISettingsService settingsService)
         {
-            _firebaseAuth = firebaseAuth;
+            this._firebaseAuth = firebaseAuth;
+            this._settingsService = settingsService;
         }
 
         public async Task<Auth> GetByEmailAsync(string email)
@@ -51,19 +55,16 @@ namespace CQ.AuthProvider.Firebase
             catch (AuthNotFoundException) { return false; }
         }
 
-        public async Task<Auth> CreateAsync(Auth newAuth)
+        public async Task CreateAsync(Identity identity)
         {
             var userRecords = new UserRecordArgs
             {
-                Uid = newAuth.Id,
-                Email = newAuth.Email,
-                Password = newAuth.Password,
-                DisplayName = newAuth.Name,
+                Uid = identity.Id,
+                Email = identity.Email,
+                Password = identity.Password,
             };
 
             var firebaseAuth = await CreateAuthAsync(userRecords).ConfigureAwait(false);
-
-            return newAuth;
         }
 
         private async Task<UserRecord> CreateAuthAsync(UserRecordArgs userRecords)
@@ -78,22 +79,42 @@ namespace CQ.AuthProvider.Firebase
             {
                 if (ex.AuthErrorCode == AuthErrorCode.EmailAlreadyExists)
                 {
-                    throw new DuplicatedEmailException(userRecords.Email);
+                    throw new ResourceDuplicatedException("email", userRecords.Email, "FirebaseAuth");
                 }
 
                 throw;
             }
         }
 
-        public async Task UpdatePasswordAsync(string newPassword, Auth userLogged)
+        public async Task UpdatePasswordAsync(string newPassword, string identityId)
         {
             var userUpdated = new UserRecordArgs
             {
-                Uid = userLogged.Id,
+                Uid = identityId,
                 Password = newPassword,
             };
 
             var userRecord = await _firebaseAuth.UpdateUserAsync(userUpdated).ConfigureAwait(false);
+        }
+
+        public string GetName()
+        {
+            return $"Firebase-{this._settingsService.GetValue(EnvironmentVariable.Firebase.ProjectName)}";
+        }
+
+        public bool Ping()
+        {
+            try
+            {
+                var task = this._firebaseAuth.GetUserByEmailAsync("ping@gmail.com");
+
+                task.Wait();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
