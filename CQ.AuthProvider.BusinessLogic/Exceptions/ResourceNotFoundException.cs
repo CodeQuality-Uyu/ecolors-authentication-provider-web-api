@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Exceptions
 {
-    public class ResourceNotFoundException : Exception 
+    public abstract class ResourceNotFoundException : Exception 
     {
         public readonly string Key;
 

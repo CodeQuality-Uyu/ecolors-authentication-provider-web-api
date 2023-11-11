@@ -12,7 +12,6 @@ namespace CQ.AuthProvider.WebApi.Filters
         public ExceptionFilter(ExceptionStoreService exceptionStoreService)
         {
             this._exceptionStoreService = exceptionStoreService;
-            this._exceptionStoreService.RegisterSolutionExceptions();
         }
 
         public void OnException(ExceptionContext context)
@@ -39,7 +38,7 @@ namespace CQ.AuthProvider.WebApi.Filters
             var customcontext = new ExceptionThrownContext(
                 context.Exception,
                 context.RouteData.Values["controller"].ToString(),
-                $"{context.RouteData.Values["action"]}-{context.HttpContext.Request.Path.ToString().Substring(1)}");
+                $"{context.HttpContext.Request.Method}-{context.HttpContext.Request.Path.ToString().Substring(1)}");
 
             return this._exceptionStoreService.HandleException(customcontext);
         }

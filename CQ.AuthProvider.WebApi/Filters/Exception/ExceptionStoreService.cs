@@ -1,4 +1,6 @@
 ﻿
+using CQ.AuthProvider.BusinessLogic;
+using CQ.AuthProvider.BusinessLogic.Authorization.Exceptions;
 using CQ.AuthProvider.BusinessLogic.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
@@ -11,18 +13,49 @@ namespace CQ.AuthProvider.WebApi.Filters
         private readonly IDictionary<OriginError, ExceptionsOfOrigin> _specificExceptions = new Dictionary<OriginError, ExceptionsOfOrigin>();
         private readonly IDictionary<Type, ExceptionResponse> _genericExceptions = new Dictionary<Type, ExceptionResponse>();
 
+        public ExceptionStoreService()
+        {
+            this.RegisterSolutionExceptions();
+        }
+
         public void RegisterSolutionExceptions()
         {
             #region Specific exceptions
-            this.AddOriginExceptions(new("Role","Post-roles"))
-                .AddException<ResourceNotFoundException>(
+            #region Role controller
+            this.AddOriginExceptions(new("Role", "POST-roles"))
+                .AddException<PermissionNotFoundException>(
                 "ResourceNotFound",
                 HttpStatusCode.Conflict,
-                (ResourceNotFoundException exception, 
-                ExceptionThrownContext context) => $"Invalid '{exception.Key}'. Resource '{exception.Resource}' was not found",
-                (ResourceNotFoundException exception, 
-                ExceptionThrownContext context) => $"The resource '{exception.Resource}' with '{exception.Key}': '{exception.Value}' not found"
+                (PermissionNotFoundException exception,
+                ExceptionThrownContext context) => $"The following permissions are incorrect '{string.Join(',', exception.PermissionKeys)}'"
                 );
+            #endregion
+
+            #region Auth controller
+            this.AddOriginExceptions(
+                new("Auth", "POST-auths/credentials"))
+                .AddException<InvalidCredentialsException>(
+                "InvalidOperation",
+                HttpStatusCode.Conflict,
+                (InvalidCredentialsException exception,
+                ExceptionThrownContext context) => $"The creation of the account was interrupted",
+                (InvalidCredentialsException exception,
+                ExceptionThrownContext context) => $"The account with '{exception.Email}' was not found"
+                )
+                .AddException<AuthDisabledException>(
+                "InvalidOperation",
+                HttpStatusCode.Conflict,
+                (AuthDisabledException exception,
+                ExceptionThrownContext context) => $"The creation of the account was interrupted",
+                (AuthDisabledException exception,
+                ExceptionThrownContext context) => $"The account with '{exception.Email}' is disabled"
+                )
+                .AddException<SpecificResourceNotFoundException<Role>>(
+                "InvalidOperation",
+                HttpStatusCode.Conflict,
+                (SpecificResourceNotFoundException<Role> exception,
+                ExceptionThrownContext context) => "The role specified does not exist");
+            #endregion
             #endregion
 
             #region Generic exceptions
@@ -45,7 +78,7 @@ namespace CQ.AuthProvider.WebApi.Filters
                     ExceptionThrownContext context) => $"The prop '{exception.Prop}' has the following error '{exception.Error}'");
 
             this.AddGenericException<InvalidOperationException>(
-                    "InterruptedOperationError",
+                    "InterruptedOperation",
                     HttpStatusCode.InternalServerError,
                     "The operation was interrupted due to an exception.");
 
@@ -56,11 +89,37 @@ namespace CQ.AuthProvider.WebApi.Filters
                     ExceptionThrownContext context) => $"The resource with '{exception.Key}': '{exception.Value}' was not found",
                     (ResourceNotFoundException exception,
                     ExceptionThrownContext context) => $"The resource '{exception.Resource}' with '{exception.Key}': '{exception.Value}' not found");
+
+            this.AddGenericException<ResourceDuplicatedException>(
+                    "ResourceDuplicated",
+                    HttpStatusCode.Conflict,
+                    (ResourceDuplicatedException exception,
+                    ExceptionThrownContext context) => $"Exist a resource with '{exception.Key}': '{exception.Value}'",
+                    (ResourceDuplicatedException exception,
+                    ExceptionThrownContext context) => $"Exist a resource '{exception.Resource}' with '{exception.Key}': '{exception.Value}'");
+
+            this.AddGenericException<InvalidCredentialsException>(
+                "InvalidCredentials",
+                HttpStatusCode.BadRequest,
+                (InvalidCredentialsException exception,
+                ExceptionThrownContext context) => $"The credentials provided are incorrect"
+                );
+
+            this.AddGenericException<AuthDisabledException>(
+                "AccountDisabled",
+                HttpStatusCode.BadRequest,
+                (AuthDisabledException exception,
+                ExceptionThrownContext context) => $"The account is disabled",
+                (AuthDisabledException exception,
+                ExceptionThrownContext context) => $"The account with '{exception.Email}' is disabled"
+                );
             #endregion
         }
 
         private ExceptionsOfOrigin AddOriginExceptions(OriginError error)
         {
+            if (this._specificExceptions.ContainsKey(error)) return this._specificExceptions[error];
+
             var exceptionsOfOrigin = new ExceptionsOfOrigin();
 
             this._specificExceptions.Add(error, exceptionsOfOrigin);
@@ -106,22 +165,65 @@ namespace CQ.AuthProvider.WebApi.Filters
 
         public ExceptionResponse HandleException(ExceptionThrownContext context)
         {
-            return this.HandleTypeException(context);
+            var exception = this.HandleSpecificException(context);
+
+            exception ??= this.HandleTypeException(context);
+
+            exception ??= new("ExceptionOccured", HttpStatusCode.InternalServerError, "An unpredicted exception ocurred");
+
+            return exception;
         }
 
-        private ExceptionResponse HandleTypeException(ExceptionThrownContext context)
+        private ExceptionResponse? HandleSpecificException(ExceptionThrownContext context)
         {
-            Exception exception = context.Exception;
-            if (!this._genericExceptions.ContainsKey(exception.GetType()))
+            var exception = context.Exception;
+            var originError = new OriginError(context.ControllerName, context.Action);
+            if (!this._specificExceptions.ContainsKey(originError))
             {
-                return new("ExceptionOccured", HttpStatusCode.InternalServerError, "An unpredicted exception ocurred");
+                return null;
             }
 
-            var mapping = this._genericExceptions[exception.GetType()];
+            var originErrorFound = this._specificExceptions[originError];
+
+            if (!originErrorFound.Exceptions.ContainsKey(exception.GetType()))
+            {
+                return null;
+            }
+
+            var mapping = originErrorFound.Exceptions[exception.GetType()];
 
             mapping.SetContext(context);
 
             return mapping;
+        }
+
+        private ExceptionResponse? HandleTypeException(ExceptionThrownContext context)
+        {
+            var exception = context.Exception;
+            var registeredType = this.GetRegisteredType(exception.GetType());
+
+            if (registeredType == null) return null;
+
+            var mapping = this._genericExceptions[registeredType];
+
+            mapping.SetContext(context);
+
+            return mapping;
+        }
+
+        private Type? GetRegisteredType(Type initialType)
+        {
+            if (initialType == typeof(Exception))
+            {
+                return null;
+            }
+
+            if (!this._genericExceptions.ContainsKey(initialType))
+            {
+                return this.GetRegisteredType(initialType.BaseType ?? typeof(Exception));
+            }
+
+            return initialType;
         }
     }
 }

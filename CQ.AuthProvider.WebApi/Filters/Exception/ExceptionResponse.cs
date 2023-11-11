@@ -2,13 +2,13 @@
 
 namespace CQ.AuthProvider.WebApi.Filters
 {
-    public record class ExceptionResponse
+    internal record class ExceptionResponse
     {
         public readonly string Code;
 
-        public readonly string Message;
+        public string Message { get; protected set; }
 
-        public readonly string LogMessage;
+        public string LogMessage { get; protected set; }
 
         public readonly HttpStatusCode StatusCode;
 
@@ -26,7 +26,7 @@ namespace CQ.AuthProvider.WebApi.Filters
             this.LogMessage = logMessage ?? message;
         }
 
-        public void SetContext(ExceptionThrownContext context)
+        public virtual void SetContext(ExceptionThrownContext context)
         {
             this.Context = context;
         }

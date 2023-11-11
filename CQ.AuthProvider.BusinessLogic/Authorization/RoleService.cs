@@ -22,6 +22,16 @@ namespace CQ.AuthProvider.BusinessLogic
             this._permissionService = permissionService;
         }
 
+        public async Task CheckExistAsync(Roles key)
+        {
+            var existRoleKey = await this._roleRepository.ExistAsync(r => r.Key == key.Value);
+
+            if (!existRoleKey)
+            {
+                throw new SpecificResourceNotFoundException<Role>(nameof(Role.Key), key.ToString());
+            }
+        }
+
         public async Task<IList<MiniRole>> GetAllAsync()
         {
             return await this._roleRepository.GetAllAsync<MiniRole>(r => r.IsPublic).ConfigureAwait(false);
@@ -33,7 +43,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
             if (existKey)
             {
-                throw new ResourceDuplicatedException(role.Key);
+                throw new ResourceDuplicatedException(nameof(Role.Key), role.Key, nameof(Role));
             }
 
             await this._permissionService.CheckExistenceAsync(role.PermissionKeys).ConfigureAwait(false);
@@ -45,7 +55,11 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task<Role> GetByKeyAsync(Roles key)
         {
-            var role = await this._roleRepository.GetByPropAsync<ResourceNotFoundException>(this._roleRepository.GetByPropAsync,key.Value, nameof(Role.Key)).ConfigureAwait(false);
+            var role = await this._roleRepository.GetByPropAsync(
+                key.Value,
+                new SpecificResourceNotFoundException<Role>(nameof(Role.Key), key.Value),
+                nameof(Role.Key))
+                .ConfigureAwait(false);
 
             return role;
         }

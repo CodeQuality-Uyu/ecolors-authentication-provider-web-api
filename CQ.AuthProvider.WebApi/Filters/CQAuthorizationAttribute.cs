@@ -27,7 +27,7 @@ namespace CQ.AuthProvider.WebApi.Filters
 
                 return (isAuthorized, permission);
             }
-            catch (Exception) 
+            catch (Exception ex) 
             { 
                 return (false, permission);
             }

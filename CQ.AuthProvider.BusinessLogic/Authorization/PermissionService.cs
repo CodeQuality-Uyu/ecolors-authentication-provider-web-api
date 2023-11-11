@@ -41,7 +41,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
             if (existPermission)
             {
-                throw new ResourceDuplicatedException(nameof(Permission.Key));
+                throw new ResourceDuplicatedException(nameof(Permission.Key), permission.Key, nameof(Permission));
             }
 
             var newPermission = new Permission(permission.Name, permission.Description, permission.Key, permission.IsPublic);

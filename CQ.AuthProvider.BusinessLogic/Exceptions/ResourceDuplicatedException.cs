@@ -6,13 +6,19 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Exceptions
 {
-    public sealed class ResourceDuplicatedException : Exception
+    public sealed class ResourceDuplicatedException: Exception
     {
-        public readonly string PropDuplicated;
+        public readonly string Key;
 
-        public ResourceDuplicatedException(string propDuplicated)
+        public readonly string Value;
+
+        public readonly string Resource;
+
+        public ResourceDuplicatedException(string key, string value, string resource)
         {
-            PropDuplicated = propDuplicated;
+            Key = key;
+            Value = value;
+            Resource = resource;
         }
     }
 }

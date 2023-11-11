@@ -2,7 +2,7 @@
 
 namespace CQ.AuthProvider.WebApi.Filters
 {
-    public sealed record class ExceptionsOfOrigin
+    internal sealed record class ExceptionsOfOrigin
     {
         public readonly IDictionary<Type, ExceptionResponse> Exceptions = new Dictionary<Type, ExceptionResponse>();
 

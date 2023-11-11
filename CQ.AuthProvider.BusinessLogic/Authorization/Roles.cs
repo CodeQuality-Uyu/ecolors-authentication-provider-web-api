@@ -18,5 +18,10 @@ namespace CQ.AuthProvider.BusinessLogic
 
             Guard.ThrowIsNullOrEmpty(Value, nameof(Value));
         }
+
+        public override string ToString()
+        {
+            return Value;
+        }
     }
 }

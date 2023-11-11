@@ -23,6 +23,7 @@ builder.Services.AddControllers(
 
 // Add services to the container.
 builder.Services
+    .AddSingleton<ExceptionStoreService>()
     .AddCQServices()
     .AddCQDataAccess();
 

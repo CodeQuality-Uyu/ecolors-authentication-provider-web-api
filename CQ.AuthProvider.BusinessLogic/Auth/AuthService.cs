@@ -35,6 +35,8 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             await AssertEmailInUse(newAuth.Email).ConfigureAwait(false);
 
+            await this._roleService.CheckExistAsync(newAuth.Role).ConfigureAwait(false); 
+
             var auth = await SaveAuthAsync(newAuth);
 
             var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAuth.Email, newAuth.Password)).ConfigureAwait(false);
@@ -48,7 +50,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
             if (existAuth)
             {
-                throw new ResourceDuplicatedException(email);
+                throw new ResourceDuplicatedException(nameof(Auth.Email), email, nameof(Auth));
             }
         }
 
@@ -81,7 +83,10 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             var session = await this._sessionService.GetByTokenAsync(token).ConfigureAwait(false);
 
-            var auth = await this._authRepository.GetByPropAsync<ResourceNotFoundException>(this._authRepository.GetByPropAsync,session.AuthId).ConfigureAwait(false);
+            var auth = await this._authRepository.GetByPropAsync(
+                session.AuthId,
+                new SpecificResourceNotFoundException<Session>(nameof(Session.AuthId), session.AuthId))
+                .ConfigureAwait(false);
 
             return auth;
         }

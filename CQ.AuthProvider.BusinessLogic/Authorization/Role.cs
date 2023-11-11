@@ -17,7 +17,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public string Key { get; init; }
 
-        public IList<string> Permissions { get; init; }
+        public IList<string> PermissionKeys { get; init; }
 
         public bool IsPublic { get; init; }
 
@@ -32,13 +32,13 @@ namespace CQ.AuthProvider.BusinessLogic
             Name = name;
             Description = description;
             Key = key;
-            Permissions = permissions;
+            PermissionKeys = permissions;
             IsPublic = isPublic;
         }
 
         public bool HasPermission(string permission)
         {
-            return Permissions.Contains(permission);
+            return PermissionKeys.Contains(permission);
         }
     }
 }

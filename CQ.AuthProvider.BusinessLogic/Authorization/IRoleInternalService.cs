@@ -8,6 +8,8 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     internal interface IRoleInternalService : IRoleService
     {
+        Task CheckExistAsync(Roles key);
+
         Task<Role> GetByKeyAsync(Roles key);
     }
 }
