@@ -8,6 +8,17 @@ namespace CQ.AuthProvider.BusinessLogic.Exceptions
 {
     public class ResourceNotFoundException : Exception 
     {
-        public string? Resource => (string)Data["Resource"];
+        public readonly string Key;
+
+        public readonly string Value;
+
+        public readonly string Resource;
+
+        public ResourceNotFoundException(string  key, string value, string resource)
+        {
+            this.Key = key;
+            this.Value = value;
+            this.Resource = resource;
+        }
     }
 }
