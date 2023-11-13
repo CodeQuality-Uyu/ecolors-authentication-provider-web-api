@@ -17,4 +17,8 @@
     <ProjectReference Include="..\CQ.AuthProvider.Mongo\CQ.AuthProvider.Mongo.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="CQ.Utility" Version="1.1.5" />
+  </ItemGroup>
+
 </Project>
