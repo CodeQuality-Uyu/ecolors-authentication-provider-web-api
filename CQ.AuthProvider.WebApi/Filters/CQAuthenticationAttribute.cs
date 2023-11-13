@@ -11,34 +11,26 @@ namespace CQ.AuthProvider.WebApi.Filters
 {
     internal class CQAuthenticationAttribute : AuthenticationAsyncAttributeFilter
     {
-        protected IAuthService _authService { get; private set; } = null!;
-        
+        public CQAuthenticationAttribute() : base() { }
+
+        public CQAuthenticationAttribute(string permission) : base(permission) { }
+
         protected override async Task<bool> IsFormatOfTokenValidAsync(string token, AuthorizationFilterContext context)
         {
             var auth = await GetAuthOfTokenAsync(token, context).ConfigureAwait(false);
 
             context.HttpContext.Items[Items.Auth] = auth;
 
-            return auth != null;
+            return true;
         }
 
-        private async Task<Auth?> GetAuthOfTokenAsync(string token, AuthorizationFilterContext context)
+        private async Task<Auth> GetAuthOfTokenAsync(string token, AuthorizationFilterContext context)
         {
-            this._authService = GetService<IAuthService>(context);
+            var authService = base.GetService<IAuthService>(context);
 
-            try
-            {
-                var auth = await this._authService.GetMeAsync(token).ConfigureAwait(false);
+            var auth = await authService.GetMeAsync(token).ConfigureAwait(false);
 
-                return auth;
-            }
-            catch (Exception) { return null; }
-        }
-
-        protected TService GetService<TService>(AuthorizationFilterContext context)
-            where TService : class
-        {
-            return context.HttpContext.RequestServices.GetRequiredService<TService>();
+            return auth;
         }
     }
 }
