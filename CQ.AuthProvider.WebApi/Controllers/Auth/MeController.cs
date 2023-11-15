@@ -25,11 +25,11 @@ namespace CQ.AuthProvider.WebApi.Controllers
         [HttpPost("check-permission")]
         public async Task<IActionResult> CreateAsync(CheckPermissionRequest request)
         {
-            var hastPermission = await this._authService.HasPermissionAsync(request.Permission, this.GetAuthLogged());
+            var hasPermission = await this._authService.HasPermissionAsync(request.Permission, this.GetAuthLogged());
 
             return Ok(new
             {
-                hastPermission,
+                hasPermission,
             });
         }
     }

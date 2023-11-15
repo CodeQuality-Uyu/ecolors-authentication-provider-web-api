@@ -55,28 +55,12 @@ namespace CQ.AuthProvider.WebApi.Filters
 
             #region Generic exceptions
             exceptionStoreService
-                .AddGenericException<ArgumentException>(
-                    "InvalidArgument",
-                    HttpStatusCode.InternalServerError,
-                    (ArgumentException exception,
-                    ExceptionThrownContext context) => $"Invalid argument '{exception.ParamName}'. {exception.Message}")
-                
-                .AddGenericException<ArgumentNullException>(
-                    "InvalidArgument",
-                    HttpStatusCode.InternalServerError,
-                    (ArgumentNullException exception,
-                    ExceptionThrownContext context) => $"Invalid argument '{exception.ParamName}'. {exception.Message}")
                 
                 .AddGenericException<InvalidRequestException>(
                     "InvalidRequest",
                     HttpStatusCode.BadRequest,
                     (InvalidRequestException exception,
                     ExceptionThrownContext context) => $"The prop '{exception.Prop}' has the following error '{exception.Error}'")
-                
-                .AddGenericException<InvalidOperationException>(
-                    "InterruptedOperation",
-                    HttpStatusCode.InternalServerError,
-                    "The operation was interrupted due to an exception.")
                 
                 .AddGenericException<ResourceNotFoundException>(
                     "ResourceNotFound",
