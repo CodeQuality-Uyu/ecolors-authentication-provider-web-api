@@ -2,6 +2,7 @@
 using CQ.UnitOfWork.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,12 +11,12 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     internal sealed class RoleService : IRoleInternalService
     {
-        private readonly IRepository<Role> _roleRepository;
+        private readonly IRoleRepository _roleRepository;
 
         private readonly IPermissionInternalService _permissionService;
 
         public RoleService(
-            IRepository<Role> roleRepository,
+            IRoleRepository roleRepository,
             IPermissionInternalService permissionService)
         {
             this._roleRepository = roleRepository;
@@ -62,6 +63,18 @@ namespace CQ.AuthProvider.BusinessLogic
                 .ConfigureAwait(false);
 
             return role;
+        }
+
+        public async Task AddPermissionByIdAsync(string id, AddPermission permissions)
+        {
+            var role = await this._roleRepository.GetByPropAsync(id, new SpecificResourceNotFoundException<Role>(nameof(Role.Id), id)).ConfigureAwait(false);
+            
+            await this._permissionService.CheckExistenceAsync(permissions.PermissionsKeys).ConfigureAwait(false);
+
+            var duplicatePermission = permissions.PermissionsKeys.Where(p => role.PermissionKeys.Contains(p));
+            if (duplicatePermission.Any()) throw new PermissionsDuplicatedException(duplicatePermission.ToList());
+
+            await this._roleRepository.AddPermissionsByIdAsync(id, permissions.PermissionsKeys).ConfigureAwait(false);
         }
     }
 }

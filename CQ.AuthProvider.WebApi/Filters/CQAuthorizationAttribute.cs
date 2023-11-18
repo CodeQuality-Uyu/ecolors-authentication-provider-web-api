@@ -10,6 +10,10 @@ namespace CQ.AuthProvider.WebApi.Filters
 
         public CQAuthorizationAttribute(string permission) : base(permission) { }
 
+        protected override string BuildPermission(string token, AuthorizationFilterContext context)
+        {
+            return $"{context.RouteData.Values["action"].ToString().ToLower()}-{context.RouteData.Values["controller"].ToString().ToLower()}";
+        }
 
         protected override async Task<bool> HasUserPermissionAsync(string token, string permission, AuthorizationFilterContext context)
         {

@@ -25,11 +25,11 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task CheckExistenceAsync(IList<string> permissionKeys)
         {
-            var permissionsSaved = await this._permissionRepository.GetAllAsync(p => permissionKeys.Contains(p.Key)).ConfigureAwait(false);
+            var permissionsSaved = await this._permissionRepository.GetAllAsync(p => permissionKeys.Contains(p.Key) || permissionKeys.Contains(p.Id)).ConfigureAwait(false);
 
             if (permissionsSaved.Count != permissionKeys.Count)
             {
-                var permissionsNotFound = permissionKeys.Where(p => !permissionsSaved.Any(ps => ps.Key == p)).ToList();
+                var permissionsNotFound = permissionKeys.Where(p => !permissionsSaved.Any(ps => ps.Key == p || ps.Id == p)).ToList();
 
                 throw new PermissionNotFoundException(permissionsNotFound);
             }

@@ -11,5 +11,7 @@ namespace CQ.AuthProvider.BusinessLogic
         Task<IList<MiniRole>> GetAllAsync();
 
         Task CreateAsync(CreateRole role);
+
+        Task AddPermissionByIdAsync(string id, AddPermission permissions);
     }
 }

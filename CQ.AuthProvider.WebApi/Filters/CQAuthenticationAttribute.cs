@@ -17,6 +17,8 @@ namespace CQ.AuthProvider.WebApi.Filters
 
         protected override async Task<bool> IsFormatOfTokenValidAsync(string token, AuthorizationFilterContext context)
         {
+            if (context.HttpContext.Items[Items.Auth] != null) return true;
+
             var auth = await GetAuthOfTokenAsync(token, context).ConfigureAwait(false);
 
             context.HttpContext.Items[Items.Auth] = auth;
