@@ -34,11 +34,19 @@ namespace CQ.AuthProvider.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IList<MiniRoleResponse>> GetAsync()
+        public async Task<IList<RoleResponse>> GetAsync()
         {
             var roles = await this._roleService.GetAllAsync().ConfigureAwait(false);
 
-            return roles.MapTo<MiniRoleResponse, MiniRole>();
+            return roles.MapTo<RoleResponse, Role>();
+        }
+
+        [HttpGet("public")]
+        public async Task<IList<MiniPublicRoleResponse>> GetAllPublicAsync()
+        {
+            var roles = await this._roleService.GetAllPublicAsync().ConfigureAwait(false);
+
+            return roles.MapTo<MiniPublicRoleResponse, MiniRole>();
         }
     }
 }

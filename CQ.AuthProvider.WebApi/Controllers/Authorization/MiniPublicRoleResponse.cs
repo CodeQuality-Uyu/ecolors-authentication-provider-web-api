@@ -3,7 +3,7 @@ using CQ.AuthProvider.BusinessLogic;
 
 namespace CQ.AuthProvider.WebApi.Controllers
 {
-    public sealed record class MiniRoleResponse : Response<MiniRole>
+    public sealed record class MiniPublicRoleResponse : Response<MiniRole>
     {
         public string Name { get; private set; }
 
@@ -11,7 +11,7 @@ namespace CQ.AuthProvider.WebApi.Controllers
 
         public string Key { get; private set; }
 
-        public MiniRoleResponse(MiniRole entity) : base(entity) { }
+        public MiniPublicRoleResponse(MiniRole entity) : base(entity) { }
 
         protected override void Map(MiniRole entity)
         {

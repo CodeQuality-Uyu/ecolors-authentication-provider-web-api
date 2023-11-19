@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public sealed class MiniPermission
+    public sealed class MiniPublicPermission
     {
+        public string Id { get; init; }
+
         public string Name { get; init; }
 
         public string Description { get; init; }

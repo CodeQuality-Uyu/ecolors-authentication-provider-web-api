@@ -24,13 +24,12 @@ namespace CQ.AuthProvider.BusinessLogic
             Id = Db.NewId();
         }
 
-        public Permission(string name, string description, string key, bool isPublic)
+        public Permission(string name, string description, string key, bool isPublic) : this()
         {
-            Id = Db.NewId();
-            Name = name;
-            Description = description;
-            Key = key;
-            IsPublic = isPublic;
+            this.Name = name;
+            this.Description = description;
+            this.Key = key;
+            this.IsPublic = isPublic;
         }
     }
 }

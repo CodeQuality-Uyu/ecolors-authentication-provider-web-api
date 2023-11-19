@@ -18,21 +18,27 @@ namespace CQ.AuthProvider.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(CreatePermissionRequest request)
+        public async Task CreateAsync(CreatePermissionRequest request)
         {
             var role = request.Map();
 
             await this._permissionService.CreateAsync(role).ConfigureAwait(false);
-
-            return NoContent();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IList<PermissionResponse>> GetAsync()
         {
             var permissions = await this._permissionService.GetAllAsync().ConfigureAwait(false);
-            
-            return Ok(permissions.MapTo<MiniPermissionResponse, MiniPermission>());
+
+            return permissions.MapTo<PermissionResponse, Permission>();
+        }
+
+        [HttpGet("public")]
+        public async Task<IList<MiniPermissionResponse>> GetAllPublicAsync()
+        {
+            var permissions = await this._permissionService.GetAllPublicAsync().ConfigureAwait(false);
+
+            return permissions.MapTo<MiniPermissionResponse, MiniPublicPermission>();
         }
     }
 }

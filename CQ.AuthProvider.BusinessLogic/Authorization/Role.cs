@@ -38,7 +38,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public bool HasPermission(string permission)
         {
-            return PermissionKeys.Contains(permission) || PermissionKeys.Contains("any");
+            return this.PermissionKeys.Contains(permission) || this.PermissionKeys.Contains(Permissions.Any.ToString());
         }
     }
 }

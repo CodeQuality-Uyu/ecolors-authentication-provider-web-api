@@ -33,9 +33,14 @@ namespace CQ.AuthProvider.BusinessLogic
             }
         }
 
-        public async Task<IList<MiniRole>> GetAllAsync()
+        public async Task<IList<MiniRole>> GetAllPublicAsync()
         {
             return await this._roleRepository.GetAllAsync<MiniRole>(r => r.IsPublic).ConfigureAwait(false);
+        }
+
+        public async Task<IList<Role>> GetAllAsync()
+        {
+            return await this._roleRepository.GetAllAsync().ConfigureAwait(false);
         }
 
         public async Task CreateAsync(CreateRole role)
