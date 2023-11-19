@@ -21,7 +21,7 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
             var settingsService = new SettingsService();
 
             services
-                .AddMongoContext(new MongoConfig
+                .AddMongoContext<AuthMongoContext>(new MongoConfig
                 {
                     DatabaseConnection = new DatabaseConfig
                     {
@@ -29,12 +29,11 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                         DatabaseName = settingsService.GetValue(EnvironmentVariable.MongoAuth.DataBaseName)
                     },
                     UseDefaultQueryLogger = true,
-                    DefaultToUse = true
                 },
                 LifeTime.Singleton,
                 LifeTime.Singleton)
                 .AddMongoRepository<Auth>(lifeTime: LifeTime.Singleton)
-                .AddMongoRepository<Role>(lifeTime: LifeTime.Singleton)
+                .AddCustomMongoRepository<Role, IRoleRepository, RoleRepository>(lifeTime: LifeTime.Singleton)
                 .AddMongoRepository<Permission>(lifeTime: LifeTime.Singleton)
                 .AddIdentityProvider(settingsService);
 

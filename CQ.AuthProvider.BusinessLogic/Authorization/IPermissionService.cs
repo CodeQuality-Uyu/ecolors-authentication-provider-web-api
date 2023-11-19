@@ -8,7 +8,9 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public interface IPermissionService
     {
-        Task<IList<MiniPermission>> GetAllAsync();
+        Task<IList<Permission>> GetAllAsync();
+
+        Task<IList<MiniPublicPermission>> GetAllPublicAsync();
 
         Task CreateAsync(CreatePermission permission);
     }

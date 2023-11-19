@@ -21,7 +21,7 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             this.Name = Guard.Encode(name.Trim());
             this.Description = Guard.Encode(description.Trim());
-            this.Key = Guard.Encode(key.Trim());
+            this.Key = key;
             this.IsPublic = isPublic;
 
             Guard.ThrowIsNullOrEmpty(this.Name, nameof(this.Name));

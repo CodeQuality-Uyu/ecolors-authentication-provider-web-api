@@ -8,8 +8,12 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public interface IRoleService
     {
-        Task<IList<MiniRole>> GetAllAsync();
+        Task<IList<MiniRole>> GetAllPublicAsync();
+
+        Task<IList<Role>> GetAllAsync();
 
         Task CreateAsync(CreateRole role);
+
+        Task AddPermissionByIdAsync(string id, AddPermission permissions);
     }
 }

@@ -3,7 +3,7 @@ using CQ.AuthProvider.BusinessLogic;
 
 namespace CQ.AuthProvider.WebApi.Controllers
 {
-    public sealed record class MiniPermissionResponse : Response<MiniPublicPermission>
+    public sealed record class PermissionResponse : Response<Permission>
     {
         public string Id { get; private set; }
 
@@ -13,13 +13,18 @@ namespace CQ.AuthProvider.WebApi.Controllers
 
         public string Key { get; private set; }
 
-        public MiniPermissionResponse(MiniPublicPermission entity) : base(entity) { }
+        public bool IsPublic {  get; private set; }
 
-        protected override void Map(MiniPublicPermission entity)
+        public PermissionResponse(Permission entity) : base(entity)
+        {
+        }
+
+        protected override void Map(Permission entity)
         {
             this.Id = entity.Id;
             this.Name = entity.Name;
             this.Description = entity.Description;
+            this.IsPublic = entity.IsPublic;
             this.Key = entity.Key;
         }
     }

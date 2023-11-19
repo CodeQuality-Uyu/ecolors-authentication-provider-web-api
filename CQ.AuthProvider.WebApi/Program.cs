@@ -5,7 +5,7 @@ using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.DataAccess.AppConfig;
 using CQ.ServiceExtension;
-using CQ.ApiElements.Config;
+using CQ.ApiElements.AppConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ DotEnv.Load();
 builder.Services.AddControllers(
     (options) =>
 {
-    options.AddExceptionFilter();
+    options.AddExceptionFilter<CQAuthExceptionFilter>();
 })
 // Avoids returning an automatic response when missing a prop in the body
     .ConfigureApiBehaviorOptions(options =>
