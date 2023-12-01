@@ -66,11 +66,6 @@ namespace CQ.AuthProvider.WebApi.Filters
             #region Generic exceptions
             exceptionStoreService
 
-                .AddGenericException<InvalidRequestException>(
-                    "InvalidRequest",
-                    HttpStatusCode.BadRequest,
-                    (exception, context) => $"The prop '{exception.Prop}' has the following error '{exception.Error}'")
-
                 .AddGenericException<ResourceNotFoundException>(
                     "ResourceNotFound",
                     HttpStatusCode.NotFound,

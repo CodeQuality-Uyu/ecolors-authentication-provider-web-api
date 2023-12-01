@@ -14,7 +14,7 @@ DotEnv.Load();
 builder.Services.AddControllers(
     (options) =>
 {
-    options.AddExceptionFilter<CQAuthExceptionFilter>();
+    options.AddExceptionFilter();
 })
 // Avoids returning an automatic response when missing a prop in the body
     .ConfigureApiBehaviorOptions(options =>

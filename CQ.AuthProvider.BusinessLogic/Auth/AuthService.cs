@@ -37,7 +37,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
             await this._roleService.CheckExistAsync(newAuth.Role).ConfigureAwait(false); 
 
-            var auth = await SaveAuthAsync(newAuth);
+            var auth = await SaveAuthAsync(newAuth).ConfigureAwait(false);
 
             var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAuth.Email, newAuth.Password)).ConfigureAwait(false);
 
