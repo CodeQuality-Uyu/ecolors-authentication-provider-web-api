@@ -44,22 +44,26 @@ namespace CQ.AuthProvider.WebApi.Filters
             exceptionStoreService
                 .AddOriginExceptions(
                 new("Auth", "CreateCredentials"))
-                .AddException<InvalidCredentialsException>(
-                "InvalidOperation",
+                .AddException<ResourceDuplicatedException>(
+                    "DuplicatedEmail",
+                    HttpStatusCode.Conflict,
+                    "Exist another account with email provided"
+                    )
+                .AddException<SpecificResourceNotFoundException<Role>>(
+                "InvalidRole",
                 HttpStatusCode.Conflict,
-                (exception, context) => $"The creation of the account was interrupted",
-                (exception, context) => $"The account with '{exception.Email}' was not found"
+                (exception, context) => "The role provided does not exist"
+                )
+                .AddException<InvalidCredentialsException>(
+                "InvalidSession",
+                HttpStatusCode.InternalServerError,
+                (exception, context) => $"Operation failed due to an error in creating a session"
                 )
                 .AddException<AuthDisabledException>(
-                "InvalidOperation",
-                HttpStatusCode.Conflict,
-                (exception, context) => $"The creation of the account was interrupted",
-                (exception, context) => $"The account with '{exception.Email}' is disabled"
-                )
-                .AddException<SpecificResourceNotFoundException<Role>>(
-                "InvalidOperation",
-                HttpStatusCode.Conflict,
-                (exception, context) => "The role specified does not exist");
+                "InvalidSession",
+                HttpStatusCode.InternalServerError,
+                (exception, context) => $"Operation due to an error in creating a session"
+                );
             #endregion
             #endregion
 
