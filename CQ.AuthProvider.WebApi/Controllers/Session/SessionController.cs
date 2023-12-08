@@ -18,15 +18,15 @@ namespace CQ.AuthProvider.WebApi.Controllers
         }
 
         [HttpPost("credentials")]
-        public async Task<IActionResult> CreateAsync(CreateSessionCredentialsRequest request)
+        public async Task<CreateSessionResponse> CreateAsync(CreateSessionCredentialsRequest request)
         {
             var createAuth = request.Map();
 
             var session = await this._sessionService.CreateAsync(createAuth);
 
             var response = new CreateSessionResponse(session);
-            
-            return Ok(response);
+
+            return response;
         }
     }
 }

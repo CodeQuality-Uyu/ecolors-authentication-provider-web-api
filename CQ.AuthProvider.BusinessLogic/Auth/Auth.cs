@@ -15,7 +15,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public string? Name { get; init; }    
 
-        public string Role { get; init; }
+        public IList<string> Roles { get; init; }
 
         public DateTime CreatedAt { get; init; }
 
@@ -25,15 +25,18 @@ namespace CQ.AuthProvider.BusinessLogic
             CreatedAt= DateTime.UtcNow;
         }
 
-        public Roles ConcreteRole() => new(Role);
-
         public Auth(string email, string? name, Roles role)
         {
-            Id = Db.NewId();
-            Email = email;
-            Name = name;
-            Role = role.Value;
-            CreatedAt= DateTime.UtcNow;
+            this.Id = Db.NewId();
+            this.Email = email;
+            this.Name = name;
+            this.Roles = new List<string> { role.ToString() };
+            this.CreatedAt= DateTime.UtcNow;
+        }
+
+        public IList<Roles> ConcreteRoles()
+        {
+            return this.Roles.Select(r => new Roles(r)).ToList();
         }
     }
 }

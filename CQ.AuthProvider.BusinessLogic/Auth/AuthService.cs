@@ -93,9 +93,7 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task<bool> HasPermissionAsync(string permission, Auth userlogged)
         {
-            var role = await this._roleService.GetByKeyAsync(userlogged.ConcreteRole()).ConfigureAwait(false);
-
-            return role.HasPermission(permission);
+            return await this._roleService.HasPermissionAsync(userlogged.ConcreteRoles(), permission).ConfigureAwait(false);
         }
     }
 }

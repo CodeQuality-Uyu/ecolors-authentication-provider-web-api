@@ -14,18 +14,21 @@ namespace CQ.AuthProvider.Mongo
 {
     public sealed class SessionService : ISessionService
     {
-        private readonly IMongoDriverRepository<Session> _sessionRepository;
+        private readonly IRepository<Session> _sessionRepository;
         private readonly IRepository<Identity> _identityRepository;
+        private readonly IRepository<Auth> _authRepository;
 
         public SessionService(
-            IMongoDriverRepository<Session> sessionRepository,
-            IRepository<Identity> identityRepository)
+            IRepository<Session> sessionRepository,
+            IRepository<Identity> identityRepository,
+            IRepository<Auth> authRepository)
         {
             _sessionRepository = sessionRepository;
             _identityRepository = identityRepository;
+            _authRepository = authRepository;
         }
 
-        public async Task<Session> CreateAsync(CreateSessionCredentials credentials)
+        public async Task<SessionCreated> CreateAsync(CreateSessionCredentials credentials)
         {
             var identity = await _identityRepository
                 .GetOrDefaultAsync(a =>
@@ -47,10 +50,16 @@ namespace CQ.AuthProvider.Mongo
             {
                 sessionOfUser = sessionOfUser with { Token = Guid.NewGuid().ToString() };
 
-                await _sessionRepository.UpdateByPropAsync(sessionOfUser.Id, new { sessionOfUser.Token }).ConfigureAwait(false);
+                await _sessionRepository.UpdateByIdAsync(sessionOfUser.Id, new { sessionOfUser.Token }).ConfigureAwait(false);
             }
 
-            return sessionOfUser;
+            var auth = await this._authRepository.GetByPropAsync(identity.Id).ConfigureAwait(true);
+
+            return new SessionCreated(
+                sessionOfUser.AuthId,
+                sessionOfUser.Email,
+                sessionOfUser.Token,
+                auth.Roles);
         }
 
         private async Task<Session> CreateNewAsync(Identity identity)
@@ -66,7 +75,7 @@ namespace CQ.AuthProvider.Mongo
         {
             var isGuid = Guid.TryParse(token, out var id);
 
-            if (!isGuid) throw new ArgumentException("The token must be a valid Guid","token");
+            if (!isGuid) throw new ArgumentException("The token must be a valid Guid", "token");
 
             var result = await GetOrDefaultByTokenAsync(token).ConfigureAwait(false);
 
