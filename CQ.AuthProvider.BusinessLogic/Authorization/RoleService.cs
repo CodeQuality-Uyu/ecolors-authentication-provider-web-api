@@ -61,8 +61,10 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task<bool> HasPermissionAsync(IList<Roles> roles, string permission)
         {
+            var rolesKeys = roles.Select(r => r.ToString()).ToList();
+
             var role = await this._roleRepository.ExistAsync(
-                r => roles.Contains(new Roles(r.Key)) && r.PermissionKeys.Contains(permission))
+                r => rolesKeys.Contains(r.Key) && r.PermissionKeys.Contains(permission))
                 .ConfigureAwait(false);
 
             return role;
