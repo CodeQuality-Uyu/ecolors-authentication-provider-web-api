@@ -35,9 +35,9 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             await AssertEmailInUse(newAuth.Email).ConfigureAwait(false);
 
-            await this._roleService.CheckExistAsync(newAuth.Role).ConfigureAwait(false); 
+            await this._roleService.CheckExistAsync(newAuth.Role).ConfigureAwait(false);
 
-            var auth = await SaveAuthAsync(newAuth);
+            var auth = await SaveAuthAsync(newAuth).ConfigureAwait(false);
 
             var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAuth.Email, newAuth.Password)).ConfigureAwait(false);
 
@@ -91,11 +91,16 @@ namespace CQ.AuthProvider.BusinessLogic
             return auth;
         }
 
+        public async Task<Auth> GetByEmailAsync(string email)
+        {
+            var auth = await this._authRepository.GetByPropAsync(email, new SpecificResourceNotFoundException<Auth>(nameof(Auth.Email), email), nameof(Auth.Email)).ConfigureAwait(false);
+            
+            return auth;
+        }
+
         public async Task<bool> HasPermissionAsync(string permission, Auth userlogged)
         {
-            var role = await this._roleService.GetByKeyAsync(userlogged.ConcreteRole()).ConfigureAwait(false);
-
-            return role.HasPermission(permission);
+            return await this._roleService.HasPermissionAsync(userlogged.ConcreteRoles(), permission).ConfigureAwait(false);
         }
     }
 }

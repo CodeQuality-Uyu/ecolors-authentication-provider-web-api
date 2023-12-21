@@ -35,6 +35,7 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                 .AddMongoRepository<Auth>(lifeTime: LifeTime.Singleton)
                 .AddCustomMongoRepository<Role, IRoleRepository, RoleRepository>(lifeTime: LifeTime.Singleton)
                 .AddMongoRepository<Permission>(lifeTime: LifeTime.Singleton)
+                .AddMongoRepository<ResetPasswordApplication>(lifeTime: LifeTime.Singleton)
                 .AddIdentityProvider(settingsService);
 
             return services;

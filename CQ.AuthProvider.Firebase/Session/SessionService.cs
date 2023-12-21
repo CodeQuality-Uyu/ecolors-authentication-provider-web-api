@@ -30,7 +30,7 @@ namespace CQ.AuthProvider.Firebase
             this._authRepository = authRepository;
         }
 
-        public async Task<Session> CreateAsync(CreateSessionCredentials credentials)
+        public async Task<SessionCreated> CreateAsync(CreateSessionCredentials credentials)
         {
 
             var response = await this._firebaseApi.PostAsync<SessionFirebase, FirebaseError>(
@@ -41,11 +41,13 @@ namespace CQ.AuthProvider.Firebase
                     return this.ProcessLoginError(error, credentials);
                 })
                 .ConfigureAwait(false);
+            var auth = await this._authRepository.GetByPropAsync(response.LocalId).ConfigureAwait(false);
 
-            return new Session(
+            return new SessionCreated(
                 response.LocalId,
                 response.Email,
-                response.IdToken);
+                response.IdToken,
+                auth.Roles);
         }
 
         private Exception? ProcessLoginError(FirebaseError error, CreateSessionCredentials credentials)

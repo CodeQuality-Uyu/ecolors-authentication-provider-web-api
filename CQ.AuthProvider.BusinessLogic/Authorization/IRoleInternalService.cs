@@ -10,6 +10,6 @@ namespace CQ.AuthProvider.BusinessLogic
     {
         Task CheckExistAsync(Roles key);
 
-        Task<Role> GetByKeyAsync(Roles key);
+        Task<bool> HasPermissionAsync(IList<Roles> keys, string permission);
     }
 }

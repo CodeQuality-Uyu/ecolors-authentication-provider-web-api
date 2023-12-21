@@ -17,9 +17,9 @@ namespace CQ.AuthProvider.WebApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public Auth Get()
         {
-            return Ok(this.GetAuthLogged());
+            return this.GetAuthLogged();
         }
 
         [HttpPost("check-permission")]

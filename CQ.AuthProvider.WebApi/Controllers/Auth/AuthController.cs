@@ -33,14 +33,4 @@ namespace CQ.AuthProvider.WebApi.Controllers
             return controller.HttpContext.Items[Items.Auth] as Auth;
         }
     }
-
-    public class ResetPasswordRequestUnauthenticated
-    {
-        public string Email { get; set; }
-    }
-
-    public class UpdatePasswordRequest
-    {
-        public string Password { get; set; }
-    }
 }

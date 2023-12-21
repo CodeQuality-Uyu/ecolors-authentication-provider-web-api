@@ -10,7 +10,7 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public sealed record class Roles
     {
-        public readonly string Value;
+        private readonly string Value;
 
         public Roles(string value)
         {
