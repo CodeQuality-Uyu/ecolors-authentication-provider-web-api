@@ -12,6 +12,8 @@ namespace CQ.AuthProvider.BusinessLogic
 
         Task<Auth> GetMeAsync(string token);
 
+        Task<Auth> GetByEmailAsync(string email);
+
         Task<bool> HasPermissionAsync(string permission, Auth userLogged);
     }
 }

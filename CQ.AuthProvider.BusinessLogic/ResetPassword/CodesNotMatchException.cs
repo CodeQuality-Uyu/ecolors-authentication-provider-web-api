@@ -8,6 +8,14 @@ namespace PlayerFinder.Auth.Core.Exceptions
 {
     public class CodesNotMatchException : Exception
     {
-        public CodesNotMatchException() { }
+        public readonly string Code;
+
+        public readonly string Email;
+
+        public CodesNotMatchException(string code, string email) 
+        { 
+            this.Code = code;
+            this.Email = email;
+        }
     }
 }

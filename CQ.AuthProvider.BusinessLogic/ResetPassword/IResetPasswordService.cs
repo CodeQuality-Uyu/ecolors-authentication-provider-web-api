@@ -9,10 +9,10 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public interface IResetPasswordService
     {
-        Task<ResetPasswordRequest> CreateAsync(string email);
+        Task<ResetPasswordApplication> CreateAsync(string email);
 
-        Task AcceptAsync(string id, NewPasswordRequest request);
+        Task AcceptAsync(string id, ResetPasswordApplicationAccepted request);
 
-        Task<ResetPasswordRequest> GetActiveResetPasswordByIdAsync(string id);
+        Task<ResetPasswordApplication> GetActiveByIdAsync(string id);
     }
 }
