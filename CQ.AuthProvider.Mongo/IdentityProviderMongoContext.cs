@@ -13,7 +13,7 @@ namespace CQ.AuthProvider.Mongo
     {
         public IdentityProviderMongoContext(IMongoDatabase mongoDatabase, bool isDefault) : base(mongoDatabase, isDefault)
         {
-            base.collections.Add(typeof(Identity), "Auths");
+            base.AddCollection<Identity>("Auths");
         }
     }
 }

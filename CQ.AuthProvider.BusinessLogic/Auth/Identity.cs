@@ -20,9 +20,9 @@ namespace CQ.AuthProvider.BusinessLogic
             Id = Db.NewId();
         }
 
-        public Identity(string email, string password)
+        public Identity(string email, string password) 
+            : this()
         {
-            Id = Db.NewId();
             Email = email;
             Password = password;
         }

@@ -13,15 +13,11 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public readonly string Code = null!;
 
-        public readonly string Email = null!;
-
-        public ResetPasswordApplicationAccepted(string newPassword, string code, string email)
+        public ResetPasswordApplicationAccepted(string newPassword, string code)
         {
             this.NewPassword = Guard.Encode(newPassword.Trim());
             this.Code = Guard.Encode(code.Trim());
-            this.Email = Guard.Encode(email.Trim());
 
-            Guard.ThrowIsInputInvalidEmail(this.Email);
             Guard.ThrowIsInputInvalidPassword(this.NewPassword);
             Guard.ThrowIsNullOrEmpty(this.Code, nameof(this.Code));
         }

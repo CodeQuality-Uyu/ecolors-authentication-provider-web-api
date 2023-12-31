@@ -76,7 +76,7 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             Guard.ThrowIsInputInvalidPassword(newPassword, "newPassword");
 
-            await _identityProviderRepository.UpdatePasswordAsync(newPassword, userLogged.Id).ConfigureAwait(false);
+            await _identityProviderRepository.UpdatePasswordAsync(userLogged.Id, newPassword).ConfigureAwait(false);
         }
 
         public async Task<Auth> GetMeAsync(string token)

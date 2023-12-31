@@ -20,21 +20,14 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             this._authService = authService;
             this._resetPasswordRepository = resetPasswordRepository;
-            _identityProviderRepository = identityProviderRepository;
+            this._identityProviderRepository = identityProviderRepository;
         }
-
-        //public async Task<ResetPasswordRequest> GetActiveResetPasswordByIdAsync(string id)
-        //{
-        //    var resetPassword = await this._resetPasswordsRepository.GetAsync(resetPassword => resetPassword.Id == id).ConfigureAwait(false);
-
-        //    return resetPassword;
-        //}
 
         public async Task AcceptAsync(string id, ResetPasswordApplicationAccepted request)
         {
             var resetPasswordOldApplication = await this._resetPasswordRepository.GetByPropAsync(id, new SpecificResourceNotFoundException<ResetPasswordApplicationAccepted>(nameof(ResetPasswordApplication.Id), id)).ConfigureAwait(false);
 
-            if (resetPasswordOldApplication.Code != request.Code && resetPasswordOldApplication.Auth.Email == request.Email) throw new CodesNotMatchException(request.Code, request.Email);
+            if (resetPasswordOldApplication.Code != request.Code) throw new CodesNotMatchException(request.Code, resetPasswordOldApplication.Auth.Email);
 
             await this._identityProviderRepository.UpdatePasswordAsync(resetPasswordOldApplication.Auth.Id, request.NewPassword).ConfigureAwait(false);
 
