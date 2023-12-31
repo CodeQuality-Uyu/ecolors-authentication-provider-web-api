@@ -36,11 +36,9 @@ namespace CQ.AuthProvider.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ResetPasswordApplication> GetAsync(string id)
+        public async Task GetAsync(string id)
         {
-            var resetPassword = await _resetPasswordService.GetActiveByIdAsync(id).ConfigureAwait(false);
-
-            return resetPassword;
+            await _resetPasswordService.GetActiveByIdAsync(id).ConfigureAwait(false);
         }
     }
 }

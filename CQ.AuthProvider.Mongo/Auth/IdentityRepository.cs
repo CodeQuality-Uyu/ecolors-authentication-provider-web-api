@@ -13,7 +13,6 @@ namespace CQ.AuthProvider.Mongo
     {
         public IdentityRepository(MongoContext context) : base(context) { }
 
-
         public new async Task CreateAsync(Identity identity)
         {
             await base.CreateAsync(identity).ConfigureAwait(false);
@@ -31,7 +30,7 @@ namespace CQ.AuthProvider.Mongo
             return base._mongoContext.Ping();
         }
 
-        public async Task UpdatePasswordAsync(string newPassword, string identityId)
+        public async Task UpdatePasswordAsync(string identityId, string newPassword)
         {
             await base.UpdateByPropAsync(identityId, new { Password = newPassword }).ConfigureAwait(false);
         }
