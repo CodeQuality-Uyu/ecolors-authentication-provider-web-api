@@ -26,15 +26,15 @@ namespace CQ.AuthProvider.BusinessLogic
             string lastName,
             string role)
         {
-            Email = Guard.Encode(email.Trim());
-            Password = Guard.Encode(password.Trim());
-            FirstName = Guard.Encode(firstName.Trim());
-            LastName = Guard.Encode(lastName.Trim());
-            Role = new(role);
+            this.Email = Guard.Encode(email.Trim());
+            this.Password = Guard.Encode(password.Trim());
+            this.FirstName = Guard.Encode(firstName.Trim());
+            this.LastName = Guard.Encode(lastName.Trim());
+            this.Role = new(role);
 
-            Guard.ThrowIsInputInvalidEmail(Email);
+            Guard.ThrowIsInputInvalidEmail(this.Email);
 
-            Guard.ThrowIsInputInvalidPassword(Password);
+            Guard.ThrowIsInputInvalidPassword(this.Password);
         }
 
         public string? FullName()

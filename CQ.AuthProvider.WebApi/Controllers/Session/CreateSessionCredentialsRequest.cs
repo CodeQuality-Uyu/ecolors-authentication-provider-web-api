@@ -5,9 +5,9 @@ namespace CQ.AuthProvider.WebApi.Controllers
 {
     public sealed record class CreateSessionCredentialsRequest : Request<CreateSessionCredentials>
     {
-        public string? Email { get; set; }
+        public string? Email { get; init; }
 
-        public string? Password { get; set; }
+        public string? Password { get; init; }
 
         protected override CreateSessionCredentials InnerMap()
         {
