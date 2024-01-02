@@ -43,7 +43,7 @@ namespace CQ.AuthProvider.BusinessLogic
         {
             var auth = await this._authService.GetByEmailAsync(email).ConfigureAwait(false);
 
-            var resetPasswordOldApplication = await this._resetPasswordRepository.GetOrDefaultByPropAsync(email, nameof(Auth.Email)).ConfigureAwait(false);
+            var resetPasswordOldApplication = await this._resetPasswordRepository.GetOrDefaultByPropAsync(email, $"{nameof(Auth)}.{nameof(Auth.Email)}").ConfigureAwait(false);
 
             if (Guard.IsNotNull(resetPasswordOldApplication) && !resetPasswordOldApplication.HasExpired()) throw new DuplicateResetPasswordApplicationException(email);
 

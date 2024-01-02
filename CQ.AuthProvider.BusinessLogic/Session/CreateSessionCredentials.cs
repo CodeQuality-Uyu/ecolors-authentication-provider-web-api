@@ -9,16 +9,16 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public sealed record class CreateSessionCredentials
     {
-        public string Email { get; }
+        public readonly string Email;
 
-        public string Password { get; }
+        public readonly string Password;
 
         public CreateSessionCredentials(string email, string password)
         {
-            Email = Guard.Encode(email.Trim());
-            Password = Guard.Encode(password.Trim());
+            this.Email = Guard.Encode(email.Trim());
+            this.Password = Guard.Encode(password.Trim());
 
-            Guard.ThrowIsInvalidEmailFormat(Email);
+            Guard.ThrowIsInvalidEmailFormat(this.Email);
         }
     }
 }
