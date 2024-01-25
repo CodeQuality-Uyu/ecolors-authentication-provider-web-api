@@ -10,7 +10,7 @@ services:
       - mongo-server
     restart: always
     env_file:
-      - CQ.AuthProvider.WebApi/.env.local.docker
+      - CQ.AuthProvider.WebApi/.env.docker.local
     build: .
     ports:
-      - "7049:80"
+      - "8161:80"
