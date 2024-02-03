@@ -6,11 +6,6 @@ using CQ.ServiceExtension;
 using CQ.UnitOfWork;
 using CQ.UnitOfWork.MongoDriver;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.DataAccess.AppConfig
 {
@@ -21,7 +16,7 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
             var settingsService = new SettingsService();
 
             services
-                .AddMongoContext<AuthMongoContext>(new MongoConfig
+                .AddMongoContext(new MongoConfig
                 {
                     DatabaseConnection = new DatabaseConfig
                     {
@@ -51,7 +46,6 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
 
                 return services;
             }
-
 
             settingsService.GetValue(EnvironmentVariable.Firebase.ProjectId);
 

@@ -8,21 +8,19 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
-    public sealed record class ResetPasswordApplication
+    public sealed class ResetPasswordApplication
     {
-        public string Id { get; init; }
+        public string Id { get; set; } = Db.NewId();
 
-        public MiniAuth Auth { get; init; }
+        public MiniAuth Auth { get; set; } = null!;
 
-        public string Code { get; init; }
+        public string Code { get; set; } = null!;
 
-        public DateTime CreatedAt { get; init; }
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         public ResetPasswordApplication()
         {
-            this.Id = Db.NewId();
-            this.Code = new Random().Next(111, 1111).ToString();
-            this.CreatedAt = DateTime.UtcNow;
+            this.Code = NewCode();
         }
 
         public ResetPasswordApplication(MiniAuth auth) : this()
@@ -32,9 +30,28 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public bool HasExpired()
         {
-            return this.CreatedAt.AddMinutes(15) < DateTime.UtcNow;
+            return DateTimeOffset.UtcNow > this.CreatedAt.AddMinutes(15);
+        }
+
+        public static string NewCode()
+        {
+            return new Random().Next(111, 1111).ToString();
         }
     }
 
-    public sealed record class MiniAuth(string Id, string Email);
+    public sealed class MiniAuth {
+        public string Id { get; set; } = null!;
+
+        public string Email { get; set; } = null!;
+
+        public MiniAuth()
+        {
+        }
+
+        public MiniAuth(string id, string email)
+        {
+            this.Id = id;
+            this.Email = email;
+        }
+    }
 }
