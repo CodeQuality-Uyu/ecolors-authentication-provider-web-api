@@ -15,11 +15,16 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public readonly string Key;
 
-        public readonly IList<string> PermissionKeys;
+        public readonly List<string> PermissionKeys;
 
         public readonly bool IsPublic;
 
-        public CreateRole(string name, string description, string key, IList<string> permissionKeys, bool isPublic)
+        public CreateRole(
+            string name,
+            string description,
+            string key,
+            List<string> permissionKeys,
+            bool isPublic)
         {
             this.Name = Guard.Encode(name.Trim());
             this.Description = Guard.Encode(description.Trim());

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,18 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CQ.UnitOfWork.MongoDriver" Version="2.2.7" />
+    <PackageReference Include="CQ.UnitOfWork.EfCore" Version="2.2.21" />
+    <PackageReference Include="CQ.UnitOfWork.MongoDriver" Version="2.2.21" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />
+    <ProjectReference Include="..\CQ.AuthProvider.EfCore\CQ.AuthProvider.EfCore.csproj" />
     <ProjectReference Include="..\CQ.AuthProvider.Firebase\CQ.AuthProvider.Firebase.csproj" />
     <ProjectReference Include="..\CQ.AuthProvider.Mongo\CQ.AuthProvider.Mongo.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="CQ.Utility" Version="1.1.6" />
   </ItemGroup>
 
 </Project>

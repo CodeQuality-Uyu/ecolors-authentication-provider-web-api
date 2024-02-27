@@ -9,5 +9,7 @@ namespace CQ.AuthProvider.BusinessLogic
     internal interface IPermissionInternalService : IPermissionService
     {
         Task CheckExistenceAsync(IList<string> permissionKeys);
+
+        Task<List<Permission>> GetAllByKeysAsync(List<string> keys);
     }
 }

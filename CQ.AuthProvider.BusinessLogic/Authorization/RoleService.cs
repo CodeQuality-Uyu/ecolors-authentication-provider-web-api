@@ -1,11 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Exceptions;
-using CQ.UnitOfWork.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic
 {
@@ -23,7 +17,7 @@ namespace CQ.AuthProvider.BusinessLogic
             this._permissionService = permissionService;
         }
 
-        public async Task CheckExistAsync(Roles key)
+        public async Task ExistByKeyAsync(RoleKey key)
         {
             var existRoleKey = await this._roleRepository.ExistAsync(r => r.Key == key.ToString());
 
@@ -31,6 +25,13 @@ namespace CQ.AuthProvider.BusinessLogic
             {
                 throw new SpecificResourceNotFoundException<Role>(nameof(Role.Key), key.ToString());
             }
+        }
+
+        public async Task<Role> GetByKeyAsync(RoleKey key)
+        {
+            var role = await this._roleRepository.GetByPropAsync(key.ToString(), nameof(Role.Key)).ConfigureAwait(false);
+
+            return role;
         }
 
         public async Task<IList<MiniRole>> GetAllPublicAsync()
@@ -52,19 +53,19 @@ namespace CQ.AuthProvider.BusinessLogic
                 throw new ResourceDuplicatedException(nameof(Role.Key), role.Key, nameof(Role));
             }
 
-            await this._permissionService.CheckExistenceAsync(role.PermissionKeys).ConfigureAwait(false);
+            var permissions = await this._permissionService.GetAllByKeysAsync(role.PermissionKeys).ConfigureAwait(false);
 
-            var newRole = new Role(role.Name, role.Description, role.Key, role.PermissionKeys, role.IsPublic);
+            var newRole = new Role(role.Name, role.Description, role.Key, permissions, role.IsPublic);
 
             await this._roleRepository.CreateAsync(newRole).ConfigureAwait(false);
         }
 
-        public async Task<bool> HasPermissionAsync(IList<Roles> roles, string permission)
+        public async Task<bool> HasPermissionAsync(List<RoleKey> roles, string permission)
         {
             var rolesKeys = roles.Select(r => r.ToString()).ToList();
 
             var role = await this._roleRepository.ExistAsync(
-                r => rolesKeys.Contains(r.Key) && r.PermissionKeys.Contains(permission))
+                r => rolesKeys.Contains(r.Key) && r.Permissions.Any(p => p.Key == permission))
                 .ConfigureAwait(false);
 
             return role;
@@ -72,14 +73,14 @@ namespace CQ.AuthProvider.BusinessLogic
 
         public async Task AddPermissionByIdAsync(string id, AddPermission permissions)
         {
-            var role = await this._roleRepository.GetByPropAsync(id, new SpecificResourceNotFoundException<Role>(nameof(Role.Id), id)).ConfigureAwait(false);
+            var role = await this._roleRepository.GetByIdAsync(id, new SpecificResourceNotFoundException<Role>(nameof(Role.Id), id)).ConfigureAwait(false);
 
-            await this._permissionService.CheckExistenceAsync(permissions.PermissionsKeys).ConfigureAwait(false);
+            var permissionsSaved = await this._permissionService.GetAllByKeysAsync(permissions.PermissionsKeys).ConfigureAwait(false);
 
-            var duplicatePermission = permissions.PermissionsKeys.Where(p => role.PermissionKeys.Contains(p));
+            var duplicatePermission = permissions.PermissionsKeys.Where(p => role.Permissions.Any(ps => ps.Key == p));
             if (duplicatePermission.Any()) throw new PermissionsDuplicatedException(duplicatePermission.ToList());
 
-            await this._roleRepository.AddPermissionsByIdAsync(id, permissions.PermissionsKeys).ConfigureAwait(false);
+            await this._roleRepository.AddPermissionsByIdAsync(id, permissionsSaved).ConfigureAwait(false);
         }
     }
 }

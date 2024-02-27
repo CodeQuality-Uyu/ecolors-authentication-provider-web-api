@@ -9,6 +9,6 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public interface IRoleRepository : IRepository<Role>
     {
-        Task AddPermissionsByIdAsync(string id, IList<string> permissionsKeys);
+        Task AddPermissionsByIdAsync(string id, List<Permission> permissionsKeys);
     }
 }

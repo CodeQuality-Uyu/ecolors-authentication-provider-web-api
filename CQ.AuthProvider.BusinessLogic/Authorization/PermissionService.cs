@@ -19,14 +19,19 @@ namespace CQ.AuthProvider.BusinessLogic
             _permissionRepository = permissionRepository;
         }
 
-        public async Task<IList<MiniPublicPermission>> GetAllPublicAsync()
+        public async Task<List<MiniPublicPermission>> GetAllPublicAsync()
         {
             return await this._permissionRepository.GetAllAsync<MiniPublicPermission>(p => p.IsPublic).ConfigureAwait(false);
         }
 
-        public async Task<IList<Permission>> GetAllAsync()
+        public async Task<List<Permission>> GetAllAsync()
         {
             return await this._permissionRepository.GetAllAsync().ConfigureAwait(false);
+        }
+
+        public async Task<List<Permission>> GetAllByKeysAsync(List<string> keys)
+        {
+            return await this._permissionRepository.GetAllAsync(p => keys.Contains(p.Key)).ConfigureAwait(false);
         }
 
         public async Task CheckExistenceAsync(IList<string> permissionKeys)

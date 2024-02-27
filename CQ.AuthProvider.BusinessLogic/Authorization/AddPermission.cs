@@ -8,9 +8,9 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public sealed record class AddPermission
     {
-        public readonly IList<string> PermissionsKeys;
+        public readonly List<string> PermissionsKeys;
 
-        public AddPermission(IList<string> permissionsKeys)
+        public AddPermission(List<string> permissionsKeys)
         {
             this.PermissionsKeys = permissionsKeys;
 

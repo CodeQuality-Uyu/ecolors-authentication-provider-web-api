@@ -1,22 +1,32 @@
 ﻿using CQ.AuthProvider.BusinessLogic.AppConfig;
-using CQ.AuthProvider.BusinessLogic;
 using CQ.Utility;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 
 namespace CQ.AuthProvider.Firebase.AppConfig
 {
     public static class FirebaseDependencyInjection
     {
-        public static IServiceCollection AddFirebaseServices(this IServiceCollection services, ISettingsService settingsService)
+        public static IServiceCollection AddFirebaseServices(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            IdentityFirebaseOptions identityFirebase)
         {
+            var identityOptions = configuration
+                .GetSection(IdentityOptions.Identity)
+                .Get<IdentityFirebaseOptions>()!;
+
             services
-                .AddFirebase(settingsService)
-                .AddSingleton<IIdentityProviderRepository, AuthRepository>()
-                .AddSingleton<IIdentityProviderHealthService, AuthRepository>()
+                .AddFirebase(identityFirebase)
+                .AddSingleton<IdentityFirebaseOptions>(identityOptions)
+                .AddSingleton<IIdentityProviderRepository, IdentityService>()
+                .AddSingleton<IIdentityProviderHealthService, IdentityService>()
                 .AddTransient<HttpClientAdapter>((serviceProvider) =>
                 {
-                    var apiUrl = settingsService.GetValue(EnvironmentVariable.Firebase.RefererApiUrl);
-                    var baseUrl = settingsService.GetValue(EnvironmentVariable.Firebase.ApiUrl);
+                    var apiUrl = identityFirebase.RefererApiUrl;
+                    var baseUrl = identityFirebase.ApiUrl;
 
                     var baseHeaders = new List<Header>
                 {

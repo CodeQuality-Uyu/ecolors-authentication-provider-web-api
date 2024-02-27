@@ -1,4 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters
@@ -10,18 +12,13 @@ namespace CQ.AuthProvider.WebApi.Filters
 
         public CQAuthorizationAttribute(string permission) : base(permission) { }
 
-        protected override string BuildPermission(string token, AuthorizationFilterContext context)
-        {
-            return $"{context.RouteData.Values["action"].ToString().ToLower()}-{context.RouteData.Values["controller"].ToString().ToLower()}";
-        }
-
         protected override async Task<bool> HasUserPermissionAsync(string token, string permission, AuthorizationFilterContext context)
         {
-            var authService = GetService<IAuthService>(context);
+            var authService = GetService<IAccountService>(context);
 
-            var auth = (Auth)context.HttpContext.Items[Items.Auth];
+            var account = (Account)context.HttpContext.Items[Items.Auth];
 
-            var isAuthorized = await authService.HasPermissionAsync(permission, auth).ConfigureAwait(false);
+            var isAuthorized = await authService.HasPermissionAsync(permission, account).ConfigureAwait(false);
 
             return isAuthorized;
         }

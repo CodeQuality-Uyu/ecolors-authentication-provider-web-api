@@ -9,22 +9,30 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public sealed class Permission
     {
-        public string Id { get; init; }
+        public string Id { get; set; } = null!;
 
-        public string Name { get; init; }
+        public string Name { get; set; } = null!;
 
-        public string Description { get; init; }
+        public string Description { get; set; } = null!;
 
-        public string Key { get; init; }
+        public string Key { get; set; } = null!;
 
-        public bool IsPublic { get; init; }
+        public bool IsPublic { get; set; }
+
+        public List<Role> Roles { get; set; } = null!;
 
         public Permission()
         {
             Id = Db.NewId();
+            this.Roles = new List<Role>();
         }
 
-        public Permission(string name, string description, string key, bool isPublic) : this()
+        public Permission(
+            string name,
+            string description,
+            string key,
+            bool isPublic)
+            : this()
         {
             this.Name = name;
             this.Description = description;

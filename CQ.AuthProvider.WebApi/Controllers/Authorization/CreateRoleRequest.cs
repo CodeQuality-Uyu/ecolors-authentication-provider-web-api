@@ -11,13 +11,18 @@ namespace CQ.AuthProvider.WebApi.Controllers
 
         public string? Key { get; init; }
 
-        public IList<string>? PermissionKeys { get; init; }
+        public List<string>? PermissionKeys { get; init; }
 
         public bool IsPublic { get; init; }
 
         protected override CreateRole InnerMap()
         {
-            return new CreateRole(Name ?? string.Empty, Description ?? string.Empty, Key ?? string.Empty, PermissionKeys ?? new List<string>(), IsPublic);
+            return new CreateRole(
+                Name ?? string.Empty,
+                Description ?? string.Empty,
+                Key ?? string.Empty,
+                PermissionKeys ?? new List<string>(),
+                IsPublic);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using CQ.ApiElements.Filters;
 using CQ.AuthProvider.BusinessLogic;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.AuthProvider.WebApi.Extensions;
 using dotenv.net.Utilities;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -26,9 +28,9 @@ namespace CQ.AuthProvider.WebApi.Filters
             return true;
         }
 
-        private async Task<Auth> GetAuthOfTokenAsync(string token, AuthorizationFilterContext context)
+        private async Task<Account> GetAuthOfTokenAsync(string token, AuthorizationFilterContext context)
         {
-            var authService = base.GetService<IAuthService>(context);
+            var authService = base.GetService<IAccountService>(context);
 
             var auth = await authService.GetMeAsync(token).ConfigureAwait(false);
 

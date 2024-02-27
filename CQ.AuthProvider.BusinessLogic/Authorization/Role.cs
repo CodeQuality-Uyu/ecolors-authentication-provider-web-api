@@ -1,4 +1,5 @@
-﻿using CQ.Utility;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,36 +10,45 @@ namespace CQ.AuthProvider.BusinessLogic
 {
     public sealed record class Role
     {
-        public string Id { get; init; }
+        public string Id { get; set; } = null!;
 
-        public string Name { get; init; }
+        public string Name { get; set; } = null!;
 
-        public string Description { get; init; }
+        public string Description { get; set; } = null!;
 
-        public string Key { get; init; }
+        public string Key { get; set; } = null!;
 
-        public IList<string> PermissionKeys { get; init; }
+        public List<Permission> Permissions { get; set; } = null!;
 
-        public bool IsPublic { get; init; }
+        public List<Account> Accounts { get; set; } = null!;
+
+        public bool IsPublic { get; set; }
 
         public Role()
         {
-            Id = Db.NewId();
+            this.Id = Db.NewId();
+            this.Permissions = new List<Permission>();
+            this.Accounts = new List<Account>();
         }
 
-        public Role(string name, string description, string key, IList<string> permissions, bool isPublic)
+        public Role(
+            string name,
+            string description,
+            string key,
+            List<Permission> permissions,
+            bool isPublic)
+            : this()
         {
-            Id = Db.NewId();
             Name = name;
             Description = description;
             Key = key;
-            PermissionKeys = permissions;
+            Permissions = permissions;
             IsPublic = isPublic;
         }
 
         public bool HasPermission(string permission)
         {
-            return this.PermissionKeys.Contains(permission) || this.PermissionKeys.Contains(Permissions.Any.ToString());
+            return this.Permissions.Any(p => p.Key == permission) || this.Permissions.Any(p => p.Key == PermissionKey.Any.ToString());
         }
     }
 }
