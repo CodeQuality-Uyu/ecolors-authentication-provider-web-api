@@ -1,111 +1,94 @@
-﻿using CQ.AuthProvider.BusinessLogic.Exceptions;
+﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Exceptions;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.UnitOfWork.Abstractions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
-    internal sealed class AccountService : IAccountService
+    internal abstract class AccountService<TAccount> : IAccountService
+        where TAccount : class
     {
         private readonly IIdentityProviderRepository _identityProviderRepository;
 
-        private readonly IRepository<Account> _accountRepository;
+        protected readonly IAccountRepository<TAccount> _accountRepository;
 
-        private readonly ISessionService _sessionService;
-
-        private readonly IRoleInternalService _roleService;
+        protected readonly ISessionService _sessionService;
 
         public AccountService(
             IIdentityProviderRepository identityProviderRepository,
             ISessionService sessionService,
-            IRepository<Account> accountRepository,
-            IRoleInternalService roleService)
+            IAccountRepository<TAccount> accountRepository)
         {
             this._identityProviderRepository = identityProviderRepository;
             this._sessionService = sessionService;
             this._accountRepository = accountRepository;
-            this._roleService = roleService;
         }
 
-        public async Task<CreateAccountResult> CreateAsync(CreateAccount newAuth)
+        public async Task<CreateAccountResult> CreateAsync(CreateAccount newAccount)
         {
-            await AssertEmailInUse(newAuth.Email).ConfigureAwait(false);
+            await AssertEmailInUse(newAccount.Email).ConfigureAwait(false);
 
-            var role = await this._roleService.GetByKeyAsync(newAuth.Role).ConfigureAwait(false);
+            var identity = await this.CreateIdentityAsync(newAccount).ConfigureAwait(false);
 
-            var auth = await SaveAuthAsync(newAuth, role).ConfigureAwait(false);
+            var account = await this.SaveNewAccountAsync(newAccount, identity).ConfigureAwait(false);
 
-            var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAuth.Email, newAuth.Password)).ConfigureAwait(false);
+            var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAccount.Email, newAccount.Password)).ConfigureAwait(false);
 
-            return new CreateAccountResult(auth.Id, auth.Email, auth.Name, session.Token);
+            return new CreateAccountResult(account.Id, account.Email, account.Name, session.Token);
         }
 
         private async Task AssertEmailInUse(string email)
         {
-            var existAuth = await this._accountRepository.ExistAsync(a => a.Email == email).ConfigureAwait(false);
+            var existAuth = await this._accountRepository.ExistByEmailAsync(email).ConfigureAwait(false);
 
             if (existAuth)
             {
-                throw new ResourceDuplicatedException(nameof(Account.Email), email, nameof(Account));
+                throw new SpecificResourceNotFoundException<AccountInfo>(nameof(AccountEfCore.Email), email);
             }
         }
 
-        private async Task<Account> SaveAuthAsync(CreateAccount newAuth, Role role)
+        private async Task<Identity> CreateIdentityAsync(CreateAccount newAccount)
         {
             var identity = new Identity(
-                newAuth.Email,
-                newAuth.Password);
+                newAccount.Email,
+                newAccount.Password);
 
             await _identityProviderRepository.CreateAsync(identity).ConfigureAwait(false);
 
-            var auth = new Account(
-                newAuth.Email,
-                newAuth.FullName(),
-                role)
-            {
-                Id = identity.Id
-            };
-
-            await this._accountRepository.CreateAsync(auth).ConfigureAwait(false);
-
-            return auth;
+            return identity;
         }
 
-        public async Task UpdatePasswordAsync(string newPassword, Account userLogged)
+        protected abstract Task<AccountInfo> SaveNewAccountAsync(CreateAccount newAccount, Identity identity);
+
+        public async Task UpdatePasswordAsync(string newPassword, AccountEfCore userLogged)
         {
             Guard.ThrowIsInputInvalidPassword(newPassword, "newPassword");
 
             await _identityProviderRepository.UpdatePasswordAsync(userLogged.Id, newPassword).ConfigureAwait(false);
         }
 
-        public async Task<Account> GetMeAsync(string token)
+        public async Task<AccountInfo> GetMeAsync(string token)
         {
             var session = await this._sessionService.GetByTokenAsync(token).ConfigureAwait(false);
 
-            var account = await this._accountRepository.GetByIdAsync(
+            var account = await this._accountRepository.GetInfoByIdAsync(
                 session.AccountId,
-                new SpecificResourceNotFoundException<Session>(nameof(Session.AccountId), session.AccountId))
+                new SpecificResourceNotFoundException<AccountInfo>(nameof(AccountInfo.Id), session.AccountId))
                 .ConfigureAwait(false);
 
             return account;
         }
 
-        public async Task<Account> GetByEmailAsync(string email)
+        public async Task<AccountInfo> GetByEmailAsync(string email)
         {
             var account = await this._accountRepository
-                .GetByPropAsync(
+                .GetInfoByEmailAsync(
                 email,
-                nameof(Account.Email),
-                new SpecificResourceNotFoundException<Account>(nameof(Account.Email), email))
+                new SpecificResourceNotFoundException<AccountInfo>(nameof(AccountInfo.Email), email))
                 .ConfigureAwait(false);
-            
-            return account;
-        }
 
-        public async Task<bool> HasPermissionAsync(string permission, Account userlogged)
-        {
-            return await this._roleService.HasPermissionAsync(userlogged.ConcreteRoles(), permission).ConfigureAwait(false);
+            return account;
         }
     }
 }

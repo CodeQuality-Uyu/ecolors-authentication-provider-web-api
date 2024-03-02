@@ -10,10 +10,8 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
     {
         Task<CreateAccountResult> CreateAsync(CreateAccount auth);
 
-        Task<Account> GetMeAsync(string token);
+        Task<AccountInfo> GetMeAsync(string token);
 
-        Task<Account> GetByEmailAsync(string email);
-
-        Task<bool> HasPermissionAsync(string permission, Account userLogged);
+        Task<AccountInfo> GetByEmailAsync(string email);
     }
 }

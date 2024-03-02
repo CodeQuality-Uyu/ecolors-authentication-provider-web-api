@@ -1,4 +1,5 @@
-﻿using CQ.Utility;
+﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,13 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
     public record class CreateAccount
     {
-        public readonly string Email;
+        public readonly string Email = null!;
 
-        public readonly string Password;
+        public readonly string Password = null!;
 
-        public readonly string? FirstName;
+        public readonly string FirstName = null!;
 
-        public readonly string? LastName;
+        public readonly string LastName = null!;
 
         public readonly RoleKey Role;
 
@@ -37,24 +38,19 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             Guard.ThrowIsInputInvalidPassword(this.Password);
         }
 
-        public string? FullName()
+        public string FullName()
         {
-            var firstNameNormalize = Normalize(this.FirstName);
-            var lastNameNormalize = Normalize(this.LastName);
+            var firstNameNormalize = this.Normalize(this.FirstName);
+            var lastNameNormalize = this.Normalize(this.LastName);
 
             var fullName = $"{firstNameNormalize} {lastNameNormalize}";
 
             var withoutSpace = fullName.Trim();
 
-            if (string.IsNullOrEmpty(withoutSpace))
-            {
-                return null;
-            }
-
             return withoutSpace;
         }
 
-        private string? Normalize(string? input)
+        private string Normalize(string input)
         {
             var normalized = !string.IsNullOrEmpty(input) ? $"{char.ToUpper(input[0])}{input[1..]}" : null;
 

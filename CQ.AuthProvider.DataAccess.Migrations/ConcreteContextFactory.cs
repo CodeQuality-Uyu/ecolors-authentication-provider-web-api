@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.DataAccess.Context;
+﻿using CQ.AuthProvider.DataAccess.Contexts;
 using CQ.AuthProvider.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;

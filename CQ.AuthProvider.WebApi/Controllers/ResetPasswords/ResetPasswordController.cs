@@ -15,13 +15,11 @@ namespace CQ.AuthProvider.WebApi.Controllers.ResetPasswords
         }
 
         [HttpPost]
-        public async Task<ResetPasswordApplication> CreateAsync(ResetPasswordRequest request)
+        public async Task CreateAsync(ResetPasswordRequest request)
         {
             var email = request.Map();
 
-            var resetPassword = await _resetPasswordService.CreateAsync(email).ConfigureAwait(false);
-
-            return resetPassword;
+            await _resetPasswordService.CreateAsync(email).ConfigureAwait(false);
         }
 
         [HttpPut("{id}")]

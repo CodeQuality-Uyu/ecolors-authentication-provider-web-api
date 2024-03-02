@@ -18,13 +18,13 @@ namespace CQ.AuthProvider.Firebase
         private readonly HttpClientAdapter _firebaseApi;
         private readonly FirebaseAuth _firebaseAuth;
         private readonly IdentityFirebaseOptions _options;
-        private readonly IRepository<Account> _accountRepository;
+        private readonly IAccountInfoRepository _accountRepository;
 
         public SessionService(
             IdentityFirebaseOptions options,
             FirebaseAuth firebaseAuth,
             HttpClientAdapter firebaseApi,
-            IRepository<Account> accountRepository)
+            IAccountInfoRepository accountRepository)
         {
             this._options = options;
             this._firebaseApi = firebaseApi;
@@ -42,19 +42,14 @@ namespace CQ.AuthProvider.Firebase
                     return this.ProcessLoginError(error, credentials);
                 })
                 .ConfigureAwait(false);
-            var account = await this._accountRepository.GetByIdAsync(response.LocalId).ConfigureAwait(false);
+            var account = await this._accountRepository.GetInfoByIdAsync(response.LocalId).ConfigureAwait(false);
 
             return new SessionCreated(
                 response.LocalId,
                 response.Email,
                 response.IdToken,
-                account.Roles
-                .Select(r => r.Key)
-                .ToList(),
-                account.Roles
-                .SelectMany(r => r.Permissions)
-                .Select(p => p.Key)
-                .ToList());
+                account.Roles,
+                account.Permissions);
         }
 
         private Exception? ProcessLoginError(FirebaseError error, CreateSessionCredentials credentials)
@@ -73,7 +68,7 @@ namespace CQ.AuthProvider.Firebase
 
             if (result == null) throw new ArgumentException("The token must be a valid JWT", "token");
 
-            var auth = await this._accountRepository.GetByIdAsync(result.Uid).ConfigureAwait(false);
+            var auth = await this._accountRepository.GetInfoByIdAsync(result.Uid).ConfigureAwait(false);
 
             return new Session(result.Uid, auth.Email, token);
         }

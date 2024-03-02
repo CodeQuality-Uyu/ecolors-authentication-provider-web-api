@@ -1,7 +1,8 @@
 ﻿
 using CQ.ApiElements.Filters;
 using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.BusinessLogic.Authorization.Exceptions;
+using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions;
 using CQ.AuthProvider.BusinessLogic.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
@@ -49,7 +50,7 @@ namespace CQ.AuthProvider.WebApi.Filters
                     HttpStatusCode.Conflict,
                     "Exist another account with email provided"
                     )
-                .AddException<SpecificResourceNotFoundException<Role>>(
+                .AddException<SpecificResourceNotFoundException<RoleInfo>>(
                 "InvalidRole",
                 HttpStatusCode.Conflict,
                 (exception, context) => "The role provided does not exist"

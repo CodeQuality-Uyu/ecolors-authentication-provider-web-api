@@ -19,7 +19,7 @@ namespace CQ.AuthProvider.Firebase
             this._options = options;
         }
 
-        public async Task<Account> GetByEmailAsync(string email)
+        public async Task<AccountEfCore> GetByEmailAsync(string email)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace CQ.AuthProvider.Firebase
                     throw new AuthNotFoundException(email);
                 }
 
-                return new Account
+                return new AccountEfCore
                 {
                     Id = userWithEmail.Uid,
                     Email = email,

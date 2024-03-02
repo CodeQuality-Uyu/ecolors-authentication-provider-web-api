@@ -7,49 +7,61 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
 {
-    internal sealed class ResetPasswordService : IResetPasswordService
+    internal abstract class ResetPasswordService<TResetPasswordApplication> : IResetPasswordService
+        where TResetPasswordApplication : class
     {
-        private readonly IAccountService _authService;
+        private readonly IAccountService _accountService;
         private readonly IIdentityProviderRepository _identityProviderRepository;
-        private readonly IRepository<ResetPasswordApplication> _resetPasswordRepository;
+        protected readonly IResetPasswordApplicationRepository<TResetPasswordApplication> _resetPasswordRepository;
+
 
         public ResetPasswordService(
-            IAccountService authService,
-            IRepository<ResetPasswordApplication> resetPasswordRepository,
+            IAccountService accountService,
+            IResetPasswordApplicationRepository<TResetPasswordApplication> resetPasswordRepository,
             IIdentityProviderRepository identityProviderRepository)
         {
-            this._authService = authService;
+            this._accountService = accountService;
             this._resetPasswordRepository = resetPasswordRepository;
             this._identityProviderRepository = identityProviderRepository;
         }
 
         public async Task AcceptAsync(string id, ResetPasswordApplicationAccepted request)
         {
-            var resetPasswordOldApplication = await this._resetPasswordRepository.GetByIdAsync(id, new SpecificResourceNotFoundException<ResetPasswordApplicationAccepted>(nameof(ResetPasswordApplication.Id), id)).ConfigureAwait(false);
+            var resetPasswordOldApplication = await this._resetPasswordRepository.GetInfoByIdAsync(
+                id,
+                new SpecificResourceNotFoundException<ResetPasswordApplicationAccepted>(
+                    nameof(ResetPasswordApplication.Id),
+                    id))
+                .ConfigureAwait(false);
 
-            if (resetPasswordOldApplication.Code != request.Code) throw new CodesNotMatchException(request.Code, resetPasswordOldApplication.Account.Email);
+            if (resetPasswordOldApplication.Code != request.Code) throw new CodesNotMatchException(
+                request.Code,
+                resetPasswordOldApplication.Account.Email);
 
-            await this._identityProviderRepository.UpdatePasswordAsync(resetPasswordOldApplication.Account.Id, request.NewPassword).ConfigureAwait(false);
+            await this._identityProviderRepository
+                .UpdatePasswordAsync(
+                resetPasswordOldApplication.Account.Id,
+                request.NewPassword)
+                .ConfigureAwait(false);
 
             await this.DeleteByIdAsync(resetPasswordOldApplication.Id).ConfigureAwait(false);
         }
 
         private async Task DeleteByIdAsync(string id)
         {
-            await this._resetPasswordRepository.DeleteAsync(r => r.Id == id).ConfigureAwait(false);
+            await this._resetPasswordRepository.DeleteByIdAsync(id).ConfigureAwait(false);
         }
 
-        public async Task<ResetPasswordApplication> CreateAsync(string email)
+        public async Task CreateAsync(string email)
         {
-            var account = await this._authService.GetByEmailAsync(email).ConfigureAwait(false);
+            var account = await this._accountService.GetByEmailAsync(email).ConfigureAwait(false);
 
             var resetPasswordOldApplication = await this._resetPasswordRepository
-                .GetOrDefaultByPropAsync(
-                email, 
-                $"{nameof(Account)}.{nameof(Account.Email)}")
+                .GetOrDefaultInfoByAccountEmailAsync(email)
                 .ConfigureAwait(false);
 
-            if (Guard.IsNotNull(resetPasswordOldApplication) && !resetPasswordOldApplication.HasExpired()) throw new DuplicateResetPasswordApplicationException(email);
+            if (Guard.IsNotNull(resetPasswordOldApplication) && !resetPasswordOldApplication.HasExpired())
+                throw new DuplicateResetPasswordApplicationException(email);
 
             var resetPasswordApplication = resetPasswordOldApplication;
 
@@ -59,37 +71,39 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
             }
             else
             {
-                await UpdateCodeOfResetPasswordApplicationAsync(resetPasswordOldApplication).ConfigureAwait(false);
+                var (newCode, createdAt) = await UpdateCodeByIdAsync(resetPasswordOldApplication.Id).ConfigureAwait(false);
+
+                resetPasswordApplication.Code = newCode;
+                resetPasswordApplication.CreatedAt = createdAt;
             }
 
             //TODO: send email
-
-            return resetPasswordApplication;
         }
 
-        private async Task UpdateCodeOfResetPasswordApplicationAsync(ResetPasswordApplication resetPasswordOldApplication)
-        {
-            resetPasswordOldApplication.Code = ResetPasswordApplication.NewCode();
-            resetPasswordOldApplication.CreatedAt = DateTimeOffset.UtcNow;
+        protected abstract Task<ResetPasswordApplication> CreateResetPasswordApplicationAsync(AccountInfo account);
 
+        private async Task<(string newCode, DateTimeOffset createdAt)> UpdateCodeByIdAsync(string id)
+        {
             var updates = new
             {
-                resetPasswordOldApplication.Code,
-                resetPasswordOldApplication.CreatedAt
+                Code = ResetPasswordApplication.NewCode(),
+                CreatedAt = DateTimeOffset.UtcNow
             };
-            await this._resetPasswordRepository.UpdateByIdAsync(resetPasswordOldApplication.Id, updates).ConfigureAwait(false);
-        }
 
-        private async Task<ResetPasswordApplication> CreateResetPasswordApplicationAsync(Account account)
-        {
-            ResetPasswordApplication? resetPasswordApplication = new ResetPasswordApplication(new MiniAccount(account.Id, account.Email));
-            await this._resetPasswordRepository.CreateAsync(resetPasswordApplication).ConfigureAwait(false);
-            return resetPasswordApplication;
+            await this._resetPasswordRepository.UpdateByIdAsync(id, updates).ConfigureAwait(false);
+
+            return (updates.Code, updates.CreatedAt);
         }
 
         public async Task<ResetPasswordApplication> GetActiveByIdAsync(string id)
         {
-            var resetPasswordApplication = await this._resetPasswordRepository.GetByIdAsync(id, new SpecificResourceNotFoundException<ResetPasswordApplication>(nameof(ResetPasswordApplication.Id), id)).ConfigureAwait(false);
+            var resetPasswordApplication = await this._resetPasswordRepository
+                .GetInfoByIdAsync(
+                id,
+                new SpecificResourceNotFoundException<ResetPasswordApplication>(
+                    nameof(ResetPasswordApplication.Id),
+                    id))
+                .ConfigureAwait(false);
 
             if (resetPasswordApplication.HasExpired())
             {

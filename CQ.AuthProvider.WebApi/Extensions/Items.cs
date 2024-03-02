@@ -2,6 +2,6 @@
 {
     internal enum Items
     {
-        Auth
+        Account
     }
 }

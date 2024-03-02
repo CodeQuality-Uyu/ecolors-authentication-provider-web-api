@@ -1,8 +1,13 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
-using CQ.AuthProvider.DataAccess.Context;
+using CQ.AuthProvider.DataAccess.Accounts;
+using CQ.AuthProvider.DataAccess.Contexts;
+using CQ.AuthProvider.DataAccess.Permissions;
+using CQ.AuthProvider.DataAccess.ResetPasswordApplications;
+using CQ.AuthProvider.DataAccess.Roles;
 using CQ.AuthProvider.EfCore.AppConfig;
 using CQ.AuthProvider.Firebase.AppConfig;
 using CQ.AuthProvider.Mongo.AppConfig;
@@ -26,16 +31,17 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
             if (!string.IsNullOrEmpty(mongoConnectionString))
             {
                 services
-                    .AddMongoContext(
+                    .AddMongoContext<AuthMongoContext>(
                     new MongoConfig(
                         new DatabaseConfig(mongoConnectionString, databaseName),
                         useDefaultQueryLogger: true),
                     LifeTime.Singleton,
                     LifeTime.Singleton)
-                    .AddMongoRepository<Account>(LifeTime.Singleton)
-                    .AddAbstractionMongoRepository<Role, IRoleRepository, RoleMongoRepository>(LifeTime.Singleton)
-                    .AddMongoRepository<Permission>(LifeTime.Singleton)
-                    .AddMongoRepository<ResetPasswordApplication>(LifeTime.Singleton);
+                    .AddAbstractionMongoRepository<AccountMongo, IAccountRepository<AccountMongo>, AccountMongoRepository>(LifeTime.Singleton)
+                    .AddAbstractionMongoRepository<AccountMongo, IAccountInfoRepository, AccountMongoRepository>(LifeTime.Singleton)
+                    .AddAbstractionMongoRepository<RoleMongo, IRoleRepository<RoleMongo>, RoleMongoRepository>(LifeTime.Singleton)
+                    .AddAbstractionMongoRepository<ResetPasswordApplication, IResetPasswordApplicationRepository<ResetPasswordApplication>, ResetPasswordApplicationMongoRepository>(LifeTime.Singleton)
+                    .AddAbstractionMongoRepository<Permission, IPermissionRepository<Permission>, PermissionMongoRepository>(LifeTime.Singleton);
             }
 
             if (!string.IsNullOrEmpty(sqlConnectionString))
@@ -47,10 +53,11 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                         useDefaultQueryLogger: true),
                     LifeTime.Singleton,
                     LifeTime.Singleton)
-                    .AddCustomEfCoreRepository<Account, AccountEfCoreRepository>(LifeTime.Singleton)
-                    .AddAbstractionEfCoreRepository<Role, IRoleRepository, RoleEfCoreRepository>(LifeTime.Singleton)
-                    .AddEfCoreRepository<Permission>(LifeTime.Singleton)
-                    .AddEfCoreRepository<ResetPasswordApplication>(LifeTime.Singleton);
+                    .AddAbstractionEfCoreRepository<AccountEfCore, IAccountRepository<AccountEfCore>, AccountEfCoreRepository>(LifeTime.Singleton)
+                    .AddAbstractionEfCoreRepository<AccountEfCore, IAccountInfoRepository, AccountEfCoreRepository>(LifeTime.Singleton)
+                    .AddAbstractionEfCoreRepository<RoleEfCore, IRoleRepository<RoleEfCore>, RoleEfCoreRepository>(LifeTime.Singleton)
+                    .AddAbstractionEfCoreRepository<ResetPasswordApplicationEfCore, IResetPasswordApplicationRepository<ResetPasswordApplicationEfCore>, ResetPasswordApplicationEfCoreRepository>(LifeTime.Singleton)
+                    .AddAbstractionEfCoreRepository<PermissionEfCore, IPermissionRepository<PermissionEfCore>, PermissionEfCoreRepository>(LifeTime.Singleton);
             }
 
             services.AddIdentityProvider(configuration);

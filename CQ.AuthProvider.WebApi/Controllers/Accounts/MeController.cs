@@ -10,28 +10,23 @@ namespace CQ.AuthProvider.WebApi.Controllers
     [CQAuthentication]
     public class MeController : ControllerBase
     {
-        private readonly IAccountService _authService;
-
-        public MeController(IAccountService authService)
-        {
-            this._authService = authService;
-        }
-
         [HttpGet]
-        public Account Get()
+        public AccountInfo Get()
         {
-            return this.GetAuthLogged();
+            return this.GetAccountLogged();
         }
 
         [HttpPost("check-permission")]
-        public async Task<IActionResult> CreateAsync(CheckPermissionRequest request)
+        public object CreateAsync(CheckPermissionRequest request)
         {
-            var hasPermission = await this._authService.HasPermissionAsync(request.Permission, this.GetAuthLogged());
+            var mapped = request.Map();
 
-            return Ok(new
+            var account = this.GetAccountLogged();
+
+            return new
             {
-                hasPermission,
-            });
+                hasPermission = account.Permissions.Contains(mapped)
+            };
         }
     }
 }

@@ -1,15 +1,12 @@
 ﻿
 using CQ.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
 {
     public sealed record class ResetPasswordApplication
     {
+        public const int TOLERANCE_IN_MINUTES = 15;
+
         public string Id { get; set; } = null!;
 
         public MiniAccount Account { get; set; } = null!;
@@ -25,19 +22,20 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
             this.CreatedAt = DateTimeOffset.Now;
         }
 
-        public ResetPasswordApplication(MiniAccount account) : this()
+        public ResetPasswordApplication(MiniAccount account) 
+            : this()
         {
             this.Account = account;
         }
 
         public bool HasExpired()
         {
-            return DateTimeOffset.UtcNow > this.CreatedAt.AddMinutes(15);
+            return DateTimeOffset.UtcNow > this.CreatedAt.AddMinutes(TOLERANCE_IN_MINUTES);
         }
 
         public static string NewCode()
         {
-            return new Random().Next(111, 1111).ToString();
+            return new Random().Next(1111, 9999).ToString();
         }
     }
 

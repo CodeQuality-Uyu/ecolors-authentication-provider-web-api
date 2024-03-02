@@ -8,12 +8,12 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
     {
         private readonly IRepository<Session> _sessionRepository;
         private readonly IRepository<Identity> _identityRepository;
-        private readonly IRepository<Account> _accountRepository;
+        private readonly IAccountInfoRepository _accountRepository;
 
         public SessionService(
             IRepository<Session> sessionRepository,
             IRepository<Identity> identityRepository,
-            IRepository<Account> accountRepository)
+            IAccountInfoRepository accountRepository)
         {
             _sessionRepository = sessionRepository;
             _identityRepository = identityRepository;
@@ -45,19 +45,14 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
                 await _sessionRepository.UpdateByIdAsync(sessionOfUser.Id, new { sessionOfUser.Token }).ConfigureAwait(false);
             }
 
-            var account = await this._accountRepository.GetByIdAsync(identity.Id).ConfigureAwait(true);
+            var account = await this._accountRepository.GetInfoByIdAsync(identity.Id).ConfigureAwait(true);
 
             return new SessionCreated(
                 sessionOfUser.AccountId,
                 sessionOfUser.Email,
                 sessionOfUser.Token,
-                account.Roles
-                .Select(r => r.Key)
-                .ToList(),
-                account.Roles
-                .SelectMany(r => r.Permissions)
-                .Select(p => p.Key)
-                .ToList());
+                account.Roles,
+                account.Permissions);
         }
 
         private async Task<Session> CreateNewAsync(Identity identity)

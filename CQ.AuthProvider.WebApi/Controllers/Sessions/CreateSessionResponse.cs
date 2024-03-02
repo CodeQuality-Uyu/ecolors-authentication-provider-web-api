@@ -21,8 +21,8 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
             this.AccountId = session.AccountId;
             this.Email = session.Email;
             this.Token = session.Token;
-            this.Roles = session.Roles;
-            this.Permissions = session.Permissions;
+            this.Roles = session.Roles.Select(r => r.ToString()).ToList();
+            this.Permissions = session.Permissions.Select(p => p.ToString()).ToList();
         }
     }
 }

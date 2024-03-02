@@ -5,9 +5,9 @@ namespace CQ.AuthProvider.WebApi.Extensions
 {
     public static class ControllerBaseExtension
     {
-        public static Account? GetAuthLogged(this ControllerBase controller)
+        public static AccountInfo GetAccountLogged(this ControllerBase controller)
         {
-            return controller.HttpContext.Items[Items.Auth] as Account;
+            return controller.HttpContext.GetItem<AccountInfo>(ContextItems.AccountLogged);
         }
     }
 }

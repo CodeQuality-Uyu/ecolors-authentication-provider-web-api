@@ -1,4 +1,6 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Sessions
+﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+
+namespace CQ.AuthProvider.BusinessLogic.Sessions
 {
     public sealed record class SessionCreated
     {
@@ -8,16 +10,16 @@
 
         public readonly string Token;
 
-        public readonly List<string> Roles;
+        public readonly List<RoleKey> Roles;
 
-        public readonly List<string> Permissions;
+        public readonly List<PermissionKey> Permissions;
 
         public SessionCreated(
             string accountId,
             string email,
             string token,
-            List<string> roles,
-            List<string> permissions)
+            List<RoleKey> roles,
+            List<PermissionKey> permissions)
         {
             this.AccountId = accountId;
             this.Email = email;
