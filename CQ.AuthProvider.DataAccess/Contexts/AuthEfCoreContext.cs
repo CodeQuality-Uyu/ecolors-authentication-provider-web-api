@@ -34,25 +34,31 @@ namespace CQ.AuthProvider.DataAccess.Contexts
             (
                 "Crear permiso",
                 "Crear permiso",
-                new PermissionKey("create-permission"),
+                PermissionKey.CreatePermission,
                 false);
 
             var getByIdPermissionPermission = new PermissionEfCore(
                 "Obtener un permiso",
                 "Obtener un permiso",
-                new PermissionKey("getbyid-permission"),
+                PermissionKey.GetByIdPermission,
                 false);
 
             var getAllPermissionsPermission = new PermissionEfCore(
                 "Obtener permisos",
                 "Obtener todos los permisos",
-                new PermissionKey("getall-permission"),
+                PermissionKey.GetAllPermissions,
                 false);
 
-            var getAllPublicPermissionsPermission = new PermissionEfCore(
-                "Obtener permisos publicos",
-                "Obtener permisos publicos",
-                new PermissionKey("getprivate-permission"),
+            var getAllPrivatePermissionsPermission = new PermissionEfCore(
+                "Obtener permisos privados",
+                "Obtener permisos privados",
+                PermissionKey.GetAllPrivatePermissions,
+                false);
+
+            var getAllByRoleIdPermissionsPermission = new PermissionEfCore(
+                "Obtener permisos de un rol",
+                "Obtener permisos de un rol",
+                PermissionKey.GetAllPermissionsByRoleId,
                 false);
 
             var updateByIdPermissionPermission = new PermissionEfCore(
@@ -67,33 +73,39 @@ namespace CQ.AuthProvider.DataAccess.Contexts
             (
                 "Crear rol",
                 "Crear rol",
-                new PermissionKey("create-role"),
+                PermissionKey.CreateRole,
                 false);
 
             var getByIdRolPermission = new PermissionEfCore(
                 "Obtener un rol",
                 "Obtener un rol",
-                new PermissionKey("getbyid-role"),
+                PermissionKey.GetByIdRole,
                 false);
 
             var getAllRolesPermission = new PermissionEfCore(
                 "Obtener roles",
                 "Obtener todos los roles",
-                new PermissionKey("getall-role"),
+                PermissionKey.GetAllRoles,
                 false);
 
-            var getAllPublicRolesPermission = new PermissionEfCore(
-                "Obtener roles publicos",
-                "Obtener roles publicos",
-                PermissionKey.GetPrivateRoles,
+            var getAllPrivateRolesPermission = new PermissionEfCore(
+                "Obtener roles privados",
+                "Obtener roles privados",
+                PermissionKey.GetAllPrivateRoles,
                 false);
 
             var updateByIdRolPermission = new PermissionEfCore(
                 "Actualizar un rol",
                 "Actualizar un rol",
-                new PermissionKey("addpermission-role"),
+                PermissionKey.AddPermissionToRole,
                 false);
             #endregion
+
+            var jokerPermission = new PermissionEfCore(
+                "Joker",
+                "Joker",
+                PermissionKey.Joker,
+                false);
 
             var adminRole = new RoleEfCore(
                 "Admin",
@@ -135,35 +147,38 @@ namespace CQ.AuthProvider.DataAccess.Contexts
                 new RolePermission
                 (adminRole.Id, createPermissionPermission.Id),
                 new RolePermission
-                (adminRole.Id, getAllPermissionsPermission.Id),
-                new RolePermission
                 (adminRole.Id, getByIdPermissionPermission.Id),
                 new RolePermission
-                (adminRole.Id, getAllPublicPermissionsPermission.Id),
+                (adminRole.Id, getAllPermissionsPermission.Id),
+                new RolePermission
+                (adminRole.Id, getAllPrivatePermissionsPermission.Id),
+                new RolePermission
+                (adminRole.Id, getAllByRoleIdPermissionsPermission.Id),
                 new RolePermission
                 (adminRole.Id, updateByIdPermissionPermission.Id),
                 new RolePermission
                 (adminRole.Id, createRolePermission.Id),
                 new RolePermission
+                (adminRole.Id, getByIdRolPermission.Id),
+                new RolePermission
                 (adminRole.Id, getAllRolesPermission.Id),
                 new RolePermission
-                (adminRole.Id, getAllPublicRolesPermission.Id),
-                new RolePermission
-                (adminRole.Id, getByIdRolPermission.Id),
+                (adminRole.Id, getAllPrivateRolesPermission.Id),
                 new RolePermission
                 (adminRole.Id, updateByIdRolPermission.Id));
 
             modelBuilder.Entity<PermissionEfCore>()
                 .HasData(
+                createPermissionPermission,
                 getByIdPermissionPermission,
                 getAllPermissionsPermission,
-                getAllPublicPermissionsPermission,
-                createPermissionPermission,
+                getAllPrivatePermissionsPermission,
+                getAllByRoleIdPermissionsPermission,
                 updateByIdPermissionPermission,
                 createRolePermission,
                 getByIdRolPermission,
                 getAllRolesPermission,
-                getAllPublicRolesPermission,
+                getAllPrivateRolesPermission,
                 updateByIdRolPermission);
             modelBuilder.Entity<RoleEfCore>().HasData(adminRole);
             modelBuilder.Entity<AccountEfCore>().HasData(account);

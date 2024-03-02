@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
+using CQ.Exceptions;
 using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
@@ -49,7 +48,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
             if (existKey)
             {
-                throw new ResourceDuplicatedException(nameof(RoleEfCore.Key), role.Key.ToString(), nameof(RoleInfo));
+                throw new SpecificResourceDuplicatedException<RoleInfo>(nameof(RoleInfo.Key), role.Key.ToString());
             }
 
             await this.SaveNewRoleAsync(role).ConfigureAwait(false);
@@ -64,7 +63,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
         public async Task AddPermissionByIdAsync(string id, AddPermission permissions)
         {
-            var role = await this._roleRepository.GetInfoByIdAsync(id, new SpecificResourceNotFoundException<RoleEfCore>(nameof(RoleEfCore.Id), id)).ConfigureAwait(false);
+            var role = await this._roleRepository.GetInfoByIdAsync(id, new SpecificResourceNotFoundException<RoleInfo>(nameof(RoleInfo.Id), id)).ConfigureAwait(false);
 
             var permissionsSaved = await this._permissionService.GetAllByKeysAsync(permissions.PermissionsKeys).ConfigureAwait(false);
 
@@ -72,7 +71,8 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                 .Where(p => role.Permissions.Contains(p))
                 .ToList();
 
-            if (duplicatePermission.Any()) throw new PermissionsDuplicatedException(duplicatePermission);
+            if (duplicatePermission.Count != 0)
+                throw new PermissionsDuplicatedException(duplicatePermission);
 
             await this._roleRepository.AddPermissionsByIdAsync(id, permissionsSaved).ConfigureAwait(false);
         }

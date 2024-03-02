@@ -1,5 +1,7 @@
-﻿using CQ.ApiElements.Filters;
+﻿using CQ.ApiElements;
+using CQ.ApiElements.Filters;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -15,12 +17,9 @@ namespace CQ.AuthProvider.WebApi.Filters
 
         protected override async Task<bool> IsFormatOfTokenValidAsync(string token, AuthorizationFilterContext context)
         {
-            if (context.HttpContext.Items[ContextItems.AccountLogged] != null)
-                return true;
+            var sessionService = base.GetService<ISessionService>(context);
 
-            var account = await GetAuthOfTokenAsync(token, context).ConfigureAwait(false);
-
-            return true;
+            return await sessionService.IsTokenValidAsync(token);
         }
 
         protected override async Task<object> GetAccountByTokenAsync(string token, AuthorizationFilterContext context)

@@ -14,9 +14,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 
         public string Key { get; private set; }
 
-        public MiniPermissionResponse(MiniPublicPermission entity) : base(entity) { }
-
-        protected override void Map(MiniPublicPermission entity)
+        public MiniPermissionResponse(MiniPublicPermission entity) : base(entity)
         {
             this.Id = entity.Id;
             this.Name = entity.Name;

@@ -1,8 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords.Exceptions;
-using CQ.UnitOfWork.Abstractions;
+using CQ.Exceptions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.ResetPasswords

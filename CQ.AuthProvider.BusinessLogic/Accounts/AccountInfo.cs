@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,13 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
         public List<RoleKey> Roles { get; init; } = null!;
 
         public List<PermissionKey> Permissions { get; init; } = null!;
+
+        public void AssertPermission(PermissionKey permission)
+        {
+            var hasPermission = this.Permissions.Any(p => p == permission || p == PermissionKey.Joker);
+
+            if (!hasPermission)
+                throw new AccessDeniedException(permission.ToString());
+        }
     }
 }

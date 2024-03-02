@@ -1,17 +1,11 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Authorizations.Mappings;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
+using CQ.Exceptions;
 using CQ.UnitOfWork.MongoDriver;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.DataAccess.Roles
 {
@@ -42,10 +36,10 @@ namespace CQ.AuthProvider.DataAccess.Roles
         {
             if (isPrivate)
             {
-                var hasPermission = accountLogged.Permissions.Any(p => p == PermissionKey.GetPrivateRoles || p == PermissionKey.Any);
+                var hasPermission = accountLogged.Permissions.Any(p => p == PermissionKey.GetAllPrivateRoles || p == PermissionKey.Joker);
                 if (!hasPermission)
                 {
-                    throw new AccessDeniedException(PermissionKey.GetPrivateRoles);
+                    throw new AccessDeniedException(PermissionKey.GetAllPrivateRoles.ToString());
                 }
             }
 

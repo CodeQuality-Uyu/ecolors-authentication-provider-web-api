@@ -1,4 +1,6 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.ApiElements;
+using CQ.ApiElements.Filters.Extensions;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -14,11 +16,13 @@ namespace CQ.AuthProvider.WebApi.Filters
         {
         }
 
-        protected override async Task<bool> HasUserPermissionAsync(string token, string permission, AuthorizationFilterContext context)
+        protected override Task<bool> HasUserPermissionAsync(string token, string permission, AuthorizationFilterContext context)
         {
-            var account = context.GetItem<AccountInfo>(ContextItems.AccountLogged);
+            var account = context.HttpContext.GetItem<AccountInfo>(ContextItems.AccountLogged);
 
-            return account.Permissions.Contains(new PermissionKey(permission));
+            var hasPermission = account.Permissions.Contains(new PermissionKey(permission));
+            
+            return Task.FromResult(hasPermission);
         }
     }
 }

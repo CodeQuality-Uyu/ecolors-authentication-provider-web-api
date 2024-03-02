@@ -28,9 +28,7 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
                 .ConfigureAwait(false);
 
             if (identity == null)
-            {
                 throw new InvalidCredentialsException(credentials.Email);
-            }
 
             var sessionOfUser = await _sessionRepository.GetOrDefaultAsync(s => s.AccountId == identity.Id).ConfigureAwait(false);
 
@@ -68,11 +66,13 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
         {
             var isGuid = Guid.TryParse(token, out var id);
 
-            if (!isGuid) throw new ArgumentException("The token must be a valid Guid", "token");
+            if (!isGuid)
+                throw new ArgumentException("The token must be a valid Guid", "token");
 
             var result = await GetOrDefaultByTokenAsync(token).ConfigureAwait(false);
 
-            if (result == null) throw new ArgumentException("Invalid token, session has expired", "token");
+            if (result == null)
+                throw new ArgumentException("Invalid token, session has expired", "token");
 
             return result;
         }
@@ -81,7 +81,8 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
         {
             var isGuid = Guid.TryParse(token, out var id);
 
-            if (!isGuid) return null;
+            if (!isGuid)
+                return null;
 
             return await this._sessionRepository.GetOrDefaultByPropAsync(token, nameof(Session.Token)).ConfigureAwait(false);
         }
@@ -90,7 +91,8 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
         {
             var isGuid = Guid.TryParse(token, out var id);
 
-            if (!isGuid) return false;
+            if (!isGuid)
+                return false;
 
             return await this._sessionRepository.ExistAsync(s => s.Token == token).ConfigureAwait(false);
         }

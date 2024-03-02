@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
-using CQ.ApiElements.Filters.Extension;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.ApiElements.Extensions;
+using CQ.ApiElements.Filters.Extensions;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.ApiElements;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 {
@@ -26,9 +29,13 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
         }
 
         [HttpGet]
-        public async Task<List<PermissionResponse>> GetAllAsync()
+        public async Task<List<PermissionResponse>> GetAllAsync(
+            [FromQuery] bool @private,
+            [FromQuery] string? roleId)
         {
-            var permissions = await this._permissionService.GetAllAsync().ConfigureAwait(false);
+            var accountLogged = base.HttpContext.GetItem<AccountInfo>(ContextItems.AccountLogged);
+
+            var permissions = await this._permissionService.GetAllAsync(@private, roleId, accountLogged).ConfigureAwait(false);
 
             return permissions.MapTo<PermissionResponse, Permission>();
         }

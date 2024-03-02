@@ -36,6 +36,9 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             Guard.ThrowIsInputInvalidEmail(this.Email);
 
             Guard.ThrowIsInputInvalidPassword(this.Password);
+
+            Guard.ThrowIsNullOrEmpty(this.FirstName, nameof(this.FirstName));
+            Guard.ThrowIsNullOrEmpty(this.LastName, nameof(this.LastName));
         }
 
         public string FullName()

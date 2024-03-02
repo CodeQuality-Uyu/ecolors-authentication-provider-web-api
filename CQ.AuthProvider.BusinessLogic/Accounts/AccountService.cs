@@ -1,7 +1,6 @@
-﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
-using CQ.AuthProvider.BusinessLogic.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.Exceptions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts

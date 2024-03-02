@@ -12,9 +12,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 
         public string Key { get; private set; }
 
-        public MiniPublicRoleResponse(MiniRole entity) : base(entity) { }
-
-        protected override void Map(MiniRole entity)
+        public MiniPublicRoleResponse(MiniRole entity) : base(entity)
         {
             Name = entity.Name;
             Description = entity.Description;

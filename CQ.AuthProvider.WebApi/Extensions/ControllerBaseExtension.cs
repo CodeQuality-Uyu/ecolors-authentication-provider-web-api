@@ -1,4 +1,6 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.ApiElements;
+using CQ.ApiElements.Filters.Extensions;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CQ.AuthProvider.WebApi.Extensions

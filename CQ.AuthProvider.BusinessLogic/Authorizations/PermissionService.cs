@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
+using CQ.Exceptions;
 using CQ.UnitOfWork.Abstractions;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
@@ -15,17 +16,12 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             this._permissionRepository = permissionRepository;
         }
 
-        public async Task<List<Permission>> GetAllAsync()
+        public async Task<List<Permission>> GetAllAsync(bool isPrivate, string? roleId, AccountInfo accountLogged)
         {
-            return await this._permissionRepository.GetAllInfoAsync().ConfigureAwait(false);
+            return await this._permissionRepository.GetAllInfoAsync(isPrivate, roleId, accountLogged).ConfigureAwait(false);
         }
 
         public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys)
-        {
-            return await this._permissionRepository.GetAllByKeysAsync(permissionKeys).ConfigureAwait(false);
-        }
-
-        public async Task CheckExistenceAsync(List<PermissionKey> permissionKeys)
         {
             var permissionsSaved = await this._permissionRepository.GetAllByKeysAsync(permissionKeys).ConfigureAwait(false);
 
@@ -35,6 +31,13 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
                 throw new PermissionNotFoundException(permissionsNotFound);
             }
+
+            return permissionsSaved;
+        }
+
+        public async Task ExistByKeysAsync(List<PermissionKey> permissionKeys)
+        {
+            await this.GetAllByKeysAsync(permissionKeys).ConfigureAwait(false);
         }
 
         public async Task CreateAsync(CreatePermission permission)
@@ -42,10 +45,9 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             var existPermission = await this._permissionRepository.ExistByKeyAsync(permission.Key).ConfigureAwait(false);
 
             if (existPermission) 
-                throw new ResourceDuplicatedException(
+                throw new SpecificResourceDuplicatedException<Permission>(
                     nameof(Permission.Key),
-                    permission.Key.ToString(),
-                    nameof(Permission));
+                    permission.Key.ToString());
 
             await this.SaveNewPermissionAsync(permission).ConfigureAwait(false);
         }

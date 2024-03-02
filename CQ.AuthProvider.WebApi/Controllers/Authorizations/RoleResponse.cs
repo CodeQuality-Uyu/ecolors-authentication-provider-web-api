@@ -18,10 +18,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 
         public RoleResponse(RoleInfo entity) : base(entity)
         {
-        }
-
-        protected override void Map(RoleInfo entity)
-        {
             this.Id = entity.Id;
             this.Name = entity.Name;
             this.Description = entity.Description;

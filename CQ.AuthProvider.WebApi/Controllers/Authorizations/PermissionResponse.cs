@@ -18,10 +18,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 
         public PermissionResponse(Permission entity) : base(entity)
         {
-        }
-
-        protected override void Map(Permission entity)
-        {
             this.Id = entity.Id;
             this.Name = entity.Name;
             this.Description = entity.Description;

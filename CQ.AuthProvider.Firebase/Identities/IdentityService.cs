@@ -1,9 +1,9 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
 using FirebaseAdmin.Auth;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.Exceptions;
 
 namespace CQ.AuthProvider.Firebase
 {
@@ -77,7 +77,7 @@ namespace CQ.AuthProvider.Firebase
             {
                 if (ex.AuthErrorCode == AuthErrorCode.EmailAlreadyExists)
                 {
-                    throw new ResourceDuplicatedException("email", userRecords.Email, "FirebaseAuth");
+                    throw new SpecificResourceDuplicatedException<AccountInfo>(nameof(AccountInfo.Email), userRecords.Email);
                 }
 
                 throw;

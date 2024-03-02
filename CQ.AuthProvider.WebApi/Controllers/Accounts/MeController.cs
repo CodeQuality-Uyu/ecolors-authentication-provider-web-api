@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
-using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.WebApi.Extensions;
 
-namespace CQ.AuthProvider.WebApi.Controllers
+namespace CQ.AuthProvider.WebApi.Controllers.Accounts
 {
     [ApiController]
     [Route("me")]
@@ -11,21 +10,33 @@ namespace CQ.AuthProvider.WebApi.Controllers
     public class MeController : ControllerBase
     {
         [HttpGet]
-        public AccountInfo Get()
+        public AccountInfoResponse Get()
         {
-            return this.GetAccountLogged();
+            var accountLogged = this.GetAccountLogged();
+
+            return new AccountInfoResponse(accountLogged);
         }
 
         [HttpPost("check-permission")]
-        public object CreateAsync(CheckPermissionRequest request)
+        public object CheckPermissionAsync(CheckPermissionRequest request)
         {
             var mapped = request.Map();
 
             var account = this.GetAccountLogged();
 
+            var hasPermission = true;
+            try
+            {
+                account.AssertPermission(mapped);
+            }
+            catch (Exception)
+            {
+                hasPermission = false;
+            }
+
             return new
             {
-                hasPermission = account.Permissions.Contains(mapped)
+                hasPermission = hasPermission
             };
         }
     }

@@ -27,13 +27,13 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         public Permission(
             string name,
             string description,
-            string key,
+            PermissionKey key,
             bool isPublic)
             : this()
         {
             this.Name = name;
             this.Description = description;
-            this.Key = key;
+            this.Key = key.ToString();
             this.IsPublic = isPublic;
         }
     }

@@ -1,4 +1,5 @@
-﻿using CQ.UnitOfWork.Abstractions;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.UnitOfWork.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
     public interface IPermissionRepository<TPermission> : IRepository<TPermission>
         where TPermission : class
     {
-        Task<List<Permission>> GetAllInfoAsync();
+        Task<List<Permission>> GetAllInfoAsync(bool isPrivate, string? roleId, AccountInfo accountLogged);
 
         Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys);
 

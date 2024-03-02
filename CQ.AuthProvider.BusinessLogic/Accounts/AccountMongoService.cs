@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.UnitOfWork.Abstractions;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts
 {

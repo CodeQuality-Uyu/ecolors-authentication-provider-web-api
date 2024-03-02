@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Authorizations.Mappings;
+using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore;
+using CQ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,9 +37,18 @@ namespace CQ.AuthProvider.DataAccess.Permissions
             return permissions;
         }
 
-        public async Task<List<Permission>> GetAllInfoAsync()
+        public async Task<List<Permission>> GetAllInfoAsync(bool isPrivate, string? roleId, AccountInfo accountLogged)
         {
-            return await base.GetAllAsync<Permission>().ConfigureAwait(false);
+            if (isPrivate)
+                accountLogged.AssertPermission(PermissionKey.GetAllPrivatePermissions);
+
+            if (Guard.IsNotNullOrEmpty(roleId))
+                accountLogged.AssertPermission(PermissionKey.GetAllPermissionsByRoleId);
+
+            return await base.GetAllAsync<Permission>(p =>
+            p.IsPublic != isPrivate &&
+            (string.IsNullOrEmpty(roleId) || p.Roles.Any(r => r.Id==roleId)))
+                .ConfigureAwait(false);
         }
     }
 }

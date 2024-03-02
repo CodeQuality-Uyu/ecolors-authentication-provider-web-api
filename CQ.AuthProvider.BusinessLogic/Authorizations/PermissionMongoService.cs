@@ -17,7 +17,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             var permission = new Permission(
                 newPermission.Name,
                 newPermission.Description,
-                newPermission.Key.ToString(),
+                newPermission.Key,
                 newPermission.IsPublic);
 
             await base._permissionRepository.CreateAsync(permission).ConfigureAwait(false);

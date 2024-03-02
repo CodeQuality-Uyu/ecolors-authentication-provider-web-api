@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
-using CQ.AuthProvider.BusinessLogic;
-using CQ.ApiElements.Filters.Extension;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.WebApi.Extensions;
+using CQ.ApiElements.Extensions;
+using System.Data;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 {

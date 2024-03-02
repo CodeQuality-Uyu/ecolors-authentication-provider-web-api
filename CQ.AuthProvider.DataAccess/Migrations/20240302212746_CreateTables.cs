@@ -128,50 +128,52 @@ namespace CQ.AuthProvider.DataAccess.Migrations
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "Id", "CreatedAt", "Email", "Name" },
-                values: new object[] { "d4702564-8273-495b-a694-82fcc69da874", new DateTimeOffset(new DateTime(2024, 2, 29, 23, 38, 49, 492, DateTimeKind.Unspecified).AddTicks(469), new TimeSpan(0, 0, 0, 0, 0)), "admin@gmail.com", "Admin Admin" });
+                values: new object[] { "d4702564-8273-495b-a694-82fcc69da874", new DateTimeOffset(new DateTime(2024, 3, 2, 21, 27, 46, 256, DateTimeKind.Unspecified).AddTicks(6917), new TimeSpan(0, 0, 0, 0, 0)), "admin@gmail.com", "Admin Admin" });
 
             migrationBuilder.InsertData(
                 table: "Permissions",
                 columns: new[] { "Id", "Description", "IsPublic", "Key", "Name" },
                 values: new object[,]
                 {
-                    { "054240e399f2467b89791ee5678b126b", "Obtener un rol", false, "getbyid-rol", "Obtener un rol" },
-                    { "1b19c58b29984320b65b41d57beadd1d", "Actualizar un rol", false, "updatebyid-rol", "Actualizar un rol" },
-                    { "1de1006bcc3644769f82d4e2431e522c", "Obtener roles publicos", false, "getpublic-rol", "Obtener roles publicos" },
-                    { "45779b456d0f478da758125001503210", "Obtener todos los permisos", false, "getall-permission", "Obtener permisos" },
-                    { "5901e6ddaa8e4846932feeff2b7eb43a", "Obtener todos los roles", false, "getall-permission", "Obtener roles" },
-                    { "5f2e5b22569b4f6792b13ae81ed8c958", "Crear permiso", false, "create-permission", "Crear permiso" },
-                    { "69c149db690b4825a3e55d49256cd9ee", "Actualizar un permiso", false, "updatebyid-permission", "Actualizar un permiso" },
-                    { "812c61a4cfa74f3d867d3e605186c8ca", "Obtener un permiso", false, "getbyid-permission", "Obtener un permiso" },
-                    { "cd94dfb75151470f905f4e24604c1871", "Obtener permisos publicos", false, "getpublic-permission", "Obtener permisos publicos" },
-                    { "fd325e386f7c4652bbab42712a65c2c8", "Crear rol", false, "create-rol", "Crear rol" }
+                    { "0682cd66199645e5a1fb5ba483cbf9c8", "Actualizar un permiso", false, "updatebyid-permission", "Actualizar un permiso" },
+                    { "13ce67315ae5464c889a25379c6b32a5", "Obtener un permiso", false, "getbyid-permission", "Obtener un permiso" },
+                    { "369a991cec3f40f489c821774d3ede06", "Obtener permisos privados", false, "getallprivate-permission", "Obtener permisos privados" },
+                    { "46536c750bda4544873621b341667faa", "Obtener todos los roles", false, "getall-role", "Obtener roles" },
+                    { "6a41bc423a494a63a80f5da9dd0ae277", "Crear permiso", false, "create-permission", "Crear permiso" },
+                    { "7815af8db7a1454f896c3adfd26f341c", "Crear rol", false, "create-role", "Crear rol" },
+                    { "78d5bee419524cfeb3596078878427d0", "Obtener permisos de un rol", false, "getallbyroleid-permission", "Obtener permisos de un rol" },
+                    { "7e702bcc9a704e53b1842dccb90271fb", "Obtener todos los permisos", false, "getall-permission", "Obtener permisos" },
+                    { "82f67574fc7c45baae4bee48445f6c7b", "Obtener roles privados", false, "getallprivate-role", "Obtener roles privados" },
+                    { "e894d54c71e24fff9d14f9dc3e35663d", "Obtener un rol", false, "getbyid-role", "Obtener un rol" },
+                    { "ea6d3f0d41ea482393d00d23cfce9f24", "Actualizar un rol", false, "addpermission-role", "Actualizar un rol" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "Description", "IsPublic", "Key", "Name" },
-                values: new object[] { "ad34233fc5694b019b7c5cc5e5c959b2", "Admin", false, "admin", "Admin" });
+                values: new object[] { "ebe421fd52724468bb1b870cf30eec1b", "Admin", false, "admin", "Admin" });
 
             migrationBuilder.InsertData(
                 table: "AccountsRoles",
                 columns: new[] { "AccountId", "RoleId" },
-                values: new object[] { "d4702564-8273-495b-a694-82fcc69da874", "ad34233fc5694b019b7c5cc5e5c959b2" });
+                values: new object[] { "d4702564-8273-495b-a694-82fcc69da874", "ebe421fd52724468bb1b870cf30eec1b" });
 
             migrationBuilder.InsertData(
                 table: "RolesPermissions",
                 columns: new[] { "PermissionId", "RoleId" },
                 values: new object[,]
                 {
-                    { "054240e399f2467b89791ee5678b126b", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "1b19c58b29984320b65b41d57beadd1d", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "1de1006bcc3644769f82d4e2431e522c", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "45779b456d0f478da758125001503210", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "5901e6ddaa8e4846932feeff2b7eb43a", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "5f2e5b22569b4f6792b13ae81ed8c958", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "69c149db690b4825a3e55d49256cd9ee", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "812c61a4cfa74f3d867d3e605186c8ca", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "cd94dfb75151470f905f4e24604c1871", "ad34233fc5694b019b7c5cc5e5c959b2" },
-                    { "fd325e386f7c4652bbab42712a65c2c8", "ad34233fc5694b019b7c5cc5e5c959b2" }
+                    { "0682cd66199645e5a1fb5ba483cbf9c8", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "13ce67315ae5464c889a25379c6b32a5", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "369a991cec3f40f489c821774d3ede06", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "46536c750bda4544873621b341667faa", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "6a41bc423a494a63a80f5da9dd0ae277", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "7815af8db7a1454f896c3adfd26f341c", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "78d5bee419524cfeb3596078878427d0", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "7e702bcc9a704e53b1842dccb90271fb", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "82f67574fc7c45baae4bee48445f6c7b", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "e894d54c71e24fff9d14f9dc3e35663d", "ebe421fd52724468bb1b870cf30eec1b" },
+                    { "ea6d3f0d41ea482393d00d23cfce9f24", "ebe421fd52724468bb1b870cf30eec1b" }
                 });
 
             migrationBuilder.CreateIndex(

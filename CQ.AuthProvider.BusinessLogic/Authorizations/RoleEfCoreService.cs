@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CQ.UnitOfWork.Abstractions;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
@@ -18,8 +17,10 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
         protected override async Task SaveNewRoleAsync(CreateRole newRole)
         {
-            var permissions = await base._permissionService.GetAllByKeysAsync(newRole.PermissionKeys).ConfigureAwait(false);
-            
+            var permissions = await base._permissionService
+                .GetAllByKeysAsync(newRole.PermissionKeys)
+                .ConfigureAwait(false);
+
             var permissionsEfCore = this._mapper.Map<List<PermissionEfCore>>(permissions);
 
             var role = new RoleEfCore(

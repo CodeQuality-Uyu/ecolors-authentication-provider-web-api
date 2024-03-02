@@ -1,6 +1,4 @@
-﻿using CQ.UnitOfWork.Abstractions;
-
-namespace CQ.AuthProvider.BusinessLogic.Authorizations
+﻿namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
     internal sealed class RoleMongoService : RoleService<RoleMongo>
     {
@@ -13,7 +11,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
         protected override async Task SaveNewRoleAsync(CreateRole newRole)
         {
-            await base._permissionService.CheckExistenceAsync(newRole.PermissionKeys).ConfigureAwait(false);
+            await base._permissionService.ExistByKeysAsync(newRole.PermissionKeys).ConfigureAwait(false);
             
             var role = new RoleMongo(
                 newRole.Name,

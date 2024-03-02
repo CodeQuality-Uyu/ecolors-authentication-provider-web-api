@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
-    public record class CreateAccountResult(string Id, string Email, string? Name, string Token);
+    public record class CreateAccountResult(string Id, string Email, string Name, string Token);
 }
