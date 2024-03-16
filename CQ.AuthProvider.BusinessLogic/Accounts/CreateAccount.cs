@@ -1,10 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
@@ -18,6 +13,8 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public readonly string LastName = null!;
 
+        public string FullName => $"{this.FirstName} {this.LastName}";
+
         public readonly RoleKey Role;
 
         public CreateAccount(
@@ -27,10 +24,10 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             string lastName,
             string role)
         {
-            this.Email = Guard.Encode(email.Trim());
-            this.Password = Guard.Encode(password.Trim());
-            this.FirstName = Guard.Encode(firstName.Trim());
-            this.LastName = Guard.Encode(lastName.Trim());
+            this.Email = Guard.Encode(email.Trim())!;
+            this.Password = Guard.Encode(password.Trim())!;
+            this.FirstName = Normalize(Guard.Encode(firstName.Trim())!);
+            this.LastName = Normalize(Guard.Encode(lastName.Trim())!);
             this.Role = new(role);
 
             Guard.ThrowIsInputInvalidEmail(this.Email);
@@ -41,23 +38,15 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             Guard.ThrowIsNullOrEmpty(this.LastName, nameof(this.LastName));
         }
 
-        public string FullName()
+        private static string Normalize(string input)
         {
-            var firstNameNormalize = this.Normalize(this.FirstName);
-            var lastNameNormalize = this.Normalize(this.LastName);
+            if (input.Length == 0)
+                return input;
 
-            var fullName = $"{firstNameNormalize} {lastNameNormalize}";
+            if(input.Length == 1)
+                return $"{char.ToUpper(input[0])}";
 
-            var withoutSpace = fullName.Trim();
-
-            return withoutSpace;
-        }
-
-        private string Normalize(string input)
-        {
-            var normalized = !string.IsNullOrEmpty(input) ? $"{char.ToUpper(input[0])}{input[1..]}" : null;
-
-            return normalized;
+            return $"{char.ToUpper(input[0])}{input[1..]}";
         }
     }
 }

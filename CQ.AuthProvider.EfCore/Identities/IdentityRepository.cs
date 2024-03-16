@@ -34,5 +34,10 @@ namespace CQ.AuthProvider.EfCore.Identities
         {
             await base.UpdateByIdAsync(identityId, new { Password = newPassword }).ConfigureAwait(false);
         }
+
+        public async Task DeleteByIdAsync(string id)
+        {
+            await base.DeleteAsync(i => i.Id == id).ConfigureAwait(false);
+        }
     }
 }

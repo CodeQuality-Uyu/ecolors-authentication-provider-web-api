@@ -5,9 +5,19 @@ services:
     restart: always
     ports:
       - "27018:27017"
+  
+  sql-server:
+    image: microsoft/mssql-server-linux:2017-latest
+    restart: always
+    ports:
+      - "1434:1433"
+    environment:
+        SA_PASSWORD: "password"
+        ACCEPT_EULA: "Y"
+    
   web-api:
     depends_on: 
-      - mongo-server
+      - sql-server
     restart: always
     env_file:
       - CQ.AuthProvider.WebApi/.env.docker.local

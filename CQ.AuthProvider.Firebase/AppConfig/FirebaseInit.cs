@@ -32,7 +32,7 @@ namespace CQ.AuthProvider.Firebase.AppConfig
                 throw new FirebaseInitAppException(identityFirebase.ProjectId);
             }
 
-            services.AddSingleton((serviceProvider) =>
+            services.AddScoped((serviceProvider) =>
             {
                 var firebaseAuth = FirebaseAuth.GetAuth(playerFinderApp);
 

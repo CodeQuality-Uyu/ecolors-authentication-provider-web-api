@@ -25,5 +25,13 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 
             return response;
         }
+
+        [HttpGet("{token}/validate")]
+        public async Task<TokenValidationResponse> ValidateTokenAsync(string token)
+        {
+            var isValid = await this._sessionService.IsTokenValidAsync(token).ConfigureAwait(false);
+
+            return new TokenValidationResponse(isValid);
+        }
     }
 }

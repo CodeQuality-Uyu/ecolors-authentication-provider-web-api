@@ -1,10 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
@@ -12,7 +7,11 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
     {
         public string Id { get; set; } = null!;
 
-        public string Name { get; set; } = null!;
+        public string FullName { get; set; } = null!;
+
+        public string FirstName { get; set; } = null!;
+
+        public string LastName { get; set; } = null!;
 
         public string Email { get; set; } = null!;
 
@@ -28,13 +27,17 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
         }
 
         public AccountMongo(
-            string name,
+            string fullName,
+            string firstName,
+            string lastName,
             string email,
             AccountRoleMongo role
             )
             : this()
         {
-            this.Name = name;
+            this.FullName = fullName;
+            this.FirstName = firstName;
+            this.LastName = lastName;
             this.Email= email;
             this.Roles = new List<AccountRoleMongo> { role };
         }

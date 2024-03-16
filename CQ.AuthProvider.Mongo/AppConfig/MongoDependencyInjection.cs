@@ -20,11 +20,11 @@ namespace CQ.AuthProvider.Mongo.AppConfig
                     new DatabaseConfig(connectionString, name),
                     useDefaultQueryLogger: true,
                     @default: false),
-            LifeTime.Singleton,
-            LifeTime.Singleton)
-                .AddMongoRepository<Session>(name, LifeTime.Singleton)
-                .AddAbstractionMongoRepository<Identity, IIdentityProviderRepository, IdentityRepository>(name, LifeTime.Singleton)
-                .AddSingleton<IIdentityProviderHealthService, IdentityRepository>();
+            LifeTime.Scoped,
+            LifeTime.Scoped)
+                .AddMongoRepository<Session>(name, LifeTime.Scoped)
+                .AddAbstractionMongoRepository<Identity, IIdentityProviderRepository, IdentityRepository>(name, LifeTime.Scoped)
+                .AddScoped<IIdentityProviderHealthService, IdentityRepository>();
 
             return services;
         }

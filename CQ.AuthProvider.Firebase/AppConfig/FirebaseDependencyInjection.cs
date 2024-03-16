@@ -20,10 +20,10 @@ namespace CQ.AuthProvider.Firebase.AppConfig
 
             services
                 .AddFirebase(identityFirebase)
-                .AddSingleton<IdentityFirebaseOptions>(identityOptions)
-                .AddSingleton<IIdentityProviderRepository, IdentityService>()
-                .AddSingleton<IIdentityProviderHealthService, IdentityService>()
-                .AddTransient<HttpClientAdapter>((serviceProvider) =>
+                .AddScoped<IdentityFirebaseOptions>((provider) => identityOptions)
+                .AddScoped<IIdentityProviderRepository, IdentityService>()
+                .AddScoped<IIdentityProviderHealthService, IdentityService>()
+                .AddScoped<HttpClientAdapter>((serviceProvider) =>
                 {
                     var apiUrl = identityFirebase.RefererApiUrl;
                     var baseUrl = identityFirebase.ApiUrl;
@@ -35,7 +35,7 @@ namespace CQ.AuthProvider.Firebase.AppConfig
 
                     return new HttpClientAdapter(baseUrl, baseHeaders);
                 })
-                .AddSingleton<ISessionService, SessionService>();
+                .AddScoped<ISessionService, SessionService>();
 
 
             return services;

@@ -31,7 +31,9 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
             var account = new AccountEfCore(
                 newAccount.Email,
-                newAccount.FullName(),
+                newAccount.FullName,
+                newAccount.FirstName,
+                newAccount.LastName,
                 role)
             {
                 Id = identity.Id

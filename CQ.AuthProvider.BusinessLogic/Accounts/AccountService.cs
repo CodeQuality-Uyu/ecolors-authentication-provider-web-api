@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Exceptions;
 using CQ.Utility;
@@ -30,11 +31,27 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
             var identity = await this.CreateIdentityAsync(newAccount).ConfigureAwait(false);
 
-            var account = await this.SaveNewAccountAsync(newAccount, identity).ConfigureAwait(false);
+            try
+            {
+                var account = await this.SaveNewAccountAsync(newAccount, identity).ConfigureAwait(false);
 
-            var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAccount.Email, newAccount.Password)).ConfigureAwait(false);
+                var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAccount.Email, newAccount.Password)).ConfigureAwait(false);
 
-            return new CreateAccountResult(account.Id, account.Email, account.Name, session.Token);
+                return new CreateAccountResult(
+                    account.Id,
+                    account.Email,
+                    account.FullName,
+                    account.FirstName,
+                    account.LastName,
+                    session.Token,
+                    account.Roles,
+                    account.Permissions);
+            }
+            catch (SpecificResourceNotFoundException<RoleInfo>) 
+            {
+                await this._identityProviderRepository.DeleteByIdAsync(identity.Id).ConfigureAwait(false);
+                throw;
+            }
         }
 
         private async Task AssertEmailInUse(string email)

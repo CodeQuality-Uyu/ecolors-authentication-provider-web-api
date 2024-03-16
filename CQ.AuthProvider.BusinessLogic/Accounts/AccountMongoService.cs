@@ -33,7 +33,9 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             var miniRole = new AccountRoleMongo(role.Key, role.Permissions);
 
             var account = new AccountMongo(
-                newAccount.FullName(),
+                newAccount.FullName,
+                newAccount.FirstName,
+                newAccount.LastName,
                 newAccount.Email,
                 miniRole)
             {

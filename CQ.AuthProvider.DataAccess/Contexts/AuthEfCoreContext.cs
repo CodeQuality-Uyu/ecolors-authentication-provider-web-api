@@ -118,7 +118,9 @@ namespace CQ.AuthProvider.DataAccess.Contexts
             {
                 Id = accountId,
                 Email = "admin@gmail.com",
-                Name = "Admin Admin"
+                FullName = "Admin Admin",
+                FirstName = "Admin",
+                LastName= "Admin"
             };
 
             modelBuilder

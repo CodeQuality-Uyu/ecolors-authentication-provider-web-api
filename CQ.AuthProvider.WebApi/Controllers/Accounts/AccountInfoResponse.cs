@@ -7,7 +7,11 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
     {
         public string Id { get; init; }
 
-        public string Name { get; init; }
+        public string FullName { get; init; }
+        
+        public string FirstName { get; init; }
+        
+        public string LastName { get; init; }
 
         public string Email { get; init; }
 
@@ -18,7 +22,9 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
         public AccountInfoResponse(AccountInfo entity) : base(entity)
         {
             Id = entity.Id;
-            Name = entity.Name;
+            FullName = entity.FullName;
+            FirstName = entity.FirstName;
+            LastName = entity.LastName;
             Email = entity.Email;
             Roles = entity.Roles.Select(r => r.ToString()).ToList();
             Permissions = entity.Permissions.Select(p => p.ToString()).ToList();

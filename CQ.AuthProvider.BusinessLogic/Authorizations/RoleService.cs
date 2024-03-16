@@ -32,7 +32,11 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
         public async Task<TRole> GetByKeyAsync(RoleKey key)
         {
-            var role = await this._roleRepository.GetByPropAsync(key.ToString(), nameof(RoleInfo.Key)).ConfigureAwait(false);
+            var role = await this._roleRepository.GetByPropAsync(
+                key.ToString(),
+                nameof(RoleInfo.Key),
+                new SpecificResourceNotFoundException<RoleInfo>(nameof(RoleInfo.Key), key.ToString()))
+                .ConfigureAwait(false);
 
             return role;
         }

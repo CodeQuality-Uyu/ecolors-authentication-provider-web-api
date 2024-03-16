@@ -21,11 +21,11 @@ namespace CQ.AuthProvider.EfCore.AppConfig
                     new DatabaseConfig(connectionString, name),
                     useDefaultQueryLogger: true,
                      @default: false),
-                LifeTime.Singleton,
-                LifeTime.Singleton)
-                .AddRepository<Session>(name, LifeTime.Singleton)
-                .AddAbstractionEfCoreRepository<Identity, IIdentityProviderRepository, IdentityRepository>(name, LifeTime.Singleton)
-                .AddSingleton<IIdentityProviderHealthService, IdentityRepository>();
+                LifeTime.Scoped,
+                LifeTime.Scoped)
+                .AddRepository<Session>(name, LifeTime.Scoped)
+                .AddAbstractionEfCoreRepository<Identity, IIdentityProviderRepository, IdentityRepository>(name, LifeTime.Scoped)
+                .AddScoped<IIdentityProviderHealthService, IdentityRepository>();
 
             return services;
         }

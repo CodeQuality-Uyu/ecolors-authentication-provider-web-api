@@ -14,7 +14,11 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public string Email { get; init; } = null!;
 
-        public string Name { get; init; } = null!;
+        public string FullName { get; init; } = null!;
+
+        public string FirstName { get; init; } = null!;
+
+        public string LastName { get; init; } = null!;
 
         public List<RoleKey> Roles { get; init; } = null!;
 

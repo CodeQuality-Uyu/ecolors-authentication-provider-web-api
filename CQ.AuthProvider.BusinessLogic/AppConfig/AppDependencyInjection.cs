@@ -26,27 +26,26 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
             var mongoConnectionString = configuration.GetConnectionString("AuthMongo");
             var sqlConnectionString = configuration.GetConnectionString("AuthSql");
 
-
             if(Guard.IsNotNullOrEmpty(sqlConnectionString)) 
             {
                 services
-                    .AddSingleton<IAccountService, AccountEfCoreService>()
-                    .AddSingleton<IRoleService, RoleEfCoreService>()
-                    .AddSingleton<IRoleInternalService<RoleEfCore>, RoleEfCoreService>()
-                    .AddSingleton<IPermissionInternalService, PermissionEfCoreService>()
-                    .AddSingleton<IPermissionService, PermissionEfCoreService>()
-                    .AddSingleton<IResetPasswordService, ResetPasswordEfCoreService>();
+                    .AddScoped<IAccountService, AccountEfCoreService>()
+                    .AddScoped<IRoleService, RoleEfCoreService>()
+                    .AddScoped<IRoleInternalService<RoleEfCore>, RoleEfCoreService>()
+                    .AddScoped<IPermissionInternalService, PermissionEfCoreService>()
+                    .AddScoped<IPermissionService, PermissionEfCoreService>()
+                    .AddScoped<IResetPasswordService, ResetPasswordEfCoreService>();
             }
             
             if(Guard.IsNotNullOrEmpty(mongoConnectionString)) 
             {
                 services
-                    .AddSingleton<IAccountService, AccountMongoService>()
-                    .AddSingleton<IRoleService, RoleMongoService>()
-                    .AddSingleton<IRoleInternalService<RoleMongo>, RoleMongoService>()
-                    .AddSingleton<IPermissionInternalService, PermissionMongoService>()
-                    .AddSingleton<IPermissionService, PermissionMongoService>()
-                    .AddSingleton<IResetPasswordService, ResetPasswordMongoService>();
+                    .AddScoped<IAccountService, AccountMongoService>()
+                    .AddScoped<IRoleService, RoleMongoService>()
+                    .AddScoped<IRoleInternalService<RoleMongo>, RoleMongoService>()
+                    .AddScoped<IPermissionInternalService, PermissionMongoService>()
+                    .AddScoped<IPermissionService, PermissionMongoService>()
+                    .AddScoped<IResetPasswordService, ResetPasswordMongoService>();
             }
 
             var identity = configuration
@@ -57,7 +56,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 
             if (identity.Type == "Database")
             {
-                services.AddSingleton<ISessionService, SessionService>();
+                services.AddScoped<ISessionService, SessionService>();
             }
 
             return services;

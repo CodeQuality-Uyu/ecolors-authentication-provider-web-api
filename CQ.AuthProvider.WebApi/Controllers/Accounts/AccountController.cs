@@ -15,13 +15,13 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
         }
 
         [HttpPost("credentials")]
-        public async Task<IActionResult> CreateCredentialsAsync(CreateAccountRequest request)
+        public async Task<CreateAccountResponse> CreateCredentialsAsync(CreateAccountRequest request)
         {
-            var createAuth = request.Map();
+            var createAccount = request.Map();
 
-            var auth = await this._accountService.CreateAsync(createAuth);
+            var account = await this._accountService.CreateAsync(createAccount);
 
-            return Ok(auth);
+            return new CreateAccountResponse(account);
         }
     }
 }

@@ -19,22 +19,19 @@ namespace CQ.AuthProvider.Firebase
             this._options = options;
         }
 
-        public async Task<AccountEfCore> GetByEmailAsync(string email)
+        public async Task<Identity> GetByEmailAsync(string email)
         {
             try
             {
                 var userWithEmail = await _firebaseAuth.GetUserByEmailAsync(email).ConfigureAwait(false);
 
                 if (userWithEmail == null)
-                {
-                    throw new AuthNotFoundException(email);
-                }
+                    throw new SpecificResourceNotFoundException<Identity>(nameof(Identity.Email), email);
 
-                return new AccountEfCore
+                return new Identity
                 {
                     Id = userWithEmail.Uid,
                     Email = email,
-                    Name = userWithEmail.DisplayName,
                 };
             }
             catch (FirebaseAuthException ex)
@@ -113,6 +110,11 @@ namespace CQ.AuthProvider.Firebase
             {
                 return false;
             }
+        }
+
+        public async Task DeleteByIdAsync(string id)
+        {
+            await this._firebaseAuth.DeleteUserAsync(id).ConfigureAwait(false);
         }
     }
 }

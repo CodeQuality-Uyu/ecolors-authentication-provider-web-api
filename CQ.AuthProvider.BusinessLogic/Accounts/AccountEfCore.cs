@@ -9,7 +9,11 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public string Email { get; set; } = null!;
 
-        public string Name { get; set; } = null!;
+        public string FullName { get; set; } = null!;
+
+        public string FirstName { get; set; } = null!;
+
+        public string LastName { get; set; } = null!;
 
         public List<RoleEfCore> Roles { get; set; } = null!;
 
@@ -24,12 +28,16 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public AccountEfCore(
             string email,
-            string name,
+            string fullName,
+            string firstName,
+            string lastName,
             RoleEfCore role)
             : this()
         {
             this.Email = email;
-            this.Name = name;
+            this.FullName = fullName;
+            this.FirstName = firstName;
+            this.LastName = lastName;
             this.Roles = new List<RoleEfCore> { role };
         }
     }

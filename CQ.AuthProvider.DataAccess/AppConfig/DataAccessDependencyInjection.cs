@@ -35,13 +35,13 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                     new MongoConfig(
                         new DatabaseConfig(mongoConnectionString, databaseName),
                         useDefaultQueryLogger: true),
-                    LifeTime.Singleton,
-                    LifeTime.Singleton)
-                    .AddAbstractionMongoRepository<AccountMongo, IAccountRepository<AccountMongo>, AccountMongoRepository>(LifeTime.Singleton)
-                    .AddAbstractionMongoRepository<AccountMongo, IAccountInfoRepository, AccountMongoRepository>(LifeTime.Singleton)
-                    .AddAbstractionMongoRepository<RoleMongo, IRoleRepository<RoleMongo>, RoleMongoRepository>(LifeTime.Singleton)
-                    .AddAbstractionMongoRepository<ResetPasswordApplication, IResetPasswordApplicationRepository<ResetPasswordApplication>, ResetPasswordApplicationMongoRepository>(LifeTime.Singleton)
-                    .AddAbstractionMongoRepository<Permission, IPermissionRepository<Permission>, PermissionMongoRepository>(LifeTime.Singleton);
+                    LifeTime.Scoped,
+                    LifeTime.Scoped)
+                    .AddAbstractionMongoRepository<AccountMongo, IAccountRepository<AccountMongo>, AccountMongoRepository>(LifeTime.Scoped)
+                    .AddAbstractionMongoRepository<AccountMongo, IAccountInfoRepository, AccountMongoRepository>(LifeTime.Scoped)
+                    .AddAbstractionMongoRepository<RoleMongo, IRoleRepository<RoleMongo>, RoleMongoRepository>(LifeTime.Scoped)
+                    .AddAbstractionMongoRepository<ResetPasswordApplication, IResetPasswordApplicationRepository<ResetPasswordApplication>, ResetPasswordApplicationMongoRepository>(LifeTime.Scoped)
+                    .AddAbstractionMongoRepository<Permission, IPermissionRepository<Permission>, PermissionMongoRepository>(LifeTime.Scoped);
             }
 
             if (!string.IsNullOrEmpty(sqlConnectionString))
@@ -51,13 +51,13 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                     new EfCoreConfig(
                         new DatabaseConfig(sqlConnectionString, databaseName),
                         useDefaultQueryLogger: true),
-                    LifeTime.Singleton,
-                    LifeTime.Singleton)
-                    .AddAbstractionEfCoreRepository<AccountEfCore, IAccountRepository<AccountEfCore>, AccountEfCoreRepository>(LifeTime.Singleton)
-                    .AddAbstractionEfCoreRepository<AccountEfCore, IAccountInfoRepository, AccountEfCoreRepository>(LifeTime.Singleton)
-                    .AddAbstractionEfCoreRepository<RoleEfCore, IRoleRepository<RoleEfCore>, RoleEfCoreRepository>(LifeTime.Singleton)
-                    .AddAbstractionEfCoreRepository<ResetPasswordApplicationEfCore, IResetPasswordApplicationRepository<ResetPasswordApplicationEfCore>, ResetPasswordApplicationEfCoreRepository>(LifeTime.Singleton)
-                    .AddAbstractionEfCoreRepository<PermissionEfCore, IPermissionRepository<PermissionEfCore>, PermissionEfCoreRepository>(LifeTime.Singleton);
+                    LifeTime.Scoped,
+                    LifeTime.Scoped)
+                    .AddAbstractionEfCoreRepository<AccountEfCore, IAccountRepository<AccountEfCore>, AccountEfCoreRepository>(LifeTime.Scoped)
+                    .AddAbstractionEfCoreRepository<AccountEfCore, IAccountInfoRepository, AccountEfCoreRepository>(LifeTime.Scoped)
+                    .AddAbstractionEfCoreRepository<RoleEfCore, IRoleRepository<RoleEfCore>, RoleEfCoreRepository>(LifeTime.Scoped)
+                    .AddAbstractionEfCoreRepository<ResetPasswordApplicationEfCore, IResetPasswordApplicationRepository<ResetPasswordApplicationEfCore>, ResetPasswordApplicationEfCoreRepository>(LifeTime.Scoped)
+                    .AddAbstractionEfCoreRepository<PermissionEfCore, IPermissionRepository<PermissionEfCore>, PermissionEfCoreRepository>(LifeTime.Scoped);
             }
 
             services.AddIdentityProvider(configuration);
