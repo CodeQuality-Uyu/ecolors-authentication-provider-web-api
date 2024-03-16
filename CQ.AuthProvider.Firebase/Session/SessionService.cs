@@ -1,5 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.UnitOfWork.Abstractions;
 using CQ.Utility;
 using FirebaseAdmin.Auth;
@@ -15,39 +17,39 @@ namespace CQ.AuthProvider.Firebase
     {
         private readonly HttpClientAdapter _firebaseApi;
         private readonly FirebaseAuth _firebaseAuth;
-        private readonly string _firebaseApiKey;
-        private readonly IRepository<Auth> _authRepository;
+        private readonly IdentityFirebaseOptions _options;
+        private readonly IAccountInfoRepository _accountRepository;
 
         public SessionService(
-            ISettingsService settingsService,
+            IdentityFirebaseOptions options,
             FirebaseAuth firebaseAuth,
             HttpClientAdapter firebaseApi,
-            IRepository<Auth> authRepository)
+            IAccountInfoRepository accountRepository)
         {
-            this._firebaseApiKey = settingsService.GetValue(EnvironmentVariable.Firebase.ApiKey);
+            this._options = options;
             this._firebaseApi = firebaseApi;
             this._firebaseAuth = firebaseAuth;
-            this._authRepository = authRepository;
+            this._accountRepository = accountRepository;
         }
 
         public async Task<SessionCreated> CreateAsync(CreateSessionCredentials credentials)
         {
-
             var response = await this._firebaseApi.PostAsync<SessionFirebase, FirebaseError>(
-                $"v1/accounts:signInWithPassword?key={this._firebaseApiKey}",
+                $"v1/accounts:signInWithPassword?key={this._options.ApiKey}",
                 new { email = credentials.Email, password = credentials.Password, returnSecureToken = true },
                 (error) =>
                 {
                     return this.ProcessLoginError(error, credentials);
                 })
                 .ConfigureAwait(false);
-            var auth = await this._authRepository.GetByPropAsync(response.LocalId).ConfigureAwait(false);
+            var account = await this._accountRepository.GetInfoByIdAsync(response.LocalId).ConfigureAwait(false);
 
             return new SessionCreated(
                 response.LocalId,
                 response.Email,
                 response.IdToken,
-                auth.Roles);
+                account.Roles,
+                account.Permissions);
         }
 
         private Exception? ProcessLoginError(FirebaseError error, CreateSessionCredentials credentials)
@@ -66,7 +68,7 @@ namespace CQ.AuthProvider.Firebase
 
             if (result == null) throw new ArgumentException("The token must be a valid JWT", "token");
 
-            var auth = await this._authRepository.GetByPropAsync(result.Uid).ConfigureAwait(false);
+            var auth = await this._accountRepository.GetInfoByIdAsync(result.Uid).ConfigureAwait(false);
 
             return new Session(result.Uid, auth.Email, token);
         }

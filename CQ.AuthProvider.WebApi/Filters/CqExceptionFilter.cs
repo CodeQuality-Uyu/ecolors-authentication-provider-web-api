@@ -9,11 +9,9 @@ namespace CQ.AuthProvider.WebApi.Filters
         {
         }
 
-        protected override ExceptionThrownContext BuildThrownContext(ExceptionContext context)
+        protected override void LogResponse(ExceptionResponse response)
         {
-            Console.WriteLine(context.Exception.GetType());
-
-            return base.BuildThrownContext(context);
+            Console.WriteLine(response.Context.Exception);
         }
     }
 }

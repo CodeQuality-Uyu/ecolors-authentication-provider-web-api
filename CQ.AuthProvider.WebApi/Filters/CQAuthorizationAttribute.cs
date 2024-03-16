@@ -1,29 +1,28 @@
-﻿using CQ.AuthProvider.BusinessLogic;
+﻿using CQ.ApiElements;
+using CQ.ApiElements.Filters.Extensions;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Authorizations;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters
 {
     internal class CQAuthorizationAttribute : CQAuthenticationAttribute
     {
-
-        public CQAuthorizationAttribute() : base() { }
-
-        public CQAuthorizationAttribute(string permission) : base(permission) { }
-
-        protected override string BuildPermission(string token, AuthorizationFilterContext context)
+        public CQAuthorizationAttribute() : base()
         {
-            return $"{context.RouteData.Values["action"].ToString().ToLower()}-{context.RouteData.Values["controller"].ToString().ToLower()}";
         }
 
-        protected override async Task<bool> HasUserPermissionAsync(string token, string permission, AuthorizationFilterContext context)
+        public CQAuthorizationAttribute(string permission) : base(permission)
         {
-            var authService = GetService<IAuthService>(context);
+        }
 
-            var auth = (Auth)context.HttpContext.Items[Items.Auth];
+        protected override Task<bool> HasUserPermissionAsync(string token, string permission, AuthorizationFilterContext context)
+        {
+            var account = context.HttpContext.GetItem<AccountInfo>(ContextItems.AccountLogged);
 
-            var isAuthorized = await authService.HasPermissionAsync(permission, auth).ConfigureAwait(false);
-
-            return isAuthorized;
+            var hasPermission = account.Permissions.Contains(new PermissionKey(permission));
+            
+            return Task.FromResult(hasPermission);
         }
     }
 }
