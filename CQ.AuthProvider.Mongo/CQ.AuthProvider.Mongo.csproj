@@ -7,15 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CQ.UnitOfWork.MongoDriver" Version="2.2.6" />
+    <PackageReference Include="CQ.UnitOfWork.MongoDriver" Version="2.2.20" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="CQ.Utility" Version="1.1.6" />
   </ItemGroup>
 
 </Project>

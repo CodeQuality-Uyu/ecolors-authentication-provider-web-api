@@ -1,22 +1,32 @@
 ﻿using CQ.AuthProvider.BusinessLogic.AppConfig;
-using CQ.AuthProvider.BusinessLogic;
 using CQ.Utility;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 
 namespace CQ.AuthProvider.Firebase.AppConfig
 {
     public static class FirebaseDependencyInjection
     {
-        public static IServiceCollection AddFirebaseServices(this IServiceCollection services, ISettingsService settingsService)
+        public static IServiceCollection AddFirebaseServices(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            IdentityFirebaseOptions identityFirebase)
         {
+            var identityOptions = configuration
+                .GetSection(IdentityOptions.Identity)
+                .Get<IdentityFirebaseOptions>()!;
+
             services
-                .AddFirebase(settingsService)
-                .AddSingleton<IIdentityProviderRepository, AuthRepository>()
-                .AddSingleton<IIdentityProviderHealthService, AuthRepository>()
-                .AddTransient<HttpClientAdapter>((serviceProvider) =>
+                .AddFirebase(identityFirebase)
+                .AddScoped<IdentityFirebaseOptions>((provider) => identityOptions)
+                .AddScoped<IIdentityProviderRepository, IdentityService>()
+                .AddScoped<IIdentityProviderHealthService, IdentityService>()
+                .AddScoped<HttpClientAdapter>((serviceProvider) =>
                 {
-                    var apiUrl = settingsService.GetValue(EnvironmentVariable.Firebase.RefererApiUrl);
-                    var baseUrl = settingsService.GetValue(EnvironmentVariable.Firebase.ApiUrl);
+                    var apiUrl = identityFirebase.RefererApiUrl;
+                    var baseUrl = identityFirebase.ApiUrl;
 
                     var baseHeaders = new List<Header>
                 {
@@ -25,7 +35,7 @@ namespace CQ.AuthProvider.Firebase.AppConfig
 
                     return new HttpClientAdapter(baseUrl, baseHeaders);
                 })
-                .AddSingleton<ISessionService, SessionService>();
+                .AddScoped<ISessionService, SessionService>();
 
 
             return services;

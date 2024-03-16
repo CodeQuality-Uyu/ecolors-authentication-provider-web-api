@@ -16,10 +16,11 @@ namespace CQ.AuthProvider.Firebase.AppConfig
 {
     internal static class FirebaseInit
     {
-        public static IServiceCollection AddFirebase(this IServiceCollection services, ISettingsService settingsService)
+        public static IServiceCollection AddFirebase(
+            this IServiceCollection services,
+            IdentityFirebaseOptions identityFirebase)
         {
-            var credentials = BuildCredentials(settingsService);
-            var projectId = settingsService.GetValue(EnvironmentVariable.Firebase.ProjectId);
+            var credentials = BuildCredentials(identityFirebase);
 
             var playerFinderApp = FirebaseApp.Create(new AppOptions
             {
@@ -28,16 +29,16 @@ namespace CQ.AuthProvider.Firebase.AppConfig
 
             if (playerFinderApp == null)
             {
-                throw new FirebaseInitAppException(projectId);
+                throw new FirebaseInitAppException(identityFirebase.ProjectId);
             }
 
-            services.AddSingleton((serviceProvider) =>
+            services.AddScoped((serviceProvider) =>
             {
                 var firebaseAuth = FirebaseAuth.GetAuth(playerFinderApp);
 
                 if (firebaseAuth == null)
                 {
-                    throw new FirebaseInitAuthException(projectId);
+                    throw new FirebaseInitAuthException(identityFirebase.ProjectId);
                 }
 
                 return firebaseAuth;
@@ -46,44 +47,21 @@ namespace CQ.AuthProvider.Firebase.AppConfig
             return services;
         }
 
-        private static GoogleCredential BuildCredentials(ISettingsService settingsService)
+        private static GoogleCredential BuildCredentials(IdentityFirebaseOptions identityFirebase)
         {
-            var firebaseConfig = EnvironmentVariable.Firebase;
-
-            var projectId = settingsService.GetValue(firebaseConfig.ProjectId);
-
-            var privateKeyId = settingsService.GetValue(firebaseConfig.PrivateKeyId);
-
-            var privateKey = settingsService.GetValue(firebaseConfig.PrivateKey);
-
-            var clientEmail = settingsService.GetValue(firebaseConfig.ClientEmail);
-
-            var clientId = settingsService.GetValue(firebaseConfig.ClientId);
-
-            var authUri = settingsService.GetValue(firebaseConfig.AuthUri);
-
-            var tokenUri = settingsService.GetValue(firebaseConfig.TokenUri);
-
-            var authProvider = settingsService.GetValue(firebaseConfig.AuthProvider);
-
-            var clientCert = settingsService.GetValue(firebaseConfig.ClientCert);
-
-            var universeDomain = settingsService.GetValue(firebaseConfig.UniverseDomain);
-
-
             var credentials = GoogleCredential.FromJson($@"
                     {{
                         ""type"":""{JsonCredentialParameters.ServiceAccountCredentialType}"",
-                        ""project_id"":""{projectId}"",                        
-                        ""private_key_id"":""{privateKeyId}"",
-                        ""private_key"":""{privateKey}"",
-                        ""client_id"":""{clientId}"",
-                        ""client_email"":""{clientEmail}"",
-                        ""auth_uri"":""{authUri}"",
-                        ""token_uri"":""{tokenUri}"",
-                        ""auth_provider_x509_cert_url"":""{authProvider}"",
-                        ""client_x509_cert_url"":""{clientCert}"",
-                        ""universe_domain"":""{universeDomain}""
+                        ""project_id"":""{identityFirebase.ProjectId}"",                        
+                        ""private_key_id"":""{identityFirebase.PrivateKeyId}"",
+                        ""private_key"":""{identityFirebase.PrivateKey}"",
+                        ""client_id"":""{identityFirebase.ClientId}"",
+                        ""client_email"":""{identityFirebase.ClientEmail}"",
+                        ""auth_uri"":""{identityFirebase.AuthUri}"",
+                        ""token_uri"":""{identityFirebase.TokenUri}"",
+                        ""auth_provider_x509_cert_url"":""{identityFirebase.AuthProvider}"",
+                        ""client_x509_cert_url"":""{identityFirebase.ClientCert}"",
+                        ""universe_domain"":""{identityFirebase.UniverseDomain}""
                     }}");
 
             return credentials;

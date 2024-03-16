@@ -1,10 +1,9 @@
 ﻿
 using CQ.ApiElements.Filters;
 using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.BusinessLogic.Authorization.Exceptions;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System;
+using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions;
+using CQ.Exceptions;
 using System.Net;
 
 namespace CQ.AuthProvider.WebApi.Filters
@@ -49,7 +48,7 @@ namespace CQ.AuthProvider.WebApi.Filters
                     HttpStatusCode.Conflict,
                     "Exist another account with email provided"
                     )
-                .AddException<SpecificResourceNotFoundException<Role>>(
+                .AddException<SpecificResourceNotFoundException<RoleInfo>>(
                 "InvalidRole",
                 HttpStatusCode.Conflict,
                 (exception, context) => "The role provided does not exist"
@@ -70,18 +69,6 @@ namespace CQ.AuthProvider.WebApi.Filters
             #region Generic exceptions
             exceptionStoreService
 
-                .AddGenericException<ResourceNotFoundException>(
-                    "ResourceNotFound",
-                    HttpStatusCode.NotFound,
-                    (exception, context) => $"The resource with '{exception.Key}': '{exception.Value}' was not found",
-                    (exception, context) => $"The resource '{exception.Resource}' with '{exception.Key}': '{exception.Value}' not found")
-
-                .AddGenericException<ResourceDuplicatedException>(
-                    "ResourceDuplicated",
-                    HttpStatusCode.Conflict,
-                    (exception, context) => $"Exist a resource with '{exception.Key}': '{exception.Value}'",
-                    (exception, context) => $"Exist a resource '{exception.Resource}' with '{exception.Key}': '{exception.Value}'")
-
                 .AddGenericException<InvalidCredentialsException>(
                 "InvalidCredentials",
                 HttpStatusCode.BadRequest,
@@ -95,6 +82,11 @@ namespace CQ.AuthProvider.WebApi.Filters
                 (exception, context) => $"The account with '{exception.Email}' is disabled"
                 );
             #endregion
+        }
+
+        private string Join(List<string> values, string separator = ", ")
+        {
+            return string.Join(separator, values);
         }
     }
 }

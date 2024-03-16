@@ -8,14 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="CQ.Utility" Version="1.1.6" />
   </ItemGroup>
 
 </Project>
