@@ -1,10 +1,9 @@
 ﻿
 using CQ.ApiElements.Filters;
 using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.BusinessLogic.Authorization.Exceptions;
-using CQ.AuthProvider.BusinessLogic.Exceptions;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System;
+using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions;
+using CQ.Exceptions;
 using System.Net;
 
 namespace CQ.AuthProvider.WebApi.Filters
@@ -15,101 +14,79 @@ namespace CQ.AuthProvider.WebApi.Filters
         {
             #region Specific exceptions
             #region Role controller
+            #region Create
             exceptionStoreService
-                .AddOriginExceptions(new("Role", "POST-roles"))
+                .AddOriginExceptions(new("Role", "Create"))
                 .AddException<PermissionNotFoundException>(
                 "ResourceNotFound",
                 HttpStatusCode.Conflict,
-                (PermissionNotFoundException exception,
-                ExceptionThrownContext context) => $"The following permissions are incorrect '{string.Join(',', exception.PermissionKeys)}'"
+                (exception, context) => $"The following permissions are incorrect '{string.Join(',', exception.PermissionKeys)}'"
                 );
+            #endregion
+            #region Add permission
+            exceptionStoreService
+                .AddOriginExceptions(new("Role", "AddPermission"))
+                .AddException<PermissionNotFoundException>(
+                "ResourceNotFound",
+                HttpStatusCode.Conflict,
+                (exception, context) => $"The following permissions are incorrect '{string.Join(',', exception.PermissionKeys)}'"
+                )
+                .AddException<PermissionsDuplicatedException>(
+                "PermissionsDuplicated",
+                HttpStatusCode.Conflict,
+                (exception, context) => $"The following permissions are duplicated '{string.Join(',', exception.Keys)}"
+                );
+            #endregion
             #endregion
 
             #region Auth controller
             exceptionStoreService
                 .AddOriginExceptions(
-                new("Auth", "POST-auths/credentials"))
-                .AddException<InvalidCredentialsException>(
-                "InvalidOperation",
+                new("Auth", "CreateCredentials"))
+                .AddException<ResourceDuplicatedException>(
+                    "DuplicatedEmail",
+                    HttpStatusCode.Conflict,
+                    "Exist another account with email provided"
+                    )
+                .AddException<SpecificResourceNotFoundException<RoleInfo>>(
+                "InvalidRole",
                 HttpStatusCode.Conflict,
-                (InvalidCredentialsException exception,
-                ExceptionThrownContext context) => $"The creation of the account was interrupted",
-                (InvalidCredentialsException exception,
-                ExceptionThrownContext context) => $"The account with '{exception.Email}' was not found"
+                (exception, context) => "The role provided does not exist"
+                )
+                .AddException<InvalidCredentialsException>(
+                "InvalidSession",
+                HttpStatusCode.InternalServerError,
+                (exception, context) => $"Operation failed due to an error in creating a session"
                 )
                 .AddException<AuthDisabledException>(
-                "InvalidOperation",
-                HttpStatusCode.Conflict,
-                (AuthDisabledException exception,
-                ExceptionThrownContext context) => $"The creation of the account was interrupted",
-                (AuthDisabledException exception,
-                ExceptionThrownContext context) => $"The account with '{exception.Email}' is disabled"
-                )
-                .AddException<SpecificResourceNotFoundException<Role>>(
-                "InvalidOperation",
-                HttpStatusCode.Conflict,
-                (SpecificResourceNotFoundException<Role> exception,
-                ExceptionThrownContext context) => "The role specified does not exist");
+                "InvalidSession",
+                HttpStatusCode.InternalServerError,
+                (exception, context) => $"Operation due to an error in creating a session"
+                );
             #endregion
             #endregion
 
             #region Generic exceptions
             exceptionStoreService
-                .AddGenericException<ArgumentException>(
-                    "InvalidArgument",
-                    HttpStatusCode.InternalServerError,
-                    (ArgumentException exception,
-                    ExceptionThrownContext context) => $"Invalid argument '{exception.ParamName}'. {exception.Message}")
-                
-                .AddGenericException<ArgumentNullException>(
-                    "InvalidArgument",
-                    HttpStatusCode.InternalServerError,
-                    (ArgumentNullException exception,
-                    ExceptionThrownContext context) => $"Invalid argument '{exception.ParamName}'. {exception.Message}")
-                
-                .AddGenericException<InvalidRequestException>(
-                    "InvalidRequest",
-                    HttpStatusCode.BadRequest,
-                    (InvalidRequestException exception,
-                    ExceptionThrownContext context) => $"The prop '{exception.Prop}' has the following error '{exception.Error}'")
-                
-                .AddGenericException<InvalidOperationException>(
-                    "InterruptedOperation",
-                    HttpStatusCode.InternalServerError,
-                    "The operation was interrupted due to an exception.")
-                
-                .AddGenericException<ResourceNotFoundException>(
-                    "ResourceNotFound",
-                    HttpStatusCode.NotFound,
-                    (ResourceNotFoundException exception,
-                    ExceptionThrownContext context) => $"The resource with '{exception.Key}': '{exception.Value}' was not found",
-                    (ResourceNotFoundException exception,
-                    ExceptionThrownContext context) => $"The resource '{exception.Resource}' with '{exception.Key}': '{exception.Value}' not found")
-                
-                .AddGenericException<ResourceDuplicatedException>(
-                    "ResourceDuplicated",
-                    HttpStatusCode.Conflict,
-                    (ResourceDuplicatedException exception,
-                    ExceptionThrownContext context) => $"Exist a resource with '{exception.Key}': '{exception.Value}'",
-                    (ResourceDuplicatedException exception,
-                    ExceptionThrownContext context) => $"Exist a resource '{exception.Resource}' with '{exception.Key}': '{exception.Value}'")
-                
+
                 .AddGenericException<InvalidCredentialsException>(
                 "InvalidCredentials",
                 HttpStatusCode.BadRequest,
-                (InvalidCredentialsException exception,
-                ExceptionThrownContext context) => $"The credentials provided are incorrect"
+                (exception, context) => $"The credentials provided are incorrect"
                 )
-                
+
                 .AddGenericException<AuthDisabledException>(
                 "AccountDisabled",
                 HttpStatusCode.BadRequest,
-                (AuthDisabledException exception,
-                ExceptionThrownContext context) => $"The account is disabled",
-                (AuthDisabledException exception,
-                ExceptionThrownContext context) => $"The account with '{exception.Email}' is disabled"
+                (exception, context) => $"The account is disabled",
+                (exception, context) => $"The account with '{exception.Email}' is disabled"
                 );
             #endregion
+        }
+
+        private string Join(List<string> values, string separator = ", ")
+        {
+            return string.Join(separator, values);
         }
     }
 }
