@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
-    public sealed class IdentityFirebaseOptions : IdentityOptions
+    public sealed record class IdentityFirebaseOptions : IdentityOptions
     {
         public string ProjectName { get; set; } = string.Empty;
 

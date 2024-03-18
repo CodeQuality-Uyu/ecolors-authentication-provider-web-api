@@ -18,7 +18,7 @@ namespace CQ.AuthProvider.DataAccess.Contexts
             base
                 .AddCollection<AccountMongo>("Accounts")
                 .AddCollection<RoleMongo>("Roles")
-                .AddCollection<Permission>("Permissions")
+                .AddCollection<PermissionMongo>("Permissions")
                 .AddCollection<ResetPasswordApplication>("ResetPasswordApplications");
         }
     }

@@ -1,6 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.UnitOfWork.EfCore;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,8 @@ namespace CQ.AuthProvider.DataAccess.Contexts
 
         public DbSet<ResetPasswordApplicationEfCore> ResetPasswordApplications { get; set; }
 
+        public DbSet<ClientSystem> ClientSystems { get; set; }
+
         public AuthEfCoreContext(DbContextOptions<AuthEfCoreContext> options) : base(options)
         {
         }
@@ -29,12 +32,20 @@ namespace CQ.AuthProvider.DataAccess.Contexts
         {
             var accountId = "d4702564-8273-495b-a694-82fcc69da874";
 
+            #region Permissions
             #region Permission permissions
             var createPermissionPermission = new PermissionEfCore
             (
                 "Crear permiso",
                 "Crear permiso",
                 PermissionKey.CreatePermission,
+                false);
+
+            var createBulkPermissionPermission = new PermissionEfCore
+            (
+                "Crear muchos permisos",
+                "Crear muchos permisos",
+                PermissionKey.CreateBulkPermission,
                 false);
 
             var getByIdPermissionPermission = new PermissionEfCore(
@@ -76,6 +87,13 @@ namespace CQ.AuthProvider.DataAccess.Contexts
                 PermissionKey.CreateRole,
                 false);
 
+            var createBulkRolePermission = new PermissionEfCore
+            (
+                "Crear muchos roles",
+                "Crear muchos roles",
+                PermissionKey.CreateBulkRole,
+                false);
+
             var getByIdRolPermission = new PermissionEfCore(
                 "Obtener un rol",
                 "Obtener un rol",
@@ -101,18 +119,42 @@ namespace CQ.AuthProvider.DataAccess.Contexts
                 false);
             #endregion
 
+            #region ClientSystem permissions
+            var createClientSystemPermission = new PermissionEfCore(
+                "Crear client system",
+                "Crear client system",
+                PermissionKey.CreateClientSystem,
+                false);
+
+            var createAccountForPermission = new PermissionEfCore(
+                "Crear cuenta para un usuario",
+                "Crear cuenta para un usuario",
+                PermissionKey.CreateAccountFor,
+                false);
+            #endregion
+
             var jokerPermission = new PermissionEfCore(
                 "Joker",
                 "Joker",
                 PermissionKey.Joker,
                 false);
+            #endregion
 
+            #region Roles
             var adminRole = new RoleEfCore(
                 "Admin",
                 "Admin",
-                new RoleKey("admin"),
+                RoleKey.Admin,
                 new List<PermissionEfCore>(),
                 false);
+
+            var clientSystemRole = new RoleEfCore(
+                "Client System",
+                "Client System",
+                RoleKey.ClientSystem,
+                new List<PermissionEfCore>(),
+                false);
+            #endregion
 
             var account = new AccountEfCore
             {
@@ -131,11 +173,11 @@ namespace CQ.AuthProvider.DataAccess.Contexts
                 r => r.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleId),
                 l => l.HasOne(x => x.Account).WithMany().HasForeignKey(x => x.AccountId)
                 )
-                .HasData(new AccountRole
-                {
-                    AccountId = accountId,
-                    RoleId = adminRole.Id,
-                });
+                .HasData(
+                new AccountRole(
+                    accountId,
+                    adminRole.Id)
+                );
 
             modelBuilder
                 .Entity<RoleEfCore>()
@@ -145,7 +187,6 @@ namespace CQ.AuthProvider.DataAccess.Contexts
                 r => r.HasOne(x => x.Permission).WithMany().HasForeignKey(x => x.PermissionId),
                 l => l.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleId)
                 ).HasData(
-
                 new RolePermission
                 (adminRole.Id, createPermissionPermission.Id),
                 new RolePermission
@@ -167,22 +208,38 @@ namespace CQ.AuthProvider.DataAccess.Contexts
                 new RolePermission
                 (adminRole.Id, getAllPrivateRolesPermission.Id),
                 new RolePermission
-                (adminRole.Id, updateByIdRolPermission.Id));
+                (adminRole.Id, updateByIdRolPermission.Id),
+                new RolePermission
+                (adminRole.Id, createClientSystemPermission.Id),
+                new RolePermission
+                (adminRole.Id, createAccountForPermission.Id),
+                new RolePermission
+                (clientSystemRole.Id, createBulkPermissionPermission.Id),
+                new RolePermission
+                (clientSystemRole.Id, createBulkRolePermission.Id));
 
             modelBuilder.Entity<PermissionEfCore>()
                 .HasData(
                 createPermissionPermission,
+                createBulkPermissionPermission,
                 getByIdPermissionPermission,
                 getAllPermissionsPermission,
                 getAllPrivatePermissionsPermission,
                 getAllByRoleIdPermissionsPermission,
                 updateByIdPermissionPermission,
                 createRolePermission,
+                createBulkRolePermission,
                 getByIdRolPermission,
                 getAllRolesPermission,
                 getAllPrivateRolesPermission,
-                updateByIdRolPermission);
-            modelBuilder.Entity<RoleEfCore>().HasData(adminRole);
+                updateByIdRolPermission,
+                createClientSystemPermission,
+                createAccountForPermission);
+
+            modelBuilder.Entity<RoleEfCore>().HasData(
+                adminRole,
+                clientSystemRole);
+
             modelBuilder.Entity<AccountEfCore>().HasData(account);
         }
     }
@@ -196,28 +253,17 @@ namespace CQ.AuthProvider.DataAccess.Contexts
         public AccountEfCore Account { get; set; } = null!;
 
         public RoleEfCore Role { get; set; } = null!;
-    }
 
-    public sealed record class RolePermission
-    {
-        public string RoleId { get; set; } = null!;
-
-        public string PermissionId { get; set; } = null!;
-
-        public RoleEfCore Role { get; set; } = null!;
-
-        public PermissionEfCore Permission { get; set; } = null!;
-
-        public RolePermission()
+        public AccountRole()
         {
         }
 
-        public RolePermission(
-            string roleId,
-            string permissionId)
+        public AccountRole(
+            string accountId,
+            string roleId)
         {
+            this.AccountId = accountId;
             this.RoleId = roleId;
-            this.PermissionId = permissionId;
         }
     }
 }

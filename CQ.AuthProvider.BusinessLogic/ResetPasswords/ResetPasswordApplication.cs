@@ -7,13 +7,13 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
     {
         public const int TOLERANCE_IN_MINUTES = 15;
 
-        public string Id { get; set; } = null!;
+        public string Id { get; init; } = null!;
 
-        public MiniAccount Account { get; set; } = null!;
+        public MiniAccount Account { get; init; } = null!;
 
-        public string Code { get; set; } = null!;
+        public string Code { get; init; } = null!;
 
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; init; }
 
         public ResetPasswordApplication()
         {
@@ -41,9 +41,9 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
 
     public sealed record class MiniAccount
     {
-        public string Id { get; set; } = null!;
+        public string Id { get; init; } = null!;
 
-        public string Email { get; set; } = null!;
+        public string Email { get; init; } = null!;
 
         public MiniAccount()
         {

@@ -1,33 +1,65 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Identities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CQ.UnitOfWork.Abstractions;
 
 namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
 {
-    internal sealed class ResetPasswordMongoService : ResetPasswordService<ResetPasswordApplication>
+    internal sealed class ResetPasswordMongoService : ResetPasswordService
     {
+        private readonly IRepository<ResetPasswordApplication> _resetPasswordApplicationRepository;
         public ResetPasswordMongoService(
+            IRepository<ResetPasswordApplication> resetPasswordApplicationRepository,
             IAccountService accountService,
-            IResetPasswordApplicationRepository<ResetPasswordApplication> resetPasswordRepository,
+            IMapper mapper,
             IIdentityProviderRepository identityProviderRepository) 
             : base(
                   accountService,
-                  resetPasswordRepository,
-                  identityProviderRepository)
+                  identityProviderRepository,
+                  mapper)
         {
+            this._resetPasswordApplicationRepository = resetPasswordApplicationRepository;
         }
 
-        protected override async Task<ResetPasswordApplication> CreateResetPasswordApplicationAsync(AccountInfo account)
+        #region Create
+        protected override async Task<ResetPasswordApplication> CreateAsync(AccountInfo account)
         {
             var resetPasswordApplication = new ResetPasswordApplication(new MiniAccount(account.Id, account.Email));
 
-            await this._resetPasswordRepository.CreateAsync(resetPasswordApplication).ConfigureAwait(false);
+            await this._resetPasswordApplicationRepository.CreateAsync(resetPasswordApplication).ConfigureAwait(false);
          
             return resetPasswordApplication;
         }
+        #endregion
+
+        #region DeleteById
+        protected override async Task DeleteByIdAsync(string id)
+        {
+            await this._resetPasswordApplicationRepository.DeleteAsync(r => r.Id == id).ConfigureAwait(false);
+        }
+        #endregion
+
+        #region GetById
+        protected override async Task<object> GetByIdAsync(string id)
+        {
+            var resetPasswordApplication = await this._resetPasswordApplicationRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+            return resetPasswordApplication;
+        }
+        #endregion
+
+        #region Create
+        protected override async Task<object?> GetOrDefaultByAccountEmailAsync(string email)
+        {
+            var resetPassword = await this._resetPasswordApplicationRepository.GetOrDefaultByPropAsync(email, $"{nameof(ResetPasswordApplication.Account)}.{nameof(ResetPasswordApplication.Account.Email)}").ConfigureAwait(false);
+
+            return resetPassword;
+        }
+
+        protected override async Task UpdateByIdAsync(string id, object updates)
+        {
+            await this._resetPasswordApplicationRepository.UpdateByIdAsync(id, updates).ConfigureAwait(false);
+        }
+        #endregion
     }
 }

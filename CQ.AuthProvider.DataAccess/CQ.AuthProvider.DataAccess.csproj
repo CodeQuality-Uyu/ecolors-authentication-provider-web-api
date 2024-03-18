@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CQ.UnitOfWork.EfCore" Version="2.2.21" />
-    <PackageReference Include="CQ.UnitOfWork.MongoDriver" Version="2.2.21" />
+    <PackageReference Include="CQ.UnitOfWork.EfCore" Version="2.2.26" />
+    <PackageReference Include="CQ.UnitOfWork.MongoDriver" Version="2.2.26" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />

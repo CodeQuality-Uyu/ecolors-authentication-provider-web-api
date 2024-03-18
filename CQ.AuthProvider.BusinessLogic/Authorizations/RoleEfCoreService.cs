@@ -1,36 +1,129 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.UnitOfWork.Abstractions;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
     internal sealed class RoleEfCoreService : RoleService<RoleEfCore>
     {
-        private readonly IMapper _mapper;
+        private readonly IRepository<RoleEfCore> _roleRepository;
+        private readonly IRepository<RolePermission> _rolePermissionRepository;
+        private readonly IPermissionInternalService<PermissionEfCore> _permissionService;
 
         public RoleEfCoreService(
-            IRoleRepository<RoleEfCore> roleRepository,
-            IPermissionInternalService permissionService,
+            IRepository<RoleEfCore> roleRepository,
+            IRepository<RolePermission> _rolePermissionRepository,
+            IPermissionInternalService<PermissionEfCore> permissionService,
             IMapper mapper) 
-            : base(roleRepository, permissionService)
+            : base(mapper)
         {
-            this._mapper = mapper;
+            this._roleRepository = roleRepository;
+            this._rolePermissionRepository = _rolePermissionRepository;
+            this._permissionService = permissionService;
         }
 
-        protected override async Task SaveNewRoleAsync(CreateRole newRole)
+        protected override async Task<bool> HasPermissionAsync(List<string> roles, string permissionKey)
         {
-            var permissions = await base._permissionService
-                .GetAllByKeysAsync(newRole.PermissionKeys)
+            var existPermission = await this._roleRepository
+                .ExistAsync(
+                r => roles.Contains(r.Key) && r.Permissions.Any(p => p.Key == permissionKey))
                 .ConfigureAwait(false);
 
-            var permissionsEfCore = this._mapper.Map<List<PermissionEfCore>>(permissions);
+            return existPermission;
+        }
+
+        protected override async Task CreateAsync(CreateRole newRole)
+        {
+            var permissions = await this._permissionService
+                .GetAllByKeysAsync(newRole.PermissionKeys)
+                .ConfigureAwait(false);
 
             var role = new RoleEfCore(
                 newRole.Name,
                 newRole.Description,
                 newRole.Key,
-                permissionsEfCore,
+                permissions,
                 newRole.IsPublic);
 
-            await base._roleRepository.CreateAsync(role).ConfigureAwait(false);
+            await this._roleRepository.CreateAsync(role).ConfigureAwait(false);
         }
+
+        protected override async Task<bool> ExistByKeyAsync(RoleKey key)
+        {
+            var roleValue = key.ToString();
+
+            var existRole = await this._roleRepository.ExistAsync(r => r.Key == roleValue).ConfigureAwait(false);
+
+            return existRole;
+        }
+
+        protected override async Task<List<RoleInfo>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false)
+        {
+            var roles = await this._roleRepository.GetAllAsync(r => r.IsPublic != isPrivate).ConfigureAwait(false);
+
+            return base._mapper.Map<List<RoleInfo>>(roles);
+        }
+
+        #region AddPermission
+        protected override async Task AddPermissionsByIdAsync(RoleEfCore role, List<PermissionKey> permissions)
+        {
+            var permissionsSaved = await this._permissionService.GetAllByKeysAsync(permissions).ConfigureAwait(false);
+
+            var rolesPermissions = permissionsSaved.Select(p => new RolePermission(role.Id, p.Id)).ToList();
+
+            await this._rolePermissionRepository.CreateBulkAsync(rolesPermissions).ConfigureAwait(false);
+        }
+
+        protected override async Task<RoleEfCore> GetByIdAsync(string id)
+        {
+            var role = await this._roleRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+            return role;
+        }
+        #endregion
+
+        public override async Task<RoleEfCore> GetByKeyAsync(RoleKey key)
+        {
+            var role = await this._roleRepository.GetByPropAsync(key.ToString(), nameof(RoleEfCore.Key)).ConfigureAwait(false);
+
+            return role;
+        }
+
+        #region CreateBulk
+        protected override async Task<List<RoleInfo>> GetAllByRoleKeyAsync(List<string> roles)
+        {
+            var rolesSaved = await this._roleRepository.GetAllAsync(r => roles.Contains(r.Key)).ConfigureAwait(false);
+
+            return base._mapper.Map<List<RoleInfo>>(rolesSaved);
+        }
+
+        protected override async Task CreateBulkAsync(List<CreateRole> roles)
+        {
+            var permissionKeys = roles
+                .SelectMany(r => r.PermissionKeys)
+                .ToList();
+
+            var permissionsSaved = await this
+                ._permissionService
+                .GetAllByKeysAsync(permissionKeys)
+                .ConfigureAwait(false);
+
+            var rolesToSave = roles
+                .Select(r =>
+                {
+                    var permissions = permissionsSaved.Where(p => r.PermissionKeys.Contains(new PermissionKey(p.Key))).ToList();
+
+                    return new RoleEfCore(
+                        r.Name,
+                        r.Description,
+                        r.Key,
+                        permissions,
+                        r.IsPublic);
+                })
+                .ToList();
+
+            await this._roleRepository.CreateBulkAsync(rolesToSave).ConfigureAwait(false);
+        }
+        #endregion
     }
 }

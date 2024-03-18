@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="CQ.Exceptions" Version="2.2.17" />
-    <PackageReference Include="CQ.UnitOfWork" Version="2.2.21" />
+    <PackageReference Include="CQ.UnitOfWork" Version="2.2.26" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />

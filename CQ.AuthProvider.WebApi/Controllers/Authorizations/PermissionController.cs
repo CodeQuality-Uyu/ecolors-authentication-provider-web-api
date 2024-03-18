@@ -10,7 +10,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 {
     [ApiController]
     [Route("permissions")]
-    [CQAuthorization]
     public class PermissionController : ControllerBase
     {
         private readonly IPermissionService _permissionService;
@@ -21,21 +20,32 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
         }
 
         [HttpPost]
+        [CQAuthorization]
         public async Task CreateAsync(CreatePermissionRequest request)
         {
-            var role = request.Map();
+            var permission = request.Map();
 
-            await this._permissionService.CreateAsync(role).ConfigureAwait(false);
+            await this._permissionService.CreateAsync(permission).ConfigureAwait(false);
+        }
+
+        [HttpPost("bulk")]
+        [ClientSystemAuthorization]
+        public async Task CreateBulkAsync(CreatePermissionBulkRequest request)
+        {
+            var permissions = request.Map();
+
+            await this._permissionService.CreateBulkAsync(permissions).ConfigureAwait(false);
         }
 
         [HttpGet]
+        [CQAuthorization]
         public async Task<List<PermissionResponse>> GetAllAsync(
             [FromQuery] bool @private,
             [FromQuery] string? roleId)
         {
             var accountLogged = base.HttpContext.GetItem<AccountInfo>(ContextItems.AccountLogged);
 
-            var permissions = await this._permissionService.GetAllAsync(@private, roleId, accountLogged).ConfigureAwait(false);
+            var permissions = await this._permissionService.GetAllAsync(accountLogged, @private, roleId).ConfigureAwait(false);
 
             return permissions.MapTo<PermissionResponse, Permission>();
         }

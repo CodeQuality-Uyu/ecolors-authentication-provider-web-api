@@ -2,30 +2,30 @@
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.UnitOfWork.Abstractions;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
-    internal sealed class AccountEfCoreService : AccountService<AccountEfCore>
+    internal sealed class AccountEfCoreService : AccountService
     {
         private readonly IRoleInternalService<RoleEfCore> _roleService;
-
-        private readonly IMapper _mapper;
+        private readonly IRepository<AccountEfCore> _accountRepository;
 
         public AccountEfCoreService(
             IIdentityProviderRepository identityProviderRepository,
             ISessionService sessionService,
-            IAccountRepository<AccountEfCore> accountRepository,
+            IRepository<AccountEfCore> accountRepository,
             IRoleInternalService<RoleEfCore> roleService,
             IMapper mapper)
             : base(identityProviderRepository,
                   sessionService,
-                  accountRepository)
+                  mapper)
         {
             this._roleService = roleService;
-            this._mapper = mapper;
+            this._accountRepository = accountRepository;
         }
 
-        protected override async Task<AccountInfo> SaveNewAccountAsync(CreateAccount newAccount, Identity identity)
+        protected override async Task<AccountInfo> CreateAsync(CreateAccount newAccount, Identity identity)
         {
             var role = await this._roleService.GetByKeyAsync(newAccount.Role).ConfigureAwait(false);
 
@@ -39,7 +39,28 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
                 Id = identity.Id
             };
 
-            await base._accountRepository.CreateAsync(account).ConfigureAwait(false);
+            await this._accountRepository.CreateAsync(account).ConfigureAwait(false);
+
+            return this._mapper.Map<AccountInfo>(account);
+        }
+
+        protected override async Task<bool> ExistByEmailAsync(string email)
+        {
+            var existAccount = await this._accountRepository.ExistAsync(a => a.Email == email).ConfigureAwait(false);
+
+            return existAccount;
+        }
+
+        public override async Task<AccountInfo> GetByEmailAsync(string email)
+        {
+            var account = await this._accountRepository.GetByPropAsync(email, nameof(AccountEfCore.Email)).ConfigureAwait(false);
+
+            return this._mapper.Map<AccountInfo>(account);
+        }
+
+        protected override async Task<AccountInfo> GetByIdAsync(string id)
+        {
+            var account = await this._accountRepository.GetByIdAsync(id).ConfigureAwait(false);
 
             return this._mapper.Map<AccountInfo>(account);
         }

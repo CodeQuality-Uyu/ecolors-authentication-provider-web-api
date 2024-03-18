@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
-    public class IdentityOptions
+    public record class IdentityOptions
     {
         public const string Identity = "Identity";
 
-        public string Type { get; set; } = string.Empty;
+        public IdentityType? Type { get; init; } = IdentityType.Database;
+    }
+
+    public enum IdentityType
+    {
+        Database,
+        Firebase
     }
 }

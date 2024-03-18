@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
-    internal interface IPermissionInternalService : IPermissionService
+    internal interface IPermissionInternalService<TPermission> : IPermissionService
+        where TPermission : class
     {
-        Task ExistByKeysAsync(List<PermissionKey> permissionKeys);
+        Task AssertByKeysAsync(List<PermissionKey> permissionKeys);
 
-        Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> keys);
+        Task<List<TPermission>> GetAllByKeysAsync(List<PermissionKey> keys);
     }
 }

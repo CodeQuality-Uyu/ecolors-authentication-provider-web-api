@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.WebApi.Filters;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts
 {
@@ -22,6 +23,15 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
             var account = await this._accountService.CreateAsync(createAccount);
 
             return new CreateAccountResponse(account);
+        }
+
+        [HttpPost("credentials/for")]
+        [CQAuthorization]
+        public async Task CreateCredentialsForAsync(CreateAccountRequest request)
+        {
+            var createAccountFor = request.Map();
+
+            await this._accountService.CreateAsync(createAccountFor).ConfigureAwait(false);
         }
     }
 }

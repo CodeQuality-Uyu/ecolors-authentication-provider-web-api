@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Exceptions;
@@ -6,34 +7,34 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
-    internal abstract class AccountService<TAccount> : IAccountService
-        where TAccount : class
+    internal abstract class AccountService : IAccountService
     {
         private readonly IIdentityProviderRepository _identityProviderRepository;
 
-        protected readonly IAccountRepository<TAccount> _accountRepository;
-
         protected readonly ISessionService _sessionService;
+
+        protected readonly IMapper _mapper;
 
         public AccountService(
             IIdentityProviderRepository identityProviderRepository,
             ISessionService sessionService,
-            IAccountRepository<TAccount> accountRepository)
+            IMapper mapper)
         {
             this._identityProviderRepository = identityProviderRepository;
             this._sessionService = sessionService;
-            this._accountRepository = accountRepository;
+            this._mapper = mapper;
         }
 
+        #region Create
         public async Task<CreateAccountResult> CreateAsync(CreateAccount newAccount)
         {
-            await AssertEmailInUse(newAccount.Email).ConfigureAwait(false);
+            await AssertEmailInUseAsync(newAccount.Email).ConfigureAwait(false);
 
             var identity = await this.CreateIdentityAsync(newAccount).ConfigureAwait(false);
 
             try
             {
-                var account = await this.SaveNewAccountAsync(newAccount, identity).ConfigureAwait(false);
+                var account = await this.CreateAsync(newAccount, identity).ConfigureAwait(false);
 
                 var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAccount.Email, newAccount.Password)).ConfigureAwait(false);
 
@@ -54,15 +55,15 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             }
         }
 
-        private async Task AssertEmailInUse(string email)
+        private async Task AssertEmailInUseAsync(string email)
         {
-            var existAuth = await this._accountRepository.ExistByEmailAsync(email).ConfigureAwait(false);
+            var existAuth = await this.ExistByEmailAsync(email).ConfigureAwait(false);
 
             if (existAuth)
-            {
                 throw new SpecificResourceNotFoundException<AccountInfo>(nameof(AccountEfCore.Email), email);
-            }
         }
+
+        protected abstract Task<bool> ExistByEmailAsync(string email);
 
         private async Task<Identity> CreateIdentityAsync(CreateAccount newAccount)
         {
@@ -75,7 +76,8 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             return identity;
         }
 
-        protected abstract Task<AccountInfo> SaveNewAccountAsync(CreateAccount newAccount, Identity identity);
+        protected abstract Task<AccountInfo> CreateAsync(CreateAccount newAccount, Identity identity);
+        #endregion
 
         public async Task UpdatePasswordAsync(string newPassword, AccountEfCore userLogged)
         {
@@ -84,27 +86,21 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             await _identityProviderRepository.UpdatePasswordAsync(userLogged.Id, newPassword).ConfigureAwait(false);
         }
 
+        #region GetMe
         public async Task<AccountInfo> GetMeAsync(string token)
         {
             var session = await this._sessionService.GetByTokenAsync(token).ConfigureAwait(false);
 
-            var account = await this._accountRepository.GetInfoByIdAsync(
-                session.AccountId,
-                new SpecificResourceNotFoundException<AccountInfo>(nameof(AccountInfo.Id), session.AccountId))
+            var account = await this
+                .GetByIdAsync(session.AccountId)
                 .ConfigureAwait(false);
 
             return account;
         }
 
-        public async Task<AccountInfo> GetByEmailAsync(string email)
-        {
-            var account = await this._accountRepository
-                .GetInfoByEmailAsync(
-                email,
-                new SpecificResourceNotFoundException<AccountInfo>(nameof(AccountInfo.Email), email))
-                .ConfigureAwait(false);
+        protected abstract Task<AccountInfo> GetByIdAsync(string id);
+        #endregion
 
-            return account;
-        }
+        public abstract Task<AccountInfo> GetByEmailAsync(string email);
     }
 }

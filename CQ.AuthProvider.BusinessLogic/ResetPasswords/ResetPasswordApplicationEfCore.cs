@@ -10,15 +10,15 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
 {
     public sealed record class ResetPasswordApplicationEfCore
     {
-        public string Id { get; set; } = null!;
+        public string Id { get; init; } = null!;
 
-        public string AccountId { get; set; } = null!;
+        public string AccountId { get; init; } = null!;
 
-        public AccountEfCore Account { get; set; } = null!;
+        public AccountEfCore Account { get; init; } = null!;
 
-        public string Code { get; set; } = null!;
+        public string Code { get; init; } = null!;
 
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; init; }
 
         public ResetPasswordApplicationEfCore()
         {

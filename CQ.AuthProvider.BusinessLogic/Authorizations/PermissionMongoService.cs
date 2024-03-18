@@ -1,26 +1,94 @@
-﻿using System;
+﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.Exceptions;
+using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
-    internal sealed class PermissionMongoService : PermissionService<Permission>
+    internal sealed class PermissionMongoService : PermissionService<PermissionMongo>
     {
-        public PermissionMongoService(IPermissionRepository<Permission> permissionRepository) : base(permissionRepository)
+        private readonly IRepository<PermissionMongo> _permissionRepository;
+        private readonly IRepository<RoleMongo> _roleRepository;
+
+        public PermissionMongoService(
+            IRepository<PermissionMongo> permissionRepository,
+            IRepository<RoleMongo> roleRepository,
+            IMapper mapper)
+            : base(mapper)
         {
+            this._roleRepository = roleRepository;
+            this._permissionRepository = permissionRepository;
         }
 
-        protected override async Task SaveNewPermissionAsync(CreatePermission newPermission)
+        #region Create
+        protected override async Task<bool> ExistByKeyAsync(PermissionKey permissionKey)
         {
-            var permission = new Permission(
+            var permissionValue = permissionKey.ToString();
+
+            var existPermission = await this._permissionRepository.ExistAsync(p => p.Key == permissionValue).ConfigureAwait(false);
+
+            return existPermission;
+        }
+        
+        protected override async Task CreateAsync(CreatePermission newPermission)
+        {
+            var permission = new PermissionMongo(
                 newPermission.Name,
                 newPermission.Description,
                 newPermission.Key,
                 newPermission.IsPublic);
 
-            await base._permissionRepository.CreateAsync(permission).ConfigureAwait(false);
+            await this._permissionRepository.CreateAsync(permission).ConfigureAwait(false);
+        }
+        #endregion
+        
+        #region CreateBulk
+        protected override async Task<List<PermissionMongo>> GetAllByPermissionKeyAsync(List<string> permissions)
+        {
+            var permissionsSaved = await this._permissionRepository
+                .GetAllAsync(p => permissions.Contains(p.Key))
+                .ConfigureAwait(false);
+
+            return permissionsSaved;
+        }
+
+        protected override async Task CreateBulkAsync(List<CreatePermission> permissions)
+        {
+            var permissionsMapped = permissions
+                .Select(p => new PermissionMongo(
+                p.Name,
+                p.Description,
+                p.Key,
+                p.IsPublic))
+                .ToList();
+
+            await this._permissionRepository.CreateBulkAsync(permissionsMapped).ConfigureAwait(false);
+        }
+        #endregion
+
+        protected override async Task<List<Permission>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false, string? roleId = null)
+        {
+            var permissionsToGet = new List<string>();
+            if (Guard.IsNotNullOrEmpty(roleId))
+            {
+                var role = await this._roleRepository.GetByIdAsync(roleId).ConfigureAwait(false);
+
+                permissionsToGet = role.Permissions;
+            }
+
+            var permissions = await this._permissionRepository.GetAllAsync(p =>
+            p.IsPublic != isPrivate &&
+            (string.IsNullOrEmpty(roleId) || permissionsToGet.Contains(p.Id)))
+                .ConfigureAwait(false);
+
+            return base._mapper.Map<List<Permission>>(permissions);
         }
     }
 }

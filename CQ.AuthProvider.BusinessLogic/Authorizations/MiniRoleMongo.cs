@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
-    public sealed record class AccountRoleMongo
+    public sealed record class MiniRoleMongo
     {
-        public string Key { get; set; } = null!;
+        public string Key { get; init; } = null!;
 
-        public List<string> Permissions { get; set; } = null!;
+        public List<string> Permissions { get; init; } = null!;
 
-        public AccountRoleMongo()
+        public MiniRoleMongo()
         {
-            this.Permissions = new List<string>();
         }
 
-        public AccountRoleMongo(
+        public MiniRoleMongo(
             string key,
             List<string> permissions)
         {

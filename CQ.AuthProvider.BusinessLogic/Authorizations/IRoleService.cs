@@ -9,9 +9,11 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
     public interface IRoleService
     {
-        Task<List<RoleInfo>> GetAllAsync(bool isPrivate, AccountInfo accountLogged);
+        Task<List<RoleInfo>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false);
 
         Task CreateAsync(CreateRole role);
+
+        Task CreateBulkAsync(List<CreateRole> roles);
 
         Task AddPermissionByIdAsync(string id, AddPermission permissions);
     }

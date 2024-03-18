@@ -1,57 +1,105 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions;
 using CQ.Exceptions;
-using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
+using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
-    internal abstract class PermissionService<TPermission> : IPermissionInternalService
+    internal abstract class PermissionService<TPermission> : IPermissionInternalService<TPermission>
         where TPermission : class
     {
-        protected readonly IPermissionRepository<TPermission> _permissionRepository;
+        protected readonly IMapper _mapper;
 
-        public PermissionService(IPermissionRepository<TPermission> permissionRepository)
+        public PermissionService(
+            IMapper mapper)
         {
-            this._permissionRepository = permissionRepository;
+            this._mapper = mapper;
         }
 
-        public async Task<List<Permission>> GetAllAsync(bool isPrivate, string? roleId, AccountInfo accountLogged)
+        #region GetAll
+        async Task<List<Permission>> IPermissionService.GetAllAsync(AccountInfo accountLogged, bool isPrivate = false, string? roleId = null)
         {
-            return await this._permissionRepository.GetAllInfoAsync(isPrivate, roleId, accountLogged).ConfigureAwait(false);
+            if (isPrivate)
+                accountLogged.AssertPermission(PermissionKey.GetAllPrivatePermissions);
+
+            if (Guard.IsNotNullOrEmpty(roleId))
+                accountLogged.AssertPermission(PermissionKey.GetAllPermissionsByRoleId);
+
+            var permissions = await this.GetAllAsync(accountLogged, isPrivate, roleId).ConfigureAwait(false);
+
+            return permissions;
         }
 
-        public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys)
+        protected abstract Task<List<Permission>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false, string? roleId = null);
+        #endregion
+
+        public async Task<List<TPermission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys)
         {
-            var permissionsSaved = await this._permissionRepository.GetAllByKeysAsync(permissionKeys).ConfigureAwait(false);
+            var permissionKeysMapped = this._mapper.Map<List<string>>(permissionKeys);
 
-            if (permissionsSaved.Count != permissionKeys.Count)
-            {
-                var permissionsNotFound = permissionKeys.Where(p => !permissionsSaved.Any(ps => new PermissionKey(ps.Key) == p)).ToList();
+            var permissionsSaved = await this.GetAllByPermissionKeyAsync(permissionKeysMapped).ConfigureAwait(false);
 
-                throw new PermissionNotFoundException(permissionsNotFound);
-            }
+            if (permissionsSaved.Count == permissionKeys.Count)
+                return permissionsSaved;
 
-            return permissionsSaved;
+            var permissionsMapped = this._mapper.Map<List<Permission>>(permissionsSaved);
+            var missingPermissions = permissionKeysMapped.Where(pk => !permissionsMapped.Any(p => p.Key.ToString() == pk)).ToList();
+
+            throw new SpecificResourceNotFoundException<Permission>(new List<string> { nameof(Permission.Key) }, missingPermissions);
         }
 
-        public async Task ExistByKeysAsync(List<PermissionKey> permissionKeys)
+        public async Task AssertByKeysAsync(List<PermissionKey> permissionKeys)
         {
             await this.GetAllByKeysAsync(permissionKeys).ConfigureAwait(false);
         }
 
-        public async Task CreateAsync(CreatePermission permission)
+        #region Create
+        async Task IPermissionService.CreateAsync(CreatePermission permission)
         {
-            var existPermission = await this._permissionRepository.ExistByKeyAsync(permission.Key).ConfigureAwait(false);
+            var existPermission = await this.ExistByKeyAsync(permission.Key).ConfigureAwait(false);
 
-            if (existPermission) 
-                throw new SpecificResourceDuplicatedException<Permission>(
-                    nameof(Permission.Key),
+            if (existPermission)
+                throw new SpecificResourceDuplicatedException<PermissionMongo>(
+                    nameof(PermissionMongo.Key),
                     permission.Key.ToString());
 
-            await this.SaveNewPermissionAsync(permission).ConfigureAwait(false);
+            await this.CreateAsync(permission).ConfigureAwait(false);
         }
 
-        protected abstract Task SaveNewPermissionAsync(CreatePermission newPermission);
+        protected abstract Task<bool> ExistByKeyAsync(PermissionKey permissionKey);
+
+        protected abstract Task CreateAsync(CreatePermission newPermission);
+
+        #endregion
+
+        #region CreateBulk
+        async Task IPermissionService.CreateBulkAsync(List<CreatePermission> permissions)
+        {
+            var permissionKeys = permissions
+                .Select(p => p.Key)
+                .Distinct()
+                .ToList();
+
+            if (permissionKeys.Count != permissions.Count)
+            {
+                var duplicatedKeys = permissions
+                    .GroupBy(r => r.Key)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key.ToString())
+                    .ToList();
+
+                throw new SpecificResourceDuplicatedException<Permission>(new List<string> { nameof(Permission.Key) }, duplicatedKeys);
+            }
+
+            await this.AssertByKeysAsync(permissionKeys).ConfigureAwait(false);
+
+            await this.CreateBulkAsync(permissions).ConfigureAwait(false);
+        }
+
+        protected abstract Task<List<TPermission>> GetAllByPermissionKeyAsync(List<string> permissions);
+
+        protected abstract Task CreateBulkAsync(List<CreatePermission> permissions);
+        #endregion
     }
 }

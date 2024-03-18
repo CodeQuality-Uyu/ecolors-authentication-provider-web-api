@@ -33,6 +33,14 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
                 destination => destination.Key,
                 options => options.MapFrom(
                     source => new RoleKey(source.Key)));
+
+            CreateMap<List<RoleEfCore>, List<RoleInfo>>()
+                .ConvertUsing((source, destination, context) => 
+                source.Select(r => context.Mapper.Map<RoleInfo>(r)).ToList());
+
+            CreateMap<List<RoleMongo>, List<RoleInfo>>()
+                .ConvertUsing((source, destination, context) =>
+                source.Select(r => context.Mapper.Map<RoleInfo>(r)).ToList());
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
-    internal interface IRoleInternalService<TRole> : IRoleService
+    internal interface IRoleInternalService<TRole>: IRoleService
         where TRole : class
     {
-        Task ExistByKeyAsync(RoleKey key);
+        Task AssertByKeyAsync(RoleKey key);
 
         Task<TRole> GetByKeyAsync(RoleKey key);
 
