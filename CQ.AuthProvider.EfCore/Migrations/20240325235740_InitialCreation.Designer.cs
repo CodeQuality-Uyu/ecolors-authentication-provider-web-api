@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.EfCore.Migrations
 {
     [DbContext(typeof(IdentityProviderEfCoreContext))]
-    [Migration("20240226170903_CreateTables")]
-    partial class CreateTables
+    [Migration("20240325235740_InitialCreation")]
+    partial class InitialCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,14 @@ namespace CQ.AuthProvider.EfCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Identities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "d47025648273495ba69482fcc69da874",
+                            Email = "admin@gmail.com",
+                            Password = "!12345678"
+                        });
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.BusinessLogic.Sessions.Session", b =>

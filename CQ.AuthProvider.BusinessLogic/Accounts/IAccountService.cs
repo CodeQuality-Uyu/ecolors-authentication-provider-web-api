@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CQ.AuthProvider.BusinessLogic.Accounts
+﻿namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
     public interface IAccountService
     {
         Task<CreateAccountResult> CreateAsync(CreateAccount auth);
 
-        Task<AccountInfo> GetMeAsync(string token);
+        Task<Account> GetByTokenAsync(string token);
 
-        Task<AccountInfo> GetByEmailAsync(string email);
+        Task<Account> GetByEmailAsync(string email);
+    }
+
+    internal interface IAccountInternalService
+    {
+        Task<Account> GetByIdAsync(string id);
     }
 }

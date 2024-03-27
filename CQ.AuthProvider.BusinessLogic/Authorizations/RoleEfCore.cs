@@ -10,19 +10,21 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
     public sealed record class RoleEfCore
     {
-        public string Id { get; set; } = null!;
+        public string Id { get; init; } = null!;
 
         public string Name { get; set; } = null!;
 
         public string Description { get; set; } = null!;
 
-        public string Key { get; set; } = null!;
+        public string Key { get; init; } = null!;
 
         public List<PermissionEfCore> Permissions { get; set; } = null!;
 
         public List<AccountEfCore> Accounts { get; set; } = null!;
 
         public bool IsPublic { get; set; }
+
+        public bool IsDefault {  get; set; }
 
         public RoleEfCore()
         {
@@ -36,7 +38,8 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             string description,
             RoleKey key,
             List<PermissionEfCore> permissions,
-            bool isPublic)
+            bool isPublic = false,
+            bool isDefault = false)
             : this()
         {
             Name = name;
@@ -44,6 +47,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             Key = key.ToString();
             Permissions = permissions;
             IsPublic = isPublic;
+            IsDefault = isDefault;
         }
     }
 }

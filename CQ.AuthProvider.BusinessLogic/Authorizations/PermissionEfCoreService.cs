@@ -67,7 +67,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         }
         #endregion
 
-        protected override async Task<List<Permission>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false, string? roleId = null)
+        protected override async Task<List<Permission>> GetAllAsync(Account accountLogged, bool isPrivate = false, string? roleId = null)
         {
             var permissions = await 
                 this._permissionRepository.GetAllAsync(p =>

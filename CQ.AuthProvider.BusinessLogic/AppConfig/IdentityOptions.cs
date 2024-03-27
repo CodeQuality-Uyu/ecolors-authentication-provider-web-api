@@ -10,7 +10,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
     {
         public const string Identity = "Identity";
 
-        public IdentityType? Type { get; init; } = IdentityType.Database;
+        public IdentityType Type { get; init; } = IdentityType.Database;
     }
 
     public enum IdentityType

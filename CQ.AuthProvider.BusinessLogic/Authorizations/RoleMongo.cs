@@ -10,17 +10,19 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
     public sealed record class RoleMongo
     {
-        public string Id { get; set; } = null!;
+        public string Id { get; init; } = null!;
 
         public string Name { get; set; } = null!;
 
         public string Description { get; set; } = null!;
 
-        public string Key { get; set; } = null!;
+        public string Key { get; init; } = null!;
 
         public List<string> Permissions { get; set; } = null!;
 
         public bool IsPublic { get; set; }
+
+        public bool IsDefault { get; set; }
 
         public RoleMongo()
         {
@@ -33,7 +35,8 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             string description,
             RoleKey key,
             List<PermissionKey> permissions,
-            bool isPublic)
+            bool isPublic = false,
+            bool isDefault = false)
             : this()
         {
             Name = name;
@@ -41,6 +44,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             Key = key.ToString();
             Permissions = permissions.Select(p => p.ToString()).ToList();
             IsPublic = isPublic;
+            IsDefault = isDefault;
         }
     }
 }

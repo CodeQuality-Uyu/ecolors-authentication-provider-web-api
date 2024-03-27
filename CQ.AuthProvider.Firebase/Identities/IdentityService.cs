@@ -74,7 +74,7 @@ namespace CQ.AuthProvider.Firebase
             {
                 if (ex.AuthErrorCode == AuthErrorCode.EmailAlreadyExists)
                 {
-                    throw new SpecificResourceDuplicatedException<AccountInfo>(nameof(AccountInfo.Email), userRecords.Email);
+                    throw new SpecificResourceDuplicatedException<Account>(nameof(Account.Email), userRecords.Email);
                 }
 
                 throw;

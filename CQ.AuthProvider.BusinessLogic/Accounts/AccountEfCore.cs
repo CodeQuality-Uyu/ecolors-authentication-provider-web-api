@@ -31,14 +31,14 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             string fullName,
             string firstName,
             string lastName,
-            RoleEfCore role)
+            string roleId)
             : this()
         {
             this.Email = email;
             this.FullName = fullName;
             this.FirstName = firstName;
             this.LastName = lastName;
-            this.Roles = new List<RoleEfCore> { role };
+            this.Roles = new List<RoleEfCore> { new() { Id = roleId } };
         }
     }
 }

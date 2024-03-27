@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Exceptions;
@@ -11,18 +12,22 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
     {
         private readonly IIdentityProviderRepository _identityProviderRepository;
 
-        protected readonly ISessionService _sessionService;
+        protected readonly ISessionInternalService _sessionService;
 
         protected readonly IMapper _mapper;
 
+        protected readonly IRoleInternalService _roleInternalService;
+
         public AccountService(
             IIdentityProviderRepository identityProviderRepository,
-            ISessionService sessionService,
-            IMapper mapper)
+            ISessionInternalService sessionService,
+            IMapper mapper,
+            IRoleInternalService roleInternalService)
         {
             this._identityProviderRepository = identityProviderRepository;
             this._sessionService = sessionService;
             this._mapper = mapper;
+            this._roleInternalService = roleInternalService;
         }
 
         #region Create
@@ -34,11 +39,17 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
             try
             {
-                var account = await this.CreateAsync(newAccount, identity).ConfigureAwait(false);
+                Role role;
+                if (Guard.IsNull(newAccount.Role))
+                    role = await this._roleInternalService.GetDefaultAsync().ConfigureAwait(false);
+                else
+                    role = await this._roleInternalService.GetByKeyAsync(newAccount.Role).ConfigureAwait(false);
 
-                var session = await _sessionService.CreateAsync(new CreateSessionCredentials(newAccount.Email, newAccount.Password)).ConfigureAwait(false);
+                var account = await this.CreateAsync(newAccount, role, identity).ConfigureAwait(false);
 
-                return new CreateAccountResult(
+                var session = await _sessionService.CreateAsync(identity).ConfigureAwait(false);
+
+                var accountToReturn = new CreateAccountResult(
                     account.Id,
                     account.Email,
                     account.FullName,
@@ -47,8 +58,10 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
                     session.Token,
                     account.Roles,
                     account.Permissions);
+
+                return accountToReturn;
             }
-            catch (SpecificResourceNotFoundException<RoleInfo>) 
+            catch (SpecificResourceNotFoundException<Role>)
             {
                 await this._identityProviderRepository.DeleteByIdAsync(identity.Id).ConfigureAwait(false);
                 throw;
@@ -60,7 +73,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             var existAuth = await this.ExistByEmailAsync(email).ConfigureAwait(false);
 
             if (existAuth)
-                throw new SpecificResourceNotFoundException<AccountInfo>(nameof(AccountEfCore.Email), email);
+                throw new SpecificResourceDuplicatedException<Account>(nameof(Account.Email), email);
         }
 
         protected abstract Task<bool> ExistByEmailAsync(string email);
@@ -76,7 +89,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             return identity;
         }
 
-        protected abstract Task<AccountInfo> CreateAsync(CreateAccount newAccount, Identity identity);
+        protected abstract Task<Account> CreateAsync(CreateAccount newAccount, Role role, Identity identity);
         #endregion
 
         public async Task UpdatePasswordAsync(string newPassword, AccountEfCore userLogged)
@@ -87,7 +100,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
         }
 
         #region GetMe
-        public async Task<AccountInfo> GetMeAsync(string token)
+        public async Task<Account> GetByTokenAsync(string token)
         {
             var session = await this._sessionService.GetByTokenAsync(token).ConfigureAwait(false);
 
@@ -98,9 +111,9 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             return account;
         }
 
-        protected abstract Task<AccountInfo> GetByIdAsync(string id);
+        protected abstract Task<Account> GetByIdAsync(string id);
         #endregion
 
-        public abstract Task<AccountInfo> GetByEmailAsync(string email);
+        public abstract Task<Account> GetByEmailAsync(string email);
     }
 }

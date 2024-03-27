@@ -15,17 +15,18 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
         public Session() 
         {
             this.Id = Db.NewId();
+            this.Token = Db.NewId();
         }
 
         public Session(
             string accountId,
             string email,
-            string token)
+            string? token = null)
             : this()
         {
             this.AccountId = accountId;
             this.Email = email;
-            this.Token = token;
+            this.Token = token ?? this.Token;
         }
     }
 }

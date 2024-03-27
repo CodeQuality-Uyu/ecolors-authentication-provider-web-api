@@ -8,6 +8,12 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
 
         public readonly string Email;
 
+        public readonly string FirstName;
+
+        public readonly string LastName;
+
+        public readonly string FullName;
+
         public readonly string Token;
 
         public readonly List<RoleKey> Roles;
@@ -18,6 +24,9 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
             string accountId,
             string email,
             string token,
+            string firstName,
+            string lastName,
+            string fullName,
             List<RoleKey> roles,
             List<PermissionKey> permissions)
         {
@@ -26,6 +35,9 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
             this.Token = token;
             this.Roles = roles;
             this.Permissions = permissions;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.FullName = fullName;
         }
     }
 }

@@ -41,7 +41,7 @@ namespace CQ.AuthProvider.EfCore.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d4702564-8273-495b-a694-82fcc69da874",
+                            Id = "d47025648273495ba69482fcc69da874",
                             Email = "admin@gmail.com",
                             Password = "!12345678"
                         });

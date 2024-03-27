@@ -12,7 +12,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
     {
         public RoleProfile()
         {
-            CreateMap<RoleEfCore, RoleInfo>()
+            CreateMap<RoleEfCore, Role>()
                 .ForMember(
                 destination => destination.Permissions,
                 options => options.MapFrom(
@@ -23,7 +23,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
                 options => options.MapFrom(
                     source => new RoleKey(source.Key)));
 
-            CreateMap<RoleMongo, RoleInfo>()
+            CreateMap<RoleMongo, Role>()
                 .ForMember(
                 destination => destination.Permissions,
                 options => options.MapFrom(
@@ -34,13 +34,13 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
                 options => options.MapFrom(
                     source => new RoleKey(source.Key)));
 
-            CreateMap<List<RoleEfCore>, List<RoleInfo>>()
+            CreateMap<List<RoleEfCore>, List<Role>>()
                 .ConvertUsing((source, destination, context) => 
-                source.Select(r => context.Mapper.Map<RoleInfo>(r)).ToList());
+                source.Select(r => context.Mapper.Map<Role>(r)).ToList());
 
-            CreateMap<List<RoleMongo>, List<RoleInfo>>()
+            CreateMap<List<RoleMongo>, List<Role>>()
                 .ConvertUsing((source, destination, context) =>
-                source.Select(r => context.Mapper.Map<RoleInfo>(r)).ToList());
+                source.Select(r => context.Mapper.Map<Role>(r)).ToList());
         }
     }
 }

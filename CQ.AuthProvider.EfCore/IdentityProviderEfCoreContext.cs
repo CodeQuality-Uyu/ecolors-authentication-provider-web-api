@@ -1,14 +1,18 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.BusinessLogic.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.AuthProvider.EfCore.AppConfig;
 using CQ.UnitOfWork.EfCore;
+using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace CQ.AuthProvider.EfCore
 {
     public sealed class IdentityProviderEfCoreContext : EfCoreContext
     {
+        public const string ADMIN_ID= "d47025648273495ba69482fcc69da874";
+        public const string ADMIN_EMAIL = "admin@gmail.com";
+
         public DbSet<Identity> Identities { get; set; }
 
         public DbSet<Session> Sessions { get; set; }
@@ -22,10 +26,10 @@ namespace CQ.AuthProvider.EfCore
         {
             modelBuilder.Entity<Identity>().HasData(
                 new Identity(
-                    "admin@gmail.com",
+                    ADMIN_EMAIL,
                     "!12345678")
                 {
-                    Id = "d4702564-8273-495b-a694-82fcc69da874"
+                    Id = ADMIN_ID
                 });
         }
     }

@@ -17,11 +17,11 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         }
 
         public MiniRoleMongo(
-            string key,
-            List<string> permissions)
+            RoleKey key,
+            List<PermissionKey> permissions)
         {
-            this.Key = key;
-            this.Permissions = permissions;
+            this.Key = key.ToString();
+            this.Permissions = permissions.Select(p => p.ToString()).ToList();
         }
     }
 }

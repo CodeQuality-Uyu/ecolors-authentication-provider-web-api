@@ -1,6 +1,8 @@
 ﻿using CQ.AuthProvider.EfCore;
+using CQ.AuthProvider.EfCore.AppConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace CQ.EfCore.Migrations
 {
@@ -8,8 +10,17 @@ namespace CQ.EfCore.Migrations
     {
         public IdentityProviderEfCoreContext CreateDbContext(string[] args)
         {
+            string directory = Directory.GetCurrentDirectory();
+
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(directory)
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var identityProviderDbConnectionString = configuration.GetConnectionString("IdentityProvider");
+
             var options = new DbContextOptionsBuilder<IdentityProviderEfCoreContext>()
-                .UseSqlServer("Server=localhost;Database=Identity; Integrated Security=True;Trusted_Connection=True;MultipleActiveResultSets=True;TrustServerCertificate=True")
+                .UseSqlServer(identityProviderDbConnectionString)
                 .LogTo(Console.WriteLine)
                 .Options;
 

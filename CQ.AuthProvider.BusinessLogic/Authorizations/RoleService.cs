@@ -21,17 +21,15 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         {
             var existRoleKey = await this.ExistByKeyAsync(key).ConfigureAwait(false);
 
-            if (!existRoleKey)
-                throw new SpecificResourceNotFoundException<RoleInfo>(nameof(RoleInfo.Key), key.ToString());
+            if (existRoleKey)
+                throw new SpecificResourceNotFoundException<Role>(nameof(Role.Key), key.ToString());
         }
 
         protected abstract Task<bool> ExistByKeyAsync(RoleKey key);
         #endregion
 
-        public abstract Task<TRole> GetByKeyAsync(RoleKey key);
-
         #region GetAll
-        async Task<List<RoleInfo>> IRoleService.GetAllAsync(AccountInfo accountLogged, bool isPrivate = false)
+        async Task<List<Role>> IRoleService.GetAllAsync(Account accountLogged, bool isPrivate = false)
         {
             if (isPrivate)
             {
@@ -45,7 +43,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             return permissions;
         }
 
-        protected abstract Task<List<RoleInfo>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false);
+        protected abstract Task<List<Role>> GetAllAsync(Account accountLogged, bool isPrivate = false);
         #endregion
 
         #region Create
@@ -53,8 +51,13 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         {
             await this.AssertByKeyAsync(role.Key).ConfigureAwait(false);
 
+            if (role.IsDefault)
+                await this.RemoveDefaultAsync().ConfigureAwait(false);
+
             await this.CreateAsync(role).ConfigureAwait(false);
         }
+
+        protected abstract Task RemoveDefaultAsync();
 
         protected abstract Task CreateAsync(CreateRole newRole);
         #endregion
@@ -75,10 +78,19 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                     .Select(g => g.Key.ToString())
                     .ToList();
 
-                throw new SpecificResourceDuplicatedException<RoleInfo>(new List<string> { nameof(RoleInfo.Key) }, duplicatedKeys);
+                throw new SpecificResourceDuplicatedException<Role>(new List<string> { nameof(Role.Key) }, duplicatedKeys);
             }
 
+            var defaultRoles = roles
+                .GroupBy(r => r.IsDefault)
+                .Count(g => g.Count() >= 1);
+            if (defaultRoles > 1)
+                throw new SpecificResourceDuplicatedException<Role>("true", nameof(Role.IsDefault));
+
             await this.AssertByKeysAsync(rolesKeys).ConfigureAwait(false);
+
+            if(defaultRoles == 1)
+                await this.RemoveDefaultAsync();
 
             await this.CreateBulkAsync(roles).ConfigureAwait(false);
         }
@@ -94,10 +106,10 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
             var rolePermission = roleKeysMapped.Where(pk => !rolesSaved.Any(p => p.Key.ToString() == pk)).ToList();
 
-            throw new SpecificResourceNotFoundException<RoleInfo>(new List<string> { nameof(RoleInfo.Key) }, rolePermission);
+            throw new SpecificResourceNotFoundException<Role>(new List<string> { nameof(Role.Key) }, rolePermission);
         }
 
-        protected abstract Task<List<RoleInfo>> GetAllByRoleKeyAsync(List<string> roles);
+        protected abstract Task<List<Role>> GetAllByRoleKeyAsync(List<string> roles);
 
         protected abstract Task CreateBulkAsync(List<CreateRole> roles);
         #endregion
@@ -119,7 +131,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         public async Task AddPermissionByIdAsync(string id, AddPermission permissions)
         {
             var role = await this.GetByIdAsync(id).ConfigureAwait(false);
-            var roleMapped = this._mapper.Map<RoleInfo>(role);
+            var roleMapped = this._mapper.Map<Role>(role);
 
             var duplicatePermission = permissions.PermissionsKeys
                 .Where(p => roleMapped.Permissions.Contains(p))
@@ -136,5 +148,16 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         protected abstract Task AddPermissionsByIdAsync(TRole role, List<PermissionKey> permissions);
 
         #endregion
+
+        public abstract Task<TRole> GetByKeyAsync(RoleKey key);
+
+        async Task<Role> IRoleInternalService.GetByKeyAsync(RoleKey key)
+        {
+            var role = await this.GetByKeyAsync(key).ConfigureAwait(false);
+
+            return this._mapper.Map<Role>(role);
+        }
+
+        public abstract Task<Role> GetDefaultAsync();
     }
 }

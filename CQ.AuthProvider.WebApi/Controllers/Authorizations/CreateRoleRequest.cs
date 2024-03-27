@@ -16,6 +16,8 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 
         public bool IsPublic { get; init; }
 
+        public bool IsDefault { get; init; }
+
         protected override CreateRole InnerMap()
         {
             return new CreateRole(
@@ -23,7 +25,8 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
                 Description ?? string.Empty,
                 Key ?? string.Empty,
                 PermissionKeys ?? new List<string>(),
-                IsPublic);
+                IsPublic,
+                IsDefault);
         }
     }
 }

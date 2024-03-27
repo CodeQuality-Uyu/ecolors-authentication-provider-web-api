@@ -1,34 +1,38 @@
-﻿using CQ.ApiElements;
-using CQ.ApiElements.Filters;
+﻿using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.AuthProvider.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters
 {
-    internal class CQAuthenticationAttribute : AuthenticationAsyncAttributeFilter
+    internal class CQAuthenticationAttribute : SecureAuthenticationAsyncAttributeFilter
     {
-        public CQAuthenticationAttribute() : base()
-        {
-        }
-
-        public CQAuthenticationAttribute(string permission) : base(permission) { }
-
-        protected override async Task<bool> IsFormatOfTokenValidAsync(string token, AuthorizationFilterContext context)
+        protected override async Task<bool> IsFormatOfHeaderValidAsync(string header, string headerValue, AuthorizationFilterContext context)
         {
             var sessionService = base.GetService<ISessionService>(context);
 
-            return await sessionService.IsTokenValidAsync(token);
+            var isFormatValid = await sessionService.IsTokenValidAsync(headerValue).ConfigureAwait(false);
+
+            return isFormatValid;
         }
 
-        protected override async Task<object> GetAccountByTokenAsync(string token, AuthorizationFilterContext context)
+        protected override async Task<object> GetRequestByHeaderAsync(string header, string headerValue, AuthorizationFilterContext context)
         {
-            var authService = base.GetService<IAccountService>(context);
+            if (header == "Authorization")
+            {
+                var accountService = base.GetService<IAccountService>(context);
 
-            var account = await authService.GetMeAsync(token).ConfigureAwait(false);
+                var account = await accountService.GetByTokenAsync(headerValue).ConfigureAwait(false);
 
-            return account;
+                return account;
+            }
+
+            var clientSystemService = base.GetService<IClientSystemService>(context);
+
+            var clientSystem = await clientSystemService.GetByPrivateKeyAsync(headerValue).ConfigureAwait(false);
+
+            return clientSystem;
         }
     }
 }

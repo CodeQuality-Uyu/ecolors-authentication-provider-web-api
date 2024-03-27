@@ -18,7 +18,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         }
 
         #region GetAll
-        async Task<List<Permission>> IPermissionService.GetAllAsync(AccountInfo accountLogged, bool isPrivate = false, string? roleId = null)
+        async Task<List<Permission>> IPermissionService.GetAllAsync(Account accountLogged, bool isPrivate = false, string? roleId = null)
         {
             if (isPrivate)
                 accountLogged.AssertPermission(PermissionKey.GetAllPrivatePermissions);
@@ -31,7 +31,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             return permissions;
         }
 
-        protected abstract Task<List<Permission>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false, string? roleId = null);
+        protected abstract Task<List<Permission>> GetAllAsync(Account accountLogged, bool isPrivate = false, string? roleId = null);
         #endregion
 
         public async Task<List<TPermission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys)

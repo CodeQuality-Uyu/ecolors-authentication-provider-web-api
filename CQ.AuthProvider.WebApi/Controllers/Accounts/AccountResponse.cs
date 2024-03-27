@@ -3,7 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Accounts;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts
 {
-    public sealed record class AccountInfoResponse : Response<AccountInfo>
+    public record class AccountResponse : Response<Account>
     {
         public string Id { get; init; }
 
@@ -19,7 +19,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
 
         public List<string> Permissions { get; init; }
 
-        public AccountInfoResponse(AccountInfo entity) : base(entity)
+        public AccountResponse(Account entity) : base(entity)
         {
             Id = entity.Id;
             FullName = entity.FullName;

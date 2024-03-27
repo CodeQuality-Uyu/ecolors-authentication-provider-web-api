@@ -48,7 +48,7 @@ namespace CQ.AuthProvider.WebApi.Filters
                     HttpStatusCode.Conflict,
                     "Exist another account with email provided"
                     )
-                .AddException<SpecificResourceNotFoundException<RoleInfo>>(
+                .AddException<SpecificResourceNotFoundException<Role>>(
                 "InvalidRole",
                 HttpStatusCode.Conflict,
                 (exception, context) => "The role provided does not exist"

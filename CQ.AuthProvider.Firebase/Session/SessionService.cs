@@ -1,6 +1,8 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.AuthProvider.BusinessLogic.ClientSystems;
+using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.UnitOfWork.Abstractions;
 using CQ.Utility;
@@ -13,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.Firebase
 {
-    internal class SessionService : ISessionService
+    internal class SessionService : ISessionInternalService
     {
         private readonly HttpClientAdapter _firebaseApi;
         private readonly FirebaseAuth _firebaseAuth;
@@ -39,25 +41,43 @@ namespace CQ.AuthProvider.Firebase
                 new { email = credentials.Email, password = credentials.Password, returnSecureToken = true },
                 (error) =>
                 {
-                    return this.ProcessLoginError(error, credentials);
+                    return this.ProcessLoginError(error, credentials.Email);
                 })
                 .ConfigureAwait(false);
+
             var account = await this._accountRepository.GetInfoByIdAsync(response.LocalId).ConfigureAwait(false);
 
             return new SessionCreated(
                 response.LocalId,
                 response.Email,
                 response.IdToken,
+                account.FirstName,
+                account.LastName,
+                account.FullName,
                 account.Roles,
                 account.Permissions);
         }
 
-        private Exception? ProcessLoginError(FirebaseError error, CreateSessionCredentials credentials)
+        public async Task<Session> CreateAsync(Identity identity)
+        {
+            var response = await this._firebaseApi.PostAsync<SessionFirebase, FirebaseError>(
+               $"v1/accounts:signInWithPassword?key={this._options.ApiKey}",
+               new { email = identity.Email, password = identity.Password, returnSecureToken = true },
+               (error) =>
+               {
+                   return this.ProcessLoginError(error, identity.Email);
+               })
+               .ConfigureAwait(false);
+
+            return new Session(response.LocalId, identity.Email, response.IdToken);
+        }
+
+        private Exception? ProcessLoginError(FirebaseError error, string email)
         {
             if (error.Error.AuthCode == FirebaseAuthErrorCode.EmailNotFound ||
-            error.Error.AuthCode == FirebaseAuthErrorCode.InvalidPassword) return new InvalidCredentialsException(credentials.Email);
+            error.Error.AuthCode == FirebaseAuthErrorCode.InvalidPassword) return new InvalidCredentialsException(email);
 
-            if (error.Error.AuthCode == FirebaseAuthErrorCode.UserDisabled) return new AuthDisabledException(credentials.Email);
+            if (error.Error.AuthCode == FirebaseAuthErrorCode.UserDisabled) return new AuthDisabledException(email);
 
             return null;
         }

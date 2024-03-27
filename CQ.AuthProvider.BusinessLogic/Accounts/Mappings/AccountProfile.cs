@@ -11,7 +11,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts.Mappings
     {
         public AccountProfile() 
         {
-            CreateMap<AccountEfCore, AccountInfo>()
+            CreateMap<AccountEfCore, Account>()
                 .ForMember(
                 destination => destination.Roles,
                 options => options.MapFrom(
@@ -22,7 +22,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts.Mappings
                     source => source.Roles.SelectMany(r => r.Permissions).Select(p => p.Key)));
 
 
-            CreateMap<AccountMongo, AccountInfo>()
+            CreateMap<AccountMongo, Account>()
                 .ForMember(
                 destination => destination.Roles,
                 options => options.MapFrom(

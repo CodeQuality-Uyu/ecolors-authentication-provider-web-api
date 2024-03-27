@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.UnitOfWork.Abstractions;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,23 @@ namespace CQ.AuthProvider.WebApi.Controllers
 
         private readonly IIdentityProviderHealthService _identityProviderHealthService;
 
+        private readonly AuthOptions _authOptions;
+
         public HealthController(
             IEnumerable<IDatabaseContext> contexts,
-            IIdentityProviderHealthService identityProviderHealthService)
+            IIdentityProviderHealthService identityProviderHealthService,
+            AuthOptions authOptions)
         {
             _contexts = contexts.ToList();
             _identityProviderHealthService = identityProviderHealthService;
+            _authOptions = authOptions;
         }
 
         [HttpGet]
         public object Get()
         {
-            var authContext = this._contexts.FirstOrDefault(c => c.GetDatabaseInfo().Name == "Auth");
+            var authContext = this._contexts.FirstOrDefault(c => c.GetDatabaseInfo().Name == _authOptions.AuthDatabaseName);
+            
             return new
             {
                 Alive = true,

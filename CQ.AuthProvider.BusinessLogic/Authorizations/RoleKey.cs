@@ -12,6 +12,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
     {
         public static readonly RoleKey Admin = new("admin");
         public static readonly RoleKey ClientSystem = new("clientSystem");
+        public static readonly RoleKey AuthProviderClientSystem = new("authProviderClientSystem");
 
         private readonly string Value;
 

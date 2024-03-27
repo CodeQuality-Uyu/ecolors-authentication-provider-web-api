@@ -8,7 +8,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
     public sealed record class IdentityDatabaseOptions : IdentityOptions
     {
-        public DatabaseEngine Engine { get; set; } = DatabaseEngine.SQL;
+        public DatabaseEngine Engine { get; set; } = DatabaseEngine.Sql;
 
         public string Name { get; set; } = string.Empty;
 
@@ -17,7 +17,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 
     public enum DatabaseEngine
     {
-        SQL,
-        MONGO
+        Sql,
+        Mongo
     }
 }

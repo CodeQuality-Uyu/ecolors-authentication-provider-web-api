@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
-    public sealed record class RoleInfo
+    public sealed record class Role
     {
         public string Id { get; init; } = null!; 
 
@@ -19,5 +19,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         public RoleKey Key { get; init; } = null!;
 
         public List<PermissionKey> Permissions { get; init; } = null!;
+
+        public bool IsDefault { get; init; }
     }
 }

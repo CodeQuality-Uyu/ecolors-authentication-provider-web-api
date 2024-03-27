@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.AuthProvider.WebApi.Filters;
+using CQ.ApiElements.Filters.Authentications;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 {
@@ -27,6 +29,8 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
         }
 
         [HttpGet("{token}/validate")]
+        [CQAuthorization]
+        [ValidateClientSystem]
         public async Task<TokenValidationResponse> ValidateTokenAsync(string token)
         {
             var isValid = await this._sessionService.IsTokenValidAsync(token).ConfigureAwait(false);

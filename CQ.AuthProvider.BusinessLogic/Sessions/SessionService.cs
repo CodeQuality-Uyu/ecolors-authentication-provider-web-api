@@ -1,10 +1,12 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Sessions
 {
-    internal sealed class SessionService : ISessionService
+    internal sealed class SessionService : ISessionInternalService
     {
         private readonly IRepository<Session> _sessionRepository;
         private readonly IRepository<Identity> _identityRepository;
@@ -34,28 +36,31 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
 
             if (sessionOfUser == null)
             {
-                sessionOfUser = await CreateNewAsync(identity).ConfigureAwait(false);
+                sessionOfUser = await CreateAsync(identity).ConfigureAwait(false);
             }
             else
             {
-                sessionOfUser = sessionOfUser with { Token = Guid.NewGuid().ToString() };
+                sessionOfUser = sessionOfUser with { Token = Db.NewId() };
 
                 await _sessionRepository.UpdateByIdAsync(sessionOfUser.Id, new { sessionOfUser.Token }).ConfigureAwait(false);
             }
 
-            var account = await this._accountRepository.GetInfoByIdAsync(identity.Id).ConfigureAwait(true);
+            var account = await this._accountRepository.GetInfoByIdAsync(sessionOfUser.AccountId).ConfigureAwait(true);
 
             return new SessionCreated(
                 sessionOfUser.AccountId,
                 sessionOfUser.Email,
                 sessionOfUser.Token,
+                account.FirstName,
+                account.LastName,
+                account.LastName,
                 account.Roles,
                 account.Permissions);
         }
 
-        private async Task<Session> CreateNewAsync(Identity identity)
+        public async Task<Session> CreateAsync(Identity identity)
         {
-            var session = new Session(identity.Id, identity.Email, Guid.NewGuid().ToString());
+            var session = new Session(identity.Id, identity.Email);
 
             var sessionCreated = await _sessionRepository.CreateAsync(session).ConfigureAwait(false);
 
@@ -87,14 +92,11 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
             return await this._sessionRepository.GetOrDefaultByPropAsync(token, nameof(Session.Token)).ConfigureAwait(false);
         }
 
-        public async Task<bool> IsTokenValidAsync(string token)
+        public Task<bool> IsTokenValidAsync(string token)
         {
             var isGuid = Guid.TryParse(token, out var id);
 
-            if (!isGuid)
-                return false;
-
-            return await this._sessionRepository.ExistAsync(s => s.Token == token).ConfigureAwait(false);
+            return Task.FromResult(isGuid);
         }
     }
 }

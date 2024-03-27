@@ -28,7 +28,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             string name,
             string description,
             PermissionKey key,
-            bool isPublic)
+            bool isPublic = false)
             : this()
         {
             this.Name = name;

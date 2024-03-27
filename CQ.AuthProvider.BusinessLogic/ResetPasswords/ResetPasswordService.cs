@@ -107,7 +107,7 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
 
         protected abstract Task UpdateByIdAsync(string id, object updates);
 
-        protected abstract Task<ResetPasswordApplication> CreateAsync(AccountInfo account);
+        protected abstract Task<ResetPasswordApplication> CreateAsync(Account account);
         #endregion
 
         #region GetActiveById

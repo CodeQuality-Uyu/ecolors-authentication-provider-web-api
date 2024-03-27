@@ -19,32 +19,26 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
         public readonly bool IsPublic;
 
+        public readonly bool IsDefault;
+
         public CreateRole(
             string name,
             string description,
             string key,
             List<string> permissionKeys,
-            bool isPublic)
+            bool isPublic,
+            bool isDefault)
         {
-            this.Name = Guard.Encode(name.Trim());
-            this.Description = Guard.Encode(description.Trim());
+            this.Name = Guard.Encode(name);
+            this.Description = Guard.Encode(description);
             this.Key= new RoleKey(key);
             this.PermissionKeys = permissionKeys.Select(p => new PermissionKey(p)).ToList();
             this.IsPublic = isPublic;
+            this.IsDefault = isDefault;
 
-            Guard.ThrowIsNullOrEmpty(this.Name, nameof(this.Name));
             Guard.ThrowIsMoreThan(this.Name, 50,nameof(this.Name));
 
-            Guard.ThrowIsNullOrEmpty(this.Description, nameof(this.Description));
             Guard.ThrowIsMoreThan(this.Description, 200,nameof(this.Description));
-
-            Guard.ThrowIsNullOrEmpty(this.Key.ToString(), nameof(this.Key));
-            Guard.ThrowIsMoreThan(this.Key.ToString(), 50,nameof(this.Key));
-
-            if (!this.PermissionKeys.Any())
-            {
-                throw new ArgumentException("Missing at least one permission", nameof(permissionKeys));
-            }
         }
     }
 }

@@ -8,10 +8,18 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.Accounts
 {
-    internal sealed class AccountMongoRepository : MongoDriverRepository<AccountMongo>
+    internal sealed class AccountMongoRepository : MongoDriverRepository<AccountMongo>, IAccountInfoRepository
     {
+        private readonly IMapper _mapper;
+
         public AccountMongoRepository(MongoContext mongoContext) : base(mongoContext)
         {
+            var configuration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<AccountProfile>();
+            });
+
+            this._mapper = new Mapper(configuration);
         }
 
         public override async Task<AccountMongo> GetByPropAsync(string value, string prop)
@@ -22,6 +30,13 @@ namespace CQ.AuthProvider.DataAccess.Accounts
                 throw new SpecificResourceNotFoundException<AccountMongo>(prop, value);
 
             return account;
+        }
+
+        public async Task<Account> GetInfoByIdAsync(string id)
+        {
+            var account = await base.GetByIdAsync(id).ConfigureAwait(false);
+
+            return this._mapper.Map<Account>(account);
         }
     }
 }

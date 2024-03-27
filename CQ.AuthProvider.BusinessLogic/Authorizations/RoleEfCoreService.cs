@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
@@ -43,9 +44,21 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                 newRole.Description,
                 newRole.Key,
                 permissions,
-                newRole.IsPublic);
+                newRole.IsPublic,
+                newRole.IsDefault);
 
             await this._roleRepository.CreateAsync(role).ConfigureAwait(false);
+        }
+
+        protected override async Task RemoveDefaultAsync()
+        {
+            var roleDefault = await this._roleRepository.GetOrDefaultAsync(r => r.IsDefault).ConfigureAwait(false);
+
+            if (Guard.IsNull(roleDefault))
+                return;
+
+            roleDefault.IsDefault = false;
+            await this._roleRepository.UpdateAsync(roleDefault).ConfigureAwait(false);
         }
 
         protected override async Task<bool> ExistByKeyAsync(RoleKey key)
@@ -57,11 +70,11 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             return existRole;
         }
 
-        protected override async Task<List<RoleInfo>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false)
+        protected override async Task<List<Role>> GetAllAsync(Account accountLogged, bool isPrivate = false)
         {
             var roles = await this._roleRepository.GetAllAsync(r => r.IsPublic != isPrivate).ConfigureAwait(false);
 
-            return base._mapper.Map<List<RoleInfo>>(roles);
+            return base._mapper.Map<List<Role>>(roles);
         }
 
         #region AddPermission
@@ -89,12 +102,19 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             return role;
         }
 
+        public override async Task<Role> GetDefaultAsync()
+        {
+            var role = await this._roleRepository.GetAsync(r => r.IsDefault).ConfigureAwait(false);
+
+            return base._mapper.Map<Role>(role);
+        }
+
         #region CreateBulk
-        protected override async Task<List<RoleInfo>> GetAllByRoleKeyAsync(List<string> roles)
+        protected override async Task<List<Role>> GetAllByRoleKeyAsync(List<string> roles)
         {
             var rolesSaved = await this._roleRepository.GetAllAsync(r => roles.Contains(r.Key)).ConfigureAwait(false);
 
-            return base._mapper.Map<List<RoleInfo>>(rolesSaved);
+            return base._mapper.Map<List<Role>>(rolesSaved);
         }
 
         protected override async Task CreateBulkAsync(List<CreateRole> roles)

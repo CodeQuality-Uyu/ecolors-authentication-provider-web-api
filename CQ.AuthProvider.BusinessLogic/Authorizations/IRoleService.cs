@@ -9,7 +9,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
     public interface IRoleService
     {
-        Task<List<RoleInfo>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false);
+        Task<List<Role>> GetAllAsync(Account accountLogged, bool isPrivate = false);
 
         Task CreateAsync(CreateRole role);
 

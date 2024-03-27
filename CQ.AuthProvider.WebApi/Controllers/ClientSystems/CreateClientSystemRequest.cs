@@ -7,10 +7,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.ClientSystems
     {
         public string? Name { get; init; }
 
-        public CreateClientSystemRequest(Request<string> original) : base(original)
-        {
-        }
-
         protected override string InnerMap()
         {
             return Guard.Encode(this.Name ?? string.Empty, nameof(this.Name));

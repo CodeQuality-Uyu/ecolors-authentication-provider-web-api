@@ -1,14 +1,9 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
-    public sealed record class AccountInfo
+    public sealed record class Account
     {
         public string Id { get; init; } = null!;
 
@@ -30,6 +25,11 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
             if (!hasPermission)
                 throw new AccessDeniedException(permission.ToString());
+        }
+
+        public bool HasPermission(PermissionKey permission)
+        {
+            return this.Permissions.Contains(permission);
         }
     }
 }

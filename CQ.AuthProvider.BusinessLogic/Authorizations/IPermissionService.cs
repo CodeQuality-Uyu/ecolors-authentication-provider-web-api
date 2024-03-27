@@ -9,7 +9,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 {
     public interface IPermissionService
     {
-        Task<List<Permission>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false, string? roleId = null);
+        Task<List<Permission>> GetAllAsync(Account accountLogged, bool isPrivate = false, string? roleId = null);
 
         Task CreateAsync(CreatePermission permission);
 

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +15,11 @@ namespace CQ.AuthProvider.BusinessLogic.ClientSystems
     {
         private readonly IRepository<ClientSystemEfCore> _clientSystemRepository;
 
-        private readonly IRoleInternalService<RoleEfCore> _roleService;
+        private readonly IRoleInternalService _roleService;
 
         public ClientSystemEfCoreService(
             IRepository<ClientSystemEfCore> clientSystemRepository,
-            IRoleInternalService<RoleEfCore> roleInternalService,
+            IRoleInternalService roleInternalService,
             IMapper mapper)
             : base(mapper)
         {

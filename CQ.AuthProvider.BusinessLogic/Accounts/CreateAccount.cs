@@ -15,20 +15,20 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public string FullName => $"{this.FirstName} {this.LastName}";
 
-        public readonly RoleKey Role;
+        public readonly RoleKey? Role;
 
         public CreateAccount(
-            string email, 
-            string password, 
-            string firstName, 
+            string email,
+            string password,
+            string firstName,
             string lastName,
-            string role)
+            string? role)
         {
             this.Email = Guard.Encode(email.Trim())!;
             this.Password = Guard.Encode(password.Trim())!;
             this.FirstName = Normalize(Guard.Encode(firstName.Trim())!);
             this.LastName = Normalize(Guard.Encode(lastName.Trim())!);
-            this.Role = new(role);
+            this.Role = Guard.IsNotNullOrEmpty(role) ? new(role) : null;
 
             Guard.ThrowIsInputInvalidEmail(this.Email);
 
@@ -43,7 +43,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             if (input.Length == 0)
                 return input;
 
-            if(input.Length == 1)
+            if (input.Length == 1)
                 return $"{char.ToUpper(input[0])}";
 
             return $"{char.ToUpper(input[0])}{input[1..]}";

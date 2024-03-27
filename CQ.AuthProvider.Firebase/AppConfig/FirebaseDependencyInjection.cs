@@ -35,7 +35,8 @@ namespace CQ.AuthProvider.Firebase.AppConfig
 
                     return new HttpClientAdapter(baseUrl, baseHeaders);
                 })
-                .AddScoped<ISessionService, SessionService>();
+                .AddScoped<ISessionService, SessionService>()
+                .AddScoped<ISessionInternalService, SessionService>();
 
 
             return services;

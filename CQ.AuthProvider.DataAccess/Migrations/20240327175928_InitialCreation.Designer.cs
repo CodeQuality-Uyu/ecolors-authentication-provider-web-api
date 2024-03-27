@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.Migrations
 {
     [DbContext(typeof(AuthEfCoreContext))]
-    partial class AuthEfCoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240327175928_InitialCreation")]
+    partial class InitialCreation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +57,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         new
                         {
                             Id = "d47025648273495ba69482fcc69da874",
-                            CreatedAt = new DateTimeOffset(new DateTime(2024, 3, 27, 19, 22, 56, 542, DateTimeKind.Unspecified).AddTicks(5654), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedAt = new DateTimeOffset(new DateTime(2024, 3, 27, 17, 59, 27, 894, DateTimeKind.Unspecified).AddTicks(9841), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@gmail.com",
                             FirstName = "Admin",
                             FullName = "Admin Admin",
@@ -89,7 +92,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "886416f6b1e44dedac826662202010ea",
+                            Id = "105bb9d29d0f4928b6dceb7d9da744ba",
                             Description = "Crear permiso",
                             IsPublic = false,
                             Key = "create-permission",
@@ -97,7 +100,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "654834a7cc234e098302d1bad925c3f9",
+                            Id = "1e5792159aeb465fba1368f7ff835e2c",
                             Description = "Crear muchos permisos",
                             IsPublic = false,
                             Key = "createbulk-permission",
@@ -105,7 +108,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "c13551d59b354bff9878d99eae94e04f",
+                            Id = "6ca46b22fcd74070a55d883682991637",
                             Description = "Obtener un permiso",
                             IsPublic = false,
                             Key = "getbyid-permission",
@@ -113,7 +116,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "8deb4e1b283f4d939d134c511dc65a6f",
+                            Id = "7d97d5a3a3624a94a9dcde6aa2a55339",
                             Description = "Obtener todos los permisos",
                             IsPublic = false,
                             Key = "getall-permission",
@@ -121,7 +124,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "ab435b2ef92d4a96851e2fc0891fa492",
+                            Id = "ed6dd49edba74f5da4f898ec6c860481",
                             Description = "Obtener permisos privados",
                             IsPublic = false,
                             Key = "getallprivate-permission",
@@ -129,7 +132,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "d7c51933084c4facb88a9f27de33d01a",
+                            Id = "5f83e7a5640e4eb4aa7f4c3e0b6985ac",
                             Description = "Obtener permisos de un rol",
                             IsPublic = false,
                             Key = "getallbyroleid-permission",
@@ -137,7 +140,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "eec8923fe738473793f38f6ba24d42a1",
+                            Id = "073b1c6e9ddf4ebd9528aaa64d938916",
                             Description = "Actualizar un permiso",
                             IsPublic = false,
                             Key = "updatebyid-permission",
@@ -145,7 +148,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "db00d1698409477f9e27101136983582",
+                            Id = "da51cccd7517426ca78d8c6bbec9026c",
                             Description = "Crear rol",
                             IsPublic = false,
                             Key = "create-role",
@@ -153,7 +156,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "4560660aa9474b1b9c3047d21cdecab2",
+                            Id = "0031a0bc0aac4e2a9cd94ed9796bbee8",
                             Description = "Crear muchos roles",
                             IsPublic = false,
                             Key = "createbulk-role",
@@ -161,7 +164,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "e8668a426cd546f3ac0b4ec7d1a67afd",
+                            Id = "f16e3d89c187463791da4625fdb14589",
                             Description = "Obtener un rol",
                             IsPublic = false,
                             Key = "getbyid-role",
@@ -169,7 +172,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "8b9dea2caa3e4481b67cfbecfbbda6f6",
+                            Id = "243e9036a6b542478e068e56a30e11d1",
                             Description = "Obtener todos los roles",
                             IsPublic = false,
                             Key = "getall-role",
@@ -177,7 +180,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "f8a2929a5ac44264b567121fc61fd8ca",
+                            Id = "b67bdf587d50422f907d065d9e709bf9",
                             Description = "Obtener roles privados",
                             IsPublic = false,
                             Key = "getallprivate-role",
@@ -185,7 +188,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "d887260f12c3419ea5ea656d842d8373",
+                            Id = "f1ae8a44eb954f5083d4f48dbd321525",
                             Description = "Actualizar un rol",
                             IsPublic = false,
                             Key = "addpermission-role",
@@ -193,7 +196,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "b9f9bc1b840f4b51b9f1fccb82c52944",
+                            Id = "f0b3321ff1c6426092c398ff3e4110f2",
                             Description = "Crear client system",
                             IsPublic = false,
                             Key = "create-clientsystem",
@@ -201,7 +204,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "b63d682602a34e0d8feaffbee83a693d",
+                            Id = "b3d1e8d0e72b4bef864417feec140d7c",
                             Description = "Crear cuenta para un usuario",
                             IsPublic = false,
                             Key = "createcredentialsfor-account",
@@ -209,7 +212,15 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "21a73466810c4e99840e99e1a58e57df",
+                            Id = "ef577b64f9c741f6b68a2732db49f2e5",
+                            Description = "Crear usuario en sistema cliente",
+                            IsPublic = false,
+                            Key = "createfromauthprovider-user",
+                            Name = "Crear usuario en sistema cliente"
+                        },
+                        new
+                        {
+                            Id = "85c4f11e41c64468a9eb4b657d7f992d",
                             Description = "Joker",
                             IsPublic = false,
                             Key = "*",
@@ -217,7 +228,23 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "ac4e7b6f39a24b98964dcc04b1b2b24e",
+                            Id = "0a0027c493804ee39499684aabc36c6d",
+                            Description = "Obtener usuario por id de sistema cliente",
+                            IsPublic = false,
+                            Key = "getbyidfromauthprovider-user",
+                            Name = "Obtener usuario por id de sistema cliente"
+                        },
+                        new
+                        {
+                            Id = "d750f3ec5a824cd8995bd981facab2bc",
+                            Description = "Obtener la cuenta por token de sistema cliente",
+                            IsPublic = false,
+                            Key = "getbytoken-account",
+                            Name = "Obtener la cuenta por token de sistema cliente"
+                        },
+                        new
+                        {
+                            Id = "9af1865df2fc487b8456c39625988ced",
                             Description = "Validar token",
                             IsPublic = false,
                             Key = "validatetoken-session",
@@ -255,7 +282,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2aeae9e48ce740e7bf0ab8647e05761e",
+                            Id = "71bcf11229094af4bd29239f6e850688",
                             Description = "Admin",
                             IsDefault = false,
                             IsPublic = false,
@@ -264,12 +291,21 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         },
                         new
                         {
-                            Id = "e6136901b87a47018f21407b72c013ca",
+                            Id = "6565ebacc3a94007873967d083e9def0",
                             Description = "Client System",
                             IsDefault = false,
                             IsPublic = false,
                             Key = "clientSystem",
                             Name = "Client System"
+                        },
+                        new
+                        {
+                            Id = "bcc1589004f54f0e91e67295a46a9140",
+                            Description = "Auth provider",
+                            IsDefault = false,
+                            IsPublic = false,
+                            Key = "authProviderClientSystem",
+                            Name = "Auth provider"
                         });
                 });
 
@@ -290,83 +326,98 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            PermissionId = "886416f6b1e44dedac826662202010ea",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "105bb9d29d0f4928b6dceb7d9da744ba",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "c13551d59b354bff9878d99eae94e04f",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "6ca46b22fcd74070a55d883682991637",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "8deb4e1b283f4d939d134c511dc65a6f",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "7d97d5a3a3624a94a9dcde6aa2a55339",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "ab435b2ef92d4a96851e2fc0891fa492",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "ed6dd49edba74f5da4f898ec6c860481",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "d7c51933084c4facb88a9f27de33d01a",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "5f83e7a5640e4eb4aa7f4c3e0b6985ac",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "eec8923fe738473793f38f6ba24d42a1",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "073b1c6e9ddf4ebd9528aaa64d938916",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "db00d1698409477f9e27101136983582",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "da51cccd7517426ca78d8c6bbec9026c",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "e8668a426cd546f3ac0b4ec7d1a67afd",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "f16e3d89c187463791da4625fdb14589",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "8b9dea2caa3e4481b67cfbecfbbda6f6",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "243e9036a6b542478e068e56a30e11d1",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "f8a2929a5ac44264b567121fc61fd8ca",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "b67bdf587d50422f907d065d9e709bf9",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "d887260f12c3419ea5ea656d842d8373",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "f1ae8a44eb954f5083d4f48dbd321525",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "b9f9bc1b840f4b51b9f1fccb82c52944",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "f0b3321ff1c6426092c398ff3e4110f2",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "b63d682602a34e0d8feaffbee83a693d",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            PermissionId = "b3d1e8d0e72b4bef864417feec140d7c",
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         },
                         new
                         {
-                            PermissionId = "654834a7cc234e098302d1bad925c3f9",
-                            RoleId = "e6136901b87a47018f21407b72c013ca"
+                            PermissionId = "1e5792159aeb465fba1368f7ff835e2c",
+                            RoleId = "6565ebacc3a94007873967d083e9def0"
                         },
                         new
                         {
-                            PermissionId = "4560660aa9474b1b9c3047d21cdecab2",
-                            RoleId = "e6136901b87a47018f21407b72c013ca"
+                            PermissionId = "0031a0bc0aac4e2a9cd94ed9796bbee8",
+                            RoleId = "6565ebacc3a94007873967d083e9def0"
                         },
                         new
                         {
-                            PermissionId = "ac4e7b6f39a24b98964dcc04b1b2b24e",
-                            RoleId = "e6136901b87a47018f21407b72c013ca"
+                            PermissionId = "d750f3ec5a824cd8995bd981facab2bc",
+                            RoleId = "6565ebacc3a94007873967d083e9def0"
+                        },
+                        new
+                        {
+                            PermissionId = "9af1865df2fc487b8456c39625988ced",
+                            RoleId = "6565ebacc3a94007873967d083e9def0"
+                        },
+                        new
+                        {
+                            PermissionId = "ef577b64f9c741f6b68a2732db49f2e5",
+                            RoleId = "bcc1589004f54f0e91e67295a46a9140"
+                        },
+                        new
+                        {
+                            PermissionId = "0a0027c493804ee39499684aabc36c6d",
+                            RoleId = "bcc1589004f54f0e91e67295a46a9140"
                         });
                 });
 
@@ -395,6 +446,16 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("ClientSystems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "c7af32e7bbc34e26a72924c0d3ad9aad",
+                            CreatedOn = new DateTimeOffset(new DateTime(2024, 3, 27, 17, 59, 27, 894, DateTimeKind.Unspecified).AddTicks(9851), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "Authentication Server Provider",
+                            PrivateKey = "250f9196a3df4163b5a249f30a3a1382",
+                            RoleId = "bcc1589004f54f0e91e67295a46a9140"
+                        });
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.BusinessLogic.ResetPasswords.ResetPasswordApplicationEfCore", b =>
@@ -438,7 +499,7 @@ namespace CQ.AuthProvider.DataAccess.Migrations
                         new
                         {
                             AccountId = "d47025648273495ba69482fcc69da874",
-                            RoleId = "2aeae9e48ce740e7bf0ab8647e05761e"
+                            RoleId = "71bcf11229094af4bd29239f6e850688"
                         });
                 });
 

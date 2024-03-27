@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +14,8 @@ namespace CQ.AuthProvider.BusinessLogic.ClientSystems
     {
         private readonly IMapper _mapper;
 
-        public ClientSystemService(IMapper mapper)
+        public ClientSystemService(
+            IMapper mapper)
         {
             this._mapper = mapper;
         }

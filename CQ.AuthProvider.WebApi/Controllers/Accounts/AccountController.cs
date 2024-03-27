@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.WebApi.Filters;
+using CQ.AuthProvider.WebApi.Extensions;
+using CQ.AuthProvider.BusinessLogic.ClientSystems;
+using CQ.ApiElements.Filters.Authentications;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts
 {
@@ -10,8 +13,13 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
     {
         private readonly IAccountService _accountService;
 
-        public AccountController(IAccountService accountService)
+        private readonly IClientSystemService _clientSystemService;
+
+        public AccountController
+            (IClientSystemService clientSystemService,
+            IAccountService accountService)
         {
+            _clientSystemService = clientSystemService;
             this._accountService = accountService;
         }
 
@@ -32,6 +40,16 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
             var createAccountFor = request.Map();
 
             await this._accountService.CreateAsync(createAccountFor).ConfigureAwait(false);
+        }
+
+        [HttpGet("me")]
+        [CQAuthentication]
+        [ValidateAccount]
+        public AccountResponse GetMeAsync()
+        {
+            var accountLogged = this.GetAccountLogged();
+
+            return new AccountResponse(accountLogged);
         }
     }
 }

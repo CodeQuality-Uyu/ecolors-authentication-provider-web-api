@@ -22,7 +22,7 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
         }
 
         #region Create
-        protected override async Task<ResetPasswordApplication> CreateAsync(AccountInfo account)
+        protected override async Task<ResetPasswordApplication> CreateAsync(Account account)
         {
             var resetPasswordApplication = new ResetPasswordApplicationEfCore(account.Id);
 

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +15,11 @@ namespace CQ.AuthProvider.BusinessLogic.ClientSystems
     {
         private readonly IRepository<ClientSystemMongo> _clientSystemRepository;
 
-        private readonly IRoleInternalService<RoleMongo> _roleService;
+        private readonly IRoleInternalService _roleService;
 
         public ClientSystemMongoService(
             IRepository<ClientSystemMongo> clientSystemRepository,
-            IRoleInternalService<RoleMongo> roleService,
+            IRoleInternalService roleService,
             IMapper mapper)
             : base(mapper)
         {

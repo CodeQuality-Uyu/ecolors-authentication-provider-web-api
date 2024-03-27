@@ -27,14 +27,15 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
                 typeof(RoleKeyProfile),
                 typeof(ClientSystemProfile));
 
-            var mongoConnectionString = configuration.GetConnectionString("AuthMongo");
-            var sqlConnectionString = configuration.GetConnectionString("AuthSql");
+            var mongoConnectionString = configuration.GetConnectionString(AuthOptions.MongoConnectionString);
+            var sqlConnectionString = configuration.GetConnectionString(AuthOptions.SqlConnectionString);
 
             if(Guard.IsNotNullOrEmpty(sqlConnectionString)) 
                 services
                     .AddScoped<IAccountService, AccountEfCoreService>()
                     .AddScoped<IRoleService, RoleEfCoreService>()
                     .AddScoped<IRoleInternalService<RoleEfCore>, RoleEfCoreService>()
+                    .AddScoped<IRoleInternalService, RoleEfCoreService>()
                     .AddScoped<IPermissionInternalService<PermissionEfCore>, PermissionEfCoreService>()
                     .AddScoped<IPermissionService, PermissionEfCoreService>()
                     .AddScoped<IResetPasswordService, ResetPasswordEfCoreService>()
@@ -45,6 +46,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
                     .AddScoped<IAccountService, AccountMongoService>()
                     .AddScoped<IRoleService, RoleMongoService>()
                     .AddScoped<IRoleInternalService<RoleMongo>, RoleMongoService>()
+                    .AddScoped<IRoleInternalService, RoleMongoService>()
                     .AddScoped<IPermissionInternalService<PermissionMongo>, PermissionMongoService>()
                     .AddScoped<IPermissionService, PermissionMongoService>()
                     .AddScoped<IResetPasswordService, ResetPasswordMongoService>()
@@ -60,7 +62,9 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
             Guard.ThrowIsNull(identity, nameof(identity));
 
             if (identity.Type == IdentityType.Database)
-                services.AddScoped<ISessionService, SessionService>();
+                services
+                    .AddScoped<ISessionService, SessionService>()
+                    .AddScoped<ISessionInternalService, SessionService>();
 
             return services;
         }

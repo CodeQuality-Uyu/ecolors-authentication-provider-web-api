@@ -16,7 +16,7 @@ namespace CQ.AuthProvider.DataAccess.Roles
             var role = await base.GetOrDefaultByPropAsync(value, prop).ConfigureAwait(false);
 
             if (Guard.IsNull(role))
-                throw new SpecificResourceNotFoundException<RoleInfo>(value, prop);
+                throw new SpecificResourceNotFoundException<Role>(value, prop);
 
             return role;
         }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
 using System.Linq;
 
 namespace CQ.AuthProvider.BusinessLogic.Authorizations
@@ -40,9 +41,16 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
         public override async Task<RoleMongo> GetByKeyAsync(RoleKey key)
         {
-            var role = await this._roleRepository.GetByPropAsync(key.ToString(), nameof(RoleInfo.Key)).ConfigureAwait(false);
+            var role = await this._roleRepository.GetByPropAsync(key.ToString(), nameof(Role.Key)).ConfigureAwait(false);
 
             return role;
+        }
+
+        public override async Task<Role> GetDefaultAsync()
+        {
+            var role = await this._roleRepository.GetAsync(r => r.IsDefault).ConfigureAwait(false);
+
+            return base._mapper.Map<Role>(role);
         }
 
         protected override async Task CreateAsync(CreateRole newRole)
@@ -59,6 +67,16 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             await this._roleRepository.CreateAsync(role).ConfigureAwait(false);
         }
 
+        protected override async Task RemoveDefaultAsync()
+        {
+            var roleDefault = await this._roleRepository.GetOrDefaultAsync(r => r.IsDefault).ConfigureAwait(false);
+
+            if (Guard.IsNull(roleDefault))
+                return;
+
+            roleDefault.IsDefault = false;
+            await this._roleRepository.UpdateAsync(roleDefault).ConfigureAwait(false);
+        }
         protected override async Task<bool> ExistByKeyAsync(RoleKey key)
         {
             var roleValue = key.ToString();
@@ -68,11 +86,11 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             return existExist;
         }
 
-        protected override async Task<List<RoleInfo>> GetAllAsync(AccountInfo accountLogged, bool isPrivate = false)
+        protected override async Task<List<Role>> GetAllAsync(Account accountLogged, bool isPrivate = false)
         {
             var roles = await this._roleRepository.GetAllAsync(r => r.IsPublic != isPrivate).ConfigureAwait(false);
 
-            return base._mapper.Map<List<RoleInfo>>(roles);
+            return base._mapper.Map<List<Role>>(roles);
         }
 
         protected override async Task<bool> HasPermissionAsync(List<string> roles, string permissionKey)
@@ -83,11 +101,11 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         }
 
         #region CreateBulk
-        protected override async Task<List<RoleInfo>> GetAllByRoleKeyAsync(List<string> roles)
+        protected override async Task<List<Role>> GetAllByRoleKeyAsync(List<string> roles)
         {
             var rolesSaved = await this._roleRepository.GetAllAsync(r => roles.Contains(r.Key)).ConfigureAwait(false);
 
-            return base._mapper.Map<List<RoleInfo>>(rolesSaved);
+            return base._mapper.Map<List<Role>>(rolesSaved);
         }
 
         protected override async Task CreateBulkAsync(List<CreateRole> roles)

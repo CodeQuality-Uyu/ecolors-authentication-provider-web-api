@@ -4,25 +4,28 @@ using CQ.AuthProvider.BusinessLogic.Authorizations;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 {
-    public sealed record class RoleResponse : Response<RoleInfo>
+    public sealed record class RoleResponse : Response<Role>
     {
-        public string Id { get; private set; }
+        public string Id { get; init; }
 
-        public string Name { get; private set; }
+        public string Name { get; init; }
 
-        public string Description { get; private set; }
+        public string Description { get; init; }
 
-        public string Key { get; private set; }
+        public string Key { get; init; }
 
-        public bool IsPublic { get; private set; }
+        public bool IsPublic { get; init; }
 
-        public RoleResponse(RoleInfo entity) : base(entity)
+        public bool IsDefault { get; init; }
+
+        public RoleResponse(Role entity) : base(entity)
         {
             this.Id = entity.Id;
             this.Name = entity.Name;
             this.Description = entity.Description;
             this.Key = entity.Key.ToString();
             this.IsPublic = entity.IsPublic;
+            this.IsDefault = entity.IsDefault;
         }
     }
 }

@@ -24,11 +24,14 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
     {
         public static IServiceCollection AddCQDataAccess(this IServiceCollection services, IConfiguration configuration)
         {
-            var mongoConnectionString = configuration.GetConnectionString("AuthMongo");
-            var sqlConnectionString = configuration.GetConnectionString("AuthSql");
-            var databaseName = configuration.GetValue<string>("DatabaseName");
+            var mongoConnectionString = configuration.GetConnectionString(AuthOptions.MongoConnectionString);
+            var sqlConnectionString = configuration.GetConnectionString(AuthOptions.SqlConnectionString);
+            var databaseName = configuration.GetValue<string>(AuthOptions.AuthDatabaseNameKey);
 
-            Guard.ThrowIsNullOrEmpty(databaseName, "DatabaseName");
+            Guard.ThrowIsNullOrEmpty(databaseName, AuthOptions.AuthDatabaseNameKey);
+
+            services
+                .AddSingleton((providers) => new AuthOptions { AuthDatabaseName = databaseName });
 
             if (Guard.IsNotNullOrEmpty(mongoConnectionString))
                 services
@@ -38,7 +41,7 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                         useDefaultQueryLogger: true),
                     LifeTime.Scoped,
                     LifeTime.Scoped)
-                    .AddCustomMongoRepository<AccountMongo, AccountMongoRepository>(LifeTime.Scoped)
+                    .AddAbstractionMongoRepository<AccountMongo, IAccountInfoRepository, AccountMongoRepository>(LifeTime.Scoped)
                     .AddCustomMongoRepository<RoleMongo, RoleMongoRepository>(LifeTime.Scoped)
                     .AddMongoRepository<ResetPasswordApplication>(LifeTime.Scoped)
                     .AddMongoRepository<PermissionMongo>(LifeTime.Scoped)
@@ -52,7 +55,8 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                         useDefaultQueryLogger: true),
                     LifeTime.Scoped,
                     LifeTime.Scoped)
-                    .AddCustomEfCoreRepository<AccountEfCore, AccountEfCoreRepository>(LifeTime.Scoped)
+                    .AddAbstractionEfCoreRepository<AccountEfCore, IAccountInfoRepository, AccountEfCoreRepository>(LifeTime.Scoped)
+                    .AddEfCoreRepository<RolePermission>(LifeTime.Scoped)
                     .AddCustomEfCoreRepository<RoleEfCore, RoleEfCoreRepository>(LifeTime.Scoped)
                     .AddEfCoreRepository<ResetPasswordApplicationEfCore>(LifeTime.Scoped)
                     .AddEfCoreRepository<PermissionEfCore>(LifeTime.Scoped)
@@ -81,12 +85,12 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                 Guard.ThrowIsNullOrEmpty(databaseIdentity.Name, "Identity:Name");
                 Guard.ThrowIsNullOrEmpty(databaseIdentity.ConnectionString, "Identity:ConnectionString");
 
-                if (databaseIdentity.Engine == DatabaseEngine.MONGO)
+                if (databaseIdentity.Engine == DatabaseEngine.Mongo)
                     services.AddMongoServices(
                         databaseIdentity.Name,
                         databaseIdentity.ConnectionString);
 
-                if (databaseIdentity.Engine == DatabaseEngine.SQL)
+                if (databaseIdentity.Engine == DatabaseEngine.Sql)
                     services.AddEfCoreServices(
                         databaseIdentity.Name,
                         databaseIdentity.ConnectionString);

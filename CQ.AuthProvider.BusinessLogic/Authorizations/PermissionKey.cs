@@ -32,6 +32,8 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
         public static readonly PermissionKey CreateAccountFor = new("createcredentialsfor-account");
 
+        public static readonly PermissionKey ValidateToken = new("validatetoken-session");
+
         public static readonly PermissionKey Joker = new("*");
         
         private readonly string Value;

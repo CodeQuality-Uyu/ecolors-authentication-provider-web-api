@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.UnitOfWork.Abstractions;
@@ -8,29 +9,25 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 {
     internal sealed class AccountMongoService : AccountService
     {
-        private readonly IRoleInternalService<RoleMongo> _roleService;
-
         private readonly IRepository<AccountMongo> _accountRepository;
 
         public AccountMongoService(
             IIdentityProviderRepository identityProviderRepository,
-            ISessionService sessionService,
+            ISessionInternalService sessionService,
             IRepository<AccountMongo> accountRepository,
             IRoleInternalService<RoleMongo> roleService,
             IMapper mapper)
             : base(
                   identityProviderRepository,
                   sessionService,
-                  mapper)
+                  mapper,
+                  roleService)
         {
-            this._roleService = roleService;
             this._accountRepository = accountRepository;
         }
 
-        protected override async Task<AccountInfo> CreateAsync(CreateAccount newAccount, Identity identity)
+        protected override async Task<Account> CreateAsync(CreateAccount newAccount, Role role, Identity identity)
         {
-            var role = await this._roleService.GetByKeyAsync(newAccount.Role).ConfigureAwait(false);
-
             var miniRole = new MiniRoleMongo(role.Key, role.Permissions);
 
             var account = new AccountMongo(
@@ -45,7 +42,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
             await this._accountRepository.CreateAsync(account).ConfigureAwait(false);
 
-            return this._mapper.Map<AccountInfo>(account);
+            return this._mapper.Map<Account>(account);
         }
 
         protected override async Task<bool> ExistByEmailAsync(string email)
@@ -55,18 +52,18 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             return existAccount;
         }
 
-        public override async Task<AccountInfo> GetByEmailAsync(string email)
+        public override async Task<Account> GetByEmailAsync(string email)
         {
             var account = await this._accountRepository.GetByPropAsync(email, nameof(AccountEfCore.Email)).ConfigureAwait(false);
 
-            return this._mapper.Map<AccountInfo>(account);
+            return this._mapper.Map<Account>(account);
         }
 
-        protected override async Task<AccountInfo> GetByIdAsync(string id)
+        protected override async Task<Account> GetByIdAsync(string id)
         {
             var account = await this._accountRepository.GetByIdAsync(id).ConfigureAwait(false);
 
-            return this._mapper.Map<AccountInfo>(account);
+            return this._mapper.Map<Account>(account);
         }
     }
 }
