@@ -83,13 +83,13 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
             var defaultRoles = roles
                 .GroupBy(r => r.IsDefault)
-                .Count(g => g.Count() >= 1);
+                .Count(g => g.Count() > 1);
             if (defaultRoles > 1)
-                throw new SpecificResourceDuplicatedException<Role>("true", nameof(Role.IsDefault));
+                throw new SpecificResourceDuplicatedException<Role>(nameof(Role.IsDefault), "true");
 
             await this.AssertByKeysAsync(rolesKeys).ConfigureAwait(false);
 
-            if(defaultRoles == 1)
+            if (defaultRoles == 1)
                 await this.RemoveDefaultAsync();
 
             await this.CreateBulkAsync(roles).ConfigureAwait(false);
@@ -101,12 +101,12 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
             var rolesSaved = await this.GetAllByRoleKeyAsync(roleKeysMapped).ConfigureAwait(false);
 
-            if (rolesSaved.Count == roles.Count)
-                return;
+            if (rolesSaved.Count != 0)
+            {
+                var rolePermission = roleKeysMapped.Where(pk => !rolesSaved.Any(p => p.Key.ToString() == pk)).ToList();
 
-            var rolePermission = roleKeysMapped.Where(pk => !rolesSaved.Any(p => p.Key.ToString() == pk)).ToList();
-
-            throw new SpecificResourceNotFoundException<Role>(new List<string> { nameof(Role.Key) }, rolePermission);
+                throw new SpecificResourceDuplicatedException<Role>(new List<string> { nameof(Role.Key) }, rolePermission);
+            }
         }
 
         protected abstract Task<List<Role>> GetAllByRoleKeyAsync(List<string> roles);

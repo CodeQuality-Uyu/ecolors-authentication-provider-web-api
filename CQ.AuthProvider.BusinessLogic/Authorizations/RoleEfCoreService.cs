@@ -138,7 +138,8 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                         r.Description,
                         r.Key,
                         permissions,
-                        r.IsPublic);
+                        r.IsPublic,
+                        r.IsDefault);
                 })
                 .ToList();
 

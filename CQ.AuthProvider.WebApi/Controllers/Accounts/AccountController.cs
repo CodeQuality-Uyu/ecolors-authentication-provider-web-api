@@ -13,13 +13,8 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
     {
         private readonly IAccountService _accountService;
 
-        private readonly IClientSystemService _clientSystemService;
-
-        public AccountController
-            (IClientSystemService clientSystemService,
-            IAccountService accountService)
+        public AccountController(IAccountService accountService)
         {
-            _clientSystemService = clientSystemService;
             this._accountService = accountService;
         }
 

@@ -123,7 +123,8 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                         r.Description,
                         r.Key,
                         r.PermissionKeys,
-                        r.IsPublic))
+                        r.IsPublic,
+                        r.IsDefault))
                 .ToList();
 
             await this._roleRepository.CreateBulkAsync(rolesToSave).ConfigureAwait(false);
