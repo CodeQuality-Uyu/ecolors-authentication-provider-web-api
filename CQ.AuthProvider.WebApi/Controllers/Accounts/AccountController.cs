@@ -2,7 +2,6 @@
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.WebApi.Extensions;
-using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.ApiElements.Filters.Authentications;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts
