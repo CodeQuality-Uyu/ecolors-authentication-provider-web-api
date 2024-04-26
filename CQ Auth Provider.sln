@@ -16,8 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.dockerignore = .dockerignore
 		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
-		docker-compose.yml = docker-compose.yml
 		Dockerfile = Dockerfile
+		docker-compose-sql.yml = docker-compose-sql.yml
 		.github\workflows\pull-request.yml = .github\workflows\pull-request.yml
 		README.md = README.md
 	EndProjectSection
@@ -30,11 +30,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2- Infraestructure", "2- In
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3- Application", "3- Application", "{4E0E1FB7-A423-422D-821D-53D1A3EAADC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.AuthProvider.EfCore", "CQ.AuthProvider.EfCore\CQ.AuthProvider.EfCore.csproj", "{EE434D10-59D9-4A4F-A640-9A32505D10D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.EfCore", "CQ.AuthProvider.EfCore\CQ.AuthProvider.EfCore.csproj", "{EE434D10-59D9-4A4F-A640-9A32505D10D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.AuthProvider.EfCore.Migrations", "CQ.AuthProvider.EfCore.Migrations\CQ.AuthProvider.EfCore.Migrations.csproj", "{25F9B3CA-429F-4E18-8262-616649A0174E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.EfCore.Migrations", "CQ.AuthProvider.EfCore.Migrations\CQ.AuthProvider.EfCore.Migrations.csproj", "{25F9B3CA-429F-4E18-8262-616649A0174E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.AuthProvider.DataAccess.Migrations", "CQ.AuthProvider.DataAccess.Migrations\CQ.AuthProvider.DataAccess.Migrations.csproj", "{2E7B0599-5EAB-41CD-AC7D-BE45A40A4A81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.DataAccess.Migrations", "CQ.AuthProvider.DataAccess.Migrations\CQ.AuthProvider.DataAccess.Migrations.csproj", "{2E7B0599-5EAB-41CD-AC7D-BE45A40A4A81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

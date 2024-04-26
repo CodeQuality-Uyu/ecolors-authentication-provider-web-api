@@ -34,6 +34,7 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                 .AddSingleton((providers) => new AuthOptions { AuthDatabaseName = databaseName });
 
             if (Guard.IsNotNullOrEmpty(mongoConnectionString))
+            {
                 services
                     .AddMongoContext<AuthMongoContext>(
                     new MongoConfig(
@@ -46,8 +47,10 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                     .AddMongoRepository<ResetPasswordApplication>(LifeTime.Scoped)
                     .AddMongoRepository<PermissionMongo>(LifeTime.Scoped)
                     .AddCustomMongoRepository<ClientSystemMongo, ClientSystemMongoRepository>(LifeTime.Scoped);
+            }
 
             if (Guard.IsNotNullOrEmpty(sqlConnectionString))
+            {
                 services
                     .AddEfCoreContext<AuthEfCoreContext>(
                     new EfCoreConfig(
@@ -61,6 +64,7 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                     .AddEfCoreRepository<ResetPasswordApplicationEfCore>(LifeTime.Scoped)
                     .AddEfCoreRepository<PermissionEfCore>(LifeTime.Scoped)
                     .AddCustomEfCoreRepository<ClientSystemEfCore, ClientSystemEfCoreRepository>(LifeTime.Scoped);
+            }
 
             services.AddIdentityProvider(configuration);
 
@@ -86,14 +90,18 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                 Guard.ThrowIsNullOrEmpty(databaseIdentity.ConnectionString, "Identity:ConnectionString");
 
                 if (databaseIdentity.Engine == DatabaseEngine.Mongo)
+                {
                     services.AddMongoServices(
                         databaseIdentity.Name,
                         databaseIdentity.ConnectionString);
+                }
 
                 if (databaseIdentity.Engine == DatabaseEngine.Sql)
+                {
                     services.AddEfCoreServices(
                         databaseIdentity.Name,
                         databaseIdentity.ConnectionString);
+                }
             }
 
 

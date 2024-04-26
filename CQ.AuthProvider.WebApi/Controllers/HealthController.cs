@@ -31,9 +31,10 @@ namespace CQ.AuthProvider.WebApi.Controllers
         public object Get()
         {
             var authContext = this._contexts.FirstOrDefault(c => c.GetDatabaseInfo().Name == _authOptions.AuthDatabaseName);
-            
+
             return new
             {
+                v = "1",
                 Alive = true,
                 Auth = new
                 {

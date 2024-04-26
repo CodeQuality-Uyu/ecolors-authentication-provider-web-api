@@ -43,6 +43,9 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             this.Value = Guard.Encode(value, nameof(value));
         }
 
-        public override string ToString() => this.Value;
+        public override string ToString()
+        {
+            return this.Value;
+        }
     }
 }

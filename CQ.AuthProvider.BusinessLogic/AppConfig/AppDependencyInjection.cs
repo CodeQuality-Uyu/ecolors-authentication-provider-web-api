@@ -30,7 +30,8 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
             var mongoConnectionString = configuration.GetConnectionString(AuthOptions.MongoConnectionString);
             var sqlConnectionString = configuration.GetConnectionString(AuthOptions.SqlConnectionString);
 
-            if(Guard.IsNotNullOrEmpty(sqlConnectionString)) 
+            if (Guard.IsNotNullOrEmpty(sqlConnectionString))
+            {
                 services
                     .AddScoped<IAccountService, AccountEfCoreService>()
                     .AddScoped<IRoleService, RoleEfCoreService>()
@@ -40,8 +41,10 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
                     .AddScoped<IPermissionService, PermissionEfCoreService>()
                     .AddScoped<IResetPasswordService, ResetPasswordEfCoreService>()
                     .AddScoped<IClientSystemService, ClientSystemEfCoreService>();
-            
-            if(Guard.IsNotNullOrEmpty(mongoConnectionString)) 
+            }
+
+            if (Guard.IsNotNullOrEmpty(mongoConnectionString))
+            {
                 services
                     .AddScoped<IAccountService, AccountMongoService>()
                     .AddScoped<IRoleService, RoleMongoService>()
@@ -51,9 +54,12 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
                     .AddScoped<IPermissionService, PermissionMongoService>()
                     .AddScoped<IResetPasswordService, ResetPasswordMongoService>()
                     .AddScoped<IClientSystemService, ClientSystemMongoService>();
+            }
 
             if (Guard.IsNullOrEmpty(mongoConnectionString) && Guard.IsNullOrEmpty(sqlConnectionString))
+            {
                 throw new Exception("Missing Auth connection string: AuthMongo or AuthSql");
+            }
 
             var identity = configuration
                 .GetSection(IdentityOptions.Identity)
@@ -62,9 +68,11 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
             Guard.ThrowIsNull(identity, nameof(identity));
 
             if (identity.Type == IdentityType.Database)
+            {
                 services
                     .AddScoped<ISessionService, SessionService>()
                     .AddScoped<ISessionInternalService, SessionService>();
+            }
 
             return services;
         }
