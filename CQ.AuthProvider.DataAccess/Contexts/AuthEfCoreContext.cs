@@ -2,13 +2,10 @@
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
-using CQ.AuthProvider.DataAccess.AppConfig;
 using CQ.AuthProvider.EfCore;
 using CQ.UnitOfWork.EfCore;
-using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 
 namespace CQ.AuthProvider.DataAccess.Contexts
 {
