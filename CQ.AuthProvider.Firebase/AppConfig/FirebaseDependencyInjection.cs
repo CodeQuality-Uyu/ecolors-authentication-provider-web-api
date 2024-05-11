@@ -15,7 +15,7 @@ namespace CQ.AuthProvider.Firebase.AppConfig
             IdentityFirebaseOptions identityFirebase)
         {
             var identityOptions = configuration
-                .GetSection(IdentityOptions.Identity)
+                .GetSection(ConfigOptions.Identity)
                 .Get<IdentityFirebaseOptions>()!;
 
             services

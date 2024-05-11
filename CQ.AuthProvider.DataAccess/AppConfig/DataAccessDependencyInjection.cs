@@ -24,21 +24,18 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
     {
         public static IServiceCollection AddCQDataAccess(this IServiceCollection services, IConfiguration configuration)
         {
-            var mongoConnectionString = configuration.GetConnectionString(AuthOptions.MongoConnectionString);
-            var sqlConnectionString = configuration.GetConnectionString(AuthOptions.SqlConnectionString);
-            var databaseName = configuration.GetValue<string>(AuthOptions.AuthDatabaseNameKey);
+            var connectionString = configuration.GetConnectionString(ConnectionStrings.Auth);
 
-            Guard.ThrowIsNullOrEmpty(databaseName, AuthOptions.AuthDatabaseNameKey);
+            var authOption = configuration
+                .GetSection(ConfigOptions.Auth)
+                .Get<AuthOptions>();
 
-            services
-                .AddSingleton((providers) => new AuthOptions { AuthDatabaseName = databaseName });
-
-            if (Guard.IsNotNullOrEmpty(mongoConnectionString))
+            if (authOption.Engine == DatabaseEngine.Mongo)
             {
                 services
                     .AddMongoContext<AuthMongoContext>(
                     new MongoConfig(
-                        new DatabaseConfig(mongoConnectionString, databaseName),
+                        new DatabaseConfig(connectionString, authOption.DatabaseName),
                         useDefaultQueryLogger: true),
                     LifeTime.Scoped,
                     LifeTime.Scoped)
@@ -49,12 +46,12 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
                     .AddCustomMongoRepository<ClientSystemMongo, ClientSystemMongoRepository>(LifeTime.Scoped);
             }
 
-            if (Guard.IsNotNullOrEmpty(sqlConnectionString))
+            if (authOption.Engine == DatabaseEngine.Sql)
             {
                 services
                     .AddEfCoreContext<AuthEfCoreContext>(
                     new EfCoreConfig(
-                        new DatabaseConfig(sqlConnectionString, databaseName),
+                        new DatabaseConfig(connectionString, authOption.DatabaseName),
                         useDefaultQueryLogger: true),
                     LifeTime.Scoped,
                     LifeTime.Scoped)
@@ -74,33 +71,35 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
         private static IServiceCollection AddIdentityProvider(this IServiceCollection services, IConfiguration configuration)
         {
             var identity = configuration
-                .GetSection(IdentityOptions.Identity)
-                .Get<IdentityOptions>()!;
+                .GetSection(ConfigOptions.Identity)
+                .Get<IdentityOptions>();
 
             Guard.ThrowIsNull(identity.Type, "Identity:Type");
 
             if (identity.Type == IdentityType.Database)
             {
                 var databaseIdentity = configuration
-                    .GetSection(IdentityOptions.Identity)
+                    .GetSection(ConfigOptions.Identity)
                     .Get<IdentityDatabaseOptions>()!;
 
+                var connectionString = configuration.GetConnectionString(ConnectionStrings.Identity);
+
                 Guard.ThrowIsNull(databaseIdentity.Engine, "Identity:Engine");
-                Guard.ThrowIsNullOrEmpty(databaseIdentity.Name, "Identity:Name");
-                Guard.ThrowIsNullOrEmpty(databaseIdentity.ConnectionString, "Identity:ConnectionString");
+                Guard.ThrowIsNullOrEmpty(databaseIdentity.DatabaseName, "Identity:DatabaseName");
+                Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Identity");
 
                 if (databaseIdentity.Engine == DatabaseEngine.Mongo)
                 {
                     services.AddMongoServices(
-                        databaseIdentity.Name,
-                        databaseIdentity.ConnectionString);
+                        databaseIdentity.DatabaseName,
+                        connectionString);
                 }
 
                 if (databaseIdentity.Engine == DatabaseEngine.Sql)
                 {
                     services.AddEfCoreServices(
-                        databaseIdentity.Name,
-                        databaseIdentity.ConnectionString);
+                        databaseIdentity.DatabaseName,
+                        connectionString);
                 }
             }
 
@@ -108,7 +107,7 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
             if (identity.Type == IdentityType.Firebase)
             {
                 var firebaseIdentity = configuration
-                    .GetSection(IdentityOptions.Identity)
+                    .GetSection(ConfigOptions.Identity)
                     .Get<IdentityFirebaseOptions>()!;
 
                 services.AddFirebaseServices(configuration, firebaseIdentity);

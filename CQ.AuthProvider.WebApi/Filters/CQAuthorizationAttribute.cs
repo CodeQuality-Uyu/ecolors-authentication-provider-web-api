@@ -3,6 +3,7 @@ using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
+using CQ.Utility;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters
@@ -18,20 +19,30 @@ namespace CQ.AuthProvider.WebApi.Filters
 
         protected override Task<bool> HasRequestPermissionAsync(string headerValue, string permission, AuthorizationFilterContext context)
         {
-            var accountLogged = context.HttpContext.Items[ContextItems.AccountLogged];
-            var clientSystemLogged = context.HttpContext.Items[ContextItems.ClientSystemLogged];
+            var accountLogged = (Account)context.HttpContext.Items[ContextItems.AccountLogged];
+            var clientSystemLogged = (ClientSystem)context.HttpContext.Items[ContextItems.ClientSystemLogged];
 
             var permissionKey = new PermissionKey(permission);
-            if (accountLogged != null)
+            if (Guard.IsNotNull(accountLogged))
             {
-                var hasPermissionAccount = ((Account)accountLogged).HasPermission(permissionKey);
+                var hasPermissionAccount = accountLogged.HasPermission(permissionKey);
 
                 return Task.FromResult(hasPermissionAccount);
             }
 
-            var hasPermissionClient = ((ClientSystem)clientSystemLogged).HasPermission(permissionKey);
+            if (Guard.IsNull(clientSystemLogged))
+            {
+                return Task.FromResult(false);
+            }
 
-            return Task.FromResult(hasPermissionClient);
+            var hasPermissionClient = clientSystemLogged.HasPermission(permissionKey);
+
+            if(hasPermissionClient)
+            {
+                return Task.FromResult(true);
+            }
+
+            return Task.FromResult(clientSystemLogged.Name == headerValue);
         }
     }
 }

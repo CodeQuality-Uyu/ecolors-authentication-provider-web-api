@@ -1,18 +1,24 @@
 ﻿using CQ.ApiElements.Dtos;
 using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 {
-    public sealed record class CreateSessionCredentialsRequest : Request<CreateSessionCredentials>
+    public sealed record class CreateSessionCredentialsRequest : Request<CreateSessionCredentialsArgs>
     {
         public string? Email { get; init; }
 
         public string? Password { get; init; }
 
-        protected override CreateSessionCredentials InnerMap()
+        public string? ListenerServer {  get; init; }
+
+        protected override CreateSessionCredentialsArgs InnerMap()
         {
-            return new CreateSessionCredentials(Email ?? string.Empty, Password ?? string.Empty);
+            Guard.ThrowIsNullOrEmpty(Email, nameof(Email));
+            Guard.ThrowIsNullOrEmpty(Password, nameof(Password));
+
+            return new CreateSessionCredentialsArgs(Email, Password, ListenerServer);
         }
     }
 }

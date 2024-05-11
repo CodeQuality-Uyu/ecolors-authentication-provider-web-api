@@ -10,7 +10,7 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
 
         public string Email { get; init; } = null!;
 
-        public string Token { get; init; } = null!;
+        public string Token { get; set; } = null!;
 
         public Session() 
         {

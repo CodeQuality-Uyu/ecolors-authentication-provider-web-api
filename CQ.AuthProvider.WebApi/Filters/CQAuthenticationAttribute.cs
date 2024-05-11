@@ -1,5 +1,7 @@
 ﻿using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -26,6 +28,16 @@ namespace CQ.AuthProvider.WebApi.Filters
                 var account = await accountService.GetByTokenAsync(headerValue).ConfigureAwait(false);
 
                 return account;
+            }
+
+            var authOptions = base.GetService<AuthOptions>(context);
+
+            if(authOptions.PrivateKey == headerValue)
+            {
+                return new ClientSystem()
+                {
+                    Name = headerValue
+                };
             }
 
             var clientSystemService = base.GetService<IClientSystemService>(context);

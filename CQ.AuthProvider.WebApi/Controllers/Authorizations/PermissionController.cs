@@ -10,7 +10,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 {
     [ApiController]
     [Route("permissions")]
-
     [CQAuthorization]
     public class PermissionController : ControllerBase
     {

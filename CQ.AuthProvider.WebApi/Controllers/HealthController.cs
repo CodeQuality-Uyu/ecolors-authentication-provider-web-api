@@ -30,7 +30,7 @@ namespace CQ.AuthProvider.WebApi.Controllers
         [HttpGet]
         public object Get()
         {
-            var authContext = this._contexts.FirstOrDefault(c => c.GetDatabaseInfo().Name == _authOptions.AuthDatabaseName);
+            var authContext = this._contexts.FirstOrDefault(c => c.GetDatabaseInfo().Name == _authOptions.DatabaseName);
 
             return new
             {

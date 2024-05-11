@@ -1,17 +1,10 @@
 ﻿using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
-using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.UnitOfWork.Abstractions;
 using CQ.Utility;
 using FirebaseAdmin.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.Firebase
 {
@@ -21,20 +14,26 @@ namespace CQ.AuthProvider.Firebase
         private readonly FirebaseAuth _firebaseAuth;
         private readonly IdentityFirebaseOptions _options;
         private readonly IAccountInfoRepository _accountRepository;
+        private readonly HttpClientAdapter _httpClient;
+        private readonly AuthOptions _authOptions;
 
         public SessionService(
             IdentityFirebaseOptions options,
             FirebaseAuth firebaseAuth,
             HttpClientAdapter firebaseApi,
-            IAccountInfoRepository accountRepository)
+            IAccountInfoRepository accountRepository,
+            HttpClientAdapter httpClient,
+            AuthOptions authOptions)
         {
             this._options = options;
             this._firebaseApi = firebaseApi;
             this._firebaseAuth = firebaseAuth;
             this._accountRepository = accountRepository;
+            _httpClient = httpClient;
+            _authOptions = authOptions;
         }
 
-        public async Task<SessionCreated> CreateAsync(CreateSessionCredentials credentials)
+        public async Task<SessionCreated> CreateAsync(CreateSessionCredentialsArgs credentials)
         {
             var response = await this._firebaseApi.PostAsync<SessionFirebase, FirebaseError>(
                 $"v1/accounts:signInWithPassword?key={this._options.ApiKey}",
@@ -47,7 +46,7 @@ namespace CQ.AuthProvider.Firebase
 
             var account = await this._accountRepository.GetInfoByIdAsync(response.LocalId).ConfigureAwait(false);
 
-            return new SessionCreated(
+            var sessionSaved = new SessionCreated(
                 response.LocalId,
                 response.Email,
                 response.IdToken,
@@ -56,6 +55,17 @@ namespace CQ.AuthProvider.Firebase
                 account.FullName,
                 account.Roles,
                 account.Permissions);
+
+            if (Guard.IsNotNullOrEmpty(credentials.ListenerServer))
+            {
+                try
+                {
+                    _httpClient.PostAsync($"{credentials.ListenerServer}", sessionSaved, new List<Header> { new("PrivateKey", _authOptions.PrivateKey) });
+                }
+                catch (Exception) { }
+            }
+
+            return sessionSaved;
         }
 
         public async Task<Session> CreateAsync(Identity identity)

@@ -57,12 +57,11 @@ namespace CQ.AuthProvider.DataAccess.Contexts
             return (accountBuilder, roleBuilder);
         }
 
-        private void SeedData(
+        private static void SeedData(
             EntityTypeBuilder<AccountRole> accountBuilder,
             EntityTypeBuilder<RolePermission> roleBuilder,
             ModelBuilder modelBuilder)
         {
-
             #region Permissions
             #region Permission permissions
             var createPermissionPermission = new PermissionEfCore
@@ -217,9 +216,10 @@ namespace CQ.AuthProvider.DataAccess.Contexts
                 (adminRole.Id, createAccountForPermission.Id),
 
                 new RolePermission
-                (clientSystemRole.Id, createBulkPermissionPermission.Id),
+                (adminRole.Id, createBulkPermissionPermission.Id),
                 new RolePermission
-                (clientSystemRole.Id, createBulkRolePermission.Id),
+                (adminRole.Id, createBulkRolePermission.Id),
+
                 new RolePermission
                 (clientSystemRole.Id, validateTokenPermission.Id));
 

@@ -1,5 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.ClientSystems;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.UnitOfWork.Abstractions;
 using CQ.Utility;
@@ -11,51 +11,70 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
         private readonly IRepository<Session> _sessionRepository;
         private readonly IRepository<Identity> _identityRepository;
         private readonly IAccountInfoRepository _accountRepository;
+        private readonly HttpClientAdapter _httpClient;
+        private readonly AuthOptions _authOptions;
 
         public SessionService(
             IRepository<Session> sessionRepository,
             IRepository<Identity> identityRepository,
-            IAccountInfoRepository accountRepository)
+            IAccountInfoRepository accountRepository,
+            HttpClientAdapter httpClient,
+            AuthOptions authOptions)
         {
             _sessionRepository = sessionRepository;
             _identityRepository = identityRepository;
             _accountRepository = accountRepository;
+            _httpClient = httpClient;
+            _authOptions = authOptions;
         }
 
-        public async Task<SessionCreated> CreateAsync(CreateSessionCredentials credentials)
+        public async Task<SessionCreated> CreateAsync(CreateSessionCredentialsArgs credentials)
         {
             var identity = await _identityRepository
                 .GetOrDefaultAsync(a =>
                 a.Email == credentials.Email && a.Password == credentials.Password)
                 .ConfigureAwait(false);
 
-            if (identity == null)
+            if (Guard.IsNull(identity))
+            {
                 throw new InvalidCredentialsException(credentials.Email);
+            }
 
             var sessionOfUser = await _sessionRepository.GetOrDefaultAsync(s => s.AccountId == identity.Id).ConfigureAwait(false);
 
-            if (sessionOfUser == null)
+            if (Guard.IsNull(sessionOfUser))
             {
                 sessionOfUser = await CreateAsync(identity).ConfigureAwait(false);
             }
             else
             {
-                sessionOfUser = sessionOfUser with { Token = Db.NewId() };
+                sessionOfUser.Token = Db.NewId();
 
-                await _sessionRepository.UpdateByIdAsync(sessionOfUser.Id, new { sessionOfUser.Token }).ConfigureAwait(false);
+                await _sessionRepository.UpdateAsync(sessionOfUser).ConfigureAwait(false);
             }
 
             var account = await this._accountRepository.GetInfoByIdAsync(sessionOfUser.AccountId).ConfigureAwait(true);
 
-            return new SessionCreated(
+            var sessionSaved = new SessionCreated(
                 sessionOfUser.AccountId,
                 sessionOfUser.Email,
                 sessionOfUser.Token,
                 account.FirstName,
                 account.LastName,
-                account.LastName,
+                account.FullName,
                 account.Roles,
                 account.Permissions);
+
+            if (Guard.IsNotNullOrEmpty(credentials.ListenerServer))
+            {
+                try
+                {
+                    _httpClient.PostAsync($"{credentials.ListenerServer}", sessionSaved, new List<Header> { new ("PrivateKey", _authOptions.PrivateKey) });
+                }
+                catch (Exception) { }
+            }
+
+            return sessionSaved;
         }
 
         public async Task<Session> CreateAsync(Identity identity)

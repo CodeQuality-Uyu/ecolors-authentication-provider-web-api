@@ -27,10 +27,21 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
                 typeof(RoleKeyProfile),
                 typeof(ClientSystemProfile));
 
-            var mongoConnectionString = configuration.GetConnectionString(AuthOptions.MongoConnectionString);
-            var sqlConnectionString = configuration.GetConnectionString(AuthOptions.SqlConnectionString);
+            services.AddScoped<HttpClientAdapter>();
 
-            if (Guard.IsNotNullOrEmpty(sqlConnectionString))
+            var connectionString = configuration.GetConnectionString(ConnectionStrings.Auth);
+
+            Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
+
+            var authOptions = configuration
+                .GetSection(ConfigOptions.Auth)
+                .Get<AuthOptions>();
+
+            Guard.ThrowIsNull(authOptions, "Auth");
+
+            services.AddSingleton<AuthOptions>(authOptions);
+
+            if (authOptions.Engine == DatabaseEngine.Sql)
             {
                 services
                     .AddScoped<IAccountService, AccountEfCoreService>()
@@ -43,7 +54,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
                     .AddScoped<IClientSystemService, ClientSystemEfCoreService>();
             }
 
-            if (Guard.IsNotNullOrEmpty(mongoConnectionString))
+            if (authOptions.Engine == DatabaseEngine.Mongo)
             {
                 services
                     .AddScoped<IAccountService, AccountMongoService>()
@@ -56,16 +67,11 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
                     .AddScoped<IClientSystemService, ClientSystemMongoService>();
             }
 
-            if (Guard.IsNullOrEmpty(mongoConnectionString) && Guard.IsNullOrEmpty(sqlConnectionString))
-            {
-                throw new Exception("Missing Auth connection string: AuthMongo or AuthSql");
-            }
-
             var identity = configuration
-                .GetSection(IdentityOptions.Identity)
+                .GetSection(ConfigOptions.Identity)
                 .Get<IdentityOptions>();
 
-            Guard.ThrowIsNull(identity, nameof(identity));
+            Guard.ThrowIsNull(identity, "Identity");
 
             if (identity.Type == IdentityType.Database)
             {
