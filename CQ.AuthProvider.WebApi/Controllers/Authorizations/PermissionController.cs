@@ -5,12 +5,14 @@ using CQ.ApiElements.Extensions;
 using CQ.ApiElements.Filters.Extensions;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.ApiElements;
+using CQ.ApiElements.Filters.Authentications;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 {
     [ApiController]
     [Route("permissions")]
     [CQAuthorization]
+    [ValidateAccount]
     public class PermissionController : ControllerBase
     {
         private readonly IPermissionService _permissionService;

@@ -3,12 +3,14 @@ using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.ApiElements.Extensions;
+using CQ.ApiElements.Filters.Authentications;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Authorizations
 {
     [ApiController]
     [Route("roles")]
     [CQAuthorization]
+    [ValidateAccount]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleService;

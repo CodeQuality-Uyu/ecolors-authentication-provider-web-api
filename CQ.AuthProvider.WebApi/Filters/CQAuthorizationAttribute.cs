@@ -20,7 +20,6 @@ namespace CQ.AuthProvider.WebApi.Filters
         protected override Task<bool> HasRequestPermissionAsync(string headerValue, string permission, AuthorizationFilterContext context)
         {
             var accountLogged = (Account)context.HttpContext.Items[ContextItems.AccountLogged];
-            var clientSystemLogged = (ClientSystem)context.HttpContext.Items[ContextItems.ClientSystemLogged];
 
             var permissionKey = new PermissionKey(permission);
             if (Guard.IsNotNull(accountLogged))
@@ -30,6 +29,7 @@ namespace CQ.AuthProvider.WebApi.Filters
                 return Task.FromResult(hasPermissionAccount);
             }
 
+            var clientSystemLogged = (ClientSystem)context.HttpContext.Items[ContextItems.ClientSystemLogged];
             if (Guard.IsNull(clientSystemLogged))
             {
                 return Task.FromResult(false);

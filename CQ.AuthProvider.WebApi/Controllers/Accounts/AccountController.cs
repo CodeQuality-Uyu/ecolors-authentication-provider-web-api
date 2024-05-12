@@ -29,6 +29,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
 
         [HttpPost("credentials/for")]
         [CQAuthorization]
+        [ValidateAccount]
         public async Task CreateCredentialsForAsync(CreateAccountRequest request)
         {
             var createAccountFor = request.Map();
