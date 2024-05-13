@@ -5,7 +5,10 @@ namespace CQ.AuthProvider.WebApi.Filters
 {
     public sealed class CqExceptionFilter : ExceptionFilter
     {
-        public CqExceptionFilter(ExceptionStoreService exceptionStoreService, ExceptionRegistryService exceptionRegistryService) : base(exceptionStoreService, exceptionRegistryService)
+        public CqExceptionFilter(
+            ExceptionStoreService exceptionStoreService,
+            ExceptionRegistryService exceptionRegistryService) 
+            : base(exceptionStoreService, exceptionRegistryService)
         {
         }
 

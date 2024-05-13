@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
-using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Exceptions;
@@ -24,10 +23,10 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             IMapper mapper,
             IRoleInternalService roleInternalService)
         {
-            this._identityProviderRepository = identityProviderRepository;
-            this._sessionService = sessionService;
-            this._mapper = mapper;
-            this._roleInternalService = roleInternalService;
+            _identityProviderRepository = identityProviderRepository;
+            _sessionService = sessionService;
+            _mapper = mapper;
+            _roleInternalService = roleInternalService;
         }
 
         #region Create
@@ -35,15 +34,15 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
         {
             await AssertEmailInUseAsync(newAccount.Email).ConfigureAwait(false);
 
-            var identity = await this.CreateIdentityAsync(newAccount).ConfigureAwait(false);
+            var identity = await CreateIdentityAsync(newAccount).ConfigureAwait(false);
 
             try
             {
                 Role role;
                 if (Guard.IsNull(newAccount.Role))
-                    role = await this._roleInternalService.GetDefaultAsync().ConfigureAwait(false);
+                    role = await _roleInternalService.GetDefaultAsync().ConfigureAwait(false);
                 else
-                    role = await this._roleInternalService.GetByKeyAsync(newAccount.Role).ConfigureAwait(false);
+                    role = await _roleInternalService.GetByKeyAsync(newAccount.Role).ConfigureAwait(false);
 
                 var account = await this.CreateAsync(newAccount, role, identity).ConfigureAwait(false);
 
@@ -63,17 +62,19 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             }
             catch (SpecificResourceNotFoundException<Role>)
             {
-                await this._identityProviderRepository.DeleteByIdAsync(identity.Id).ConfigureAwait(false);
+                await _identityProviderRepository.DeleteByIdAsync(identity.Id).ConfigureAwait(false);
                 throw;
             }
         }
 
         private async Task AssertEmailInUseAsync(string email)
         {
-            var existAuth = await this.ExistByEmailAsync(email).ConfigureAwait(false);
+            var existAuth = await ExistByEmailAsync(email).ConfigureAwait(false);
 
             if (existAuth)
+            {
                 throw new SpecificResourceDuplicatedException<Account>(nameof(Account.Email), email);
+            }
         }
 
         protected abstract Task<bool> ExistByEmailAsync(string email);

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
-using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.UnitOfWork.Abstractions;

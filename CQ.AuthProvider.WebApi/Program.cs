@@ -3,7 +3,6 @@ using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.DataAccess.AppConfig;
 using CQ.ServiceExtension;
 using CQ.ApiElements.AppConfig;
-using dotenv.net;
 
 var builder = WebApplication.CreateBuilder(args);
 

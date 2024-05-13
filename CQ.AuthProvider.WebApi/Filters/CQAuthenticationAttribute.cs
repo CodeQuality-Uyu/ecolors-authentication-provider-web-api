@@ -1,7 +1,6 @@
 ﻿using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
-using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using Microsoft.AspNetCore.Mvc.Filters;

@@ -2,7 +2,7 @@
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
-using CQ.AuthProvider.EfCore;
+using CQ.IdentityProvider.EfCore;
 using CQ.UnitOfWork.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

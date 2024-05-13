@@ -16,9 +16,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />
-    <ProjectReference Include="..\CQ.AuthProvider.EfCore\CQ.AuthProvider.EfCore.csproj" />
-    <ProjectReference Include="..\CQ.AuthProvider.Firebase\CQ.AuthProvider.Firebase.csproj" />
-    <ProjectReference Include="..\CQ.AuthProvider.Mongo\CQ.AuthProvider.Mongo.csproj" />
+    <ProjectReference Include="..\CQ.IdentityProvider.EfCore\CQ.IdentityProvider.EfCore.csproj" />
+    <ProjectReference Include="..\CQ.IdentityProvider.Firebase\CQ.IdentityProvider.Firebase.csproj" />
+    <ProjectReference Include="..\CQ.IdentityProvider.Mongo\CQ.IdentityProvider.Mongo.csproj" />
   </ItemGroup>
 
 </Project>
