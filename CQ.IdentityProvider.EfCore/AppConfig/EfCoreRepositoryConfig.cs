@@ -25,7 +25,7 @@ namespace CQ.IdentityProvider.EfCore.AppConfig
                 LifeTime.Scoped)
                 .AddRepository<Session>(name, LifeTime.Scoped)
                 .AddAbstractionEfCoreRepository<Identity, IIdentityProviderRepository, IdentityRepository>(name, LifeTime.Scoped)
-                .AddScoped<IIdentityProviderHealthService, IdentityRepository>();
+                .AddScoped<IIdentityProviderHealthService, IdentityProviderEfCoreContext>();
 
             return services;
         }

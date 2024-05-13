@@ -1,7 +1,7 @@
-﻿using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.BusinessLogic.AppConfig;
+﻿using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CQ.AuthProvider.WebApi.Controllers
@@ -32,19 +32,34 @@ namespace CQ.AuthProvider.WebApi.Controllers
         {
             var authContext = this._contexts.FirstOrDefault(c => c.GetDatabaseInfo().Name == _authOptions.DatabaseName);
 
+
+            object authDbHealth = new
+            {
+                Alive = false
+            };
+
+            if (Guard.IsNotNull(authContext))
+            {
+                var authInfo = authContext.GetDatabaseInfo();
+
+                authDbHealth = new
+                {
+                    Server = authInfo.Provider,
+                    DatabaseName = authInfo.Name,
+                    Alive = authContext.Ping()
+                };
+            }
+
             return new
             {
-                v = "1",
+                v = "2",
                 Alive = true,
-                Auth = new
-                {
-                    Database = authContext.GetDatabaseInfo(),
-                    Alive = authContext.Ping()
-                },
+                Auth = authDbHealth,
                 Identity = new
                 {
-                    Service = this._identityProviderHealthService.GetName(),
-                    Alive = this._identityProviderHealthService.Ping()
+                    Server = _identityProviderHealthService.GetProvider(),
+                    Name = _identityProviderHealthService.GetName(),
+                    Alive = _identityProviderHealthService.Ping()
                 }
             };
         }

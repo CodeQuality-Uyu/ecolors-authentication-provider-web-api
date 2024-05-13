@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CQ.AuthProvider.BusinessLogic.Identities
+﻿namespace CQ.AuthProvider.BusinessLogic.Identities
 {
     public interface IIdentityProviderHealthService
     {
+        string GetProvider();
+
         string GetName();
 
         bool Ping();

@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CQ.AuthProvider.DataAccess.Contexts
 {
-    public sealed class AuthEfCoreContext : EfCoreContext
+    public sealed class AuthEfCoreContext 
+        : EfCoreContext
     {
         public DbSet<AccountEfCore> Accounts { get; set; }
 

@@ -5,26 +5,13 @@ namespace CQ.IdentityProvider.Mongo
 {
     public sealed class IdentityRepository : 
         MongoDriverRepository<Identity>,
-        IIdentityProviderRepository,
-        IIdentityProviderHealthService
+        IIdentityProviderRepository
     {
         public IdentityRepository(MongoContext context) : base(context) { }
 
         public new async Task CreateAsync(Identity identity)
         {
             await base.CreateAsync(identity).ConfigureAwait(false);
-        }
-
-        public string GetName()
-        {
-            var databaseInfo = base._mongoContext.GetDatabaseInfo();
-
-            return $"{databaseInfo.Provider}-{databaseInfo.Name}";
-        }
-
-        public bool Ping()
-        {
-            return base._mongoContext.Ping();
         }
 
         public async Task UpdatePasswordAsync(string identityId, string newPassword)

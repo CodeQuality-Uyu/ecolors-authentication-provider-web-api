@@ -3,11 +3,6 @@ using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.UnitOfWork.MongoDriver;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.DataAccess.Contexts
 {

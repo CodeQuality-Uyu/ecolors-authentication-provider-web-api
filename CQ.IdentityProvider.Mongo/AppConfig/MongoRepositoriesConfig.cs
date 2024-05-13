@@ -24,7 +24,7 @@ namespace CQ.IdentityProvider.Mongo.AppConfig
             LifeTime.Scoped)
                 .AddMongoRepository<Session>(name, LifeTime.Scoped)
                 .AddAbstractionMongoRepository<Identity, IIdentityProviderRepository, IdentityRepository>(name, LifeTime.Scoped)
-                .AddScoped<IIdentityProviderHealthService, IdentityRepository>();
+                .AddScoped<IIdentityProviderHealthService, IdentityProviderMongoContext>();
 
             return services;
         }

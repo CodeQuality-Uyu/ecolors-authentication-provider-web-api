@@ -7,7 +7,9 @@ using CQ.Exceptions;
 
 namespace CQ.IdentityProvider.Firebase
 {
-    internal class IdentityService : IIdentityProviderRepository, IIdentityProviderHealthService
+    internal class IdentityService 
+        : IIdentityProviderRepository,
+        IIdentityProviderHealthService
     {
         private readonly FirebaseAuth _firebaseAuth;
 
@@ -92,16 +94,21 @@ namespace CQ.IdentityProvider.Firebase
             var userRecord = await _firebaseAuth.UpdateUserAsync(userUpdated).ConfigureAwait(false);
         }
 
+        public string GetProvider()
+        {
+            return "Firebase";
+        }
+
         public string GetName()
         {
-            return $"Firebase-{this._options.ProjectName}";
+            return $"{_options.ProjectName}";
         }
 
         public bool Ping()
         {
             try
             {
-                var task = this._firebaseAuth.GetUserByEmailAsync("ping@gmail.com");
+                var task = _firebaseAuth.GetUserByEmailAsync("ping@gmail.com");
 
                 task.Wait();
                 return true;

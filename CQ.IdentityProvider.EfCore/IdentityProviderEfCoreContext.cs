@@ -5,9 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CQ.IdentityProvider.EfCore
 {
-    public sealed class IdentityProviderEfCoreContext : EfCoreContext
+    public sealed class IdentityProviderEfCoreContext
+        : EfCoreContext,
+        IIdentityProviderHealthService
     {
-        public const string ADMIN_ID= "d47025648273495ba69482fcc69da874";
+        public const string ADMIN_ID = "d47025648273495ba69482fcc69da874";
         public const string ADMIN_EMAIL = "admin@gmail.com";
 
         public DbSet<Identity> Identities { get; set; }
@@ -21,13 +23,30 @@ namespace CQ.IdentityProvider.EfCore
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Identity>().HasData(
+            modelBuilder
+                .Entity<Identity>()
+                .HasData(
                 new Identity(
                     ADMIN_EMAIL,
                     "!12345678")
                 {
                     Id = ADMIN_ID
                 });
+        }
+
+        public string GetProvider()
+        {
+            return base.GetDatabaseInfo().Provider;
+        }
+
+        public string GetName()
+        {
+            return base.GetDatabaseInfo().Name;
+        }
+
+        public bool Ping()
+        {
+            return base.Ping();
         }
     }
 }
