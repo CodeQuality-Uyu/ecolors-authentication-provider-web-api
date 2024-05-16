@@ -52,7 +52,9 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             await this.AssertByKeyAsync(role.Key).ConfigureAwait(false);
 
             if (role.IsDefault)
+            {
                 await this.RemoveDefaultAsync().ConfigureAwait(false);
+            }
 
             await this.CreateAsync(role).ConfigureAwait(false);
         }
