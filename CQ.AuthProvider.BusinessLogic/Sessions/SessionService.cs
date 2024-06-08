@@ -56,14 +56,9 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
             var account = await this._accountRepository.GetInfoByIdAsync(sessionOfUser.AccountId).ConfigureAwait(true);
 
             var sessionSaved = new SessionCreated(
-                sessionOfUser.AccountId,
+                account,
                 sessionOfUser.Email,
-                sessionOfUser.Token,
-                account.FirstName,
-                account.LastName,
-                account.FullName,
-                account.Roles,
-                account.Permissions);
+                sessionOfUser.Token);
 
             if (Guard.IsNotNullOrEmpty(credentials.ListenerServer))
             {

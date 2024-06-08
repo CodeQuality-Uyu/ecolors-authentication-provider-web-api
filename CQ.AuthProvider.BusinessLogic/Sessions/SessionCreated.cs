@@ -1,43 +1,24 @@
-﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Authorizations;
 
 namespace CQ.AuthProvider.BusinessLogic.Sessions
 {
     public sealed record class SessionCreated
     {
-        public readonly string AccountId;
+        public readonly Account Account;
 
         public readonly string Email;
 
-        public readonly string FirstName;
-
-        public readonly string LastName;
-
-        public readonly string FullName;
-
         public readonly string Token;
 
-        public readonly List<RoleKey> Roles;
-
-        public readonly List<PermissionKey> Permissions;
-
         public SessionCreated(
-            string accountId,
+            Account account,
             string email,
-            string token,
-            string firstName,
-            string lastName,
-            string fullName,
-            List<RoleKey> roles,
-            List<PermissionKey> permissions)
+            string token)
         {
-            this.AccountId = accountId;
-            this.Email = email;
-            this.Token = token;
-            this.Roles = roles;
-            this.Permissions = permissions;
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.FullName = fullName;
+            Account = account;
+            Email = email;
+            Token = token;
         }
     }
 }

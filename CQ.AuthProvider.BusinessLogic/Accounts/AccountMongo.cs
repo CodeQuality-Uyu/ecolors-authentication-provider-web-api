@@ -7,6 +7,8 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
     {
         public string Id { get; set; } = null!;
 
+        public string? ProfilePictureUrl { get; set; }
+
         public string FullName { get; set; } = null!;
 
         public string FirstName { get; set; } = null!;
@@ -21,9 +23,9 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public AccountMongo()
         {
-            this.Id = Db.NewId();
-            this.Roles = new List<MiniRoleMongo>();
-            this.CreatedAt = DateTimeOffset.UtcNow;
+            Id = Db.NewId();
+            Roles = new List<MiniRoleMongo>();
+            CreatedAt = DateTimeOffset.UtcNow;
         }
 
         public AccountMongo(
@@ -31,15 +33,17 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             string firstName,
             string lastName,
             string email,
-            MiniRoleMongo role
+            MiniRoleMongo role,
+            string? profilePictureUrl = null
             )
             : this()
         {
-            this.FullName = fullName;
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.Email= email;
-            this.Roles = new List<MiniRoleMongo> { role };
+            FullName = fullName;
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            Roles = new List<MiniRoleMongo> { role };
+            ProfilePictureUrl = profilePictureUrl;
         }
     }
 }

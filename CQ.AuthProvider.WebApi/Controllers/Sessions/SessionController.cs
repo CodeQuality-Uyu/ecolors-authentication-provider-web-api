@@ -13,7 +13,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 
         public SessionController(ISessionService sessionService)
         {
-            this._sessionService = sessionService;
+            _sessionService = sessionService;
         }
 
         [HttpPost("credentials")]
@@ -21,7 +21,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
         {
             var createAuth = request.Map();
 
-            var session = await this._sessionService.CreateAsync(createAuth);
+            var session = await _sessionService.CreateAsync(createAuth);
 
             var response = new CreateSessionResponse(session);
 
@@ -33,7 +33,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
         [ValidateClientSystem]
         public async Task<TokenValidationResponse> ValidateTokenAsync(string token)
         {
-            var isValid = await this._sessionService.IsTokenValidAsync(token).ConfigureAwait(false);
+            var isValid = await _sessionService.IsTokenValidAsync(token).ConfigureAwait(false);
 
             return new TokenValidationResponse(isValid);
         }

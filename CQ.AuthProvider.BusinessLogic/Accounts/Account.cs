@@ -9,6 +9,8 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public string Email { get; init; } = null!;
 
+        public string? ProfilePictureUrl { get; init; } = null!;
+
         public string FullName { get; init; } = null!;
 
         public string FirstName { get; init; } = null!;

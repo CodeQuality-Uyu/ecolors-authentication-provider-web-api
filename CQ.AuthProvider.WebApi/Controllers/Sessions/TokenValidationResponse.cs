@@ -2,10 +2,11 @@
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 {
-    public sealed record class TokenValidationResponse : Response<bool>
+    public readonly struct TokenValidationResponse
     {
         public bool IsValid { get; init; }
-        public TokenValidationResponse(bool entity) : base(entity)
+
+        public TokenValidationResponse(bool entity)
         {
             this.IsValid = entity;
         }

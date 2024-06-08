@@ -9,6 +9,8 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public string Email { get; set; } = null!;
 
+        public string? ProfilePictureUrl { get; set; } = null!;
+
         public string FullName { get; set; } = null!;
 
         public string FirstName { get; set; } = null!;
@@ -21,9 +23,9 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public AccountEfCore()
         {
-            this.Id = Db.NewId();
-            this.CreatedAt = DateTimeOffset.UtcNow;
-            this.Roles = new List<RoleEfCore>();
+            Id = Db.NewId();
+            CreatedAt = DateTimeOffset.UtcNow;
+            Roles = new List<RoleEfCore>();
         }
 
         public AccountEfCore(
@@ -31,14 +33,16 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             string fullName,
             string firstName,
             string lastName,
-            string roleId)
+            string roleId,
+            string? profilePictureUrl = null)
             : this()
         {
-            this.Email = email;
-            this.FullName = fullName;
-            this.FirstName = firstName;
-            this.LastName = lastName;
-            this.Roles = new List<RoleEfCore> { new() { Id = roleId } };
+            Email = email;
+            FullName = fullName;
+            FirstName = firstName;
+            LastName = lastName;
+            Roles = new List<RoleEfCore> { new() { Id = roleId } };
+            ProfilePictureUrl = profilePictureUrl;
         }
     }
 }

@@ -7,6 +7,8 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
     {
         public string Id { get; init; }
 
+        public string? ProfilePictureUrl { get; init; }
+
         public string FullName { get; init; }
         
         public string FirstName { get; init; }
@@ -28,6 +30,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
             Email = entity.Email;
             Roles = entity.Roles.Select(r => r.ToString()).ToList();
             Permissions = entity.Permissions.Select(p => p.ToString()).ToList();
+            ProfilePictureUrl = entity.ProfilePictureUrl;
         }
     }
 }

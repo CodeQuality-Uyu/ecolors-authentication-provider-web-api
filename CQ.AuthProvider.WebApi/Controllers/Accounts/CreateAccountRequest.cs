@@ -1,14 +1,9 @@
 ﻿using CQ.ApiElements.Dtos;
-using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Accounts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CQ.AuthProvider.WebApi.Controllers
 {
-    public sealed record class CreateAccountRequest : Request<CreateAccount>
+    public sealed record class CreateAccountRequest : Request<CreateAccountArgs>
     {
         public string? Email { get; init; }
 
@@ -18,16 +13,19 @@ namespace CQ.AuthProvider.WebApi.Controllers
 
         public string? LastName { get; init; }
 
+        public string? ProfilePictureUrl { get; init; }
+
         public string? Role { get; init; }
 
-        protected override CreateAccount InnerMap()
+        protected override CreateAccountArgs InnerMap()
         {
-            return new CreateAccount(
+            return new CreateAccountArgs(
                Email ?? string.Empty,
                Password ?? string.Empty,
                FirstName ?? string.Empty,
                 LastName ?? string.Empty,
-                Role ?? string.Empty);
+                Role,
+                ProfilePictureUrl);
         }
     }
 }

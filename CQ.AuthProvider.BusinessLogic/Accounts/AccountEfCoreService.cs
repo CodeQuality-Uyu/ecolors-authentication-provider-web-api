@@ -21,11 +21,11 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
                   mapper,
                   roleService)
         {
-            this._accountRepository = accountRepository;
+            _accountRepository = accountRepository;
         }
 
         protected override async Task<Account> CreateAsync(
-            CreateAccount newAccount,
+            CreateAccountArgs newAccount,
             Role role,
             Identity identity)
         {
@@ -34,14 +34,15 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
                 newAccount.FullName,
                 newAccount.FirstName,
                 newAccount.LastName,
-                role.Id)
+                role.Id,
+                newAccount.ProfilePictureUrl)
             {
                 Id = identity.Id
             };
 
-            await this._accountRepository.CreateAsync(account).ConfigureAwait(false);
+            await _accountRepository.CreateAsync(account).ConfigureAwait(false);
 
-            return this._mapper.Map<Account>(account);
+            return _mapper.Map<Account>(account);
         }
 
         protected override async Task<bool> ExistByEmailAsync(string email)

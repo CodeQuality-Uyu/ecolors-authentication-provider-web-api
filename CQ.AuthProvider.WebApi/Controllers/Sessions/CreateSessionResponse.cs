@@ -1,12 +1,12 @@
-﻿using CQ.ApiElements.Dtos;
-using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.BusinessLogic.Sessions;
+﻿using CQ.AuthProvider.BusinessLogic.Sessions;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 {
-    public sealed record class CreateSessionResponse
+    public readonly struct CreateSessionResponse
     {
         public string AccountId { get; init; }
+
+        public string? ProfilePictureUrl { get; init; }
 
         public string Email { get; init; }
 
@@ -14,7 +14,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 
         public string LastName { get; init; }
 
-        public string FulLName { get; init; }
+        public string FullName { get; init; }
 
         public string Token { get; init; }
 
@@ -24,14 +24,15 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 
         public CreateSessionResponse(SessionCreated session)
         { 
-            this.AccountId = session.AccountId;
-            this.Email = session.Email;
-            this.FulLName = session.FullName;
-            this.FirstName = session.FirstName;
-            this.LastName = session.LastName;
-            this.Token = session.Token;
-            this.Roles = session.Roles.Select(r => r.ToString()).ToList();
-            this.Permissions = session.Permissions.Select(p => p.ToString()).ToList();
+            AccountId = session.Account.Id;
+            Email = session.Email;
+            FullName = session.Account.FullName;
+            FirstName = session.Account.FirstName;
+            LastName = session.Account.LastName;
+            Token = session.Token;
+            Roles = session.Account.Roles.Select(r => r.ToString()).ToList();
+            Permissions = session.Account.Permissions.Select(p => p.ToString()).ToList();
+            ProfilePictureUrl = session.Account.ProfilePictureUrl;
         }
     }
 }

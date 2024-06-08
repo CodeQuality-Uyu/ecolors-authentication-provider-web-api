@@ -2,7 +2,7 @@
 {
     public interface IAccountService
     {
-        Task<CreateAccountResult> CreateAsync(CreateAccount auth);
+        Task<CreateAccountResult> CreateAsync(CreateAccountArgs auth);
 
         Task<Account> GetByTokenAsync(string token);
 

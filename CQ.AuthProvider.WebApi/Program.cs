@@ -17,18 +17,21 @@ builder.Services.AddControllers(
         options.SuppressModelStateInvalidFilter = true;
     });
 
+var services = builder.Services;
+var configuration = builder.Configuration;
+
 // Add services to the container.
-builder.Services
+services
 .AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Singleton, LifeTime.Singleton)
-.AddCQServices(builder.Configuration)
-.AddCQDataAccess(builder.Configuration);
+.AddCQServices(configuration)
+.AddCQDataAccess(configuration);
 
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 

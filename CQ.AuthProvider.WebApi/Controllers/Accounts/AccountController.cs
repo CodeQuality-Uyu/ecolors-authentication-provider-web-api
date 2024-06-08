@@ -22,7 +22,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
         {
             var createAccount = request.Map();
 
-            var account = await this._accountService.CreateAsync(createAccount);
+            var account = await _accountService.CreateAsync(createAccount);
 
             return new CreateAccountResponse(account);
         }
@@ -34,7 +34,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts
         {
             var createAccountFor = request.Map();
 
-            await this._accountService.CreateAsync(createAccountFor).ConfigureAwait(false);
+            await _accountService.CreateAsync(createAccountFor).ConfigureAwait(false);
         }
 
         [HttpGet("me")]

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
-using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.UnitOfWork.Abstractions;
@@ -26,7 +25,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             this._accountRepository = accountRepository;
         }
 
-        protected override async Task<Account> CreateAsync(CreateAccount newAccount, Role role, Identity identity)
+        protected override async Task<Account> CreateAsync(CreateAccountArgs newAccount, Role role, Identity identity)
         {
             var miniRole = new MiniRoleMongo(role.Key, role.Permissions);
 
@@ -35,7 +34,8 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
                 newAccount.FirstName,
                 newAccount.LastName,
                 newAccount.Email,
-                miniRole)
+                miniRole,
+                newAccount.ProfilePictureUrl)
             {
                 Id = identity.Id
             };
@@ -54,7 +54,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         public override async Task<Account> GetByEmailAsync(string email)
         {
-            var account = await this._accountRepository.GetByPropAsync(email, nameof(AccountEfCore.Email)).ConfigureAwait(false);
+            var account = await this._accountRepository.GetByPropAsync(email, nameof(AccountMongo.Email)).ConfigureAwait(false);
 
             return this._mapper.Map<Account>(account);
         }

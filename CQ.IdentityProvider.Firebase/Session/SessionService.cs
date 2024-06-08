@@ -46,15 +46,12 @@ namespace CQ.IdentityProvider.Firebase
 
             var account = await _accountRepository.GetInfoByIdAsync(response.LocalId).ConfigureAwait(false);
 
+            account = account with { Id = response.LocalId };
+
             var sessionSaved = new SessionCreated(
-                response.LocalId,
+                account,
                 response.Email,
-                response.IdToken,
-                account.FirstName,
-                account.LastName,
-                account.FullName,
-                account.Roles,
-                account.Permissions);
+                response.IdToken);
 
             if (Guard.IsNotNullOrEmpty(credentials.ListenerServer))
             {

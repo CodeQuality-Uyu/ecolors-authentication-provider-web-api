@@ -30,7 +30,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
         }
 
         #region Create
-        public async Task<CreateAccountResult> CreateAsync(CreateAccount newAccount)
+        public async Task<CreateAccountResult> CreateAsync(CreateAccountArgs newAccount)
         {
             await AssertEmailInUseAsync(newAccount.Email).ConfigureAwait(false);
 
@@ -40,9 +40,13 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             {
                 Role role;
                 if (Guard.IsNull(newAccount.Role))
+                {
                     role = await _roleInternalService.GetDefaultAsync().ConfigureAwait(false);
+                }
                 else
+                {
                     role = await _roleInternalService.GetByKeyAsync(newAccount.Role).ConfigureAwait(false);
+                }
 
                 var account = await this.CreateAsync(newAccount, role, identity).ConfigureAwait(false);
 
@@ -79,7 +83,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
 
         protected abstract Task<bool> ExistByEmailAsync(string email);
 
-        private async Task<Identity> CreateIdentityAsync(CreateAccount newAccount)
+        private async Task<Identity> CreateIdentityAsync(CreateAccountArgs newAccount)
         {
             var identity = new Identity(
                 newAccount.Email,
@@ -90,10 +94,10 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts
             return identity;
         }
 
-        protected abstract Task<Account> CreateAsync(CreateAccount newAccount, Role role, Identity identity);
+        protected abstract Task<Account> CreateAsync(CreateAccountArgs newAccount, Role role, Identity identity);
         #endregion
 
-        public async Task UpdatePasswordAsync(string newPassword, AccountEfCore userLogged)
+        public async Task UpdatePasswordAsync(string newPassword, Account userLogged)
         {
             Guard.ThrowIsInputInvalidPassword(newPassword, "newPassword");
 
