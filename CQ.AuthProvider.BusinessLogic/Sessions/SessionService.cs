@@ -98,10 +98,12 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
 
         public async Task<Session?> GetOrDefaultByTokenAsync(string token)
         {
-            var isGuid = Guid.TryParse(token, out var id);
+            var isGuid = Guid.TryParse(token, out var _);
 
             if (!isGuid)
+            {
                 return null;
+            }
 
             return await this._sessionRepository.GetOrDefaultByPropAsync(token, nameof(Session.Token)).ConfigureAwait(false);
         }
@@ -111,6 +113,15 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions
             var isGuid = Guid.TryParse(token, out var id);
 
             return Task.FromResult(isGuid);
+        }
+
+        public async Task DeleteAsync(Account accountLogged)
+        {
+            var session = await _sessionRepository.GetByPropAsync(accountLogged.Id, nameof(Session.AccountId)).ConfigureAwait(false);
+
+            session.Token = null;
+
+            await _sessionRepository.UpdateAsync(session).ConfigureAwait(false);
         }
     }
 }

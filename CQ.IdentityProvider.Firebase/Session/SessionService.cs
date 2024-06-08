@@ -115,5 +115,10 @@ namespace CQ.IdentityProvider.Firebase
 
             return result != null;
         }
+
+        public async Task DeleteAsync(Account accountLogged)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

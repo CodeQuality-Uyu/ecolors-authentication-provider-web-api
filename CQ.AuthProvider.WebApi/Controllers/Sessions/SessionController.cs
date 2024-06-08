@@ -2,12 +2,13 @@
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.ApiElements.Filters.Authentications;
+using CQ.AuthProvider.WebApi.Extensions;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 {
     [ApiController]
     [Route("sessions")]
-    public class SessionController: ControllerBase
+    public class SessionController : ControllerBase
     {
         private readonly ISessionService _sessionService;
 
@@ -27,6 +28,17 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions
 
             return response;
         }
+
+        [HttpDelete("credentials")]
+        [CQAuthorization]
+        [ValidateAccount]
+        public async Task DeleteAsync()
+        {
+            var accountLogged = this.GetAccountLogged();
+
+            await _sessionService.DeleteAsync(accountLogged);
+        }
+
 
         [HttpGet("{token}/validate")]
         [CQAuthorization]
