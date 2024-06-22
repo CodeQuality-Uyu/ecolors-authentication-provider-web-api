@@ -1,12 +1,11 @@
 using CQ.AuthProvider.WebApi.Filters;
-using CQ.AuthProvider.BusinessLogic.AppConfig;
-using CQ.AuthProvider.DataAccess.AppConfig;
-using CQ.ServiceExtension;
 using CQ.ApiElements.AppConfig;
+using CQ.AuthProvider.WebApi.AppConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(
+builder.Services
+    .AddControllers(
     (options) =>
     {
         options.AddExceptionFilter<CqExceptionFilter>();
@@ -22,9 +21,7 @@ var configuration = builder.Configuration;
 
 // Add services to the container.
 services
-.AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Singleton, LifeTime.Singleton)
-.AddCQServices(configuration)
-.AddCQDataAccess(configuration);
+    .ConfigureApiServices(configuration);
 
 
 var app = builder.Build();
@@ -33,7 +30,11 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseCors(policy =>
+policy
+.AllowAnyOrigin()
+.AllowAnyHeader()
+.AllowAnyMethod());
 
 app.MapControllers();
 

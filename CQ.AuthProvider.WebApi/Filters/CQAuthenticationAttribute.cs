@@ -1,8 +1,8 @@
 ﻿using CQ.ApiElements.Filters.Authentications;
-using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
-using CQ.AuthProvider.BusinessLogic.Sessions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters

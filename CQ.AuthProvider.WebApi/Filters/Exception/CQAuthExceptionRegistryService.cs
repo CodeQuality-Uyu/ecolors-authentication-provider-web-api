@@ -1,12 +1,11 @@
-﻿
-using CQ.ApiElements.Filters;
+﻿using CQ.ApiElements.Filters;
 using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions;
 using CQ.Exceptions;
 using System.Net;
 
-namespace CQ.AuthProvider.WebApi.Filters
+namespace CQ.AuthProvider.WebApi.Filters.Exception
 {
     internal sealed class CQAuthExceptionRegistryService : ExceptionRegistryService
     {

@@ -1,6 +1,6 @@
 ﻿using CQ.ApiElements;
 using CQ.ApiElements.Filters.Authorizations;
-using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Authorizations;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using CQ.Utility;

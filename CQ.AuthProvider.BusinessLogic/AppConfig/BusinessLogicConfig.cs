@@ -14,7 +14,7 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
 {
     public static class BusinessLogicConfig
     {
-        public static IServiceCollection AddCQServices(
+        public static IServiceCollection ConfigureServices(
             this IServiceCollection services,
             IConfiguration configuration)
         {

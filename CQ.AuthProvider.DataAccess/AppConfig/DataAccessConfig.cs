@@ -22,7 +22,7 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
 {
     public static class DataAccessConfig
     {
-        public static IServiceCollection AddCQDataAccess(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureDataAccess(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString(ConnectionStrings.Auth);
 

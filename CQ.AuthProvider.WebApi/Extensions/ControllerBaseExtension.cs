@@ -1,6 +1,6 @@
 ﻿using CQ.ApiElements;
 using CQ.ApiElements.Filters.Extensions;
-using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
 using Microsoft.AspNetCore.Mvc;
 

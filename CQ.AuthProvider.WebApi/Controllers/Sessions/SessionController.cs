@@ -1,53 +1,56 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.WebApi.Extensions;
+using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
+using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.Utility;
 
-namespace CQ.AuthProvider.WebApi.Controllers.Sessions
+namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
+
+[ApiController]
+[Route("sessions")]
+public class SessionController(
+    IMapper mapper,
+    ISessionService sessionService) : ControllerBase
 {
-    [ApiController]
-    [Route("sessions")]
-    public class SessionController : ControllerBase
+    [HttpPost("credentials")]
+    public async Task<CreateSessionResponse> CreateAsync(CreateSessionCredentialsRequest? request)
     {
-        private readonly ISessionService _sessionService;
+        Guard.ThrowIsNull(request, nameof(request));
 
-        public SessionController(ISessionService sessionService)
-        {
-            _sessionService = sessionService;
-        }
+        var createAuth = request.Map();
 
-        [HttpPost("credentials")]
-        public async Task<CreateSessionResponse> CreateAsync(CreateSessionCredentialsRequest request)
-        {
-            var createAuth = request.Map();
+        var session = await sessionService
+            .CreateAsync(createAuth)
+            .ConfigureAwait(false);
 
-            var session = await _sessionService.CreateAsync(createAuth);
+        return mapper.Map<CreateSessionResponse>(session);
+    }
 
-            var response = new CreateSessionResponse(session);
+    [HttpDelete]
+    [CQAuthorization]
+    [ValidateAccount]
+    public async Task DeleteAsync()
+    {
+        var accountLogged = this.GetAccountLogged();
 
-            return response;
-        }
-
-        [HttpDelete("credentials")]
-        [CQAuthorization]
-        [ValidateAccount]
-        public async Task DeleteAsync()
-        {
-            var accountLogged = this.GetAccountLogged();
-
-            await _sessionService.DeleteAsync(accountLogged);
-        }
+        await sessionService
+            .DeleteAsync(accountLogged)
+            .ConfigureAwait(false);
+    }
 
 
-        [HttpGet("{token}/validate")]
-        [CQAuthorization]
-        [ValidateClientSystem]
-        public async Task<TokenValidationResponse> ValidateTokenAsync(string token)
-        {
-            var isValid = await _sessionService.IsTokenValidAsync(token).ConfigureAwait(false);
+    [HttpGet("{token}/validate")]
+    [CQAuthorization]
+    [ValidateClientSystem]
+    public async Task<TokenValidationResponse> ValidateTokenAsync(string token)
+    {
+        var isValid = await sessionService
+            .IsTokenValidAsync(token)
+            .ConfigureAwait(false);
 
-            return new TokenValidationResponse(isValid);
-        }
+        return mapper.Map<TokenValidationResponse>(isValid);
     }
 }
