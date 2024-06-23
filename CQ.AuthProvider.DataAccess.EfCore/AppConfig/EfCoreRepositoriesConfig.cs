@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;

@@ -5,7 +5,7 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 public interface IPermissionService
 {
     Task<List<Permission>> GetAllAsync(
-        bool isPrivate,
+        bool? isPrivate,
         string? roleId,
         Account accountLogged);
 
