@@ -11,6 +11,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CQ.UnitOfWork.Abstractions" Version="3.0.0" />
+		<PackageReference Include="CQ.Exceptions" Version="2.2.25" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>CQ.AuthProvider.DataAccess.EfCore</_Parameter1>
 		</AssemblyAttribute>

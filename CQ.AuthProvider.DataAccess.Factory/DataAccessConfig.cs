@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.EfCore.AppConfig;
+﻿using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

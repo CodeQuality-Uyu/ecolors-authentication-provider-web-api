@@ -1,6 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.Exceptions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;

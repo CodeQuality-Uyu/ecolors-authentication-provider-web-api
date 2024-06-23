@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 
@@ -16,7 +17,4 @@ public interface ISessionInternalService : ISessionService
     Task<Session> CreateAsync(Identity identity);
 
     Task<Session> GetByTokenAsync(string token);
-
-    Task<Session?> GetOrDefaultByTokenAsync(string token);
-
 }

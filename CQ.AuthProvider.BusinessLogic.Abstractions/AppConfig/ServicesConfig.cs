@@ -1,4 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +16,15 @@ public static class ServicesConfig
         services
             .AddScoped<IAccountService, AccountService>()
             .AddScoped<IAccountInternalService, AccountService>()
+
+            .AddScoped<ISessionService, SessionService>()
+            .AddScoped<ISessionInternalService, SessionService>()
+
+            .AddScoped<IRoleService, RoleService>()
+            .AddScoped<IRoleInternalService, RoleService>()
+
+            .AddScoped<IPermissionService, PermissionService>()
+            .AddScoped<IPermissionInternalService, PermissionService>()
             ;
 
         return services;

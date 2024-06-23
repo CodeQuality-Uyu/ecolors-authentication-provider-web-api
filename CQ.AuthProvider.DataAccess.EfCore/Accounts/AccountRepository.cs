@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.UnitOfWork.EfCore;
+using CQ.UnitOfWork.EfCore.Core;
 
-namespace CQ.AuthProvider.BusinessLogic.Accounts;
+namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 internal sealed class AccountRepository(
     IMapper mapper,

@@ -1,24 +1,18 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Authorizations;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions
+namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+
+public sealed record class SessionCreated
 {
-    public sealed record class SessionCreated
+    public readonly Account Account;
+
+    public readonly string Token;
+
+    public SessionCreated(
+        Account account,
+        string token)
     {
-        public readonly Account Account;
-
-        public readonly string Email;
-
-        public readonly string Token;
-
-        public SessionCreated(
-            Account account,
-            string email,
-            string token)
-        {
-            Account = account;
-            Email = email;
-            Token = token;
-        }
+        Account = account;
+        Token = token;
     }
 }

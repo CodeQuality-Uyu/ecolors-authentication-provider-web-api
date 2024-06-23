@@ -14,10 +14,9 @@ public interface IPermissionService
     Task CreateBulkAsync(List<CreatePermissionArgs> permission);
 }
 
-internal interface IPermissionInternalService<TPermission> : IPermissionService
-        where TPermission : class
+internal interface IPermissionInternalService: IPermissionService
 {
     Task AssertByKeysAsync(List<PermissionKey> permissionKeys);
 
-    Task<List<TPermission>> GetAllByKeysAsync(List<PermissionKey> keys);
+    Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> keys);
 }

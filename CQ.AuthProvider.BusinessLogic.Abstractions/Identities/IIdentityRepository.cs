@@ -7,4 +7,6 @@ public interface IIdentityRepository
     Task UpdatePasswordAsync(string identityId, string newPassword);
 
     Task DeleteByIdAsync(string id);
+
+    Task<Identity> GetByCredentialsAsync(string email, string password);
 }

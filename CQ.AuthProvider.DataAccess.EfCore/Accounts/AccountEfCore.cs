@@ -1,4 +1,6 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+
+namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 public sealed record class AccountEfCore
 {
@@ -14,7 +16,7 @@ public sealed record class AccountEfCore
 
     public string LastName { get; set; } = null!;
 
-    public List<RoleEfCore> Roles { get; set; } = [];
+    public List<AccountRole> Roles { get; set; } = [];
 
     public string Locale { get; set; } = null!;
 
@@ -34,7 +36,7 @@ public sealed record class AccountEfCore
         string lastName,
         string locale,
         string timeZone,
-        string roleId,
+        List<Role> roles,
         string? profilePictureUrl)
     {
         Id = id;
@@ -45,6 +47,6 @@ public sealed record class AccountEfCore
         ProfilePictureUrl = profilePictureUrl;
         Locale = locale;
         TimeZone = timeZone;
-        Roles = [ new() { Id = roleId } ];
+        Roles = roles.ConvertAll(r => new AccountRole(r.Id));
     }
 }

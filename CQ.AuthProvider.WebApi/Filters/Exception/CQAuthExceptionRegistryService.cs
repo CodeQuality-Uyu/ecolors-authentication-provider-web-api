@@ -1,7 +1,7 @@
 ﻿using CQ.ApiElements.Filters;
-using CQ.AuthProvider.BusinessLogic;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
-using CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions.Exceptions;
 using CQ.Exceptions;
 using System.Net;
 

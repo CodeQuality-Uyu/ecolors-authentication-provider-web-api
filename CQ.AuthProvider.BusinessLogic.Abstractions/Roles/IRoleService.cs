@@ -1,12 +1,12 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using System.Security;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 
 public interface IRoleService
 {
     Task<List<Role>> GetAllAsync(
-        bool isPrivate,
+        bool? isPrivate,
         Account accountLogged);
 
     Task CreateAsync(CreateRoleArgs role);
@@ -29,11 +29,5 @@ internal interface IRoleInternalService : IRoleService
     Task<Role> GetByKeyAsync(RoleKey key);
 
     Task<Role> GetDefaultAsync();
-}
-
-internal interface IRoleInternalService<TRole> : IRoleInternalService
-        where TRole : class
-{
-    new Task<TRole> GetByKeyAsync(RoleKey key);
 }
 

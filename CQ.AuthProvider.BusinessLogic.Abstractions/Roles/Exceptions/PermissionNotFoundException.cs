@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations.Exceptions
+namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions
 {
     public class PermissionNotFoundException : Exception
     {
