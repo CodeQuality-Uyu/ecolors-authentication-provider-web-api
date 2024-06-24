@@ -7,9 +7,9 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
 {
     internal sealed class ResetPasswordMongoService : ResetPasswordService
     {
-        private readonly IRepository<ResetPasswordApplication> _resetPasswordApplicationRepository;
+        private readonly IRepository<ResetPassword> _resetPasswordApplicationRepository;
         public ResetPasswordMongoService(
-            IRepository<ResetPasswordApplication> resetPasswordApplicationRepository,
+            IRepository<ResetPassword> resetPasswordApplicationRepository,
             IAccountService accountService,
             IMapper mapper,
             IIdentityProviderRepository identityProviderRepository) 
@@ -22,9 +22,9 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
         }
 
         #region Create
-        protected override async Task<ResetPasswordApplication> CreateAsync(Account account)
+        protected override async Task<ResetPassword> CreateAsync(Account account)
         {
-            var resetPasswordApplication = new ResetPasswordApplication(new MiniAccount(account.Id, account.Email));
+            var resetPasswordApplication = new ResetPassword(new MiniAccount(account.Id, account.Email));
 
             await this._resetPasswordApplicationRepository.CreateAsync(resetPasswordApplication).ConfigureAwait(false);
          
@@ -51,7 +51,7 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
         #region Create
         protected override async Task<object?> GetOrDefaultByAccountEmailAsync(string email)
         {
-            var resetPassword = await this._resetPasswordApplicationRepository.GetOrDefaultByPropAsync(email, $"{nameof(ResetPasswordApplication.Account)}.{nameof(ResetPasswordApplication.Account.Email)}").ConfigureAwait(false);
+            var resetPassword = await this._resetPasswordApplicationRepository.GetOrDefaultByPropAsync(email, $"{nameof(ResetPassword.Account)}.{nameof(ResetPassword.Account.Email)}").ConfigureAwait(false);
 
             return resetPassword;
         }

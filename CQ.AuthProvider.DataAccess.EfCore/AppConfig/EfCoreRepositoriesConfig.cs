@@ -52,7 +52,6 @@ public static class EfCoreRepositoriesConfig
             LifeTime.Scoped)
 
             .AddAbstractionRepository<AccountEfCore, IAccountRepository, AccountRepository>(LifeTime.Scoped)
-            .AddRepository<Session>(LifeTime.Scoped)
             .AddAbstractionRepository<RoleEfCore, IRoleRepository, RoleRepository>(LifeTime.Scoped)
             .AddRepository<RolePermission>(LifeTime.Scoped)
             .AddAbstractionRepository<PermissionEfCore, IPermissionRepository, PermissionRepository>(LifeTime.Scoped)

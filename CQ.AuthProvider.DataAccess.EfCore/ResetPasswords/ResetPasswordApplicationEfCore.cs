@@ -23,7 +23,7 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
         public ResetPasswordApplicationEfCore()
         {
             this.Id = Db.NewId();
-            this.Code = ResetPasswordApplication.NewCode();
+            this.Code = ResetPassword.NewCode();
             this.CreatedAt = DateTimeOffset.Now;
         }
 

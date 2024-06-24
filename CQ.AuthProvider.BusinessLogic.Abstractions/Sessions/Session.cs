@@ -1,4 +1,5 @@
-﻿using CQ.Utility;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 
@@ -6,20 +7,19 @@ public sealed record class Session
 {
     public string Id { get; init; } = Db.NewId();
 
-    public string AccountId { get; init; } = null!;
+    public Account Account { get; init; } = null!;
 
-    public string Token { get; set; } = Db.NewId();
+    public string Token { get; set; } = null!;
 
     public Session()
     {
     }
 
     public Session(
-        string accountId,
-        string? token = null)
-        : this()
+        Account account,
+        string token)
     {
-        AccountId = accountId;
-        Token = token ?? Token;
+        Account = account;
+        Token = token;
     }
 }

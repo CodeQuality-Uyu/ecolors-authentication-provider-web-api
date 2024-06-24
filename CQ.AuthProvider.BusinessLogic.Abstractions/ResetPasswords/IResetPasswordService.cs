@@ -1,18 +1,13 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace CQ.AuthProvider.BusinessLogic.ResetPasswords;
 
-namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
+public interface IResetPasswordService
 {
-    public interface IResetPasswordService
-    {
-        Task CreateAsync(string email);
+    Task CreateAsync(string email);
 
-        Task AcceptAsync(string id, ResetPasswordApplicationAccepted request);
+    Task AcceptAsync(
+        string id,
+        AcceptResetPasswordArgs args);
 
-        Task<ResetPasswordApplication> GetActiveByIdAsync(string id);
-    }
+    Task<ResetPassword> GetActiveByIdAsync(string id);
 }

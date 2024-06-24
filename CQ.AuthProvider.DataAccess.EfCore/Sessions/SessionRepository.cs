@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.UnitOfWork.EfCore.Core;
 
-namespace CQ.AuthProvider.DataAccess.EfCore.Sessions
+namespace CQ.AuthProvider.DataAccess.EfCore.Sessions;
+
+internal sealed class SessionRepository(
+    EfCoreContext context,
+    IMapper mapper)
+    : EfCoreRepository<SessionEfCore>(context),
+    ISessionRepository
 {
-    internal class SessionRepository
-    {
-    }
 }

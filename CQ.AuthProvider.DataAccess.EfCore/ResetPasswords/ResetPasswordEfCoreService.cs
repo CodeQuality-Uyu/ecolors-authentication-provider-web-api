@@ -22,13 +22,13 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
         }
 
         #region Create
-        protected override async Task<ResetPasswordApplication> CreateAsync(Account account)
+        protected override async Task<ResetPassword> CreateAsync(Account account)
         {
             var resetPasswordApplication = new ResetPasswordApplicationEfCore(account.Id);
 
             await this._resetPasswordApplicationRepository.CreateAsync(resetPasswordApplication).ConfigureAwait(false);
 
-            return this._mapper.Map<ResetPasswordApplication>(resetPasswordApplication);
+            return this._mapper.Map<ResetPassword>(resetPasswordApplication);
         }
         #endregion
 
@@ -51,7 +51,7 @@ namespace CQ.AuthProvider.BusinessLogic.ResetPasswords
         #region Create
         protected override async Task<object?> GetOrDefaultByAccountEmailAsync(string email)
         {
-            var resetPassword = await this._resetPasswordApplicationRepository.GetOrDefaultByPropAsync(email, $"{nameof(ResetPasswordApplication.Account)}.{nameof(ResetPasswordApplication.Account.Email)}").ConfigureAwait(false);
+            var resetPassword = await this._resetPasswordApplicationRepository.GetOrDefaultByPropAsync(email, $"{nameof(ResetPassword.Account)}.{nameof(ResetPassword.Account.Email)}").ConfigureAwait(false);
 
             return resetPassword;
         }

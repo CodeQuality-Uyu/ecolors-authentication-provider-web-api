@@ -1,6 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Identities;
-using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.UnitOfWork.MongoDriver;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+using CQ.UnitOfWork.MongoDriver.Core;
 using MongoDB.Driver;
 
 namespace CQ.IdentityProvider.Mongo
@@ -18,12 +17,12 @@ namespace CQ.IdentityProvider.Mongo
 
         public string GetProvider()
         {
-            return base.GetDatabaseInfo().Provider;
+            return "Mongo";
         }
 
         public string GetName()
         {
-            return base.GetDatabaseInfo().Name;
+            return "";
         }
 
         public bool Ping()

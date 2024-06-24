@@ -7,7 +7,7 @@ using CQ.Utility;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
-namespace CQ.AuthProvider.WebApi.Controllers.Authorizations;
+namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 
 [ApiController]
 [Route("permissions")]
