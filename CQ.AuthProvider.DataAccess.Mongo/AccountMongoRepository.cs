@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Accounts.Mappings;
 using CQ.AuthProvider.BusinessLogic.ClientSystems;
+using CQ.AuthProvider.DataAccess.Mongo.Accounts;
+using CQ.AuthProvider.DataAccess.Mongo.Accounts.Mappings;
 using CQ.Exceptions;
 using CQ.UnitOfWork.MongoDriver;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.DataAccess.Accounts
+namespace CQ.AuthProvider.DataAccess.Mongo
 {
     internal sealed class AccountMongoRepository : MongoDriverRepository<AccountMongo>, IAccountInfoRepository
     {
@@ -19,7 +19,7 @@ namespace CQ.AuthProvider.DataAccess.Accounts
                 cfg.AddProfile<AccountProfile>();
             });
 
-            this._mapper = new Mapper(configuration);
+            _mapper = new Mapper(configuration);
         }
 
         public override async Task<AccountMongo> GetByPropAsync(string value, string prop)
@@ -36,7 +36,7 @@ namespace CQ.AuthProvider.DataAccess.Accounts
         {
             var account = await base.GetByIdAsync(id).ConfigureAwait(false);
 
-            return this._mapper.Map<Account>(account);
+            return _mapper.Map<Account>(account);
         }
     }
 }

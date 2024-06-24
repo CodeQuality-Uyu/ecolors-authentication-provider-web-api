@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations
+namespace CQ.AuthProvider.DataAccess.Mongo.Authorizations
 {
     public sealed record class MiniRole
     {

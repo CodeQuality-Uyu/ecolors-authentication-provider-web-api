@@ -5,10 +5,10 @@ internal sealed record class AuthSection
 {
     public const string Name = "Auth";
 
-    public DatabaseEngine Engine { get; init; }
+    public AuthEngine Engine { get; init; }
 }
 
-internal enum DatabaseEngine
+public enum AuthEngine
 {
     Sql,
     Mongo

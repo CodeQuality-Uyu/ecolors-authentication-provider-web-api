@@ -1,9 +1,9 @@
-﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+﻿using CQ.AuthProvider.DataAccess.Mongo.Authorizations;
 using CQ.Exceptions;
 using CQ.UnitOfWork.MongoDriver;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.DataAccess.Roles
+namespace CQ.AuthProvider.DataAccess.Mongo
 {
     internal sealed class RoleMongoRepository : MongoDriverRepository<RoleMongo>
     {

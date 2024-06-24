@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
 internal sealed class PermissionRepository(
-    EfCoreContext context,
+    AuthDbContext context,
     IMapper mapper)
     : EfCoreRepository<PermissionEfCore>(context),
     IPermissionRepository
@@ -29,7 +29,7 @@ internal sealed class PermissionRepository(
         return mapper.Map<List<Permission>>(permissions);
     }
 
-    public async Task<List<Permission>> GetAllByPermissionKeyAsync(List<PermissionKey> permissionKeys)
+    public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys)
     {
         var keys = mapper.Map<List<string>>(permissionKeys);
 

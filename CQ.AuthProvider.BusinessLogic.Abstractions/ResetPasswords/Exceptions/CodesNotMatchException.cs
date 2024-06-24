@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords.Exceptions;
 
-namespace CQ.AuthProvider.BusinessLogic.ResetPasswords.Exceptions
+public sealed class CodesNotMatchException(
+    string code,
+    string email)
+    : Exception
 {
-    public class CodesNotMatchException : Exception
-    {
-        public readonly string Code;
+    public string Code { get; init; } = code;
 
-        public readonly string Email;
-
-        public CodesNotMatchException(string code, string email)
-        {
-            Code = code;
-            Email = email;
-        }
-    }
+    public string Email { get; init; } = email;
 }

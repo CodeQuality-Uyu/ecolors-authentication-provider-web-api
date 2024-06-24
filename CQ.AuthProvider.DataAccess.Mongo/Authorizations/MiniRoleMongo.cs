@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations
+namespace CQ.AuthProvider.DataAccess.Mongo.Authorizations
 {
     public sealed record class MiniRoleMongo
     {
@@ -20,8 +20,8 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             RoleKey key,
             List<PermissionKey> permissions)
         {
-            this.Key = key.ToString();
-            this.Permissions = permissions.Select(p => p.ToString()).ToList();
+            Key = key.ToString();
+            Permissions = permissions.Select(p => p.ToString()).ToList();
         }
     }
 }

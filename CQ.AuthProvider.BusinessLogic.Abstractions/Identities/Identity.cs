@@ -10,10 +10,18 @@ public sealed record class Identity
 
     public string Password { get; set; } = null!;
 
+    /// <summary>
+    /// For EfCore
+    /// </summary>
     public Identity()
     {
     }
 
+    /// <summary>
+    /// For new Identity
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="password"></param>
     public Identity(
         string email,
         string password)

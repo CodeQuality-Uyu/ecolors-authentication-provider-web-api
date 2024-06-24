@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace CQ.AuthProvider.EfCore.Migrations
 {
-    [DbContext(typeof(IdentityProviderEfCoreContext))]
+    [DbContext(typeof(IdentityProviderDbContext))]
     partial class IdentityProviderEfCoreContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

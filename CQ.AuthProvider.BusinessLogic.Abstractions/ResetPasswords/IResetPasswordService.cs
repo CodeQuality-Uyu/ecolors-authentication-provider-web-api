@@ -1,5 +1,4 @@
-﻿
-namespace CQ.AuthProvider.BusinessLogic.ResetPasswords;
+﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
 
 public interface IResetPasswordService
 {

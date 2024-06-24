@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CQ.IdentityProvider.EfCore;
 
-public sealed class IdentityProviderEfCoreContext(DbContextOptions<IdentityProviderEfCoreContext> options)
+public sealed class IdentityProviderDbContext(DbContextOptions<IdentityProviderDbContext> options)
     : EfCoreContext(options),
     IIdentityProviderHealthService
 {

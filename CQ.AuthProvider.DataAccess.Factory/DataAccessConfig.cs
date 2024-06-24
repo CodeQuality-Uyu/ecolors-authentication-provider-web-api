@@ -1,45 +1,44 @@
 ﻿using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
+using CQ.AuthProvider.DataAccess.Mongo.AppConfig;
+using CQ.Extensions.Configuration;
 using CQ.Utility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CQ.AuthProvider.DataAccess.Factory
+namespace CQ.AuthProvider.DataAccess.Factory;
+
+public static class DataAccessConfig
 {
-    public static class DataAccessConfig
+    public static IServiceCollection ConfigureDataAccess(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection ConfigureDataAccess(
-            this IServiceCollection services,
-            IConfiguration configuration)
+        var authOptions = configuration.GetSection<AuthSection>(AuthSection.Name);
+
+        Guard.ThrowIsNull(authOptions, "Auth");
+
+        switch (authOptions.Engine)
         {
-            var authOptions = configuration
-                .GetSection(AuthSection.Name)
-                .Get<AuthSection>();
+            case AuthEngine.Sql:
+                {
+                    services
+                        .AddEfCoreRepositories(configuration);
 
-            Guard.ThrowIsNull(authOptions, "Auth");
+                    break;
+                }
+            case AuthEngine.Mongo:
+                {
+                    services
+                        .AddMongoRepositories(configuration);
 
-            switch (authOptions.Engine)
-            {
-                case DatabaseEngine.Sql:
-                    {
-                        services
-                            .ConfigureEfCore(configuration);
+                    break;
+                }
 
-                        break;
-                    }
-                case DatabaseEngine.Mongo:
-                    {
-                        services
-                            .ConfigureMongo(configuration);
-
-                        break;
-                    }
-
-                default:
-                    throw new Exception();
-            }
-
-
-            return services;
+            default:
+                throw new Exception("Engine for Auth not supported");
         }
+
+
+        return services;
     }
 }

@@ -10,7 +10,7 @@ internal interface IPermissionRepository
         string? roleId,
         Account accountLogged);
 
-    Task<List<Permission>> GetAllByPermissionKeyAsync(List<PermissionKey> permisionsKeys);
+    Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permisionsKeys);
 
     Task<bool> ExistByKeyAsync(PermissionKey permissionKey);
 

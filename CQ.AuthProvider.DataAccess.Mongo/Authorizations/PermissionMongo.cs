@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations
+namespace CQ.AuthProvider.DataAccess.Mongo.Authorizations
 {
     public sealed class PermissionMongo
     {
@@ -31,10 +31,10 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             bool isPublic = false)
             : this()
         {
-            this.Name = name;
-            this.Description = description;
-            this.Key = key.ToString();
-            this.IsPublic = isPublic;
+            Name = name;
+            Description = description;
+            Key = key.ToString();
+            IsPublic = isPublic;
         }
     }
 }

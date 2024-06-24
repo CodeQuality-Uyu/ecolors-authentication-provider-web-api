@@ -4,11 +4,11 @@ using MongoDB.Driver;
 
 namespace CQ.IdentityProvider.Mongo
 {
-    internal sealed class IdentityProviderMongoContext 
+    internal sealed class IdentityDbContext 
         : MongoContext,
         IIdentityProviderHealthService
     {
-        public IdentityProviderMongoContext(IMongoDatabase mongoDatabase) 
+        public IdentityDbContext(IMongoDatabase mongoDatabase) 
             : base(mongoDatabase)
         {
             base

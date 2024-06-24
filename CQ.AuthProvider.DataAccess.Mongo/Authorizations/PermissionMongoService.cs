@@ -10,7 +10,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations
+namespace CQ.AuthProvider.DataAccess.Mongo.Authorizations
 {
     internal sealed class PermissionMongoService : PermissionService<PermissionMongo>
     {
@@ -23,8 +23,8 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             IMapper mapper)
             : base(mapper)
         {
-            this._roleRepository = roleRepository;
-            this._permissionRepository = permissionRepository;
+            _roleRepository = roleRepository;
+            _permissionRepository = permissionRepository;
         }
 
         #region Create
@@ -32,11 +32,11 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         {
             var permissionValue = permissionKey.ToString();
 
-            var existPermission = await this._permissionRepository.ExistAsync(p => p.Key == permissionValue).ConfigureAwait(false);
+            var existPermission = await _permissionRepository.ExistAsync(p => p.Key == permissionValue).ConfigureAwait(false);
 
             return existPermission;
         }
-        
+
         protected override async Task CreateAsync(CreatePermission newPermission)
         {
             var permission = new PermissionMongo(
@@ -45,14 +45,14 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                 newPermission.Key,
                 newPermission.IsPublic);
 
-            await this._permissionRepository.CreateAsync(permission).ConfigureAwait(false);
+            await _permissionRepository.CreateAsync(permission).ConfigureAwait(false);
         }
         #endregion
-        
+
         #region CreateBulk
         protected override async Task<List<PermissionMongo>> GetAllByPermissionKeyAsync(List<string> permissions)
         {
-            var permissionsSaved = await this._permissionRepository
+            var permissionsSaved = await _permissionRepository
                 .GetAllAsync(p => permissions.Contains(p.Key))
                 .ConfigureAwait(false);
 
@@ -69,7 +69,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                 p.IsPublic))
                 .ToList();
 
-            await this._permissionRepository.CreateBulkAsync(permissionsMapped).ConfigureAwait(false);
+            await _permissionRepository.CreateBulkAsync(permissionsMapped).ConfigureAwait(false);
         }
         #endregion
 
@@ -78,12 +78,12 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
             var permissionsToGet = new List<string>();
             if (Guard.IsNotNullOrEmpty(roleId))
             {
-                var role = await this._roleRepository.GetByIdAsync(roleId).ConfigureAwait(false);
+                var role = await _roleRepository.GetByIdAsync(roleId).ConfigureAwait(false);
 
                 permissionsToGet = role.Permissions;
             }
 
-            var permissions = await this._permissionRepository.GetAllAsync(p =>
+            var permissions = await _permissionRepository.GetAllAsync(p =>
             p.IsPublic != isPrivate &&
             (string.IsNullOrEmpty(roleId) || permissionsToGet.Contains(p.Id)))
                 .ConfigureAwait(false);

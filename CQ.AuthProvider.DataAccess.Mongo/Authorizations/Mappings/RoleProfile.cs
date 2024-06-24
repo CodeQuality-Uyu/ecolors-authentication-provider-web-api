@@ -1,12 +1,13 @@
 ﻿
 using AutoMapper;
+using CQ.AuthProvider.DataAccess.Mongo.Authorizations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
+namespace CQ.AuthProvider.DataAccess.Mongo.Authorizations.Mappings
 {
     public sealed class RoleProfile : Profile
     {
@@ -35,7 +36,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
                     source => new RoleKey(source.Key)));
 
             CreateMap<List<RoleEfCore>, List<Role>>()
-                .ConvertUsing((source, destination, context) => 
+                .ConvertUsing((source, destination, context) =>
                 source.Select(r => context.Mapper.Map<Role>(r)).ToList());
 
             CreateMap<List<RoleMongo>, List<Role>>()

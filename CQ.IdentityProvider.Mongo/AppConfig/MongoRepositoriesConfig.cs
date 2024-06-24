@@ -1,32 +1,29 @@
-﻿using CQ.AuthProvider.BusinessLogic.Identities;
-using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.ServiceExtension;
-using CQ.UnitOfWork;
-using CQ.UnitOfWork.MongoDriver;
+﻿
+using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+using CQ.Extensions.ServiceCollection;
+using CQ.IdentityProvider.Mongo.Identities;
+using CQ.UnitOfWork.MongoDriver.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 
-namespace CQ.IdentityProvider.Mongo.AppConfig
+namespace CQ.IdentityProvider.Mongo.AppConfig;
+
+public static class MongoRepositoriesConfig
 {
-    public static class MongoRepositoriesConfig
+    public static IServiceCollection AddMongoRepositories(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddMongoRepositories(
-            this IServiceCollection services,
-            string name,
-            string connectionString)
-        {
-            services
-                .AddMongoContext<IdentityProviderMongoContext>(
-                new MongoConfig(
-                    new DatabaseConfig(connectionString, name),
-                    useDefaultQueryLogger: true,
-                    @default: false),
-            LifeTime.Scoped,
-            LifeTime.Scoped)
-                .AddMongoRepository<Session>(name, LifeTime.Scoped)
-                .AddAbstractionMongoRepository<Identity, IIdentityProviderRepository, IdentityRepository>(name, LifeTime.Scoped)
-                .AddScoped<IIdentityProviderHealthService, IdentityProviderMongoContext>();
+        var connectionString = configuration.GetConnectionString("Identity");
 
-            return services;
-        }
+        services
+            .AddContext<IdentityDbContext>(
+            new MongoClient(connectionString),
+            LifeTime.Scoped)
+            .AddAbstractionRepository<Identity, IIdentityRepository, IdentityRepository>(LifeTime.Scoped)
+            .AddScoped<IIdentityProviderHealthService, IdentityDbContext>();
+
+        return services;
     }
 }

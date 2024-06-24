@@ -18,7 +18,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 
 public static class EfCoreRepositoriesConfig
 {
-    public static IServiceCollection ConfigureEfCore(
+    public static IServiceCollection AddEfCoreRepositories(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -46,14 +46,14 @@ public static class EfCoreRepositoriesConfig
         Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
 
         services
-            .AddContext<AuthDbContext>(options => 
+            .AddContext<AuthDbContext>(options =>
             options
             .UseSqlServer(connectionString),
             LifeTime.Scoped)
 
             .AddAbstractionRepository<AccountEfCore, IAccountRepository, AccountRepository>(LifeTime.Scoped)
             .AddAbstractionRepository<RoleEfCore, IRoleRepository, RoleRepository>(LifeTime.Scoped)
-            .AddRepository<RolePermission>(LifeTime.Scoped)
+            .AddRepositoryForContext<RolePermission, AuthDbContext>(LifeTime.Scoped)
             .AddAbstractionRepository<PermissionEfCore, IPermissionRepository, PermissionRepository>(LifeTime.Scoped)
             .AddAbstractionRepository<SessionEfCore, ISessionRepository, SessionRepository>(LifeTime.Scoped)
             ;

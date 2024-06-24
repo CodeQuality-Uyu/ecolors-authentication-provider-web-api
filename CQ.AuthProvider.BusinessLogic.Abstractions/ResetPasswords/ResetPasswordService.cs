@@ -1,10 +1,10 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
-using CQ.AuthProvider.BusinessLogic.ResetPasswords.Exceptions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords.Exceptions;
 using CQ.Exceptions;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.ResetPasswords;
+namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
 
 internal abstract class ResetPasswordService(
     IResetPasswordRepository resetPasswordRepository,
@@ -19,7 +19,7 @@ internal abstract class ResetPasswordService(
             .GetByIdAsync(id)
             .ConfigureAwait(false);
 
-        if (resetPasswordOldApplication.Code != args.Code || resetPasswordOldApplication.Account.Email != args.Email)
+        if (resetPasswordOldApplication.Code != args.Code)
         {
             throw new CodesNotMatchException(
                 args.Code,
@@ -32,9 +32,10 @@ internal abstract class ResetPasswordService(
             args.NewPassword)
             .ConfigureAwait(false);
 
+        
         await resetPasswordRepository
             .UpdateStatusByIdAsync(
-            resetPasswordOldApplication.Id.
+            resetPasswordOldApplication.Id,
             ResetPasswordStatus.Accepted)
             .ConfigureAwait(false);
     }
@@ -49,21 +50,23 @@ internal abstract class ResetPasswordService(
             .GetByEmailAsync(email)
             .ConfigureAwait(false);
 
-        string code;
+        string code = ResetPassword.NewCode();
         if (Guard.IsNull(oldResetPassword))
         {
             var resetPassword = new ResetPassword(account);
 
-            code = await resetPasswordRepository
+            code = resetPassword.Code;
+
+            await resetPasswordRepository
                 .CreateAsync(resetPassword)
                 .ConfigureAwait(false);
         }
         else
         {
-            code = await resetPasswordRepository
+            await resetPasswordRepository
                 .UpdateCodeByIdAsync(
                 oldResetPassword.Id,
-                ResetPassword.NewCode())
+                code)
                 .ConfigureAwait(false);
         }
 

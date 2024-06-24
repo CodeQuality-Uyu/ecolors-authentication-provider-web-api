@@ -22,8 +22,11 @@ public sealed record class AccountEfCore
 
     public string TimeZone { get; set; } = null!;
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
+    /// <summary>
+    /// For EfCore
+    /// </summary>
     public AccountEfCore()
     {
     }

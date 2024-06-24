@@ -54,8 +54,9 @@ internal abstract class RoleService(
                 .ConfigureAwait(false);
         }
 
-        var permissions = permissionRepository
-            .GetAllByKeyesAsync(args.PermissionKeys);
+        var permissions = await permissionRepository
+            .GetAllByKeysAsync(args.PermissionKeys)
+            .ConfigureAwait(false);
 
         var role = new Role(
             args.Name,
@@ -110,15 +111,17 @@ internal abstract class RoleService(
             .ToList();
 
         var permissions = await permissionRepository
-            .GetAllByKeyesAsync(allPermissionsKeyes)
+            .GetAllByKeysAsync(allPermissionsKeyes)
             .ConfigureAwait(false);
+        
         if (permissions.Count != allPermissionsKeyes.Count)
         {
             var missingPermissions = allPermissionsKeyes
                 .Where(p => !permissions.Exists(pp => pp.Key == p))
                 .ToList();
+            var missingPermissionsMapped = missingPermissions.ConvertAll(p => p.ToString());
 
-            throw new SpecificResourceNotFoundException<Permission>([nameof(Permission.Key)], missingPermissions)
+            throw new SpecificResourceNotFoundException<Permission>([nameof(Permission.Key)], missingPermissionsMapped);
         }
 
         var roles = args.ConvertAll(r => new Role(

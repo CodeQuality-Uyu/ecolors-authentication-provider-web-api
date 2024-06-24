@@ -1,5 +1,5 @@
 ﻿using CQ.ApiElements.Dtos;
-using CQ.AuthProvider.BusinessLogic.ResetPasswords;
+using CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.ResetPasswords.Models;

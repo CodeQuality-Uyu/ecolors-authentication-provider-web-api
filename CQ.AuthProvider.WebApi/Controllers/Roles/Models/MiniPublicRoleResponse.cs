@@ -1,6 +1,6 @@
 ﻿using CQ.ApiElements.Dtos;
 using CQ.AuthProvider.BusinessLogic;
-using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.DataAccess.Mongo.Authorizations;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles.Models
 {

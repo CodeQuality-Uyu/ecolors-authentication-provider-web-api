@@ -4,7 +4,7 @@ public interface IAccountService
 {
     Task<CreateAccountResult> CreateAsync(CreateAccountArgs auth);
 
-    Task<Account> GetByTokenAsync(string token);
+    Task<AccountLogged> GetByTokenAsync(string token);
 
     Task<Account> GetByEmailAsync(string email);
 }

@@ -1,6 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
+using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
 using CQ.UnitOfWork.EfCore.Core;
@@ -23,7 +24,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
     public DbSet<SessionEfCore> Sessions { get; set; }
 
-    public DbSet<ResetPasswordApplicationEfCore> ResetPasswordApplications { get; set; }
+    public DbSet<ResetPasswordEfCore> ResetPasswords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

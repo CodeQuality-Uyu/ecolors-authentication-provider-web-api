@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
+namespace CQ.AuthProvider.DataAccess.Mongo.Authorizations.Mappings
 {
     internal sealed class RoleKeyProfile : Profile
     {

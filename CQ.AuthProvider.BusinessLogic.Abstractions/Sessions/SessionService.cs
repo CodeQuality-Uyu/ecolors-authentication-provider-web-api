@@ -1,44 +1,42 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions.Exceptions;
-using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 
 internal sealed class SessionService(
-    IRepository<Session> sessionRepository,
+    ISessionRepository sessionRepository,
     IIdentityRepository identityRepository,
     IAccountRepository accountRepository)
     : ISessionInternalService
 {
-    public async Task<SessionCreated> CreateAsync(CreateSessionCredentialsArgs credentials)
+    public async Task<Session> CreateAsync(CreateSessionCredentialsArgs args)
     {
         var identity = await identityRepository
-            .GetByCredentialsAsync(credentials.Email, credentials.Password)
+            .GetByCredentialsAsync(args.Email, args.Password)
             .ConfigureAwait(false);
 
         if (Guard.IsNull(identity))
         {
-            throw new InvalidCredentialsException(credentials.Email);
+            throw new InvalidCredentialsException(args.Email);
         }
+
 
         var session = await CreateAsync(identity).ConfigureAwait(false);
 
-        var account = await accountRepository
-            .GetByIdAsync(identity.Id)
-            .ConfigureAwait(true);
-
-        var sessionSaved = new SessionCreated(
-            account,
-            session.Token);
-
-        return sessionSaved;
+        return session;
     }
 
     public async Task<Session> CreateAsync(Identity identity)
     {
-        var session = new Session(identity.Id);
+        var account = await accountRepository
+            .GetByIdAsync(identity.Id)
+            .ConfigureAwait(true);
+
+        var session = new Session(
+            account,
+            Db.NewId());
 
         await sessionRepository
             .CreateAsync(session)
@@ -51,16 +49,16 @@ internal sealed class SessionService(
     {
         Db.ThrowIsInvalidId(token, nameof(token));
 
-        var result = await sessionRepository
-            .GetOrDefaultAsync(s => s.Token == token)
+        var session = await sessionRepository
+            .GetOrDefaultByTokenAsync(token)
             .ConfigureAwait(false);
 
-        if (result == null)
+        if (Guard.IsNull(session))
         {
             throw new ArgumentException("Invalid token, session has expired", nameof(token));
         }
 
-        return result;
+        return session;
     }
 
     public Task<bool> IsTokenValidAsync(string token)
@@ -70,10 +68,10 @@ internal sealed class SessionService(
         return Task.FromResult(isGuid);
     }
 
-    public async Task DeleteAsync(Account accountLogged)
+    public async Task DeleteAsync(AccountLogged accountLogged)
     {
         await sessionRepository
-            .DeleteAsync(s => s.Token == accountLogged.Token)
+            .DeleteByTokenAsync(accountLogged.Token)
             .ConfigureAwait(false);
     }
 }

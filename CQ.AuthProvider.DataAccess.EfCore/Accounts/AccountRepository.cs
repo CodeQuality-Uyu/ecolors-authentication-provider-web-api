@@ -6,7 +6,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 internal sealed class AccountRepository(
     IMapper mapper,
-    EfCoreContext context)
+    AuthDbContext context)
     : EfCoreRepository<AccountEfCore>(context),
     IAccountRepository
 {

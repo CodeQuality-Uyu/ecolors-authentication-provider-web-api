@@ -37,7 +37,7 @@ internal abstract class PermissionService(
     public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys)
     {
         var permissionsSaved = await permissionRepository
-            .GetAllByPermissionKeyAsync(permissionKeys)
+            .GetAllByKeysAsync(permissionKeys)
             .ConfigureAwait(false);
 
         if (permissionsSaved.Count != permissionKeys.Count)
@@ -104,7 +104,7 @@ internal abstract class PermissionService(
         var allPermissionsKeyes = args.ConvertAll(a => a.Key);
 
         var permissionsSaved = await permissionRepository
-            .GetAllByPermissionKeyAsync(allPermissionsKeyes)
+            .GetAllByKeysAsync(allPermissionsKeyes)
             .ConfigureAwait(false);
 
         if (permissionsSaved.Count != 0)

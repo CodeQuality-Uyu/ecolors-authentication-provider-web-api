@@ -1,10 +1,10 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Authorizations;
-using CQ.AuthProvider.BusinessLogic.ResetPasswords;
+﻿using CQ.AuthProvider.BusinessLogic.ResetPasswords;
+using CQ.AuthProvider.DataAccess.Mongo.Accounts;
+using CQ.AuthProvider.DataAccess.Mongo.Authorizations;
 using CQ.UnitOfWork.MongoDriver;
 using MongoDB.Driver;
 
-namespace CQ.AuthProvider.DataAccess.Contexts
+namespace CQ.AuthProvider.DataAccess.Mongo
 {
     internal sealed class AuthMongoContext : MongoContext
     {

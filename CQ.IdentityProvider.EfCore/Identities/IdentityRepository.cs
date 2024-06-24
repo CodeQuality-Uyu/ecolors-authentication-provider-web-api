@@ -1,11 +1,10 @@
-﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
 using CQ.UnitOfWork.EfCore.Core;
 
 namespace CQ.IdentityProvider.EfCore.Identities;
 
 public sealed class IdentityRepository(
-    EfCoreContext context)
+    IdentityProviderDbContext context)
     : EfCoreRepository<Identity>(context),
     IIdentityRepository
 {

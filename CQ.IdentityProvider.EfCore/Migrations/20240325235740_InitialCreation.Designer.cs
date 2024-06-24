@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CQ.AuthProvider.EfCore.Migrations
 {
-    [DbContext(typeof(IdentityProviderEfCoreContext))]
+    [DbContext(typeof(IdentityProviderDbContext))]
     [Migration("20240325235740_InitialCreation")]
     partial class InitialCreation
     {

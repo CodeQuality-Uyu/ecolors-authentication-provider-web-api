@@ -1,7 +1,7 @@
-﻿using CQ.AuthProvider.BusinessLogic.Authorizations;
+﻿using CQ.AuthProvider.DataAccess.Mongo.Authorizations;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Accounts
+namespace CQ.AuthProvider.DataAccess.Mongo.Accounts
 {
     public sealed record class AccountMongo
     {

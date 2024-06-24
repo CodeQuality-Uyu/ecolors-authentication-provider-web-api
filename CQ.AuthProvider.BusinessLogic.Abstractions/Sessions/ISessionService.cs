@@ -5,9 +5,9 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 
 public interface ISessionService
 {
-    Task<SessionCreated> CreateAsync(CreateSessionCredentialsArgs credentials);
+    Task<Session> CreateAsync(CreateSessionCredentialsArgs args);
 
-    Task DeleteAsync(Account accountLogged);
+    Task DeleteAsync(AccountLogged accountLogged);
 
     Task<bool> IsTokenValidAsync(string token);
 }

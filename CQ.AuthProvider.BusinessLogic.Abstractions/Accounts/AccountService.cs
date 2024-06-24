@@ -121,17 +121,17 @@ internal sealed class AccountService(
             .ConfigureAwait(false);
     }
 
-    public async Task<Account> GetByTokenAsync(string token)
+    public async Task<AccountLogged> GetByTokenAsync(string token)
     {
         var session = await sessionService
             .GetByTokenAsync(token)
             .ConfigureAwait(false);
 
         var account = await accountRepository
-            .GetByIdAsync(session.AccountId)
+            .GetByIdAsync(session.Account.Id)
             .ConfigureAwait(false);
 
-        return account;
+        return new AccountLogged(account, token);
     }
 
     public async Task<Account> GetByEmailAsync(string email)

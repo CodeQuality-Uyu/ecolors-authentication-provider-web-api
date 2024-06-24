@@ -4,7 +4,7 @@ using CQ.UnitOfWork.Abstractions;
 using CQ.Utility;
 using System.Linq;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations
+namespace CQ.AuthProvider.DataAccess.Mongo.Authorizations
 {
     internal sealed class RoleMongoService : RoleService<RoleMongo>
     {
@@ -14,11 +14,11 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         public RoleMongoService(
             IRepository<RoleMongo> roleRepository,
             IPermissionInternalService<PermissionMongo> permissionService,
-            IMapper mapper) 
+            IMapper mapper)
             : base(mapper)
         {
-            this._roleRepository = roleRepository;
-            this._permissionService = permissionService;
+            _roleRepository = roleRepository;
+            _permissionService = permissionService;
         }
 
         #region AddPermissionsByIdAsync
@@ -28,12 +28,12 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
             role.Permissions = role.Permissions.Concat(permissionsMapped).ToList();
 
-            await this._roleRepository.UpdateAsync(role).ConfigureAwait(false);
+            await _roleRepository.UpdateAsync(role).ConfigureAwait(false);
         }
 
         protected override async Task<RoleMongo> GetByIdAsync(string id)
         {
-            var role = await this._roleRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var role = await _roleRepository.GetByIdAsync(id).ConfigureAwait(false);
 
             return role;
         }
@@ -41,21 +41,21 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
 
         public override async Task<RoleMongo> GetByKeyAsync(RoleKey key)
         {
-            var role = await this._roleRepository.GetByPropAsync(key.ToString(), nameof(Role.Key)).ConfigureAwait(false);
+            var role = await _roleRepository.GetByPropAsync(key.ToString(), nameof(Role.Key)).ConfigureAwait(false);
 
             return role;
         }
 
         public override async Task<Role> GetDefaultAsync()
         {
-            var role = await this._roleRepository.GetAsync(r => r.IsDefault).ConfigureAwait(false);
+            var role = await _roleRepository.GetAsync(r => r.IsDefault).ConfigureAwait(false);
 
             return base._mapper.Map<Role>(role);
         }
 
         protected override async Task CreateAsync(CreateRole newRole)
         {
-            await this._permissionService.AssertByKeysAsync(newRole.PermissionKeys).ConfigureAwait(false);
+            await _permissionService.AssertByKeysAsync(newRole.PermissionKeys).ConfigureAwait(false);
 
             var role = new RoleMongo(
                 newRole.Name,
@@ -64,38 +64,38 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                 newRole.PermissionKeys,
                 newRole.IsPublic);
 
-            await this._roleRepository.CreateAsync(role).ConfigureAwait(false);
+            await _roleRepository.CreateAsync(role).ConfigureAwait(false);
         }
 
         protected override async Task RemoveDefaultAsync()
         {
-            var roleDefault = await this._roleRepository.GetOrDefaultAsync(r => r.IsDefault).ConfigureAwait(false);
+            var roleDefault = await _roleRepository.GetOrDefaultAsync(r => r.IsDefault).ConfigureAwait(false);
 
             if (Guard.IsNull(roleDefault))
                 return;
 
             roleDefault.IsDefault = false;
-            await this._roleRepository.UpdateAsync(roleDefault).ConfigureAwait(false);
+            await _roleRepository.UpdateAsync(roleDefault).ConfigureAwait(false);
         }
         protected override async Task<bool> ExistByKeyAsync(RoleKey key)
         {
             var roleValue = key.ToString();
 
-            var existExist = await this._roleRepository.ExistAsync(r => r.Key == roleValue).ConfigureAwait(false);
+            var existExist = await _roleRepository.ExistAsync(r => r.Key == roleValue).ConfigureAwait(false);
 
             return existExist;
         }
 
         protected override async Task<List<Role>> GetAllAsync(Account accountLogged, bool isPrivate = false)
         {
-            var roles = await this._roleRepository.GetAllAsync(r => r.IsPublic != isPrivate).ConfigureAwait(false);
+            var roles = await _roleRepository.GetAllAsync(r => r.IsPublic != isPrivate).ConfigureAwait(false);
 
             return base._mapper.Map<List<Role>>(roles);
         }
 
         protected override async Task<bool> HasPermissionAsync(List<string> roles, string permissionKey)
         {
-            var hasPermission = await this._roleRepository.ExistAsync(r => roles.Contains(r.Key) && r.Permissions.Contains(permissionKey)).ConfigureAwait(false);
+            var hasPermission = await _roleRepository.ExistAsync(r => roles.Contains(r.Key) && r.Permissions.Contains(permissionKey)).ConfigureAwait(false);
 
             return hasPermission;
         }
@@ -103,7 +103,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
         #region CreateBulk
         protected override async Task<List<Role>> GetAllByRoleKeyAsync(List<string> roles)
         {
-            var rolesSaved = await this._roleRepository.GetAllAsync(r => roles.Contains(r.Key)).ConfigureAwait(false);
+            var rolesSaved = await _roleRepository.GetAllAsync(r => roles.Contains(r.Key)).ConfigureAwait(false);
 
             return base._mapper.Map<List<Role>>(rolesSaved);
         }
@@ -114,7 +114,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                 .SelectMany(r => r.PermissionKeys)
                 .ToList();
 
-            await this._permissionService.AssertByKeysAsync(permissionKeys).ConfigureAwait(false);
+            await _permissionService.AssertByKeysAsync(permissionKeys).ConfigureAwait(false);
 
             var rolesToSave = roles
                 .Select(r =>
@@ -127,7 +127,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations
                         r.IsDefault))
                 .ToList();
 
-            await this._roleRepository.CreateBulkAsync(rolesToSave).ConfigureAwait(false);
+            await _roleRepository.CreateBulkAsync(rolesToSave).ConfigureAwait(false);
         }
         #endregion
     }

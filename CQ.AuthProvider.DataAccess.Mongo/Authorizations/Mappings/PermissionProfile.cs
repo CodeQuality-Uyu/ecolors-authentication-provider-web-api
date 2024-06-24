@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.DataAccess.Mongo.Authorizations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
+namespace CQ.AuthProvider.DataAccess.Mongo.Authorizations.Mappings
 {
     public sealed class PermissionProfile : Profile
     {
@@ -22,7 +23,7 @@ namespace CQ.AuthProvider.BusinessLogic.Authorizations.Mappings
                     source => new PermissionKey(source.Key)));
 
             CreateMap<List<PermissionEfCore>, List<Permission>>()
-                .ConvertUsing((source, destination, context) => 
+                .ConvertUsing((source, destination, context) =>
                 source.Select(p => context.Mapper.Map<Permission>(p)).ToList());
 
             CreateMap<List<PermissionMongo>, List<Permission>>()

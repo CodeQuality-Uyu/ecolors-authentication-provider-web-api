@@ -16,10 +16,17 @@ public sealed record class AccountRole
 
     public AccountEfCore Account { get; init; } = null!;
 
+    /// <summary>
+    /// For EfCore
+    /// </summary>
     public AccountRole()
     {
     }
 
+    /// <summary>
+    /// When creating account
+    /// </summary>
+    /// <param name="roleId"></param>
     public AccountRole(string roleId)
     {
         RoleId = roleId;

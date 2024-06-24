@@ -5,55 +5,23 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 
-public sealed record class Account
+public record class Account(
+    string Email,
+    string FirstName,
+    string LastName,
+    string FullName,
+    string? ProfilePictureUrl,
+    string Locale,
+    string TimeZone,
+    List<Role> Roles)
 {
     public string Id { get; init; } = Db.NewId();
 
-    public string Email { get; init; } = null!;
-
-    public string? ProfilePictureUrl { get; init; } = null!;
-
-    public string FullName { get; init; } = null!;
-
-    public string FirstName { get; init; } = null!;
-
-    public string LastName { get; init; } = null!;
-
-    public string Locale { get; init; } = null!;
-
-    public string TimeZone { get; init; } = null!;
-
-    public List<Role> Roles { get; init; } = null!;
-
-    public Account()
-    {
-    }
-
-    public Account(
-        string email,
-        string firstName,
-        string lastName,
-        string fullName,
-        string? profilePictureUrl,
-        string locale,
-        string timeZone,
-        List<Role> roles)
-    {
-        Email = email;
-        FirstName = firstName;
-        LastName = lastName;
-        FullName = fullName;
-        ProfilePictureUrl = profilePictureUrl;
-        Roles = roles;
-        Locale = locale;
-        TimeZone = timeZone;
-    }
-
     public void AssertPermission(PermissionKey permission)
     {
-        var hasPermission = Permissions.Exists(p => p == permission || p == PermissionKey.Joker);
+        var missingPermission = !HasPermission(permission);
 
-        if (!hasPermission)
+        if (missingPermission)
         {
             throw new AccessDeniedException(permission.ToString());
         }
@@ -61,6 +29,12 @@ public sealed record class Account
 
     public bool HasPermission(PermissionKey permission)
     {
-        return Permissions.Contains(permission);
+        var allPermissions = Roles
+           .SelectMany(r => r.Permissions)
+           .ToList();
+
+        var missingPermission = !allPermissions.Exists(p => p.HasPermission(permission));
+
+        return missingPermission;
     }
 }

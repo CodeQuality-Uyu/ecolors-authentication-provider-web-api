@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles;
 
 internal sealed class RoleRepository(
-    EfCoreContext context,
+    AuthDbContext context,
     IMapper mapper,
     IRepository<PermissionEfCore> permissionRepository,
     IRepository<RolePermission> rolePermissionRepository)

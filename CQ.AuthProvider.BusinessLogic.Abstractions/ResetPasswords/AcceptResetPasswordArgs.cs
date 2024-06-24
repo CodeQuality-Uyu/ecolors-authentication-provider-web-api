@@ -1,6 +1,6 @@
 ﻿using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.ResetPasswords;
+namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
 
 public readonly struct AcceptResetPasswordArgs
 {
@@ -14,7 +14,7 @@ public readonly struct AcceptResetPasswordArgs
     {
         NewPassword = Guard.Encode(newPassword, nameof(newPassword));
         Guard.ThrowIsInputInvalidPassword(NewPassword);
-        
+
         Code = Guard.Encode(code, nameof(code));
     }
 }

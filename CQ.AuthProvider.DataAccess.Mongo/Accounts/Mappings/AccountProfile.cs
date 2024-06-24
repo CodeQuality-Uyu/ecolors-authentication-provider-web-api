@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.DataAccess.Mongo.Accounts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Accounts.Mappings
+namespace CQ.AuthProvider.DataAccess.Mongo.Accounts.Mappings
 {
     public sealed class AccountProfile : Profile
     {
-        public AccountProfile() 
+        public AccountProfile()
         {
             CreateMap<AccountEfCore, Account>()
                 .ForMember(
