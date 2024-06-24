@@ -7,8 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CQ.ApiElements" Version="2.2.26" />
-		<PackageReference Include="CQ.Exceptions" Version="2.2.25" />
+		<PackageReference Include="CQ.ApiElements" Version="3.0.6" />
+		<PackageReference Include="CQ.Exceptions" Version="3.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -22,6 +22,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\CQ.AuthProvider.BusinessLogic.Abstractions\CQ.AuthProvider.BusinessLogic.Abstractions.csproj" />
 		<ProjectReference Include="..\CQ.AuthProvider.DataAccess.Factory\CQ.AuthProvider.DataAccess.Factory.csproj" />
+		<ProjectReference Include="..\CQ.IdentityProvider.Factory\CQ.IdentityProvider.Factory.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

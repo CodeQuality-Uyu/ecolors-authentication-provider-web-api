@@ -1,52 +1,45 @@
-﻿using CQ.AuthProvider.BusinessLogic.Identities;
-using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.UnitOfWork.EfCore;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
 
-namespace CQ.IdentityProvider.EfCore
+namespace CQ.IdentityProvider.EfCore;
+
+public sealed class IdentityProviderEfCoreContext(DbContextOptions<IdentityProviderEfCoreContext> options)
+    : EfCoreContext(options),
+    IIdentityProviderHealthService
 {
-    public sealed class IdentityProviderEfCoreContext
-        : EfCoreContext,
-        IIdentityProviderHealthService
+    public const string ADMIN_ID = "d47025648273495ba69482fcc69da874";
+    public const string ADMIN_EMAIL = "admin@gmail.com";
+
+    public DbSet<Identity> Identities { get; set; }
+
+    public DbSet<Session> Sessions { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public const string ADMIN_ID = "d47025648273495ba69482fcc69da874";
-        public const string ADMIN_EMAIL = "admin@gmail.com";
+        modelBuilder
+            .Entity<Identity>()
+            .HasData(
+            new Identity(
+                ADMIN_EMAIL,
+                "!12345678")
+            {
+                Id = ADMIN_ID
+            });
+    }
 
-        public DbSet<Identity> Identities { get; set; }
+    public string GetProvider()
+    {
+        return "EfCore";
+    }
 
-        public DbSet<Session> Sessions { get; set; }
+    public string GetName()
+    {
+        return string.Empty;
+    }
 
-        public IdentityProviderEfCoreContext(DbContextOptions<IdentityProviderEfCoreContext> options)
-            : base(options)
-        {
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder
-                .Entity<Identity>()
-                .HasData(
-                new Identity(
-                    ADMIN_EMAIL,
-                    "!12345678")
-                {
-                    Id = ADMIN_ID
-                });
-        }
-
-        public string GetProvider()
-        {
-            return base.GetDatabaseInfo().Provider;
-        }
-
-        public string GetName()
-        {
-            return base.GetDatabaseInfo().Name;
-        }
-
-        public bool Ping()
-        {
-            return base.Ping();
-        }
+    public bool Ping()
+    {
+        return base.Ping();
     }
 }

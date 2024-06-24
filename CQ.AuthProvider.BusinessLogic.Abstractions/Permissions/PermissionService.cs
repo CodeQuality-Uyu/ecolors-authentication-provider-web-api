@@ -25,7 +25,10 @@ internal abstract class PermissionService(
         }
 
         var permissions = await permissionRepository
-            .GetAllAsync(isPrivate, roleId, accountLogged)
+            .GetAllAsync(
+            isPrivate,
+            roleId,
+            accountLogged)
             .ConfigureAwait(false);
 
         return permissions;
@@ -40,7 +43,7 @@ internal abstract class PermissionService(
         if (permissionsSaved.Count != permissionKeys.Count)
         {
             var missingPermissions = permissionKeys
-                .Where(pk => !permissionsSaved.Exists(p => p.Key == pk.ToString()))
+                .Where(pk => !permissionsSaved.Exists(p => p.Key == pk))
                 .ToList();
             var missingPermissionsMapped = missingPermissions.ConvertAll(p => p.ToString());
 
@@ -69,8 +72,14 @@ internal abstract class PermissionService(
                 args.Key.ToString());
         }
 
+        var permission = new Permission(
+            args.Name,
+            args.Description,
+            args.IsPublic,
+            args.Key);
+
         await permissionRepository
-            .CreateAsync(args)
+            .CreateAsync(permission)
             .ConfigureAwait(false);
     }
 
@@ -103,8 +112,9 @@ internal abstract class PermissionService(
             var permissionsSavedKeys = allPermissionsKeyes
                 .Where(pk => !permissionsSaved.Exists(p => p.Key == pk))
                 .ToList();
+            var permissionsSavedKeysMapped = permissionsSavedKeys.ConvertAll(p => p.ToString());
 
-            throw new SpecificResourceDuplicatedException<Permission>([nameof(Permission.Key)], permissionsSavedKeys);
+            throw new SpecificResourceDuplicatedException<Permission>([nameof(Permission.Key)], permissionsSavedKeysMapped);
         }
 
         var permissions = args.ConvertAll(p => new Permission(

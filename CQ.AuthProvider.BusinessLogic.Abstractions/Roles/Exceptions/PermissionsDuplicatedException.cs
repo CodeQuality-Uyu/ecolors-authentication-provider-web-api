@@ -2,6 +2,9 @@
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions
 {
-    public sealed class PermissionsDuplicatedException(List<PermissionKey> Keyes)
-        : Exception;
+    public sealed class PermissionsDuplicatedException(List<PermissionKey> keys)
+        : Exception
+    {
+        public List<PermissionKey> Keys { get; init; } = keys;
+    }
 }

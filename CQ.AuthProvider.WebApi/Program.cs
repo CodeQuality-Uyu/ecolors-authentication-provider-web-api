@@ -1,6 +1,6 @@
-using CQ.AuthProvider.WebApi.Filters;
-using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.WebApi.AppConfig;
+using CQ.ApiElements.AppConfig;
+using CQ.AuthProvider.WebApi.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +8,7 @@ builder.Services
     .AddControllers(
     (options) =>
     {
-        options.AddExceptionFilter<CqExceptionFilter>();
+        options.AddExceptionGlobalHandler<CqExceptionFilter>();
     })
     .ConfigureApiBehaviorOptions(options =>
     {

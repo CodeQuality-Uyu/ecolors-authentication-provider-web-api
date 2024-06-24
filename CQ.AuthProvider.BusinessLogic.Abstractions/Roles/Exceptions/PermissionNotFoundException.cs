@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions
+namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions;
+
+public class PermissionNotFoundException(List<PermissionKey> permissionKeys) : Exception
 {
-    public class PermissionNotFoundException : Exception
-    {
-        public readonly List<PermissionKey> PermissionKeys;
-
-        public PermissionNotFoundException(List<PermissionKey> permissionKeys)
-        {
-            PermissionKeys = permissionKeys;
-        }
-    }
+    public List<PermissionKey> PermissionKeys { get; init; } = permissionKeys;
 }

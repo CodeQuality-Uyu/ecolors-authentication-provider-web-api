@@ -7,14 +7,14 @@ using System.Net;
 
 namespace CQ.AuthProvider.WebApi.Filters.Exception
 {
-    internal sealed class CQAuthExceptionRegistryService : ExceptionRegistryService
+    internal sealed class CQAuthExceptionRegistryService : ExceptionStoreService
     {
-        protected override void RegisterBusinessExceptions(ExceptionStoreService exceptionStoreService)
+        protected override void RegisterBusinessExceptions()
         {
             #region Specific exceptions
             #region Role controller
             #region Create
-            exceptionStoreService
+            this
                 .AddOriginExceptions(new("Role", "Create"))
                 .AddException<PermissionNotFoundException>(
                 "ResourceNotFound",
@@ -23,7 +23,7 @@ namespace CQ.AuthProvider.WebApi.Filters.Exception
                 );
             #endregion
             #region Add permission
-            exceptionStoreService
+            this
                 .AddOriginExceptions(new("Role", "AddPermission"))
                 .AddException<PermissionNotFoundException>(
                 "ResourceNotFound",
@@ -39,7 +39,7 @@ namespace CQ.AuthProvider.WebApi.Filters.Exception
             #endregion
 
             #region Auth controller
-            exceptionStoreService
+            this
                 .AddOriginExceptions(
                 new("Auth", "CreateCredentials"))
                 .AddException<ResourceDuplicatedException>(
@@ -66,8 +66,7 @@ namespace CQ.AuthProvider.WebApi.Filters.Exception
             #endregion
 
             #region Generic exceptions
-            exceptionStoreService
-
+            this
                 .AddGenericException<InvalidCredentialsException>(
                 "InvalidCredentials",
                 HttpStatusCode.BadRequest,

@@ -8,7 +8,7 @@ public sealed record class Identity
 
     public string Email { get; init; } = null!;
 
-    public string Password { get; init; } = null!;
+    public string Password { get; set; } = null!;
 
     public Identity()
     {

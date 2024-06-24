@@ -1,7 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
-using CQ.AuthProvider.DataAccess.EfCore.Accounts;
-using CQ.AuthProvider.DataAccess.EfCore.Permissions;
+﻿using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles;
@@ -26,24 +23,5 @@ public sealed record class RoleEfCore
 
     public RoleEfCore()
     {
-    }
-
-    public RoleEfCore(
-        string id,
-        string name,
-        string description,
-        RoleKey key,
-        List<Permission> permissions,
-        bool isPublic,
-        bool isDefault)
-        : this()
-    {
-        Id = id;
-        Name = name;
-        Description = description;
-        Key = key.ToString();
-        Permissions = permissions.ConvertAll(p => new RolePermission(p.Id));
-        IsPublic = isPublic;
-        IsDefault = isDefault;
     }
 }
