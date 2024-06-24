@@ -22,56 +22,6 @@ namespace CQ.AuthProvider.DataAccess.AppConfig
 {
     public static class DataAccessConfig
     {
-        public static IServiceCollection ConfigureDataAccess(this IServiceCollection services, IConfiguration configuration)
-        {
-            var connectionString = configuration.GetConnectionString(ConnectionStrings.Auth);
-
-            Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
-
-            var authOption = configuration
-                .GetSection(ConfigOptions.Auth)
-                .Get<AuthOptions>();
-
-            Guard.ThrowIsNull(authOption, "Auth");
-
-            if (authOption.Engine == DatabaseEngine.Sql)
-            {
-                services
-                    .AddEfCoreContext<AuthEfCoreContext>(
-                    new EfCoreConfig(
-                        new DatabaseConfig(connectionString, authOption.DatabaseName),
-                        useDefaultQueryLogger: true),
-                    LifeTime.Scoped,
-                    LifeTime.Scoped)
-                    .AddAbstractionEfCoreRepository<AccountEfCore, IAccountInfoRepository, AccountEfCoreRepository>(LifeTime.Scoped)
-                    .AddEfCoreRepository<RolePermission>(LifeTime.Scoped)
-                    .AddCustomEfCoreRepository<RoleEfCore, RoleEfCoreRepository>(LifeTime.Scoped)
-                    .AddEfCoreRepository<ResetPasswordApplicationEfCore>(LifeTime.Scoped)
-                    .AddEfCoreRepository<PermissionEfCore>(LifeTime.Scoped)
-                    .AddCustomEfCoreRepository<ClientSystemEfCore, ClientSystemEfCoreRepository>(LifeTime.Scoped);
-            }
-
-            if (authOption.Engine == DatabaseEngine.Mongo)
-            {
-                services
-                    .AddMongoContext<AuthMongoContext>(
-                    new MongoConfig(
-                        new DatabaseConfig(connectionString, authOption.DatabaseName),
-                        useDefaultQueryLogger: true),
-                    LifeTime.Scoped,
-                    LifeTime.Scoped)
-                    .AddAbstractionMongoRepository<AccountMongo, IAccountInfoRepository, AccountMongoRepository>(LifeTime.Scoped)
-                    .AddCustomMongoRepository<RoleMongo, RoleMongoRepository>(LifeTime.Scoped)
-                    .AddMongoRepository<ResetPasswordApplication>(LifeTime.Scoped)
-                    .AddMongoRepository<PermissionMongo>(LifeTime.Scoped)
-                    .AddCustomMongoRepository<ClientSystemMongo, ClientSystemMongoRepository>(LifeTime.Scoped);
-            }
-
-            services.AddIdentityProvider(configuration);
-
-            return services;
-        }
-
         private static IServiceCollection AddIdentityProvider(this IServiceCollection services, IConfiguration configuration)
         {
             var identity = configuration

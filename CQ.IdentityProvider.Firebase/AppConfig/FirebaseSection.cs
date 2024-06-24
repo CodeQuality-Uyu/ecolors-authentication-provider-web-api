@@ -1,40 +1,8 @@
 ﻿
-namespace CQ.AuthProvider.BusinessLogic.AppConfig
+namespace CQ.IdentityProvider.Firebase.AppConfig;
+
+internal class FirebaseSection
 {
-    public sealed record class ConnectionStrings
-    {
-        public const string Auth = "Auth";
-        public const string Identity = "Identity";
-    }
-
-    public sealed record class ConfigOptions
-    {
-        public const string Identity = "Identity";
-    }
-
-    public record class IdentityOptions
-    {
-        public IdentityType Type { get; init; }
-    }
-
-    public enum IdentityType
-    {
-        Firebase
-    }
-
-    public sealed record class IdentityDatabaseOptions : IdentityOptions
-    {
-        public DatabaseEngine Engine { get; init; } = DatabaseEngine.Sql;
-    }
-
-    public enum DatabaseEngine
-    {
-        Sql,
-        Mongo
-    }
-
-    public sealed record class IdentityFirebaseOptions : IdentityOptions
-    {
         public string ProjectName { get; init; } = null!;
 
         public string ProjectId { get; init; } = null!;
@@ -62,5 +30,4 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig
         public string ApiUrl { get; init; } = null!;
 
         public string RefererApiUrl { get; init; } = null!;
-    }
 }

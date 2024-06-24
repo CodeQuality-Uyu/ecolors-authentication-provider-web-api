@@ -1,13 +1,13 @@
-﻿using CQ.AuthProvider.DataAccess.EfCore.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CQ.AuthProvider.DataAccess.EfCore;
 
-public sealed class AuthEfCoreContext(DbContextOptions<AuthEfCoreContext> options)
+public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     : EfCoreContext(options)
 {
     public DbSet<AccountEfCore> Accounts { get; set; }
@@ -20,40 +20,16 @@ public sealed class AuthEfCoreContext(DbContextOptions<AuthEfCoreContext> option
 
     public DbSet<PermissionEfCore> Permissions { get; set; }
 
+    public DbSet<SessionEfCore> Sessions { get; set; }
+
     public DbSet<ResetPasswordApplicationEfCore> ResetPasswordApplications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var (accountBuilder, roleBuilder) = ConfigStructure(modelBuilder);
-
-        SeedData(accountBuilder, roleBuilder, modelBuilder);
+        SeedData(modelBuilder);
     }
 
-    private (EntityTypeBuilder<AccountRole>, EntityTypeBuilder<RolePermission>) ConfigStructure(ModelBuilder modelBuilder)
-    {
-        var accountBuilder = modelBuilder
-           .Entity<AccountEfCore>()
-           .HasMany(a => a.Roles)
-           .WithMany(r => r.Accounts)
-           .UsingEntity<AccountRole>(
-           r => r.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleId),
-           l => l.HasOne(x => x.Account).WithMany().HasForeignKey(x => x.AccountId));
-
-        var roleBuilder = modelBuilder
-            .Entity<RoleEfCore>()
-            .HasMany(a => a.Permissions)
-            .WithMany(p => p.Roles)
-            .UsingEntity<RolePermission>(
-            r => r.HasOne(x => x.Permission).WithMany().HasForeignKey(x => x.PermissionId),
-            l => l.HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleId));
-
-        return (accountBuilder, roleBuilder);
-    }
-
-    private static void SeedData(
-        EntityTypeBuilder<AccountRole> accountBuilder,
-        EntityTypeBuilder<RolePermission> roleBuilder,
-        ModelBuilder modelBuilder)
+    private static void SeedData(ModelBuilder modelBuilder)
     {
         #region Permissions
         #region Permission permissions

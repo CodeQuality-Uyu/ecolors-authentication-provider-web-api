@@ -13,8 +13,7 @@ namespace CQ.IdentityProvider.Mongo
             : base(mongoDatabase)
         {
             base
-                .AddCollection<Identity>("Identities")
-                .AddCollection<Session>("Sessions");
+                .AddCollection<Identity>("Identities");
         }
 
         public string GetProvider()

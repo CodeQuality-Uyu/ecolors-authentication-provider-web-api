@@ -13,8 +13,6 @@ public sealed class IdentityProviderEfCoreContext(DbContextOptions<IdentityProvi
 
     public DbSet<Identity> Identities { get; set; }
 
-    public DbSet<Session> Sessions { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
