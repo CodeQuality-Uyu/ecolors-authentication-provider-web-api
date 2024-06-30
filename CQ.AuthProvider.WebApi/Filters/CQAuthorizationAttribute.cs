@@ -1,48 +1,31 @@
 ﻿using CQ.ApiElements;
 using CQ.ApiElements.Filters.Authorizations;
+using CQ.ApiElements.Filters.Extensions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Authorizations;
-using CQ.AuthProvider.BusinessLogic.ClientSystems;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.Utility;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace CQ.AuthProvider.WebApi.Filters
+namespace CQ.AuthProvider.WebApi.Filters;
+
+internal class CQAuthorizationAttribute(string? permission = null)
+    : SecureAuthorizationAttribute(
+        new CQAuthenticationAttribute(),
+        permission)
 {
-    internal class CQAuthorizationAttribute : SecureAuthorizationAsyncAttributeFilter
+    protected override Task<bool> HasRequestPermissionAsync(string headerValue, string permission, AuthorizationFilterContext context)
     {
-        public CQAuthorizationAttribute(string? permission = null)
-            : base(
-                  new CQAuthenticationAttribute(),
-                  permission)
+        var accountLogged = context.HttpContext.GetItem<AccountLogged>(ContextItems.AccountLogged);
+
+        if (Guard.IsNull(accountLogged))
         {
+            return Task.FromResult(false);
         }
 
-        protected override Task<bool> HasRequestPermissionAsync(string headerValue, string permission, AuthorizationFilterContext context)
-        {
-            var accountLogged = (Account)context.HttpContext.Items[ContextItems.AccountLogged];
+        var permissionKey = new PermissionKey(permission);
 
-            var permissionKey = new PermissionKey(permission);
-            if (Guard.IsNotNull(accountLogged))
-            {
-                var hasPermissionAccount = accountLogged.HasPermission(permissionKey);
+        var hasPermissionAccount = accountLogged.HasPermission(permissionKey);
 
-                return Task.FromResult(hasPermissionAccount);
-            }
-
-            var clientSystemLogged = (ClientSystem)context.HttpContext.Items[ContextItems.ClientSystemLogged];
-            if (Guard.IsNull(clientSystemLogged))
-            {
-                return Task.FromResult(false);
-            }
-
-            var hasPermissionClient = clientSystemLogged.HasPermission(permissionKey);
-
-            if(hasPermissionClient)
-            {
-                return Task.FromResult(true);
-            }
-
-            return Task.FromResult(clientSystemLogged.Name == headerValue);
-        }
+        return Task.FromResult(hasPermissionAccount);
     }
 }

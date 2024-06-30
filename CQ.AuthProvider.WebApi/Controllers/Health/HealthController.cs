@@ -1,62 +1,57 @@
-﻿using CQ.Utility;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
+
+using AuthEfCoreDbContext = CQ.AuthProvider.DataAccess.EfCore.AuthDbContext;
+using AuthMongoDbContext = CQ.AuthProvider.DataAccess.Mongo.AuthDbContext;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Health;
 
 [ApiController]
 [Route("/", Name = "Ping")]
 [Route("health", Name = "Health Check")]
-public class HealthController : ControllerBase
+public class HealthController(
+    AuthEfCoreDbContext authEfCoreContext,
+    AuthMongoDbContext authMongoContext,
+    IIdentityProviderHealthService identityHealthService)
+    : ControllerBase
 {
-    private readonly List<IDatabaseContext> _contexts;
-
-    private readonly IIdentityProviderHealthService _identityProviderHealthService;
-
-    private readonly AuthOptions _authOptions;
-
-    public HealthController(
-        IEnumerable<IDatabaseContext> contexts,
-        IIdentityProviderHealthService identityProviderHealthService,
-        AuthOptions authOptions)
-    {
-        _contexts = contexts.ToList();
-        _identityProviderHealthService = identityProviderHealthService;
-        _authOptions = authOptions;
-    }
-
     [HttpGet]
     public object Get()
     {
-        var authContext = _contexts.FirstOrDefault(c => c.GetDatabaseInfo().Name == _authOptions.DatabaseName);
-
-
-        object authDbHealth = new
+        var authDataBase = new
         {
+            Provider = string.Empty,
             Alive = false
         };
 
-        if (Guard.IsNotNull(authContext))
+        if (Guard.IsNotNull(authEfCoreContext))
         {
-            var authInfo = authContext.GetDatabaseInfo();
-
-            authDbHealth = new
+            authDataBase = new
             {
-                Server = authInfo.Provider,
-                DatabaseName = authInfo.Name,
-                Alive = authContext.Ping()
+                Provider = "EfCore",
+                Alive = authEfCoreContext.Ping()
+            };
+        }
+
+        if (Guard.IsNotNull(authMongoContext))
+        {
+            authDataBase = new
+            {
+                Provider = "Mongo",
+                Alive = authMongoContext.Ping()
             };
         }
 
         return new
         {
-            v = "2",
+            v = "3",
             Alive = true,
-            Auth = authDbHealth,
+            Auth = authDataBase,
             Identity = new
             {
-                Server = _identityProviderHealthService.GetProvider(),
-                Name = _identityProviderHealthService.GetName(),
-                Alive = _identityProviderHealthService.Ping()
+                Server = identityHealthService.GetProvider(),
+                Alive = identityHealthService.Ping()
             }
         };
     }

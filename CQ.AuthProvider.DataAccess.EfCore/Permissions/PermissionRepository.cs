@@ -29,9 +29,9 @@ internal sealed class PermissionRepository(
         return mapper.Map<List<Permission>>(permissions);
     }
 
-    public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys)
+    public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionsKeys)
     {
-        var keys = mapper.Map<List<string>>(permissionKeys);
+        var keys = mapper.Map<List<string>>(permissionsKeys);
 
         var query = _dbSet
             .Where(p => keys.Contains(p.Key));
@@ -54,14 +54,26 @@ internal sealed class PermissionRepository(
 
     public async Task CreateAsync(Permission permission)
     {
-        var permissionEfCore = mapper.Map<PermissionEfCore>(permission);
+        var permissionEfCore = new PermissionEfCore(
+            permission.Id,
+            permission.Name,
+            permission.Description,
+            permission.Key,
+            permission.IsPublic,
+            permission.Tenant);
 
         await CreateAsync(permissionEfCore).ConfigureAwait(false);
     }
 
     public async Task CreateBulkAsync(List<Permission> permissions)
     {
-        var permissionsEfCore = mapper.Map<List<PermissionEfCore>>(permissions);
+        var permissionsEfCore = permissions.ConvertAll(p => new PermissionEfCore(
+            p.Id,
+            p.Name,
+            p.Description,
+            p.Key,
+            p.IsPublic,
+            p.Tenant));
 
         await CreateBulkAsync(permissionsEfCore).ConfigureAwait(false);
     }

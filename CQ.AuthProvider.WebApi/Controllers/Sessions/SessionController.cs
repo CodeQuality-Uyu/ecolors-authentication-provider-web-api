@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
-using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
 using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.Utility;
+using CQ.ApiElements.Filters.Authentications;
+using CQ.ApiElements;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
 
@@ -31,7 +32,6 @@ public class SessionController(
 
     [HttpDelete]
     [CQAuthorization]
-    [ValidateAccount]
     public async Task DeleteAsync()
     {
         var accountLogged = this.GetAccountLogged();
@@ -39,18 +39,5 @@ public class SessionController(
         await sessionService
             .DeleteAsync(accountLogged)
             .ConfigureAwait(false);
-    }
-
-
-    [HttpGet("{token}/validate")]
-    [CQAuthorization]
-    [ValidateClientSystem]
-    public async Task<TokenValidationResponse> ValidateTokenAsync(string token)
-    {
-        var isValid = await sessionService
-            .IsTokenValidAsync(token)
-            .ConfigureAwait(false);
-
-        return mapper.Map<TokenValidationResponse>(isValid);
     }
 }

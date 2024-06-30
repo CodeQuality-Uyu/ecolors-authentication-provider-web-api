@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.Exceptions;
@@ -10,29 +11,34 @@ internal sealed class AccountService(
         IAccountRepository accountRepository,
         IIdentityRepository identityService,
         ISessionInternalService sessionService,
-        IRoleInternalService roleInternalService)
+        IRoleInternalService roleInternalService,
+        IAppInternalService appInternalService)
     : IAccountInternalService
 {
     #region Create
-    public async Task<CreateAccountResult> CreateAsync(CreateAccountArgs newAccount)
+    public async Task<CreateAccountResult> CreateAsync(CreateAccountArgs args)
     {
-        await AssertEmailInUseAsync(newAccount.Email).ConfigureAwait(false);
+        await AssertEmailInUseAsync(args.Email).ConfigureAwait(false);
 
-        var identity = await CreateIdentityAsync(newAccount).ConfigureAwait(false);
+        var identity = await CreateIdentityAsync(args).ConfigureAwait(false);
 
         try
         {
-            var role = await GetRoleAsync(newAccount.Role).ConfigureAwait(false);
+            var role = await GetRoleAsync(args.Role).ConfigureAwait(false);
+            var app = await appInternalService
+                .GetByIdAsync(args.AppId)
+                .ConfigureAwait(false);
 
             var account = new Account(
-                newAccount.Email,
-                newAccount.FirstName,
-                newAccount.LastName,
-                newAccount.FullName,
-                newAccount.ProfilePictureUrl,
-                newAccount.Locale,
-                newAccount.TimeZone,
-                [role])
+                args.Email,
+                args.FirstName,
+                args.LastName,
+                args.ProfilePictureUrl,
+                args.Locale,
+                args.TimeZone,
+                role,
+                app,
+                app.Tenant)
             {
                 Id = identity.Id
             };

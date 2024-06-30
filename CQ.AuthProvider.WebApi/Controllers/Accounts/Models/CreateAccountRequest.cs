@@ -22,6 +22,8 @@ public sealed record class CreateAccountRequest : Request<CreateAccountArgs>
 
     public string? TimeZone { get; init; }
 
+    public string? AppId { get; init; }
+
     protected override CreateAccountArgs InnerMap()
     {
         Guard.ThrowIsNullOrEmpty(Email, nameof(Email));
@@ -32,6 +34,7 @@ public sealed record class CreateAccountRequest : Request<CreateAccountArgs>
         Guard.ThrowIsNullOrEmpty(Role, nameof(Role));
         Guard.ThrowIsNullOrEmpty(Locale, nameof(Locale));
         Guard.ThrowIsNullOrEmpty(TimeZone, nameof(TimeZone));
+        Guard.ThrowIsNullOrEmpty(AppId, nameof(AppId));
 
         return new CreateAccountArgs(
            Email!,
@@ -41,6 +44,7 @@ public sealed record class CreateAccountRequest : Request<CreateAccountArgs>
             Locale!,
             TimeZone!,
             Role,
-            ProfilePictureUrl);
+            ProfilePictureUrl,
+            AppId!);
     }
 }

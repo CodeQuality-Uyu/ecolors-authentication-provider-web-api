@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
@@ -25,6 +26,9 @@ public static class ServicesConfig
 
             .AddScoped<IPermissionService, PermissionService>()
             .AddScoped<IPermissionInternalService, PermissionService>()
+
+            .AddScoped<IAppService, AppService>()
+            .AddScoped<IAppInternalService, AppService>()
             ;
 
         return services;

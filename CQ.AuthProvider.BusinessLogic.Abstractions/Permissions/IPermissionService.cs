@@ -9,9 +9,13 @@ public interface IPermissionService
         string? roleId,
         Account accountLogged);
 
-    Task CreateAsync(CreatePermissionArgs permission);
+    Task CreateAsync(
+        CreatePermissionArgs permission,
+        AccountLogged accountLogged);
 
-    Task CreateBulkAsync(List<CreatePermissionArgs> permission);
+    Task CreateBulkAsync(
+        List<CreatePermissionArgs> permission,
+        AccountLogged accountLogged);
 }
 
 internal interface IPermissionInternalService: IPermissionService

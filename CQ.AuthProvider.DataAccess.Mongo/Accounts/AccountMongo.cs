@@ -1,11 +1,11 @@
-﻿using CQ.AuthProvider.DataAccess.Mongo.Authorizations;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.Mongo.Accounts
 {
     public sealed record class AccountMongo
     {
-        public string Id { get; set; } = null!;
+        public string Id { get; init; } = null!;
 
         public string? ProfilePictureUrl { get; set; }
 
@@ -17,32 +17,50 @@ namespace CQ.AuthProvider.DataAccess.Mongo.Accounts
 
         public string Email { get; set; } = null!;
 
-        public List<MiniRoleMongo> Roles { get; set; } = null!;
+        public List<MiniAcountRole> Roles { get; set; } = [];
 
-        public DateTimeOffset CreatedAt { get; set; }
+        public string Locale { get; set; } = null!;
 
+        public string TimeZone { get; set; } = null!;
+
+        public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+
+        /// <summary>
+        /// For MongoDriver
+        /// </summary>
         public AccountMongo()
         {
-            Id = Db.NewId();
-            Roles = new List<MiniRoleMongo>();
-            CreatedAt = DateTimeOffset.UtcNow;
         }
 
+        /// <summary>
+        /// For new AccountMongo
+        /// </summary>
+        /// <param name="fullName"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="email"></param>
+        /// <param name="role"></param>
+        /// <param name="profilePictureUrl"></param>
         public AccountMongo(
+            string id,
+            string email,
             string fullName,
             string firstName,
             string lastName,
-            string email,
-            MiniRoleMongo role,
-            string? profilePictureUrl = null
+            string locale,
+            string timeZone,
+            List<Role> roles,
+            string? profilePictureUrl
             )
-            : this()
         {
+            Id = id;
+            Email = email;
             FullName = fullName;
             FirstName = firstName;
             LastName = lastName;
-            Email = email;
-            Roles = new List<MiniRoleMongo> { role };
+            Locale = locale;
+            TimeZone = timeZone;
+            Roles = roles.ConvertAll(r => new MiniAcountRole(r.Key, r.Permissions));
             ProfilePictureUrl = profilePictureUrl;
         }
     }

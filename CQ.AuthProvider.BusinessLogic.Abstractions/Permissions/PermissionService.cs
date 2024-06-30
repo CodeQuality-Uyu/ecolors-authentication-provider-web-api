@@ -5,7 +5,7 @@ using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
-internal abstract class PermissionService(
+internal sealed class PermissionService(
     IPermissionRepository permissionRepository)
     : IPermissionInternalService
 {
@@ -59,7 +59,9 @@ internal abstract class PermissionService(
             .ConfigureAwait(false);
     }
 
-    public async Task CreateAsync(CreatePermissionArgs args)
+    public async Task CreateAsync(
+        CreatePermissionArgs args,
+        AccountLogged accountLogged)
     {
         var existPermission = await permissionRepository
             .ExistByKeyAsync(args.Key)
@@ -76,14 +78,17 @@ internal abstract class PermissionService(
             args.Name,
             args.Description,
             args.IsPublic,
-            args.Key);
+            args.Key,
+            accountLogged.Tenant);
 
         await permissionRepository
             .CreateAsync(permission)
             .ConfigureAwait(false);
     }
 
-    public async Task CreateBulkAsync(List<CreatePermissionArgs> args)
+    public async Task CreateBulkAsync(
+        List<CreatePermissionArgs> args,
+        AccountLogged accountLogged)
     {
         var permissionKeys = args
             .Select(p => p.Key)
@@ -121,7 +126,8 @@ internal abstract class PermissionService(
             p.Name,
             p.Description,
             p.IsPublic,
-            p.Key));
+            p.Key,
+            accountLogged.Tenant));
 
         await permissionRepository
             .CreateBulkAsync(permissions)

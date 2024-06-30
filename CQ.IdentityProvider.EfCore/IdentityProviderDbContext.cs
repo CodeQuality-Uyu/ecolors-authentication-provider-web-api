@@ -8,32 +8,24 @@ public sealed class IdentityProviderDbContext(DbContextOptions<IdentityProviderD
     : EfCoreContext(options),
     IIdentityProviderHealthService
 {
-    public const string ADMIN_ID = "d47025648273495ba69482fcc69da874";
-    public const string ADMIN_EMAIL = "admin@gmail.com";
-
     public DbSet<Identity> Identities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
-            .Entity<Identity>()
-            .HasData(
-            new Identity(
-                ADMIN_EMAIL,
-                "!12345678")
+            .Entity<Identity>(entity =>
             {
-                Id = ADMIN_ID
+                entity.HasData(
+                new Identity(
+                    "1",
+                    "admin@gmail.com",
+                    "!12345678"));
             });
     }
 
     public string GetProvider()
     {
         return "EfCore";
-    }
-
-    public string GetName()
-    {
-        return string.Empty;
     }
 
     public bool Ping()

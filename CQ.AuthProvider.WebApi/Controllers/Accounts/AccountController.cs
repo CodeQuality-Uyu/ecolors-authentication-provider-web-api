@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.WebApi.Extensions;
-using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
@@ -28,7 +27,6 @@ public class AccountController(
 
     [HttpPost("credentials/for")]
     [CQAuthorization]
-    [ValidateAccount]
     public async Task CreateCredentialsForAsync(CreateAccountRequest request)
     {
         var createAccountFor = request.Map();
@@ -40,7 +38,6 @@ public class AccountController(
 
     [HttpGet("me")]
     [CQAuthentication]
-    [ValidateAccount]
     public AccountLoggedResponse GetMeAsync()
     {
         var accountLogged = this.GetAccountLogged();

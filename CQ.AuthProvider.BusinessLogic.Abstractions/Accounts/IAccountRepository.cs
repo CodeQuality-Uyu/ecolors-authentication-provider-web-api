@@ -7,7 +7,7 @@ internal interface IAccountRepository
 
     Task<bool> ExistByEmailAsync(string email);
 
-    Task<Account> GetByEmailAsync(string id);
+    Task<Account> GetByEmailAsync(string email);
 
     Task<Account> GetByIdAsync(string id);
 }

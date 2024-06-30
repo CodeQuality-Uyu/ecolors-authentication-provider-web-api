@@ -4,7 +4,9 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 
 public sealed record class RoleKey
 {
-    public static readonly RoleKey Admin = new("admin");
+    public static readonly RoleKey Admin = new("admin-auth-server");
+
+    public static readonly RoleKey TenantOwner = new("admin-tenant");
 
     private readonly string Value;
 

@@ -1,6 +1,5 @@
 ﻿
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
-using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Sessions;
 

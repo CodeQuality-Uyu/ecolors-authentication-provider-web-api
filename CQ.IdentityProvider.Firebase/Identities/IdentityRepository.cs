@@ -61,9 +61,9 @@ internal sealed class IdentityRepository(
                 Email = email,
             };
         }
-        catch (FirebaseAuthException ex)
+        catch (FirebaseAuthException)
         {
-            throw new AuthNotFoundException(email, ex);
+            throw new SpecificResourceNotFoundException<Identity>(email, nameof(Identity.Email));
         }
     }
 
@@ -117,11 +117,6 @@ internal sealed class IdentityRepository(
         return "Firebase";
     }
 
-    public string GetName()
-    {
-        return $"";
-    }
-
     public bool Ping()
     {
         try
@@ -154,7 +149,7 @@ internal sealed class IdentityRepository(
 
             return true;
         }
-        catch (AuthNotFoundException)
+        catch (Exception)
         {
             return false;
         }

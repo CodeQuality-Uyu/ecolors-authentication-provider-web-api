@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
@@ -17,12 +18,15 @@ internal sealed class RoleRepository(
     : EfCoreRepository<RoleEfCore>(context),
     IRoleRepository
 {
-    public async Task<List<Role>> GetAllAsync(bool? isPrivate)
+    public async Task<List<Role>> GetAllAsync(
+        bool? isPrivate,
+        AccountLogged accountLogged)
     {
         var query = _dbSet
             .Include(r => r.Permissions)
-            .ThenInclude(p => p.Permission)
-            .Where(r => isPrivate == null || r.IsPublic == !isPrivate);
+                .ThenInclude(p => p.Permission)
+            .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
+            .Where(r => r.TenantId == null || r.TenantId == accountLogged.Tenant.Id);
 
         var roles = await query
             .ToListAsync()
@@ -54,9 +58,20 @@ internal sealed class RoleRepository(
         await UpdateAsync(role).ConfigureAwait(false);
     }
 
-    public async Task CreateAsync(Role role)
+    public async Task CreateAsync(
+        Role role,
+        AccountLogged accountLogged)
     {
-        var roleEfCore = mapper.Map<RoleEfCore>(role);
+        var roleEfCore = new RoleEfCore(
+            role.Id,
+            role.Name,
+            role.Description,
+            role.Key,
+            role.Permissions,
+            role.IsPublic,
+            role.IsDefault,
+            role.Apps,
+            accountLogged.Tenant);
 
         await CreateAsync(roleEfCore).ConfigureAwait(false);
     }
@@ -163,9 +178,20 @@ internal sealed class RoleRepository(
         return mapper.Map<Role>(role);
     }
 
-    public async Task CreateBulkAsync(List<Role> roles)
+    public async Task CreateBulkAsync(
+        List<Role> roles,
+        AccountLogged accountLogged)
     {
-        var rolesEfCore = mapper.Map<List<RoleEfCore>>(roles);
+        var rolesEfCore = roles.ConvertAll(r => new RoleEfCore(
+            r.Id,
+            r.Name,
+            r.Description,
+            r.Key,
+            r.Permissions,
+            r.IsPublic,
+            r.IsDefault,
+            r.Apps,
+            accountLogged.Tenant));
 
         await CreateBulkAsync(rolesEfCore).ConfigureAwait(false);
     }

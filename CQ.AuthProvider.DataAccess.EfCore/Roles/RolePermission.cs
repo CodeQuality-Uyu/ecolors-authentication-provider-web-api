@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.DataAccess.EfCore.Permissions;
+using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles;
@@ -15,6 +16,10 @@ public sealed record class RolePermission
 
     public PermissionEfCore Permission { get; init; } = null!;
 
+    public string TenantId { get; init; } = null!;
+
+    public TenantEfCore Tenant { get; init; } = null!;
+
     /// <summary>
     /// For Ef Core
     /// </summary>
@@ -23,24 +28,31 @@ public sealed record class RolePermission
     }
 
     /// <summary>
-    /// For when creating a new role
+    /// For new Role
     /// </summary>
     /// <param name="permissionId"></param>
-    public RolePermission(string permissionId)
+    /// <param name="tenantId"></param>
+    public RolePermission(
+        string permissionId,
+        string tenantId)
     {
         PermissionId = permissionId;
+        TenantId = tenantId;
     }
 
     /// <summary>
-    /// For adding new permission to existent role
+    /// For adding permission to role
     /// </summary>
     /// <param name="id"></param>
     /// <param name="permissionId"></param>
+    /// <param name="tenantId"></param>
     public RolePermission(
         string id,
-        string permissionId)
+        string permissionId,
+        string tenantId)
     {
         RoleId = id;
         PermissionId = permissionId;
+        TenantId = tenantId;
     }
 }

@@ -21,7 +21,9 @@ internal sealed class AccountRepository(
             account.Locale,
             account.TimeZone,
             account.Roles,
-            account.ProfilePictureUrl);
+            account.ProfilePictureUrl,
+            account.Apps,
+            account.Tenant);
 
         await CreateAsync(accountEfCore).ConfigureAwait(false);
     }

@@ -20,11 +20,6 @@ namespace CQ.IdentityProvider.Mongo
             return "Mongo";
         }
 
-        public string GetName()
-        {
-            return "";
-        }
-
         public bool Ping()
         {
             return base.Ping();

@@ -1,4 +1,5 @@
 ﻿using CQ.ApiElements.Dtos;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
@@ -11,7 +12,7 @@ public sealed record class CreatePermissionRequest : Request<CreatePermissionArg
 
     public string? Key { get; init; }
 
-    public bool IsPublic { get; init; }
+    public bool? IsPublic { get; init; }
 
     protected override CreatePermissionArgs InnerMap()
     {
@@ -24,6 +25,6 @@ public sealed record class CreatePermissionRequest : Request<CreatePermissionArg
             Name!,
             Description!,
             Key!,
-            IsPublic!);
+            IsPublic.Value);
     }
 }

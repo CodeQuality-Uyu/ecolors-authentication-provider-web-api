@@ -1,9 +1,11 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 
-public sealed record class Role
+public sealed record class Role()
 {
     public string Id { get; init; } = Db.NewId();
 
@@ -17,11 +19,11 @@ public sealed record class Role
 
     public List<Permission> Permissions { get; init; } = [];
 
-    public bool IsDefault { get; init; }
+    public List<App> Apps { get; init; } = [];
 
-    public Role()
-    {
-    }
+    public Tenant Tenant { get; init; } = null!;
+
+    public bool IsDefault { get; init; }
 
     public Role(
         string name,
@@ -29,7 +31,9 @@ public sealed record class Role
         bool isPublic,
         RoleKey key,
         List<Permission> permissions,
-        bool isDefault)
+        bool isDefault,
+        App app)
+        : this()
     {
         Name = name;
         Description = description;
@@ -37,5 +41,7 @@ public sealed record class Role
         Key = key;
         Permissions = permissions;
         IsDefault = isDefault;
+        Apps = [app];
+        Tenant = app.Tenant;
     }
 }

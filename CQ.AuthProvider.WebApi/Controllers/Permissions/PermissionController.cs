@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
-using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using AutoMapper;
 using CQ.Utility;
@@ -12,7 +11,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 [ApiController]
 [Route("permissions")]
 [CQAuthorization]
-[ValidateAccount]
 public class PermissionController(
     IMapper mapper,
     IPermissionService permissionService)
@@ -25,8 +23,12 @@ public class PermissionController(
 
         var args = request.Map();
 
+        var accountLogged = this.GetAccountLogged();
+
         await permissionService
-            .CreateAsync(args)
+            .CreateAsync(
+            args,
+            accountLogged)
             .ConfigureAwait(false);
     }
 
@@ -37,8 +39,12 @@ public class PermissionController(
 
         var args = request.Map();
 
+        var accountLogged = this.GetAccountLogged();
+
         await permissionService
-            .CreateBulkAsync(args)
+            .CreateBulkAsync(
+            args,
+            accountLogged)
             .ConfigureAwait(false);
     }
 

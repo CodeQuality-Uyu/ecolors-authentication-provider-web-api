@@ -7,11 +7,15 @@ public interface IRoleService
 {
     Task<List<Role>> GetAllAsync(
         bool? isPrivate,
-        Account accountLogged);
+        AccountLogged accountLogged);
 
-    Task CreateAsync(CreateRoleArgs role);
+    Task CreateAsync(
+        CreateRoleArgs role,
+        AccountLogged accountLogged);
 
-    Task CreateBulkAsync(List<CreateRoleArgs> roles);
+    Task CreateBulkAsync(
+        List<CreateRoleArgs> roles,
+        AccountLogged accountLogged);
 
     Task AddPermissionByIdAsync(
         string id,

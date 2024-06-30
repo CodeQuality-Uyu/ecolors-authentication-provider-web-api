@@ -23,9 +23,13 @@ public sealed record class PermissionKey
     public static readonly PermissionKey AddPermissionToRole = new("addpermission-role");
     #endregion
 
-    public static readonly PermissionKey CreateAccountFor = new("createcredentialsfor-account");
+    #region Invitation
+    public static readonly PermissionKey CreateInvitation = new("create-invitation");
 
-    public static readonly PermissionKey ValidateToken = new("validatetoken-session");
+    public static readonly PermissionKey GetAllInvitation = new("getall-invitation");
+    #endregion
+
+    public static readonly PermissionKey CreateAccountFor = new("createcredentialsfor-account");
 
     public static readonly PermissionKey Joker = new("*");
 

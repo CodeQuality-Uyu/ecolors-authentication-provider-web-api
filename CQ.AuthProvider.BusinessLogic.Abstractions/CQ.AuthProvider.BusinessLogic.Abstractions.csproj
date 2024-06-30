@@ -18,6 +18,10 @@
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>CQ.AuthProvider.DataAccess.EfCore</_Parameter1>
 		</AssemblyAttribute>
+
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>CQ.AuthProvider.DataAccess.Mongo</_Parameter1>
+		</AssemblyAttribute>
 	</ItemGroup>
 
 </Project>

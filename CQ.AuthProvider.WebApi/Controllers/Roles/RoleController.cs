@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.WebApi.Extensions;
-using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.WebApi.Controllers.Roles.Models;
 using AutoMapper;
 using CQ.Utility;
@@ -13,7 +12,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.Roles;
 [ApiController]
 [Route("roles")]
 [CQAuthorization]
-[ValidateAccount]
 public class RoleController(
     IMapper mapper,
     IRoleService roleService) : ControllerBase
@@ -25,8 +23,12 @@ public class RoleController(
 
         var args = request.Map();
 
+        var accountLogged = this.GetAccountLogged();
+
         await roleService
-            .CreateAsync(args)
+            .CreateAsync(
+            args,
+            accountLogged)
             .ConfigureAwait(false);
     }
 
@@ -37,8 +39,12 @@ public class RoleController(
 
         var args = request.Map();
 
+        var accountLogged = this.GetAccountLogged();
+
         await roleService
-            .CreateBulkAsync(args)
+            .CreateBulkAsync(
+            args,
+            accountLogged)
             .ConfigureAwait(false);
     }
 
@@ -59,9 +65,9 @@ public class RoleController(
 
     [HttpGet]
     public async Task<List<RoleBasicInfoResponse>> GetAllAsync(
-        [FromQuery] bool isPrivate = false)
+        [FromQuery] bool? isPrivate)
     {
-        var accountLogged = this.GetAccountLogged()!;
+        var accountLogged = this.GetAccountLogged();
 
         var roles = await roleService
             .GetAllAsync(

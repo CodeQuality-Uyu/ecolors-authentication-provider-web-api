@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions;
 using CQ.Exceptions;
@@ -6,26 +7,35 @@ using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 
-internal abstract class RoleService(
+internal sealed class RoleService(
     IRoleRepository roleRepository,
-    IPermissionRepository permissionRepository)
+    IPermissionRepository permissionRepository,
+    IAppInternalService appInternalService)
     : IRoleInternalService
 {
-    async Task<List<Role>> IRoleService.GetAllAsync(
+    public async Task<List<Role>> GetAllAsync(
         bool? isPrivate,
-        Account accountLogged)
+        AccountLogged accountLogged)
     {
-        if (isPrivate.HasValue && isPrivate.Value)
+        if (isPrivate == null || isPrivate.Value)
         {
             var hasPermission = accountLogged.HasPermission(PermissionKey.GetAllPrivateRoles);
-            if (!hasPermission)
+
+            if (isPrivate == null)
             {
+                isPrivate = hasPermission ? isPrivate : false;
+            }
+            else if (!hasPermission)
+            {
+
                 throw new AccessDeniedException(PermissionKey.GetAllPrivateRoles.ToString());
             }
         }
 
         var permissions = await roleRepository
-            .GetAllAsync(isPrivate)
+            .GetAllAsync(
+            isPrivate,
+            accountLogged)
             .ConfigureAwait(false);
 
         return permissions;
@@ -43,7 +53,9 @@ internal abstract class RoleService(
         }
     }
 
-    public async Task CreateAsync(CreateRoleArgs args)
+    public async Task CreateAsync(
+        CreateRoleArgs args,
+        AccountLogged accountLogged)
     {
         await AssertByKeyAsync(args.Key).ConfigureAwait(false);
 
@@ -58,20 +70,29 @@ internal abstract class RoleService(
             .GetAllByKeysAsync(args.PermissionKeys)
             .ConfigureAwait(false);
 
+        var app = await appInternalService
+            .GetByIdAsync(args.AppId)
+            .ConfigureAwait(false);
+
         var role = new Role(
             args.Name,
             args.Description,
             args.IsPublic,
             args.Key,
             permissions,
-            args.IsDefault);
+            args.IsDefault,
+            app);
 
         await roleRepository
-            .CreateAsync(role)
+            .CreateAsync(
+            role,
+            accountLogged)
             .ConfigureAwait(false);
     }
 
-    public async Task CreateBulkAsync(List<CreateRoleArgs> args)
+    public async Task CreateBulkAsync(
+        List<CreateRoleArgs> args,
+        AccountLogged accountLogged)
     {
         var rolesKeys = args
             .Select(p => p.Key)
@@ -113,7 +134,7 @@ internal abstract class RoleService(
         var permissions = await permissionRepository
             .GetAllByKeysAsync(allPermissionsKeyes)
             .ConfigureAwait(false);
-        
+
         if (permissions.Count != allPermissionsKeyes.Count)
         {
             var missingPermissions = allPermissionsKeyes
@@ -124,16 +145,39 @@ internal abstract class RoleService(
             throw new SpecificResourceNotFoundException<Permission>([nameof(Permission.Key)], missingPermissionsMapped);
         }
 
-        var roles = args.ConvertAll(r => new Role(
-            r.Name,
-            r.Description,
-            r.IsPublic,
-            r.Key,
-            permissions,
-            r.IsDefault));
+        var allAppsIds = args.ConvertAll(r => r.AppId);
+
+        var apps = await appInternalService
+            .GetAllByIdAsync(allAppsIds)
+            .ConfigureAwait(false);
+        if(apps.Count != allAppsIds.Count)
+        {
+            var missingApps = allAppsIds
+                .Where(a => !apps.Exists(aa => aa.Id == a))
+                .ToList();
+
+            throw new SpecificResourceNotFoundException<App>([nameof(App.Id)], missingApps);
+        }
+
+        var roles = args
+            .ConvertAll(r =>
+            {
+                var app = apps.First(a => a.Id == r.AppId);
+
+                return new Role(
+                r.Name,
+                r.Description,
+                r.IsPublic,
+                r.Key,
+                permissions,
+                r.IsDefault,
+                app);
+            });
 
         await roleRepository
-            .CreateBulkAsync(roles)
+            .CreateBulkAsync(
+            roles,
+            accountLogged)
             .ConfigureAwait(false);
     }
 
