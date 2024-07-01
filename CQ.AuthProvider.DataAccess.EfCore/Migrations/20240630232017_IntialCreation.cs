@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreation : Migration
+    public partial class IntialCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -182,7 +182,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PermissionApps",
+                name: "PermissionsApps",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -192,19 +192,19 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PermissionApps", x => x.Id);
+                    table.PrimaryKey("PK_PermissionsApps", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PermissionApps_Apps_AppId",
+                        name: "FK_PermissionsApps_Apps_AppId",
                         column: x => x.AppId,
                         principalTable: "Apps",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PermissionApps_Permissions_PermissionId",
+                        name: "FK_PermissionsApps_Permissions_PermissionId",
                         column: x => x.PermissionId,
                         principalTable: "Permissions",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PermissionApps_Tenants_TenantId",
+                        name: "FK_PermissionsApps_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
                         principalColumn: "Id");
@@ -338,23 +338,23 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PermissionApps_AppId",
-                table: "PermissionApps",
-                column: "AppId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PermissionApps_PermissionId",
-                table: "PermissionApps",
-                column: "PermissionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PermissionApps_TenantId",
-                table: "PermissionApps",
+                name: "IX_Permissions_TenantId",
+                table: "Permissions",
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Permissions_TenantId",
-                table: "Permissions",
+                name: "IX_PermissionsApps_AppId",
+                table: "PermissionsApps",
+                column: "AppId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionsApps_PermissionId",
+                table: "PermissionsApps",
+                column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PermissionsApps_TenantId",
+                table: "PermissionsApps",
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
@@ -429,7 +429,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 name: "AccountsRoles");
 
             migrationBuilder.DropTable(
-                name: "PermissionApps");
+                name: "PermissionsApps");
 
             migrationBuilder.DropTable(
                 name: "ResetPasswords");

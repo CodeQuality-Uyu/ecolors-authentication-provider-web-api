@@ -7,9 +7,10 @@ public interface IAccountService
     Task<AccountLogged> GetByTokenAsync(string token);
 
     Task<Account> GetByEmailAsync(string email);
+
+    Task<Account> GetByIdAsync(string id);
 }
 
 internal interface IAccountInternalService : IAccountService
 {
-    Task<Account> GetByIdAsync(string id);
 }

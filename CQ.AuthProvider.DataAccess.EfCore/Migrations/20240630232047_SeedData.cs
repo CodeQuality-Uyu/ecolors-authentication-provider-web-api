@@ -8,21 +8,26 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateSeedData : Migration
+    public partial class SeedData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("DELETE FROM \"Tenants\"");
             migrationBuilder.Sql("DELETE FROM \"Accounts\"");
+            migrationBuilder.Sql("DELETE FROM \"AccountsApps\"");
+            migrationBuilder.Sql("DELETE FROM \"AccountsRoles\"");
             migrationBuilder.Sql("DELETE FROM \"Roles\"");
+            migrationBuilder.Sql("DELETE FROM \"RolesApps\"");
+            migrationBuilder.Sql("DELETE FROM \"RolesPermissions\"");
             migrationBuilder.Sql("DELETE FROM \"Permissions\"");
+            migrationBuilder.Sql("DELETE FROM \"PermissionsApps\"");
 
             #region Auth Provider Tenant and Account
             migrationBuilder
                 .DropForeignKey("FK_Tenants_Accounts_OwnerId", "Tenants");
 
-            var ownerId = Db.NewId();
+            var ownerId = "5f7dd4f88608458ea68bdc3ef9a94e59";
             var authProviderTenantId = Db.NewId();
             migrationBuilder
                 .InsertData("Tenants",

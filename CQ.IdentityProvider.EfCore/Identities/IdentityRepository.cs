@@ -4,7 +4,7 @@ using CQ.UnitOfWork.EfCore.Core;
 namespace CQ.IdentityProvider.EfCore.Identities;
 
 public sealed class IdentityRepository(
-    IdentityProviderDbContext context)
+    IdentityDbContext context)
     : EfCoreRepository<Identity>(context),
     IIdentityRepository
 {

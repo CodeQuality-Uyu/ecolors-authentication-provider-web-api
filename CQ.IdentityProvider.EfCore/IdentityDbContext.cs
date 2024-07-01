@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CQ.IdentityProvider.EfCore;
 
-public sealed class IdentityProviderDbContext(DbContextOptions<IdentityProviderDbContext> options)
+public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
     : EfCoreContext(options),
     IIdentityProviderHealthService
 {
@@ -17,7 +17,7 @@ public sealed class IdentityProviderDbContext(DbContextOptions<IdentityProviderD
             {
                 entity.HasData(
                 new Identity(
-                    "1",
+                    "5f7dd4f88608458ea68bdc3ef9a94e59",
                     "admin@gmail.com",
                     "!12345678"));
             });

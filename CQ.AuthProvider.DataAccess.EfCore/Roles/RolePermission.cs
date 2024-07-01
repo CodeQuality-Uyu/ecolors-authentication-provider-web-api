@@ -4,7 +4,7 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles;
 
-public sealed record class RolePermission
+public sealed record class RolePermission()
 {
     public string Id { get; init; } = Db.NewId();
 
@@ -21,13 +21,6 @@ public sealed record class RolePermission
     public TenantEfCore Tenant { get; init; } = null!;
 
     /// <summary>
-    /// For Ef Core
-    /// </summary>
-    public RolePermission()
-    {
-    }
-
-    /// <summary>
     /// For new Role
     /// </summary>
     /// <param name="permissionId"></param>
@@ -35,6 +28,7 @@ public sealed record class RolePermission
     public RolePermission(
         string permissionId,
         string tenantId)
+        : this()
     {
         PermissionId = permissionId;
         TenantId = tenantId;
@@ -50,6 +44,7 @@ public sealed record class RolePermission
         string id,
         string permissionId,
         string tenantId)
+        : this()
     {
         RoleId = id;
         PermissionId = permissionId;

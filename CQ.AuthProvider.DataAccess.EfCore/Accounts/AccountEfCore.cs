@@ -5,7 +5,7 @@ using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
-public sealed record class AccountEfCore
+public sealed record class AccountEfCore()
 {
     public string Id { get; init; } = null!;
 
@@ -34,13 +34,6 @@ public sealed record class AccountEfCore
     public TenantEfCore Tenant { get; init; } = null!;
 
     /// <summary>
-    /// For EfCore
-    /// </summary>
-    public AccountEfCore()
-    {
-    }
-
-    /// <summary>
     /// For new AccountEfCore
     /// </summary>
     /// <param name="id"></param>
@@ -64,6 +57,7 @@ public sealed record class AccountEfCore
         string? profilePictureUrl,
         List<App> apps,
         Tenant tenant)
+        : this()
     {
         Id = id;
         Email = email;
@@ -98,6 +92,7 @@ public sealed record class AccountEfCore
         string locale,
         string timeZone,
         string? profilePictureUrl)
+        : this()
     {
         Id = id;
         Email = email;

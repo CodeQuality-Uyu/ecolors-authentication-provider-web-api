@@ -17,12 +17,12 @@ public static class EfCoreRepositoriesConfig
         var connectionString = configuration.GetConnectionString("Identity");
 
         services
-            .AddContext<IdentityProviderDbContext>(
+            .AddContext<IdentityDbContext>(
             (options) => 
             options.UseSqlServer(connectionString),
             LifeTime.Scoped)
             .AddAbstractionRepository<Identity, IIdentityRepository, IdentityRepository>(LifeTime.Scoped)
-            .AddScoped<IIdentityProviderHealthService, IdentityProviderDbContext>();
+            .AddScoped<IIdentityProviderHealthService, IdentityDbContext>();
 
         return services;
     }

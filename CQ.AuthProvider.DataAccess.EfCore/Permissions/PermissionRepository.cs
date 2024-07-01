@@ -16,11 +16,13 @@ internal sealed class PermissionRepository(
     public async Task<List<Permission>> GetAllAsync(
         bool? isPrivate,
         string? roleId,
-        Account accountLogged)
+        AccountLogged accountLogged)
     {
         var query = _dbSet
+            .Where(p => p.TenantId == null || p.TenantId == accountLogged.Tenant.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Exists(r => r.RoleId == roleId));
+            //.Where(p => p.Apps.Exists(a => accountLogged.Apps.Exists(aa => aa.Id == a.Id)));
 
         var permissions = await query
             .ToListAsync()

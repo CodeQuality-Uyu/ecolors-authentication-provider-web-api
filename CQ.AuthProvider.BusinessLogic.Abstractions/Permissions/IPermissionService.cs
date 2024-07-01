@@ -7,7 +7,7 @@ public interface IPermissionService
     Task<List<Permission>> GetAllAsync(
         bool? isPrivate,
         string? roleId,
-        Account accountLogged);
+        AccountLogged accountLogged);
 
     Task CreateAsync(
         CreatePermissionArgs permission,

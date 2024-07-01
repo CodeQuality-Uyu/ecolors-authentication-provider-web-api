@@ -2,13 +2,22 @@
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.AuthProvider.DataAccess.Factory;
+using CQ.Utility;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters;
 
-internal class CQAuthenticationAttribute : SecureAuthenticationAttribute
+internal sealed class CQAuthenticationAttribute : SecureAuthenticationAttribute
 {
-    protected override async Task<bool> IsFormatOfHeaderValidAsync(string header, string headerValue, AuthorizationFilterContext context)
+    public CQAuthenticationAttribute()
+    {
+        var fakeSection = "Logged:IsActive";
+    }
+
+    protected override async Task<bool> IsFormatOfHeaderValidAsync(
+        string header,
+        string headerValue,
+        AuthorizationFilterContext context)
     {
         var authSection = base.GetService<AuthSection>(context);
 
@@ -28,12 +37,33 @@ internal class CQAuthenticationAttribute : SecureAuthenticationAttribute
     {
         var authSection = base.GetService<AuthSection>(context);
 
+        var accountService = base.GetService<IAccountService>(context);
+
         if (authSection.Logged!.IsActive)
         {
-            return authSection.Logged.Account;
-        }
+            dynamic fakeAccount = authSection.Logged.Account;
 
-        var accountService = base.GetService<IAccountService>(context);
+            try
+            {
+                if (Guard.IsNotNullOrEmpty(fakeAccount.Token))
+                {
+                    fakeAccount = await accountService
+                        .GetByTokenAsync(fakeAccount.Token)
+                        .ConfigureAwait(false);
+                }
+                else if (Guard.IsNotNullOrEmpty(fakeAccount.Id))
+                {
+                    fakeAccount = await accountService
+                        .GetByIdAsync(fakeAccount.Id)
+                        .ConfigureAwait(false);
+                }
+            }
+            catch (System.Exception)
+            {
+            }
+
+            return fakeAccount;
+        }
 
         var account = await accountService.GetByTokenAsync(headerValue).ConfigureAwait(false);
 

@@ -8,11 +8,12 @@ using CQ.Utility;
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 
 internal sealed class AccountService(
-        IAccountRepository accountRepository,
-        IIdentityRepository identityService,
-        ISessionInternalService sessionService,
-        IRoleInternalService roleInternalService,
-        IAppInternalService appInternalService)
+    IAccountRepository accountRepository,
+    IIdentityRepository identityRepository,
+    ISessionInternalService sessionService,
+    IRoleInternalService roleInternalService,
+    IAppInternalService appInternalService
+    )
     : IAccountInternalService
 {
     #region Create
@@ -67,7 +68,7 @@ internal sealed class AccountService(
         }
         catch (SpecificResourceNotFoundException<Role>)
         {
-            await identityService
+            await identityRepository
                 .DeleteByIdAsync(identity.Id)
                 .ConfigureAwait(false);
             throw;
@@ -92,7 +93,7 @@ internal sealed class AccountService(
             newAccount.Email,
             newAccount.Password);
 
-        await identityService
+        await identityRepository
             .CreateAsync(identity)
             .ConfigureAwait(false);
 
@@ -120,7 +121,7 @@ internal sealed class AccountService(
     {
         Guard.ThrowIsInputInvalidPassword(newPassword, nameof(newPassword));
 
-        await identityService
+        await identityRepository
             .UpdatePasswordAsync(
             userLogged.Id,
             newPassword)

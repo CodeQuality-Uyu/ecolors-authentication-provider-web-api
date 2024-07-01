@@ -27,18 +27,17 @@ internal sealed class RoleService(
             }
             else if (!hasPermission)
             {
-
-                throw new AccessDeniedException(PermissionKey.GetAllPrivateRoles.ToString());
+                accountLogged.AssertPermission(PermissionKey.GetAllPrivateRoles);
             }
         }
 
-        var permissions = await roleRepository
+        var roles = await roleRepository
             .GetAllAsync(
             isPrivate,
             accountLogged)
             .ConfigureAwait(false);
 
-        return permissions;
+        return roles;
     }
 
     public async Task AssertByKeyAsync(RoleKey key)

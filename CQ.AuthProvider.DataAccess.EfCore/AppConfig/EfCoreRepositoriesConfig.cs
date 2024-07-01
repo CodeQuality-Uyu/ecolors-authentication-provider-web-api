@@ -6,6 +6,7 @@ using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
+using CQ.AuthProvider.DataAccess.EfCore.Permissions.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
@@ -34,7 +35,10 @@ public static class EfCoreRepositoriesConfig
 
     public static IServiceCollection AddMappings(this IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(AccountProfile));
+        services
+            .AddAutoMapper(
+            typeof(PermissionProfile),
+            typeof(AccountProfile));
 
         return services;
     }

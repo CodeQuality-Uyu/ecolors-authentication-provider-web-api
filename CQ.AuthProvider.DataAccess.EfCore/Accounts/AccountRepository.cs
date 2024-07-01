@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore.Core;
+using CQ.Utility;
+using Microsoft.EntityFrameworkCore;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 internal sealed class AccountRepository(
-    IMapper mapper,
-    AuthDbContext context)
+    AuthDbContext context,
+    IMapper mapper
+    )
     : EfCoreRepository<AccountEfCore>(context),
     IAccountRepository
 {
@@ -42,7 +46,23 @@ internal sealed class AccountRepository(
 
     public new async Task<Account> GetByIdAsync(string id)
     {
-        var account = await GetAsync(a => a.Id == id).ConfigureAwait(false);
+        var query =
+            _dbSet
+            .Include(a => a.Roles)
+            .ThenInclude(r => r.Role)
+            .ThenInclude(r => r.Permissions)
+            .ThenInclude(p => p.Permission)
+            .Include(a => a.Tenant)
+            .Where(a => a.Id == id);
+
+        var account = await query
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        if (Guard.IsNull(account))
+        {
+            throw new SpecificResourceNotFoundException<Account>(nameof(Account.Id), id);
+        }
 
         return mapper.Map<Account>(account);
     }

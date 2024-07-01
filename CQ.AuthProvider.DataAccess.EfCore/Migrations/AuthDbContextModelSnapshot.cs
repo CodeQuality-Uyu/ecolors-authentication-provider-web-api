@@ -169,7 +169,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("PermissionApps");
+                    b.ToTable("PermissionsApps");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>

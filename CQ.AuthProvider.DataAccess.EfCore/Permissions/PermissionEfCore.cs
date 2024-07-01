@@ -6,7 +6,7 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
-public sealed record class PermissionEfCore
+public sealed record class PermissionEfCore()
 {
     public string Id { get; set; } = Db.NewId();
 
@@ -27,13 +27,6 @@ public sealed record class PermissionEfCore
     public TenantEfCore? Tenant { get; init; } = null!;
 
     /// <summary>
-    /// For EfCore
-    /// </summary>
-    public PermissionEfCore()
-    {
-    }
-
-    /// <summary>
     /// For new Permission
     /// </summary>
     /// <param name="id"></param>
@@ -48,6 +41,7 @@ public sealed record class PermissionEfCore
         PermissionKey key,
         bool isPublic,
         Tenant tenant)
+        : this()
     {
         Id = id;
         Name = name;
@@ -68,6 +62,7 @@ public sealed record class PermissionEfCore
         string description,
         PermissionKey key,
         string tenantId)
+        : this()
     {
         Name = name;
         Description = description;

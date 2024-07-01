@@ -13,7 +13,10 @@ internal class CQAuthorizationAttribute(string? permission = null)
         new CQAuthenticationAttribute(),
         permission)
 {
-    protected override Task<bool> HasRequestPermissionAsync(string headerValue, string permission, AuthorizationFilterContext context)
+    protected override Task<bool> HasRequestPermissionAsync(
+        string headerValue,
+        string permission,
+        AuthorizationFilterContext context)
     {
         var accountLogged = context.HttpContext.GetItem<AccountLogged>(ContextItems.AccountLogged);
 

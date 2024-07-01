@@ -13,9 +13,11 @@ namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 [CQAuthorization]
 public class PermissionController(
     IMapper mapper,
-    IPermissionService permissionService)
+    IPermissionService permissionService
+    )
     : ControllerBase
 {
+
     [HttpPost]
     public async Task CreateAsync(CreatePermissionRequest? request)
     {
@@ -50,13 +52,16 @@ public class PermissionController(
 
     [HttpGet]
     public async Task<List<PermissionBasicInfoResponse>> GetAllAsync(
-        [FromQuery] bool isPrivate = false,
-        [FromQuery] string? roleId = null)
+        [FromQuery] bool? isPrivate,
+        [FromQuery] string? roleId)
     {
         var accountLogged = this.GetAccountLogged();
 
         var permissions = await permissionService
-            .GetAllAsync(isPrivate, roleId, accountLogged)
+            .GetAllAsync(
+            isPrivate,
+            roleId,
+            accountLogged)
             .ConfigureAwait(false);
 
         return mapper.Map<List<PermissionBasicInfoResponse>>(permissions);

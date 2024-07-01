@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20240627223457_InitialCreation")]
-    partial class InitialCreation
+    [Migration("20240630232047_SeedData")]
+    partial class SeedData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,7 +172,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("PermissionApps");
+                    b.ToTable("PermissionsApps");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>

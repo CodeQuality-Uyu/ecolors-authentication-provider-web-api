@@ -12,11 +12,20 @@ internal sealed class PermissionService(
     public async Task<List<Permission>> GetAllAsync(
         bool? isPrivate,
         string? roleId,
-        Account accountLogged)
+        AccountLogged accountLogged)
     {
-        if (isPrivate.HasValue && isPrivate.Value)
+        if (isPrivate == null || isPrivate.Value)
         {
-            accountLogged.AssertPermission(PermissionKey.GetAllPrivatePermissions);
+            var hasPermission = accountLogged.HasPermission(PermissionKey.GetAllPrivatePermissions);
+
+            if (isPrivate == null)
+            {
+                isPrivate = hasPermission ? isPrivate : false;
+            }
+            else if (!hasPermission)
+            {
+                accountLogged.AssertPermission(PermissionKey.GetAllPermissionsByRoleId);
+            }
         }
 
         if (Guard.IsNotNullOrEmpty(roleId))
