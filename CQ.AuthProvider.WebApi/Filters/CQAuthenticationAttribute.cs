@@ -1,4 +1,5 @@
 ﻿using CQ.ApiElements.Filters.Authentications;
+using CQ.ApiElements.Filters.Extensions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.AuthProvider.DataAccess.Factory;
@@ -9,9 +10,43 @@ namespace CQ.AuthProvider.WebApi.Filters;
 
 internal sealed class CQAuthenticationAttribute : SecureAuthenticationAttribute
 {
-    public CQAuthenticationAttribute()
+    protected override async Task<object?> GetFakeAuthAsync(AuthorizationFilterContext context)
     {
-        var fakeSection = "Logged:IsActive";
+        var authSection = context.GetService<AuthSection>();
+
+        if (!authSection.Fake!.IsActive)
+        {
+            return null;
+        }
+
+        dynamic fakeAccount = authSection.Fake.Account;
+
+        if (Guard.IsNullOrEmpty(fakeAccount.Id) &&
+            Guard.IsNullOrEmpty(fakeAccount.Token))
+        {
+            return fakeAccount;
+        }
+
+        var accountService = context.GetService<IAccountService>();
+
+        try
+        {
+            if (Guard.IsNotNullOrEmpty(fakeAccount.Token))
+            {
+                fakeAccount = await accountService
+                    .GetByTokenAsync(fakeAccount.Token)
+                    .ConfigureAwait(false);
+            }
+
+            fakeAccount = await accountService
+                .GetByIdAsync(fakeAccount.Id)
+                .ConfigureAwait(false);
+        }
+        catch (System.Exception)
+        {
+        }
+
+        return fakeAccount;
     }
 
     protected override async Task<bool> IsFormatOfHeaderValidAsync(
@@ -19,53 +54,25 @@ internal sealed class CQAuthenticationAttribute : SecureAuthenticationAttribute
         string headerValue,
         AuthorizationFilterContext context)
     {
-        var authSection = base.GetService<AuthSection>(context);
+        var sessionService = context.GetService<ISessionService>();
 
-        if (authSection.Logged!.IsActive)
-        {
-            return true;
-        }
-
-        var sessionService = base.GetService<ISessionService>(context);
-
-        var isFormatValid = await sessionService.IsTokenValidAsync(headerValue).ConfigureAwait(false);
+        var isFormatValid = await sessionService
+            .IsTokenValidAsync(headerValue)
+            .ConfigureAwait(false);
 
         return isFormatValid;
     }
 
-    protected override async Task<object> GetRequestByHeaderAsync(string header, string headerValue, AuthorizationFilterContext context)
+    protected override async Task<object> GetItemByHeaderAsync(
+        string header,
+        string headerValue,
+        AuthorizationFilterContext context)
     {
-        var authSection = base.GetService<AuthSection>(context);
+        var accountService = context.GetService<IAccountService>();
 
-        var accountService = base.GetService<IAccountService>(context);
-
-        if (authSection.Logged!.IsActive)
-        {
-            dynamic fakeAccount = authSection.Logged.Account;
-
-            try
-            {
-                if (Guard.IsNotNullOrEmpty(fakeAccount.Token))
-                {
-                    fakeAccount = await accountService
-                        .GetByTokenAsync(fakeAccount.Token)
-                        .ConfigureAwait(false);
-                }
-                else if (Guard.IsNotNullOrEmpty(fakeAccount.Id))
-                {
-                    fakeAccount = await accountService
-                        .GetByIdAsync(fakeAccount.Id)
-                        .ConfigureAwait(false);
-                }
-            }
-            catch (System.Exception)
-            {
-            }
-
-            return fakeAccount;
-        }
-
-        var account = await accountService.GetByTokenAsync(headerValue).ConfigureAwait(false);
+        var account = await accountService
+            .GetByTokenAsync(headerValue)
+            .ConfigureAwait(false);
 
         return account;
     }

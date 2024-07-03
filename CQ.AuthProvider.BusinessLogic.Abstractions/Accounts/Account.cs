@@ -82,8 +82,8 @@ public record class Account()
            .SelectMany(r => r.Permissions)
            .ToList();
 
-        var missingPermission = !allPermissions.Exists(p => p.HasPermission(permission));
+        var hasPermission = allPermissions.Exists(p => p.HasPermission(permission));
 
-        return missingPermission;
+        return hasPermission;
     }
 }

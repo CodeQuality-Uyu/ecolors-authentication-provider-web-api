@@ -8,6 +8,7 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
 using CQ.IdentityProvider.Firebase.Identities;
+using CQ.Extensions.ServiceCollection;
 
 namespace CQ.IdentityProvider.Firebase.AppConfig;
 
@@ -52,22 +53,19 @@ public static class FirebaseRepositoriesConfig
             Credential = credentials
         });
 
-        if (playerFinderApp == null)
+        if (Guard.IsNull(playerFinderApp))
         {
             throw new FirebaseInitAppException(identityFirebase.ProjectId);
         }
 
-        services.AddScoped((serviceProvider) =>
+        var firebaseAuth = FirebaseAuth.GetAuth(playerFinderApp);
+
+        if (Guard.IsNull(firebaseAuth))
         {
-            var firebaseAuth = FirebaseAuth.GetAuth(playerFinderApp);
+            throw new FirebaseInitAuthException(identityFirebase.ProjectId);
+        }
 
-            if (firebaseAuth == null)
-            {
-                throw new FirebaseInitAuthException(identityFirebase.ProjectId);
-            }
-
-            return firebaseAuth;
-        });
+        services.AddService<FirebaseAuth>(firebaseAuth, LifeTime.Scoped);
 
         return services;
     }

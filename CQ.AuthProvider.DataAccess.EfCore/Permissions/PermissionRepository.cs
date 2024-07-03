@@ -18,11 +18,14 @@ internal sealed class PermissionRepository(
         string? roleId,
         AccountLogged accountLogged)
     {
+        var appsIdsOfUserLogged = accountLogged
+            .Apps
+            .ConvertAll(a => a.Id);
+
         var query = _dbSet
             .Where(p => p.TenantId == null || p.TenantId == accountLogged.Tenant.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Exists(r => r.RoleId == roleId));
-            //.Where(p => p.Apps.Exists(a => accountLogged.Apps.Exists(aa => aa.Id == a.Id)));
 
         var permissions = await query
             .ToListAsync()

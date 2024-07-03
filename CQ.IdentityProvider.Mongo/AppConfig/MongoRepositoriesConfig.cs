@@ -3,6 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.Mongo.Identities;
 using CQ.UnitOfWork.MongoDriver.Configuration;
+using CQ.Utility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
@@ -16,6 +17,7 @@ public static class MongoRepositoriesConfig
         IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("Identity");
+        Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Identity");
 
         services
             .AddContext<IdentityDbContext>(

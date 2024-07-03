@@ -16,9 +16,9 @@ public static class DataAccessConfig
         var authOptions = configuration.GetSection<AuthSection>(AuthSection.Name);
 
         Guard.ThrowIsNull(authOptions, "Auth");
-        Guard.ThrowIsNull(authOptions.Logged, "Auth:Logged");
+        Guard.ThrowIsNull(authOptions.Fake, "Auth:Fake");
 
-        authOptions.Logged!.Build();
+        authOptions.Fake.Build();
         services.AddSingleton(authOptions);
 
         switch (authOptions.Engine)

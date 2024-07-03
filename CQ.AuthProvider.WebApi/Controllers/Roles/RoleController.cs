@@ -11,6 +11,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Roles;
 
 [ApiController]
 [Route("roles")]
+[CQAuthentication]
 [CQAuthorization]
 public class RoleController(
     IMapper mapper,

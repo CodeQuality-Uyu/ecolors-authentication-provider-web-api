@@ -15,14 +15,14 @@ public sealed record class Permission()
 
     public PermissionKey Key { get; init; } = null!;
 
-    public Tenant Tenant { get; init; } = null!;
+    public Tenant? Tenant { get; init; } = null!;
 
     public Permission(
         string name,
         string description,
         bool isPublic,
         PermissionKey key,
-        Tenant tenant)
+        Tenant? tenant)
         : this()
     {
         Name = name;

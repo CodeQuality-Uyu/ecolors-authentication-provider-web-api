@@ -10,6 +10,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 
 [ApiController]
 [Route("permissions")]
+[CQAuthentication]
 [CQAuthorization]
 public class PermissionController(
     IMapper mapper,

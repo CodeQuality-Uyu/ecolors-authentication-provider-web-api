@@ -9,16 +9,14 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace CQ.AuthProvider.WebApi.Filters;
 
 internal class CQAuthorizationAttribute(string? permission = null)
-    : SecureAuthorizationAttribute(
-        new CQAuthenticationAttribute(),
-        permission)
+    : SecureAuthorizationAttribute(permission)
 {
     protected override Task<bool> HasRequestPermissionAsync(
         string headerValue,
         string permission,
         AuthorizationFilterContext context)
     {
-        var accountLogged = context.HttpContext.GetItem<AccountLogged>(ContextItems.AccountLogged);
+        var accountLogged = context.GetItem<AccountLogged>(ContextItems.AccountLogged);
 
         if (Guard.IsNull(accountLogged))
         {

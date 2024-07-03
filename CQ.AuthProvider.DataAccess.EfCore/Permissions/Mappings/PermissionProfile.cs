@@ -9,6 +9,8 @@ internal sealed class PermissionProfile : Profile
     {
         #region Get all
         CreateMap<PermissionEfCore, Permission>();
+        CreateMap<string, PermissionKey>()
+            .ConvertUsing((source, destination, context) => new (source));
         #endregion
     }
 }

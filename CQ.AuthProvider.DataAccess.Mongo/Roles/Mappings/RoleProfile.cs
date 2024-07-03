@@ -5,7 +5,7 @@ using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 
 namespace CQ.AuthProvider.DataAccess.Mongo.Roles.Mappings;
 
-public sealed class RoleProfile : Profile
+internal sealed class RoleProfile : Profile
 {
     public RoleProfile()
     {

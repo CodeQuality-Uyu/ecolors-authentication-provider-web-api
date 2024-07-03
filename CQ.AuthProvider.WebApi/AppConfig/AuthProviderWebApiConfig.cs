@@ -1,6 +1,9 @@
 ﻿using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Abstractions.AppConfig;
+using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.DataAccess.Factory;
+using CQ.AuthProvider.WebApi.Controllers.Permissions.Mappings;
+using CQ.AuthProvider.WebApi.Controllers.Roles.Mappings;
 using CQ.AuthProvider.WebApi.Filters.Exception;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.Factory;
@@ -15,14 +18,26 @@ internal static class AuthProviderWebApiConfig
     {
         services
             .AddExceptionGlobalHandlerService<CQAuthExceptionRegistryService>(LifeTime.Singleton)
+            
+            .AddMappings()
 
-            .ConfigureServices(configuration)
+            .ConfigureServices()
 
             .ConfigureDataAccess(configuration)
 
             .ConfigureIdentityProvider(configuration)
             ;
 
+        return services;
+    }
+
+    private static IServiceCollection AddMappings(
+        this IServiceCollection services)
+    {
+        services
+            .AddAutoMapper(
+            typeof(PermissionProfile),
+            typeof(RoleProfile));
         return services;
     }
 }

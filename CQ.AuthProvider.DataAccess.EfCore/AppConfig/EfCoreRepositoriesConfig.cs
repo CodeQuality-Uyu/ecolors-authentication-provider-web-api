@@ -9,6 +9,7 @@ using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
+using CQ.AuthProvider.DataAccess.EfCore.Roles.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
 using CQ.Extensions.ServiceCollection;
 using CQ.UnitOfWork.EfCore.Configuration;
@@ -33,22 +34,22 @@ public static class EfCoreRepositoriesConfig
         return services;
     }
 
-    public static IServiceCollection AddMappings(this IServiceCollection services)
+    private static IServiceCollection AddMappings(this IServiceCollection services)
     {
         services
             .AddAutoMapper(
             typeof(PermissionProfile),
+            typeof(RoleProfile),
             typeof(AccountProfile));
 
         return services;
     }
 
-    public static IServiceCollection AddRepositories(
+    private static IServiceCollection AddRepositories(
         this IServiceCollection services,
         IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("Auth");
-
         Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
 
         services
@@ -56,7 +57,7 @@ public static class EfCoreRepositoriesConfig
             options
             .UseSqlServer(connectionString),
             LifeTime.Scoped)
-
+            
             .AddAbstractionRepository<AccountEfCore, IAccountRepository, AccountRepository>(LifeTime.Scoped)
             .AddAbstractionRepository<RoleEfCore, IRoleRepository, RoleRepository>(LifeTime.Scoped)
             .AddRepositoryForContext<RolePermission, AuthDbContext>(LifeTime.Scoped)

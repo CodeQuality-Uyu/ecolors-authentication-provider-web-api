@@ -3,7 +3,6 @@ using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.AppConfig;
@@ -11,8 +10,7 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.AppConfig;
 public static class ServicesConfig
 {
     public static IServiceCollection ConfigureServices(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services)
     {
         services
             .AddScoped<IAccountService, AccountService>()

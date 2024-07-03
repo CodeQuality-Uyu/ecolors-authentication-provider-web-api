@@ -13,7 +13,7 @@ public sealed record class AuthSection
 
     public AuthEngine Engine { get; init; }
 
-    public FakeAccountLogged? Logged { get; init; }
+    public FakeAccountLogged Fake { get; init; } = null!;
 }
 
 public enum AuthEngine
@@ -51,12 +51,14 @@ public sealed record class FakeAccountLogged : AccountLogged
             {
                 Id = a
             }),
-            Roles = [
+            Roles = PermissionsKeys.Count == 0 
+            ? []
+            : [
             new Role
             {
                 Permissions = PermissionsKeys.ConvertAll(p => new Permission
                 {
-                    Id = p
+                    Key = new PermissionKey(p)
                 })
             }],
             Tenant = new Tenant

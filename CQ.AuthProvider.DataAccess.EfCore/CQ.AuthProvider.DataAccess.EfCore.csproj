@@ -16,6 +16,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
 
 		<PackageReference Include="CQ.Extensions.Configuration" Version="2.0.0" />
+		<PackageReference Include="CQ.Extensions.ServiceCollection" Version="2.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -32,22 +32,22 @@ public sealed class InvitationController(
     }
 
     [HttpPatch("{id}/accept")]
-    public async Task AcceptAsync()
+    public async Task AcceptAsync(string id)
     { 
     }
 
     [HttpPatch("{id}/accept-tenant")]
-    public async Task AcceptTenantAsync()
+    public async Task AcceptTenantAsync(string id)
     {
     }
 
     [HttpPatch("{id}/declain")]
-    public async Task DeclainAsync()
+    public async Task DeclainAsync(string id)
     {
     }
 
     [HttpGet("{id}")]
-    public async Task GetActiveByIdAsync()
+    public async Task GetActiveByIdAsync(string id)
     {
     }
 }

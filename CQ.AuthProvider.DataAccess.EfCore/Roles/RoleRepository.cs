@@ -23,8 +23,6 @@ internal sealed class RoleRepository(
         AccountLogged accountLogged)
     {
         var query = _dbSet
-            .Include(r => r.Permissions)
-                .ThenInclude(p => p.Permission)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
             .Where(r => r.TenantId == null || r.TenantId == accountLogged.Tenant.Id);
 

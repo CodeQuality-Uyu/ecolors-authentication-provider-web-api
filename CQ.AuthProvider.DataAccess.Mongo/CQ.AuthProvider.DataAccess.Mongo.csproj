@@ -13,6 +13,7 @@
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 
 		<PackageReference Include="CQ.Extensions.Configuration" Version="2.0.0" />
+		<PackageReference Include="CQ.Extensions.ServiceCollection" Version="2.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -5,9 +5,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="CQ.Extensions.Configuration" Version="2.0.0" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CQ.UnitOfWork.Abstractions" Version="3.0.0" />

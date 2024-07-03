@@ -2,6 +2,7 @@
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.Identities;
 using CQ.UnitOfWork.EfCore.Configuration;
+using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ public static class EfCoreRepositoriesConfig
         IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("Identity");
+        Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Identity");
 
         services
             .AddContext<IdentityDbContext>(

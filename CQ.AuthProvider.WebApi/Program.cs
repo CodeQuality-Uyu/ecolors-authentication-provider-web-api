@@ -23,7 +23,6 @@ var configuration = builder.Configuration;
 services
     .ConfigureApiServices(configuration);
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
