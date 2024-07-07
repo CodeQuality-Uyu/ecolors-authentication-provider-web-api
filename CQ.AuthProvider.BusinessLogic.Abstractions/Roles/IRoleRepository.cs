@@ -8,6 +8,7 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 internal interface IRoleRepository
 {
     Task<List<Role>> GetAllAsync(
+        string? appId,
         bool? isPrivate,
         AccountLogged accountLogged);
 
@@ -15,13 +16,9 @@ internal interface IRoleRepository
 
     Task RemoveDefaultAsync();
 
-    Task CreateAsync(
-        Role role,
-        AccountLogged accountLogged);
+    Task CreateAsync(Role role);
 
-    Task CreateBulkAsync(
-        List<Role> roles,
-        AccountLogged accountLogged);
+    Task CreateBulkAsync(List<Role> roles);
 
     Task<List<Role>> GetAllByRolesKeyesAsync(List<RoleKey> rolesKeys);
 
@@ -35,7 +32,9 @@ internal interface IRoleRepository
         string id,
         List<PermissionKey> permissionKey);
 
-    Task AddPermissionsAsync(string id, List<PermissionKey> permissionsKeys);
+    Task AddPermissionsAsync(
+        string id,
+        List<PermissionKey> permissionsKeys);
 
     Task<Role> GetByKeyAsync(RoleKey key);
 

@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.Exceptions;
 using CQ.Utility;
 using System.Data;
@@ -6,10 +7,12 @@ using System.Data;
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
 internal sealed class PermissionService(
-    IPermissionRepository permissionRepository)
+    IPermissionRepository permissionRepository,
+    IAppInternalService appService)
     : IPermissionInternalService
 {
     public async Task<List<Permission>> GetAllAsync(
+        string? appId,
         bool? isPrivate,
         string? roleId,
         AccountLogged accountLogged)
@@ -20,7 +23,9 @@ internal sealed class PermissionService(
 
             if (isPrivate == null)
             {
-                isPrivate = hasPermission ? isPrivate : false;
+                isPrivate = hasPermission
+                    ? null
+                    : false;
             }
             else if (!hasPermission)
             {
@@ -33,8 +38,19 @@ internal sealed class PermissionService(
             accountLogged.AssertPermission(PermissionKey.GetAllPermissionsByRoleId);
         }
 
+        if (Guard.IsNullOrEmpty(appId) && !accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfTenant))
+        {
+            appId = accountLogged.AppLogged.Id;
+        }
+
+        if (Guard.IsNotNullOrEmpty(appId))
+        {
+            accountLogged.AssertPermission(PermissionKey.GetAllPermissionsOfTenant);
+        }
+
         var permissions = await permissionRepository
             .GetAllAsync(
+            appId,
             isPrivate,
             roleId,
             accountLogged)
@@ -83,12 +99,22 @@ internal sealed class PermissionService(
                 args.Key.ToString());
         }
 
+        var app = accountLogged.AppLogged;
+        if (Guard.IsNotNullOrEmpty(args.AppId))
+        {
+            app = await appService
+                .GetByIdAsync(
+                args.AppId!,
+                accountLogged)
+                .ConfigureAwait(false);
+        }
+
         var permission = new Permission(
             args.Name,
             args.Description,
             args.IsPublic,
             args.Key,
-            accountLogged.Tenant);
+            app);
 
         await permissionRepository
             .CreateAsync(permission)
@@ -131,12 +157,48 @@ internal sealed class PermissionService(
             throw new SpecificResourceDuplicatedException<Permission>([nameof(Permission.Key)], permissionsSavedKeysMapped);
         }
 
-        var permissions = args.ConvertAll(p => new Permission(
+        var appsIds = args
+            .GroupBy(a => a.AppId)
+            .Where(a => Guard.IsNotNullOrEmpty(a.Key))
+            .Select(g => g.Key)
+            .ToList();
+
+        List<App> appsSaved = [];
+        if (appsIds.Count != 0)
+        {
+            appsSaved = await appService
+                .GetAllByIdAsync(
+                appsIds,
+                accountLogged)
+                .ConfigureAwait(false);
+
+            if(appsSaved.Count != appsIds.Count)
+            {
+                var missingAppsIds = appsIds
+                    .Where(a => !appsSaved.Exists(aa => aa.Id == a))
+                    .ToList();
+
+                throw new SpecificResourceNotFoundException<App>(
+                    [nameof(App.Id)],
+                    missingAppsIds);
+            }
+        }
+
+        var permissions = args.ConvertAll(p =>
+        {
+            var app = accountLogged.AppLogged;
+            if (Guard.IsNotNullOrEmpty(p.AppId))
+            {
+                app = appsSaved.First(a => a.Id == p.AppId);
+            }
+
+            return new Permission(
             p.Name,
             p.Description,
             p.IsPublic,
             p.Key,
-            accountLogged.Tenant));
+            app);
+        });
 
         await permissionRepository
             .CreateBulkAsync(permissions)

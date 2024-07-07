@@ -1,16 +1,22 @@
 ﻿
 
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 
 internal sealed class AppService
     : IAppInternalService
 {
-    public Task<List<App>> GetAllByIdAsync(List<string> ids)
+    public Task<List<App>> GetAllByIdAsync(
+        List<string> ids,
+        AccountLogged accountLogged)
     {
         throw new NotImplementedException();
     }
 
-    public Task<App> GetByIdAsync(string id)
+    public Task<App> GetByIdAsync(
+        string id,
+        AccountLogged accountLogged)
     {
         throw new NotImplementedException();
     }

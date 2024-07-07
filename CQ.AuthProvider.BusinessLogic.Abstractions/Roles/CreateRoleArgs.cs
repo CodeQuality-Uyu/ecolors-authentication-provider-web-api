@@ -17,7 +17,7 @@ public readonly struct CreateRoleArgs
 
     public bool IsDefault { get; init; }
 
-    public string AppId { get; init; }
+    public string? AppId { get; init; }
 
     public CreateRoleArgs(
         string name,
@@ -26,7 +26,7 @@ public readonly struct CreateRoleArgs
         List<string> permissionKeys,
         bool isPublic,
         bool isDefault,
-        string appId)
+        string? appId)
     {
         Name = Guard.Normalize(Guard.Encode(name, nameof(name)));
         Guard.ThrowIsMoreThan(Name, 50, nameof(Name));
@@ -40,7 +40,11 @@ public readonly struct CreateRoleArgs
         IsPublic = isPublic;
         IsDefault = isDefault;
 
-        Db.ThrowIsInvalidId(appId, nameof(appId));
+        if (Guard.IsNotNullOrEmpty(appId))
+        {
+            Db.ThrowIsInvalidId(appId, nameof(appId));
+        }
+
         AppId = appId;
     }
 }

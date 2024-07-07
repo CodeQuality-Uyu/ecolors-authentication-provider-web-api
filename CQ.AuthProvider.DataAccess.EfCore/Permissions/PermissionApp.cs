@@ -4,7 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
-public sealed record class PermissionApp
+public sealed record class PermissionApp()
 {
     public string Id { get; init; } = null!;
 
@@ -21,18 +21,15 @@ public sealed record class PermissionApp
     public TenantEfCore Tenant { get; init; } = null!;
 
     /// <summary>
-    /// For EfCore
-    /// </summary>
-    public PermissionApp()
-    {
-    }
-
-    /// <summary>
     /// For new Permission
     /// </summary>
     /// <param name="appId"></param>
-    public PermissionApp(string appId)
+    public PermissionApp(
+        string appId,
+        string tenantId)
+        : this()
     {
         AppId = appId;
+        TenantId = tenantId;
     }
 }

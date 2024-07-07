@@ -6,6 +6,7 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 public interface IRoleService
 {
     Task<List<Role>> GetAllAsync(
+        string? appId,
         bool? isPrivate,
         AccountLogged accountLogged);
 

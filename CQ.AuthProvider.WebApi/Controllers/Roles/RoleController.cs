@@ -66,12 +66,14 @@ public class RoleController(
 
     [HttpGet]
     public async Task<List<RoleBasicInfoResponse>> GetAllAsync(
+        [FromQuery] string? appId,
         [FromQuery] bool? isPrivate)
     {
         var accountLogged = this.GetAccountLogged();
 
         var roles = await roleService
             .GetAllAsync(
+            appId,
             isPrivate,
             accountLogged)
             .ConfigureAwait(false);

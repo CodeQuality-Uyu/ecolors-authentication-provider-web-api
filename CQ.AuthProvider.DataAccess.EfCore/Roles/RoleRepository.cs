@@ -19,12 +19,20 @@ internal sealed class RoleRepository(
     IRoleRepository
 {
     public async Task<List<Role>> GetAllAsync(
+        string? appId,
         bool? isPrivate,
         AccountLogged accountLogged)
     {
+        var appsIdsOfAccountLogged = accountLogged
+            .Apps
+            .ConvertAll(a => a.Id);
+
         var query = _dbSet
+            .Where(p =>
+            (appId != null && p.Apps.Any(a => a.AppId == appId)) ||
+            (appId == null && p.Apps.Any(a => appsIdsOfAccountLogged.Contains(a.AppId))))
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
-            .Where(r => r.TenantId == null || r.TenantId == accountLogged.Tenant.Id);
+            ;
 
         var roles = await query
             .ToListAsync()
@@ -56,9 +64,7 @@ internal sealed class RoleRepository(
         await UpdateAsync(role).ConfigureAwait(false);
     }
 
-    public async Task CreateAsync(
-        Role role,
-        AccountLogged accountLogged)
+    public async Task CreateAsync(Role role)
     {
         var roleEfCore = new RoleEfCore(
             role.Id,
@@ -68,8 +74,7 @@ internal sealed class RoleRepository(
             role.Permissions,
             role.IsPublic,
             role.IsDefault,
-            role.Apps,
-            accountLogged.Tenant);
+            role.Apps);
 
         await CreateAsync(roleEfCore).ConfigureAwait(false);
     }
@@ -176,9 +181,7 @@ internal sealed class RoleRepository(
         return mapper.Map<Role>(role);
     }
 
-    public async Task CreateBulkAsync(
-        List<Role> roles,
-        AccountLogged accountLogged)
+    public async Task CreateBulkAsync(List<Role> roles)
     {
         var rolesEfCore = roles.ConvertAll(r => new RoleEfCore(
             r.Id,
@@ -188,8 +191,7 @@ internal sealed class RoleRepository(
             r.Permissions,
             r.IsPublic,
             r.IsDefault,
-            r.Apps,
-            accountLogged.Tenant));
+            r.Apps));
 
         await CreateBulkAsync(rolesEfCore).ConfigureAwait(false);
     }

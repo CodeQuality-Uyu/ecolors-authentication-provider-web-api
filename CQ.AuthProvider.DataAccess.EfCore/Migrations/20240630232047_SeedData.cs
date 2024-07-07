@@ -1,5 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -28,7 +29,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 .DropForeignKey("FK_Tenants_Accounts_OwnerId", "Tenants");
 
             var ownerId = "5f7dd4f88608458ea68bdc3ef9a94e59";
-            var authProviderTenantId = Db.NewId();
+            var authProviderTenantId = TenantsIds.CQAuthProviderId;
             migrationBuilder
                 .InsertData("Tenants",
                 ["Id", "Name", "OwnerId"],
@@ -49,43 +50,49 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [createPermissionId, "Crear permisos", "Crear permisos para los endpoints", PermissionKey.CreatePermission.ToString(), false, null]);
+                [createPermissionId, "Crear permisos", "Crear permisos para los endpoints", PermissionKey.CreatePermission.ToString(), false, authProviderTenantId]);
 
             var createBulkPermissionId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [createBulkPermissionId, "Crear varios permisos", "Crear varios permisos para endpoints", PermissionKey.CreateBulkPermission.ToString(), false, null]);
+                [createBulkPermissionId, "Crear varios permisos", "Crear varios permisos para endpoints", PermissionKey.CreateBulkPermission.ToString(), false, authProviderTenantId]);
 
             var getAllPermissionId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [getAllPermissionId, "Obtener todos los permisos publicos", "Obtener todos los permisos publicos", PermissionKey.GetAllPermissions.ToString(), false, null]);
+                [getAllPermissionId, "Obtener todos los permisos publicos", "Obtener todos los permisos publicos", PermissionKey.GetAllPermissions.ToString(), false, authProviderTenantId]);
 
             var getAllPrivatePermissionId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [getAllPrivatePermissionId, "Obtener permisos privados", "Obtener permisos privados", PermissionKey.GetAllPrivatePermissions.ToString(), false, null]);
+                [getAllPrivatePermissionId, "Obtener permisos privados", "Obtener permisos privados", PermissionKey.GetAllPrivatePermissions.ToString(), false, authProviderTenantId]);
 
             var getAllByRolePermissionId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [getAllByRolePermissionId, "Obtener permisos de rol", "Obtener permisos de rol", PermissionKey.GetAllPermissionsByRoleId.ToString(), false, null]);
+                [getAllByRolePermissionId, "Obtener permisos de rol", "Obtener permisos de rol", PermissionKey.GetAllPermissionsByRoleId.ToString(), false, authProviderTenantId]);
+
+            var getAllOfTenantPermissionId = Db.NewId();
+            migrationBuilder
+                .InsertData("Permissions",
+                ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
+                [getAllOfTenantPermissionId, "Obtener permisos del tenant", "Obtener permisos del tenant", PermissionKey.GetAllPermissionsOfTenant.ToString(), false, authProviderTenantId]);
 
             var getByIdPermissionId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [getByIdPermissionId, "Obtener un permiso", "Obtener un permiso", PermissionKey.GetByIdPermission.ToString(), false, null]);
+                [getByIdPermissionId, "Obtener un permiso", "Obtener un permiso", PermissionKey.GetByIdPermission.ToString(), false, authProviderTenantId]);
 
             var updateByIdPermissionId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [updateByIdPermissionId, "Actualizar permiso", "Actualizar un permiso", PermissionKey.GetByIdPermission.ToString(), false, null]);
+                [updateByIdPermissionId, "Actualizar permiso", "Actualizar un permiso", PermissionKey.GetByIdPermission.ToString(), false, authProviderTenantId]);
             #endregion
 
             #region Role
@@ -93,37 +100,43 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [createRoleId, "Crear rol", "Crear rol", PermissionKey.CreateRole.ToString(), false, null]);
+                [createRoleId, "Crear rol", "Crear rol", PermissionKey.CreateRole.ToString(), false, authProviderTenantId]);
 
             var createBulkRoleId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [createBulkRoleId, "Crear roles", "Crear roles", PermissionKey.CreateBulkRole.ToString(), false, null]);
+                [createBulkRoleId, "Crear roles", "Crear roles", PermissionKey.CreateBulkRole.ToString(), false, authProviderTenantId]);
 
             var getByIdRoleId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [getByIdRoleId, "Crear obtener rol", "Crear obtener rol", PermissionKey.GetByIdRole.ToString(), false, null]);
+                [getByIdRoleId, "Crear obtener rol", "Crear obtener rol", PermissionKey.GetByIdRole.ToString(), false, authProviderTenantId]);
 
             var getAllRoleId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [getAllRoleId, "Obtener varios roles", "Obtener varios roles", PermissionKey.GetAllRoles.ToString(), false, null]);
+                [getAllRoleId, "Obtener varios roles", "Obtener varios roles", PermissionKey.GetAllRoles.ToString(), false, authProviderTenantId]);
 
             var getAllPrivateRoleId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [getAllPrivateRoleId, "Obtener roles privados", "Obtener roles privados", PermissionKey.GetAllPrivateRoles.ToString(), false, null]);
+                [getAllPrivateRoleId, "Obtener roles privados", "Obtener roles privados", PermissionKey.GetAllPrivateRoles.ToString(), false, authProviderTenantId]);
+
+            var getAllOfTenantRoleId = Db.NewId();
+            migrationBuilder
+                .InsertData("Permissions",
+                ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
+                [getAllOfTenantRoleId, "Obtener roles del tenant", "Obtener roles del tenant", PermissionKey.GetAllRolesOfTenant.ToString(), false, authProviderTenantId]);
 
             var addPermissionToRoleId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [addPermissionToRoleId, "Agregar permisos a rol", "Agregar permisos a rol", PermissionKey.AddPermissionToRole.ToString(), false, null]);
+                [addPermissionToRoleId, "Agregar permisos a rol", "Agregar permisos a rol", PermissionKey.AddPermissionToRole.ToString(), false, authProviderTenantId]);
             #endregion
 
             #region Invitation
@@ -131,26 +144,26 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [createInvitationId, "Crear invitacion", "Crear invitacion", PermissionKey.CreateInvitation.ToString(), false, null]);
+                [createInvitationId, "Crear invitacion", "Crear invitacion", PermissionKey.CreateInvitation.ToString(), false, authProviderTenantId]);
 
             var getAllInvitationId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [getAllInvitationId, "Obtener invitaciones", "Obtener invitaciones", PermissionKey.GetAllInvitation.ToString(), false, null]);
+                [getAllInvitationId, "Obtener invitaciones", "Obtener invitaciones", PermissionKey.GetAllInvitation.ToString(), false, authProviderTenantId]);
             #endregion
 
             var createAccountForId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [createAccountForId, "Crear cuenta para usuario", "Crear cuenta para usuario", PermissionKey.CreateAccountFor.ToString(), false, null]);
+                [createAccountForId, "Crear cuenta para usuario", "Crear cuenta para usuario", PermissionKey.CreateAccountFor.ToString(), false, authProviderTenantId]);
 
             var jokerId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "TenantId"],
-                [jokerId, "Comodin", "Comodin", PermissionKey.Joker.ToString(), false, null]);
+                [jokerId, "Comodin", "Comodin", PermissionKey.Joker.ToString(), false, authProviderTenantId]);
             #endregion
 
             #region Roles
@@ -158,7 +171,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Roles",
                 ["Id", "Name", "Description", "Key", "IsPublic", "IsDefault", "TenantId"],
-                [adminRoleId, "Admin", "Admin", RoleKey.Admin.ToString(), false, false, null]);
+                [adminRoleId, "Admin", "Admin", RoleKey.Admin.ToString(), false, false, authProviderTenantId]);
 
             var tenantRoleId = Db.NewId();
             migrationBuilder

@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
@@ -15,21 +16,24 @@ public sealed record class Permission()
 
     public PermissionKey Key { get; init; } = null!;
 
-    public Tenant? Tenant { get; init; } = null!;
+    public List<App> Apps { get; init; } = []; 
+
+    public Tenant Tenant { get; init; } = null!;
 
     public Permission(
         string name,
         string description,
         bool isPublic,
         PermissionKey key,
-        Tenant? tenant)
+        App app)
         : this()
     {
         Name = name;
         Description = description;
         IsPublic = isPublic;
         Key = key;
-        Tenant = tenant;
+        Apps = [app];
+        Tenant = app.Tenant;
     }
 
     public bool HasPermission(PermissionKey permission)

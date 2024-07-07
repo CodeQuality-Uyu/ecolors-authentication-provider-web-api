@@ -14,18 +14,22 @@ internal sealed class PermissionRepository(
     IPermissionRepository
 {
     public async Task<List<Permission>> GetAllAsync(
+        string? appId,
         bool? isPrivate,
         string? roleId,
         AccountLogged accountLogged)
     {
-        var appsIdsOfUserLogged = accountLogged
+        var appsIdsOfAccountLogged = accountLogged
             .Apps
             .ConvertAll(a => a.Id);
 
         var query = _dbSet
-            .Where(p => p.TenantId == null || p.TenantId == accountLogged.Tenant.Id)
+            .Where(p =>
+            (appId != null && p.Apps.Any(a => a.AppId == appId)) ||
+            (appId == null && p.Apps.Any(a => appsIdsOfAccountLogged.Contains(a.AppId))))
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
-            .Where(p => roleId == null || p.Roles.Exists(r => r.RoleId == roleId));
+            .Where(p => roleId == null || p.Roles.Exists(r => r.RoleId == roleId))
+            ;
 
         var permissions = await query
             .ToListAsync()
@@ -65,7 +69,7 @@ internal sealed class PermissionRepository(
             permission.Description,
             permission.Key,
             permission.IsPublic,
-            permission.Tenant);
+            permission.Apps);
 
         await CreateAsync(permissionEfCore).ConfigureAwait(false);
     }
@@ -78,7 +82,7 @@ internal sealed class PermissionRepository(
             p.Description,
             p.Key,
             p.IsPublic,
-            p.Tenant));
+            p.Apps));
 
         await CreateBulkAsync(permissionsEfCore).ConfigureAwait(false);
     }

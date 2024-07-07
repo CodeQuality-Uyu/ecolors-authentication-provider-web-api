@@ -4,19 +4,22 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
 public readonly struct CreatePermissionArgs
 {
-    public readonly string Name { get; init; }
+    public string Name { get; init; }
 
-    public readonly string Description { get; init; }
+    public string Description { get; init; }
 
-    public readonly PermissionKey Key { get; init; }
+    public PermissionKey Key { get; init; }
 
-    public readonly bool IsPublic { get; init; }
+    public bool IsPublic { get; init; }
+
+    public string? AppId { get; init; }
 
     public CreatePermissionArgs(
         string name,
         string description,
         string key,
-        bool isPublic)
+        bool isPublic,
+        string? appId)
     {
         Name = Guard.Normalize(Guard.Encode(name.Trim(), nameof(name)));
         Guard.ThrowIsMoreThan(Name, 50, nameof(Name));
@@ -26,5 +29,11 @@ public readonly struct CreatePermissionArgs
 
         Key = new PermissionKey(key);
         IsPublic = isPublic;
+
+        if (Guard.IsNotNullOrEmpty(appId))
+        {
+            Guard.ThrowIsNullOrEmpty(appId, nameof(appId));
+        }
+        AppId = appId;
     }
 }

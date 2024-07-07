@@ -1,7 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.Utility;
@@ -18,19 +17,19 @@ public sealed record class RoleEfCore()
 
     public string Key { get; init; } = null!;
 
+    public bool IsPublic { get; set; }
+
+    public bool IsDefault { get; set; }
+
     public List<RolePermission> Permissions { get; init; } = [];
 
     public List<AccountRole> Accounts { get; init; } = [];
 
     public List<RoleApp> Apps { get; init; } = [];
 
-    public bool IsPublic { get; set; }
+    public string TenantId { get; init; } = null!;
 
-    public bool IsDefault { get; set; }
-
-    public string? TenantId { get; init; } = null!;
-
-    public TenantEfCore? Tenant { get; init; } = null!;
+    public TenantEfCore Tenant { get; init; } = null!;
 
     /// <summary>
     /// For new Role
@@ -50,19 +49,23 @@ public sealed record class RoleEfCore()
         List<Permission> permissions,
         bool isPublic,
         bool isDefault,
-        List<App> apps,
-        Tenant tenant)
+        List<App> apps)
         : this()
     {
         Id = id;
         Name = name;
         Description = description;
         Key = key.ToString();
-        TenantId = tenant.Id;
-        Permissions = permissions.ConvertAll(p => new RolePermission(p.Id, p .Tenant.Id));
         IsPublic = isPublic;
         IsDefault = isDefault;
+        Permissions = permissions
+            .ConvertAll(p =>
+            new RolePermission(
+                p.Id,
+                p.Tenant.Id));
         Apps = apps.ConvertAll(a => new RoleApp(a.Id, a.Tenant.Id));
+        var tenant = apps.First().Tenant;
+        TenantId = tenant.Id;
     }
 
     /// <summary>

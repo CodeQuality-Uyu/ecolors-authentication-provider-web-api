@@ -1,7 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
-using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.Utility;
@@ -20,15 +18,13 @@ public sealed record class PermissionEfCore()
 
     public bool IsPublic { get; set; }
 
-    public List<RolePermission> Roles { get; set; } = [];
+    public List<RolePermission> Roles { get; init; } = [];
 
-    public string? AppId { get; init; }
+    public List<PermissionApp> Apps { get; init; } = [];
 
-    public AppEfCore? App { get; init; }
+    public string TenantId { get; init; } = null!;
 
-    public string? TenantId { get; init; } = null!;
-
-    public TenantEfCore? Tenant { get; init; } = null!;
+    public TenantEfCore Tenant { get; init; } = null!;
 
     /// <summary>
     /// For new Permission
@@ -44,8 +40,7 @@ public sealed record class PermissionEfCore()
         string description,
         PermissionKey key,
         bool isPublic,
-        App? app,
-        Tenant? tenant)
+        List<App> apps)
         : this()
     {
         Id = id;
@@ -53,8 +48,9 @@ public sealed record class PermissionEfCore()
         Description = description;
         Key = key.ToString();
         IsPublic = isPublic;
-        AppId = app?.Id;
-        TenantId = tenant?.Id;
+        Apps = apps.ConvertAll(a => new PermissionApp(a.Id, a.Tenant.Id));
+        var tenant = apps.First().Tenant;
+        TenantId = tenant.Id;
     }
 
     /// <summary>
@@ -67,14 +63,12 @@ public sealed record class PermissionEfCore()
         string name,
         string description,
         PermissionKey key,
-        string? appId,
-        string? tenantId)
+        string tenantId)
         : this()
     {
         Name = name;
         Description = description;
         Key = key.ToString();
-        AppId = appId;
         TenantId = tenantId;
     }
 }

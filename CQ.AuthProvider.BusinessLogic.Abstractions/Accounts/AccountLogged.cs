@@ -1,9 +1,13 @@
 ﻿
+using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 
 public record class AccountLogged() : Account
 {
     public string Token { get; init; } = null!;
+
+    public App AppLogged { get; init; } = null!;
 
     public AccountLogged(
         Account account,

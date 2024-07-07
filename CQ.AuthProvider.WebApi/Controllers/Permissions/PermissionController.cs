@@ -53,6 +53,7 @@ public class PermissionController(
 
     [HttpGet]
     public async Task<List<PermissionBasicInfoResponse>> GetAllAsync(
+        [FromQuery] string? appId,
         [FromQuery] bool? isPrivate,
         [FromQuery] string? roleId)
     {
@@ -60,6 +61,7 @@ public class PermissionController(
 
         var permissions = await permissionService
             .GetAllAsync(
+            appId,
             isPrivate,
             roleId,
             accountLogged)

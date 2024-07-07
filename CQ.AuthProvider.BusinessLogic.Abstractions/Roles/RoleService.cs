@@ -3,6 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions;
 using CQ.Exceptions;
+using CQ.Utility;
 using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
@@ -10,10 +11,11 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 internal sealed class RoleService(
     IRoleRepository roleRepository,
     IPermissionRepository permissionRepository,
-    IAppInternalService appInternalService)
+    IAppInternalService appService)
     : IRoleInternalService
 {
     public async Task<List<Role>> GetAllAsync(
+        string? appId,
         bool? isPrivate,
         AccountLogged accountLogged)
     {
@@ -31,8 +33,19 @@ internal sealed class RoleService(
             }
         }
 
+        if (Guard.IsNullOrEmpty(appId) && !accountLogged.HasPermission(PermissionKey.GetAllRolesOfTenant))
+        {
+            appId = accountLogged.AppLogged.Id;
+        }
+
+        if (Guard.IsNotNullOrEmpty(appId))
+        {
+            accountLogged.AssertPermission(PermissionKey.GetAllRolesOfTenant);
+        }
+
         var roles = await roleRepository
             .GetAllAsync(
+            appId,
             isPrivate,
             accountLogged)
             .ConfigureAwait(false);
@@ -69,9 +82,15 @@ internal sealed class RoleService(
             .GetAllByKeysAsync(args.PermissionKeys)
             .ConfigureAwait(false);
 
-        var app = await appInternalService
-            .GetByIdAsync(args.AppId)
-            .ConfigureAwait(false);
+        var app = accountLogged.AppLogged;
+        if (Guard.IsNotNullOrEmpty(args.AppId))
+        {
+            app = await appService
+                .GetByIdAsync(
+                args.AppId!,
+                accountLogged)
+                .ConfigureAwait(false);
+        }
 
         var role = new Role(
             args.Name,
@@ -83,9 +102,7 @@ internal sealed class RoleService(
             app);
 
         await roleRepository
-            .CreateAsync(
-            role,
-            accountLogged)
+            .CreateAsync(role)
             .ConfigureAwait(false);
     }
 
@@ -141,27 +158,45 @@ internal sealed class RoleService(
                 .ToList();
             var missingPermissionsMapped = missingPermissions.ConvertAll(p => p.ToString());
 
-            throw new SpecificResourceNotFoundException<Permission>([nameof(Permission.Key)], missingPermissionsMapped);
+            throw new SpecificResourceNotFoundException<Permission>(
+                [nameof(Permission.Key)],
+                missingPermissionsMapped);
         }
 
-        var allAppsIds = args.ConvertAll(r => r.AppId);
+        var appsIds = args
+            .GroupBy(r => r.AppId)
+            .Where(a => Guard.IsNotNull(a.Key))
+            .Select(g => g.Key)
+            .ToList();
 
-        var apps = await appInternalService
-            .GetAllByIdAsync(allAppsIds)
-            .ConfigureAwait(false);
-        if(apps.Count != allAppsIds.Count)
+        List<App> appsSaved = [];
+        if (appsIds.Count != 0)
         {
-            var missingApps = allAppsIds
-                .Where(a => !apps.Exists(aa => aa.Id == a))
-                .ToList();
+            appsSaved = await appService
+                .GetAllByIdAsync(
+                appsIds,
+                accountLogged)
+                .ConfigureAwait(false);
+            if (appsSaved.Count != appsIds.Count)
+            {
+                var missingAppsIds = appsIds
+                    .Where(a => !appsSaved.Exists(aa => aa.Id == a))
+                    .ToList();
 
-            throw new SpecificResourceNotFoundException<App>([nameof(App.Id)], missingApps);
+                throw new SpecificResourceNotFoundException<App>(
+                    [nameof(App.Id)],
+                    missingAppsIds);
+            }
         }
 
         var roles = args
             .ConvertAll(r =>
             {
-                var app = apps.First(a => a.Id == r.AppId);
+                var app = accountLogged.AppLogged;
+                if (Guard.IsNotNullOrEmpty(r.AppId))
+                {
+                    app = appsSaved.First(a => a.Id == r.AppId);
+                }
 
                 return new Role(
                 r.Name,
@@ -174,9 +209,7 @@ internal sealed class RoleService(
             });
 
         await roleRepository
-            .CreateBulkAsync(
-            roles,
-            accountLogged)
+            .CreateBulkAsync(roles)
             .ConfigureAwait(false);
     }
 
