@@ -106,11 +106,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .OnDelete(DeleteBehavior.NoAction);
 
             entity
-            .HasOne(p => p.Permission)
-            .WithMany(a => a.Apps)
-            .OnDelete(DeleteBehavior.NoAction);
-
-            entity
             .HasOne(p => p.Tenant)
             .WithMany()
             .OnDelete(DeleteBehavior.NoAction);

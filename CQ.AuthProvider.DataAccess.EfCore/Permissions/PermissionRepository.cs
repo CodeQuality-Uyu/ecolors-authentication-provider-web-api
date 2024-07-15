@@ -4,6 +4,7 @@ using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
+using System.Security;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
@@ -25,8 +26,8 @@ internal sealed class PermissionRepository(
 
         var query = _dbSet
             .Where(p =>
-            (appId != null && p.Apps.Any(a => a.AppId == appId)) ||
-            (appId == null && p.Apps.Any(a => appsIdsOfAccountLogged.Contains(a.AppId))))
+            (appId != null && p.AppId == appId) ||
+            (appId == null && appsIdsOfAccountLogged.Contains(p.AppId)))
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Exists(r => r.RoleId == roleId))
             ;
@@ -69,7 +70,8 @@ internal sealed class PermissionRepository(
             permission.Description,
             permission.Key,
             permission.IsPublic,
-            permission.Apps);
+            permission.App.Id,
+            permission.Tenant.Id);
 
         await CreateAsync(permissionEfCore).ConfigureAwait(false);
     }
@@ -82,7 +84,8 @@ internal sealed class PermissionRepository(
             p.Description,
             p.Key,
             p.IsPublic,
-            p.Apps));
+            p.App.Id,
+            p.Tenant.Id));
 
         await CreateBulkAsync(permissionsEfCore).ConfigureAwait(false);
     }

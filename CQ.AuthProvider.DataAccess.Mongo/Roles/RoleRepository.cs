@@ -12,23 +12,17 @@ internal sealed class RoleRepository(
     : MongoDriverRepository<RoleMongo>(context),
     IRoleRepository
 {
-    public Task AddPermissionsAsync(
-        string id,
-        List<PermissionKey> permissionsKeyes)
+    public Task AddPermissionsAsync(string id, List<PermissionKey> permissionsKeys)
     {
         throw new NotImplementedException();
     }
 
-    public Task CreateAsync(
-        Role role,
-        AccountLogged accountLogged)
+    public Task CreateAsync(Role role)
     {
         throw new NotImplementedException();
     }
 
-    public Task CreateBulkAsync(
-        List<Role> roles,
-        AccountLogged accountLogged)
+    public Task CreateBulkAsync(List<Role> roles)
     {
         throw new NotImplementedException();
     }
@@ -43,14 +37,12 @@ internal sealed class RoleRepository(
         throw new NotImplementedException();
     }
 
-    public Task<List<Role>> GetAllAsync(
-        bool? isPrivate,
-        AccountLogged accountLogged)
+    public Task<List<Role>> GetAllAsync(string? appId, bool? isPrivate, AccountLogged accountLogged)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Role>> GetAllByRolesKeyesAsync(List<RoleKey> rolesKeyes)
+    public Task<List<Role>> GetAllByRolesKeyesAsync(List<RoleKey> rolesKeys)
     {
         throw new NotImplementedException();
     }
@@ -65,7 +57,7 @@ internal sealed class RoleRepository(
         throw new NotImplementedException();
     }
 
-    public Task<bool> HasPermissionAsync(List<RoleKey> rolesKeyes, PermissionKey permissionKey)
+    public Task<bool> HasPermissionAsync(List<RoleKey> rolesKeys, PermissionKey permissionKey)
     {
         throw new NotImplementedException();
     }

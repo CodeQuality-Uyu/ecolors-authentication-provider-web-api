@@ -1,5 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.Utility;
@@ -20,7 +20,9 @@ public sealed record class PermissionEfCore()
 
     public List<RolePermission> Roles { get; init; } = [];
 
-    public List<PermissionApp> Apps { get; init; } = [];
+    public string AppId { get; init; } = null!;
+
+    public AppEfCore App { get; init; } = null!;
 
     public string TenantId { get; init; } = null!;
 
@@ -34,13 +36,15 @@ public sealed record class PermissionEfCore()
     /// <param name="description"></param>
     /// <param name="key"></param>
     /// <param name="isPublic"></param>
+    /// <param name="app"></param>
     public PermissionEfCore(
         string id,
         string name,
         string description,
         PermissionKey key,
         bool isPublic,
-        List<App> apps)
+        string appId,
+        string tenantId)
         : this()
     {
         Id = id;
@@ -48,9 +52,8 @@ public sealed record class PermissionEfCore()
         Description = description;
         Key = key.ToString();
         IsPublic = isPublic;
-        Apps = apps.ConvertAll(a => new PermissionApp(a.Id, a.Tenant.Id));
-        var tenant = apps.First().Tenant;
-        TenantId = tenant.Id;
+        AppId = appId;
+        TenantId = tenantId;
     }
 
     /// <summary>

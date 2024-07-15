@@ -5,7 +5,7 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
-public sealed record class AccountApp
+public sealed record class AccountApp()
 {
     public string Id { get; init; } = Db.NewId();
 
@@ -22,13 +22,6 @@ public sealed record class AccountApp
     public TenantEfCore Tenant { get; init; } = null!;
 
     /// <summary>
-    /// For EfCore
-    /// </summary>
-    public AccountApp()
-    {
-    }
-
-    /// <summary>
     /// For new Account
     /// </summary>
     /// <param name="appId"></param>
@@ -36,6 +29,7 @@ public sealed record class AccountApp
     public AccountApp(
         string appId,
         string tenantId)
+        : this()
     {
         AppId = appId;
         TenantId = tenantId;

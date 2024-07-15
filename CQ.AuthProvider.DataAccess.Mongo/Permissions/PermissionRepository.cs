@@ -45,6 +45,7 @@ internal sealed class PermissionRepository(
     }
 
     public async Task<List<Permission>> GetAllAsync(
+        string? appId,
         bool? isPrivate,
         string? roleId,
         AccountLogged accountLogged)

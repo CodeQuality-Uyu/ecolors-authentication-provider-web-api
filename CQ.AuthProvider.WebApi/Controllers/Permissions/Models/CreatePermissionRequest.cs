@@ -14,6 +14,8 @@ public sealed record class CreatePermissionRequest : Request<CreatePermissionArg
 
     public bool? IsPublic { get; init; }
 
+    public string? AppId { get; init; }
+
     protected override CreatePermissionArgs InnerMap()
     {
         Guard.ThrowIsNullOrEmpty(Name, nameof(Name));
@@ -25,6 +27,7 @@ public sealed record class CreatePermissionRequest : Request<CreatePermissionArg
             Name!,
             Description!,
             Key!,
-            IsPublic.Value);
+            IsPublic!.Value,
+            AppId);
     }
 }

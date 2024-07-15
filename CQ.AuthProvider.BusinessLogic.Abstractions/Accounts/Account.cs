@@ -50,8 +50,7 @@ public record class Account()
         string locale,
         string timeZone,
         Role role,
-        App app,
-        Tenant tenant)
+        App app)
         : this()
     {
         Email = email;
@@ -62,7 +61,7 @@ public record class Account()
         Locale = locale;
         TimeZone = timeZone;
         Roles = [role];
-        Tenant = tenant;
+        Tenant = app.Tenant;
         Apps = [app];
     }
 

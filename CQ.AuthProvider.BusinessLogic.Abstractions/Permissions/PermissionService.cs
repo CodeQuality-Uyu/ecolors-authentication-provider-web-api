@@ -17,7 +17,8 @@ internal sealed class PermissionService(
         string? roleId,
         AccountLogged accountLogged)
     {
-        if (isPrivate == null || isPrivate.Value)
+        if (isPrivate == null ||
+            isPrivate.Value)
         {
             var hasPermission = accountLogged.HasPermission(PermissionKey.GetAllPrivatePermissions);
 
@@ -38,7 +39,8 @@ internal sealed class PermissionService(
             accountLogged.AssertPermission(PermissionKey.GetAllPermissionsByRoleId);
         }
 
-        if (Guard.IsNullOrEmpty(appId) && !accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfTenant))
+        if (Guard.IsNullOrEmpty(appId) &&
+            !accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfTenant))
         {
             appId = accountLogged.AppLogged.Id;
         }
@@ -172,7 +174,7 @@ internal sealed class PermissionService(
                 accountLogged)
                 .ConfigureAwait(false);
 
-            if(appsSaved.Count != appsIds.Count)
+            if (appsSaved.Count != appsIds.Count)
             {
                 var missingAppsIds = appsIds
                     .Where(a => !appsSaved.Exists(aa => aa.Id == a))

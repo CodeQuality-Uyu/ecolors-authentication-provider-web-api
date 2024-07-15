@@ -20,4 +20,9 @@ internal sealed class AppService
     {
         throw new NotImplementedException();
     }
+
+    public Task<App> GetByIdAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -3,12 +3,11 @@ using CQ.ApiElements.Filters.Authorizations;
 using CQ.ApiElements.Filters.Extensions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.Utility;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters;
 
-internal class CQAuthorizationAttribute(string? permission = null)
+internal sealed class CQAuthorizationAttribute(string? permission = null)
     : SecureAuthorizationAttribute(permission)
 {
     protected override Task<bool> HasRequestPermissionAsync(
@@ -17,11 +16,6 @@ internal class CQAuthorizationAttribute(string? permission = null)
         AuthorizationFilterContext context)
     {
         var accountLogged = context.GetItem<AccountLogged>(ContextItems.AccountLogged);
-
-        if (Guard.IsNull(accountLogged))
-        {
-            return Task.FromResult(false);
-        }
 
         var permissionKey = new PermissionKey(permission);
 

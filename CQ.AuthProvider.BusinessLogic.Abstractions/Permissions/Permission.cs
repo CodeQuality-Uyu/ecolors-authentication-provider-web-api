@@ -16,7 +16,7 @@ public sealed record class Permission()
 
     public PermissionKey Key { get; init; } = null!;
 
-    public List<App> Apps { get; init; } = []; 
+    public App App { get; init; } = null!; 
 
     public Tenant Tenant { get; init; } = null!;
 
@@ -32,7 +32,7 @@ public sealed record class Permission()
         Description = description;
         IsPublic = isPublic;
         Key = key;
-        Apps = [app];
+        App = app;
         Tenant = app.Tenant;
     }
 

@@ -1,11 +1,12 @@
 ﻿
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
+using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Apps;
 
-public sealed record class AppEfCore
+public sealed record class AppEfCore()
 {
     public string Id { get; init; } = null!;
 
@@ -15,14 +16,9 @@ public sealed record class AppEfCore
 
     public TenantEfCore Tenant { get; init; } = null!;
 
-    public List<PermissionApp> Permissions { get; init; } = [];
+    public List<RoleApp> Roles { get; init; } = [];
 
-    /// <summary>
-    /// For EfCore
-    /// </summary>
-    public AppEfCore()
-    {
-    }
+    public List<PermissionApp> Permissions { get; init; } = [];
 
     /// <summary>
     /// For new App
@@ -35,10 +31,15 @@ public sealed record class AppEfCore
         string name,
         string tenantId,
         List<Permission> permissions)
+        : this()
     {
         Id = id;
         Name = name;
         TenantId = tenantId;
-        Permissions = permissions.ConvertAll(p => new PermissionApp(p.Id));
+        Permissions = permissions
+            .ConvertAll(p =>
+            new PermissionApp(
+                p.Id,
+                tenantId));
     }
 }

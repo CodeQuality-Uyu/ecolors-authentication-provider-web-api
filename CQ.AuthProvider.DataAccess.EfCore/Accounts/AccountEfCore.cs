@@ -19,10 +19,6 @@ public sealed record class AccountEfCore()
 
     public string LastName { get; set; } = null!;
 
-    public List<AccountRole> Roles { get; init; } = [];
-
-    public List<AccountApp> Apps { get; init; } = [];
-
     public string Locale { get; set; } = null!;
 
     public string TimeZone { get; set; } = null!;
@@ -32,6 +28,10 @@ public sealed record class AccountEfCore()
     public string TenantId { get; init; } = null!;
 
     public TenantEfCore Tenant { get; init; } = null!;
+
+    public List<AccountRole> Roles { get; init; } = [];
+
+    public List<AccountApp> Apps { get; init; } = [];
 
     /// <summary>
     /// For new AccountEfCore

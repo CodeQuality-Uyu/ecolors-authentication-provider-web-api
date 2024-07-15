@@ -63,7 +63,11 @@ public sealed record class RoleEfCore()
             new RolePermission(
                 p.Id,
                 p.Tenant.Id));
-        Apps = apps.ConvertAll(a => new RoleApp(a.Id, a.Tenant.Id));
+        Apps = apps
+            .ConvertAll(a =>
+            new RoleApp(
+                a.Id,
+                a.Tenant.Id));
         var tenant = apps.First().Tenant;
         TenantId = tenant.Id;
     }

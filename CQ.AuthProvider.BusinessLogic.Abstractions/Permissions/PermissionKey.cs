@@ -29,6 +29,8 @@ public sealed record class PermissionKey
     public static readonly PermissionKey CreateInvitation = new("create-invitation");
 
     public static readonly PermissionKey GetAllInvitation = new("getall-invitation");
+    
+    public static readonly PermissionKey GetAllInvitationsOfTenant = new("getalloftenant-invitation");
     #endregion
 
     public static readonly PermissionKey CreateAccountFor = new("createcredentialsfor-account");

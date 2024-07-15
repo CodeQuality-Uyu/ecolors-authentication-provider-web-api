@@ -12,7 +12,7 @@ internal sealed class AccountService(
     IIdentityRepository identityRepository,
     ISessionInternalService sessionService,
     IRoleInternalService roleInternalService,
-    IAppInternalService appInternalService
+    IAppInternalService appService
     )
     : IAccountInternalService
 {
@@ -26,7 +26,7 @@ internal sealed class AccountService(
         try
         {
             var role = await GetRoleAsync(args.Role).ConfigureAwait(false);
-            var app = await appInternalService
+            var app = await appService
                 .GetByIdAsync(args.AppId)
                 .ConfigureAwait(false);
 
@@ -38,8 +38,7 @@ internal sealed class AccountService(
                 args.Locale,
                 args.TimeZone,
                 role,
-                app,
-                app.Tenant)
+                app)
             {
                 Id = identity.Id
             };
@@ -52,7 +51,7 @@ internal sealed class AccountService(
                 .CreateAsync(identity)
                 .ConfigureAwait(false);
 
-            var accountToReturn = new CreateAccountResult(
+            var result = new CreateAccountResult(
                 account.Id,
                 account.Email,
                 account.FullName,
@@ -64,7 +63,7 @@ internal sealed class AccountService(
                 session.Token,
                 account.Roles.ConvertAll(r => r.Key));
 
-            return accountToReturn;
+            return result;
         }
         catch (SpecificResourceNotFoundException<Role>)
         {
