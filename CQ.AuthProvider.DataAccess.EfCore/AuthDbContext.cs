@@ -41,10 +41,14 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     {
         modelBuilder.Entity<TenantEfCore>(entity =>
         {
+        });
+
+        modelBuilder.Entity<PermissionEfCore>(entity =>
+        {
             entity
-            .HasMany(t => t.Accounts)
-            .WithOne(a => a.Tenant)
-            .HasForeignKey(a => a.TenantId);
+            .HasOne(e => e.Tenant)
+            .WithMany()
+            .OnDelete(DeleteBehavior.NoAction);
         });
 
         #region Account
@@ -131,7 +135,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         #endregion
 
         #region Role
-
         modelBuilder.Entity<RolePermission>(entity =>
         {
             entity

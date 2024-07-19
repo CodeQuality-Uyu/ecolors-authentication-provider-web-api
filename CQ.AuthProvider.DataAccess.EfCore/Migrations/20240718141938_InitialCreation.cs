@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     /// <inheritdoc />
-    public partial class IntialCreation : Migration
+    public partial class InitialCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -110,27 +110,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Permissions",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
-                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Permissions_Tenants_TenantId",
-                        column: x => x.TenantId,
-                        principalTable: "Tenants",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
@@ -140,7 +119,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsPublic = table.Column<bool>(type: "bit", nullable: false),
                     IsDefault = table.Column<bool>(type: "bit", nullable: false),
-                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -149,7 +128,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_Roles_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -182,29 +162,28 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PermissionsApps",
+                name: "Permissions",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PermissionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
                     AppId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PermissionsApps", x => x.Id);
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PermissionsApps_Apps_AppId",
+                        name: "FK_Permissions_Apps_AppId",
                         column: x => x.AppId,
                         principalTable: "Apps",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PermissionsApps_Permissions_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "Permissions",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_PermissionsApps_Tenants_TenantId",
+                        name: "FK_Permissions_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
                         principalColumn: "Id");
@@ -246,11 +225,17 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AppId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AppEfCoreId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RolesApps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RolesApps_Apps_AppEfCoreId",
+                        column: x => x.AppEfCoreId,
+                        principalTable: "Apps",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RolesApps_Apps_AppId",
                         column: x => x.AppId,
@@ -263,6 +248,36 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RolesApps_Tenants_TenantId",
+                        column: x => x.TenantId,
+                        principalTable: "Tenants",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PermissionsApps",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PermissionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AppId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissionsApps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PermissionsApps_Apps_AppId",
+                        column: x => x.AppId,
+                        principalTable: "Apps",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PermissionsApps_Permissions_PermissionId",
+                        column: x => x.PermissionId,
+                        principalTable: "Permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PermissionsApps_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
                         principalColumn: "Id");
@@ -338,6 +353,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Permissions_AppId",
+                table: "Permissions",
+                column: "AppId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Permissions_TenantId",
                 table: "Permissions",
                 column: "TenantId");
@@ -366,6 +386,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 name: "IX_Roles_TenantId",
                 table: "Roles",
                 column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RolesApps_AppEfCoreId",
+                table: "RolesApps",
+                column: "AppEfCoreId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RolesApps_AppId",
@@ -444,13 +469,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 name: "Sessions");
 
             migrationBuilder.DropTable(
-                name: "Apps");
-
-            migrationBuilder.DropTable(
                 name: "Permissions");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Apps");
 
             migrationBuilder.DropTable(
                 name: "Tenants");

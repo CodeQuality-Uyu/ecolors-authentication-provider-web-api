@@ -37,7 +37,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Accounts",
                 ["Id", "FirstName", "LastName", "FullName", "Email", "Locale", "TimeZone", "TenantId", "ProfilePictureUrl", "CreatedAt"],
-                [ownerId, "Admin", "Admin", "Admin Admin", "admin@gmail.com", "Uruguay", "UTC -3", authProviderTenantId, null, DateTimeOffset.UtcNow.Date]);
+                [ownerId, "Tenant", "Auth Provider API", "Tenant Auth Provider API", "authProviderApi@tenant.com", "Uruguay", "UTC -3", authProviderTenantId, null, DateTime.UtcNow]);
 
             migrationBuilder
                 .AddForeignKey("FK_Tenants_Accounts_OwnerId", "Tenants", "OwnerId", "Accounts");
@@ -62,13 +62,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             var createBulkPermissionId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
-                ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "AppId", "TenantId"],
+                ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
                 [createBulkPermissionId, "Crear varios permisos", "Crear varios permisos para endpoints", PermissionKey.CreateBulkPermission.ToString(), false, authProviderAppId, authProviderTenantId]);
 
             var getAllPermissionId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
-                ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "AppId", "TenantId"],
+                ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
                 [getAllPermissionId, "Obtener todos los permisos publicos", "Obtener todos los permisos publicos", PermissionKey.GetAllPermissions.ToString(), false, authProviderAppId, authProviderTenantId]);
 
             var getAllPrivatePermissionId = Db.NewId();
