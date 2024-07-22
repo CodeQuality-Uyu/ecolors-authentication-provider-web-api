@@ -18,7 +18,7 @@ public static class FirebaseRepositoriesConfig
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var identitySection = configuration.GetSection<IdentityFirebaseSection>("Identity");
+        var identitySection = configuration.GetSection<IdentityFirebaseSection>("Identity:Firebase");
 
         services
             .AddFirebase(identitySection)

@@ -51,6 +51,14 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .OnDelete(DeleteBehavior.NoAction);
         });
 
+        modelBuilder.Entity<SessionEfCore>(entity =>
+        {
+            entity
+            .HasOne(e => e.App)
+            .WithMany()
+            .OnDelete(DeleteBehavior.NoAction);
+        });
+
         #region Account
         modelBuilder.Entity<AccountEfCore>(entity =>
         {

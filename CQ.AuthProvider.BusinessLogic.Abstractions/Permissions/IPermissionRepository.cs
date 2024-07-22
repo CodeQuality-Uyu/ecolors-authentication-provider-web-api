@@ -9,6 +9,7 @@ internal interface IPermissionRepository
         string? appId,
         bool? isPrivate,
         string? roleId,
+        bool viewAll,
         AccountLogged accountLogged);
 
     Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionsKeys);

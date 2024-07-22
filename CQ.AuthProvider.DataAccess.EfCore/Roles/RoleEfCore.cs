@@ -42,7 +42,6 @@ public sealed record class RoleEfCore()
     /// <param name="isPublic"></param>
     /// <param name="isDefault"></param>
     public RoleEfCore(
-        string id,
         string name,
         string description,
         RoleKey key,
@@ -52,7 +51,6 @@ public sealed record class RoleEfCore()
         List<App> apps)
         : this()
     {
-        Id = id;
         Name = name;
         Description = description;
         Key = key.ToString();
@@ -72,22 +70,15 @@ public sealed record class RoleEfCore()
         TenantId = tenant.Id;
     }
 
-    /// <summary>
-    /// For seed data
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    /// <param name="key"></param>
-    internal RoleEfCore(
-        string name,
-        string description,
-        RoleKey key,
-        string tenantId)
-        : this()
+    internal RoleEfCore(Role role)
+        : this(role.Name,
+              role.Description,
+              role.Key,
+              role.Permissions,
+              role.IsPublic,
+              role.IsDefault,
+              role.Apps)
     {
-        Name = name;
-        Description = description;
-        Key = key.ToString();
-        TenantId = tenantId;
+        Id = role.Id;
     }
 }

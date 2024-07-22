@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20240718141959_SeedData")]
+    [Migration("20240721020154_SeedData")]
     partial class SeedData
     {
         /// <inheritdoc />
@@ -58,8 +58,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -342,6 +342,10 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AppId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -349,6 +353,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("AppId");
 
                     b.ToTable("Sessions");
                 });
@@ -583,7 +589,15 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
+                        .WithMany()
+                        .HasForeignKey("AppId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Account");
+
+                    b.Navigation("App");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>

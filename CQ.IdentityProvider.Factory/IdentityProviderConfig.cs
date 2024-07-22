@@ -13,9 +13,9 @@ public static class IdentityProviderConfig
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var identitySection = configuration.GetSection<IdentitySection>(IdentitySection.Name);
+        var identityEngine = Enum.Parse<IdentityEngine>(configuration["Identity:Engine"]!);
 
-        switch (identitySection.Engine)
+        switch (identityEngine)
         {
             case IdentityEngine.Sql:
                 {

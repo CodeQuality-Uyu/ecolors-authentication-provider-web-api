@@ -21,17 +21,21 @@ internal sealed class RoleRepository(
     public async Task<List<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
+        bool viewAll,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged
             .Apps
             .ConvertAll(a => a.Id);
 
+        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.getallrolesoftenant);
+
         var query = _dbSet
-            .Where(p =>
-            (appId != null && p.Apps.Any(a => a.AppId == appId)) ||
-            (appId == null && p.Apps.Any(a => appsIdsOfAccountLogged.Contains(a.AppId))))
+            .Where(r => viewAll || r.TenantId == accountLogged.Tenant.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
+            .Where(r =>
+            (appId != null && r.Apps.Any(a => a.AppId == appId)) ||
+            (appId == null && (viewAll || canSeeOfTenant || r.Apps.Any(a => appsIdsOfAccountLogged.Contains(a.AppId)))))
             ;
 
         var roles = await query
@@ -66,15 +70,7 @@ internal sealed class RoleRepository(
 
     public async Task CreateAsync(Role role)
     {
-        var roleEfCore = new RoleEfCore(
-            role.Id,
-            role.Name,
-            role.Description,
-            role.Key,
-            role.Permissions,
-            role.IsPublic,
-            role.IsDefault,
-            role.Apps);
+        var roleEfCore = new RoleEfCore(role);
 
         await CreateAsync(roleEfCore).ConfigureAwait(false);
     }
@@ -183,15 +179,7 @@ internal sealed class RoleRepository(
 
     public async Task CreateBulkAsync(List<Role> roles)
     {
-        var rolesEfCore = roles.ConvertAll(r => new RoleEfCore(
-            r.Id,
-            r.Name,
-            r.Description,
-            r.Key,
-            r.Permissions,
-            r.IsPublic,
-            r.IsDefault,
-            r.Apps));
+        var rolesEfCore = roles.ConvertAll(r => new RoleEfCore(r));
 
         await CreateBulkAsync(rolesEfCore).ConfigureAwait(false);
     }

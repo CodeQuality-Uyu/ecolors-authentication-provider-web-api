@@ -1,5 +1,7 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
+using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +11,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Invitations;
 [ApiController]
 [Route("invitations")]
 public sealed class InvitationController(
+    IMapper mapper,
     IInvitationService invitationService)
     : ControllerBase
 {
@@ -27,8 +30,15 @@ public sealed class InvitationController(
 
     [HttpGet]
     [CQAuthorization]
-    public async Task GetAllAsync()
+    public async Task<List<InvitationBasicInfoResponse>> GetAllAsync()
     {
+        var accountLogged = this.GetAccountLogged();
+
+        var invitations = await invitationService
+            .GetAllAsync(accountLogged)
+            .ConfigureAwait(false);
+
+        return mapper.Map<List<InvitationBasicInfoResponse>>(invitations);
     }
 
     [HttpPatch("{id}/accept")]

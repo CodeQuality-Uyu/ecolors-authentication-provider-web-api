@@ -4,7 +4,8 @@ using CQ.AuthProvider.WebApi.Controllers.Roles.Models;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles.Mappings;
 
-internal sealed class RoleProfile : Profile
+internal sealed class RoleProfile
+    : Profile
 {
     public RoleProfile()
     {

@@ -1,10 +1,8 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
-using System.Security;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
@@ -18,25 +16,38 @@ internal sealed class PermissionRepository(
         string? appId,
         bool? isPrivate,
         string? roleId,
+        bool viewAll,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged
             .Apps
             .ConvertAll(a => a.Id);
 
+        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfTenant);
+        var fullAccessKey = PermissionKey.FullAccess.ToString();
+
         var query = _dbSet
-            .Where(p =>
-            (appId != null && p.AppId == appId) ||
-            (appId == null && appsIdsOfAccountLogged.Contains(p.AppId)))
+            .Where(p => viewAll || p.TenantId == accountLogged.Tenant.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Exists(r => r.RoleId == roleId))
+            .Where(p => p.Key != fullAccessKey || viewAll)
+            .Where(p =>
+            (appId != null && p.AppId == appId) ||
+            (appId == null && (viewAll || canSeeOfTenant || appsIdsOfAccountLogged.Contains(p.AppId))))
             ;
 
         var permissions = await query
             .ToListAsync()
             .ConfigureAwait(false);
 
-        return mapper.Map<List<Permission>>(permissions);
+        return permissions.ConvertAll(p => new Permission
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Key = new PermissionKey(p.Key),
+            IsPublic = p.IsPublic
+        });
     }
 
     public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionsKeys)
@@ -64,28 +75,14 @@ internal sealed class PermissionRepository(
 
     public async Task CreateAsync(Permission permission)
     {
-        var permissionEfCore = new PermissionEfCore(
-            permission.Id,
-            permission.Name,
-            permission.Description,
-            permission.Key,
-            permission.IsPublic,
-            permission.App.Id,
-            permission.Tenant.Id);
+        var permissionEfCore = new PermissionEfCore(permission);
 
         await CreateAsync(permissionEfCore).ConfigureAwait(false);
     }
 
     public async Task CreateBulkAsync(List<Permission> permissions)
     {
-        var permissionsEfCore = permissions.ConvertAll(p => new PermissionEfCore(
-            p.Id,
-            p.Name,
-            p.Description,
-            p.Key,
-            p.IsPublic,
-            p.App.Id,
-            p.Tenant.Id));
+        var permissionsEfCore = permissions.ConvertAll(p => new PermissionEfCore(p));
 
         await CreateBulkAsync(permissionsEfCore).ConfigureAwait(false);
     }

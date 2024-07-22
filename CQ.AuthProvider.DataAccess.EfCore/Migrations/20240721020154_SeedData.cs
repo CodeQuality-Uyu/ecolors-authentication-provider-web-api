@@ -37,7 +37,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Accounts",
                 ["Id", "FirstName", "LastName", "FullName", "Email", "Locale", "TimeZone", "TenantId", "ProfilePictureUrl", "CreatedAt"],
-                [ownerId, "Tenant", "Auth Provider API", "Tenant Auth Provider API", "authProviderApi@tenant.com", "Uruguay", "UTC -3", authProviderTenantId, null, DateTime.UtcNow]);
+                [ownerId, "Tenant", "Auth Provider API", "Tenant Auth Provider API", "authProviderApi@tenant.com", "Uruguay", "-03", authProviderTenantId, null, DateTime.UtcNow.Date]);
 
             migrationBuilder
                 .AddForeignKey("FK_Tenants_Accounts_OwnerId", "Tenants", "OwnerId", "Accounts");
@@ -87,7 +87,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
-                [getAllOfTenantPermissionId, "Obtener permisos del tenant", "Obtener permisos del tenant", PermissionKey.GetAllPermissionsOfTenant.ToString(), false, authProviderAppId, authProviderTenantId]);
+                [getAllOfTenantPermissionId, "Obtener permisos del tenant", "Obtener permisos del tenant", PermissionKey.GetAllPermissionsFromAppsOfAccountLogged.ToString(), false, authProviderAppId, authProviderTenantId]);
 
             var getByIdPermissionId = Db.NewId();
             migrationBuilder
@@ -137,7 +137,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
-                [getAllOfTenantRoleId, "Obtener roles del tenant", "Obtener roles del tenant", PermissionKey.GetAllRolesOfTenant.ToString(), false, authProviderAppId, authProviderTenantId]);
+                [getAllOfTenantRoleId, "Obtener roles del tenant", "Obtener roles del tenant", PermissionKey.GetAllRolesFromAppsOfAccountLogged.ToString(), false, authProviderAppId, authProviderTenantId]);
 
             var addPermissionToRoleId = Db.NewId();
             migrationBuilder
@@ -163,7 +163,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
-                [getAllOfTenantInvitationId, "Obtener invitaciones del tenant", "Obtener invitaciones del tenant", PermissionKey.GetAllInvitationsOfTenant.ToString(), false, authProviderAppId, authProviderTenantId]);
+                [getAllOfTenantInvitationId, "Obtener invitaciones del tenant", "Obtener invitaciones del tenant", PermissionKey.GetAllInvitationsFromAppsOfAccountLogged.ToString(), false, authProviderAppId, authProviderTenantId]);
             #endregion
 
             var createAccountForId = Db.NewId();
@@ -177,6 +177,12 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
                 [jokerId, "Comodin", "Comodin", PermissionKey.Joker.ToString(), false, authProviderAppId, authProviderTenantId]);
+
+            var fullAccessId = Db.NewId();
+            migrationBuilder
+                .InsertData("Permissions",
+                ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
+                [fullAccessId, "Full Access", "Full Access", PermissionKey.FullAccess.ToString(), false, authProviderAppId, authProviderTenantId]);
             #endregion
 
             #region Roles
@@ -191,13 +197,19 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 .InsertData("Roles",
                 ["Id", "Name", "Description", "Key", "IsPublic", "IsDefault", "TenantId"],
                 [tenantRoleId, "Tenant", "Tenant", RoleKey.TenantOwner.ToString(), false, false, authProviderTenantId]);
+
+            var authProviderOwnerId = Db.NewId();
+            migrationBuilder
+                .InsertData("Roles",
+                ["Id", "Name", "Description", "Key", "IsPublic", "IsDefault", "TenantId"],
+                [authProviderOwnerId, "AuthProvider Owner", "AuthProvider Owner", RoleKey.TenantOwner.ToString(), false, false, authProviderTenantId]);
             #endregion
 
             #region Connect accounts with roles
             migrationBuilder
                 .InsertData("AccountsRoles",
                 ["Id", "AccountId", "RoleId", "TenantId"],
-                [Db.NewId(), ownerId, tenantRoleId, authProviderTenantId]);
+                [Db.NewId(), ownerId, authProviderOwnerId, authProviderTenantId]);
             #endregion
 
             #region Connect roles with permissions
@@ -210,6 +222,16 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 .InsertData("RolesPermissions",
                 ["Id", "RoleId", "PermissionId", "TenantId"],
                 [Db.NewId(), tenantRoleId, jokerId, authProviderTenantId]);
+
+            migrationBuilder
+                .InsertData("RolesPermissions",
+                ["Id", "RoleId", "PermissionId", "TenantId"],
+                [Db.NewId(), authProviderOwnerId, jokerId, authProviderTenantId]);
+
+            migrationBuilder
+               .InsertData("RolesPermissions",
+               ["Id", "RoleId", "PermissionId", "TenantId"],
+               [Db.NewId(), authProviderOwnerId, fullAccessId, authProviderTenantId]);
             #endregion
 
             #region Connect accounts with apps
@@ -229,6 +251,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 .InsertData("RolesApps",
                 ["Id", "RoleId", "AppId", "TenantId"],
                 [Db.NewId(), tenantRoleId, authProviderAppId, authProviderTenantId]);
+
+            migrationBuilder
+                .InsertData("RolesApps",
+                ["Id", "RoleId", "AppId", "TenantId"],
+                [Db.NewId(), authProviderOwnerId, authProviderAppId, authProviderTenantId]);
             #endregion
 
             #region Connect permissions with apps
@@ -316,6 +343,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 .InsertData("PermissionsApps",
                 ["Id", "PermissionId", "AppId", "TenantId"],
                 [Db.NewId(), jokerId, authProviderAppId, authProviderTenantId]);
+
+            migrationBuilder
+                .InsertData("PermissionsApps",
+                ["Id", "PermissionId", "AppId", "TenantId"],
+                [Db.NewId(), fullAccessId, authProviderAppId, authProviderTenantId]);
             #endregion
         }
 

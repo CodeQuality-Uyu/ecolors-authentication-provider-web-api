@@ -14,7 +14,9 @@ public interface ISessionService
 
 public interface ISessionInternalService : ISessionService
 {
-    Task<Session> CreateAsync(Identity identity);
+    Task<Session> CreateAsync(
+        Identity identity,
+        string appId);
 
     Task<Session> GetByTokenAsync(string token);
 }

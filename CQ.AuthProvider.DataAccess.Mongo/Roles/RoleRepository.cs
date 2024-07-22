@@ -37,7 +37,7 @@ internal sealed class RoleRepository(
         throw new NotImplementedException();
     }
 
-    public Task<List<Role>> GetAllAsync(string? appId, bool? isPrivate, AccountLogged accountLogged)
+    public Task<List<Role>> GetAllAsync(string? appId, bool? isPrivate, bool viewAll, AccountLogged accountLogged)
     {
         throw new NotImplementedException();
     }

@@ -1,6 +1,5 @@
-﻿
-
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 
@@ -22,6 +21,11 @@ internal sealed class AppService
     }
 
     public Task<App> GetByIdAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<App> GetByIdAsync(string id, Tenant tenant)
     {
         throw new NotImplementedException();
     }

@@ -23,7 +23,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Locale = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TimeZone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -46,25 +46,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     table.PrimaryKey("PK_ResetPasswords", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ResetPasswords_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sessions",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Sessions_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
@@ -186,6 +167,31 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_Permissions_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sessions",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AppId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AccountId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sessions_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Sessions_Apps_AppId",
+                        column: x => x.AppId,
+                        principalTable: "Apps",
                         principalColumn: "Id");
                 });
 
@@ -426,6 +432,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 name: "IX_Sessions_AccountId",
                 table: "Sessions",
                 column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sessions_AppId",
+                table: "Sessions",
+                column: "AppId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tenants_OwnerId",

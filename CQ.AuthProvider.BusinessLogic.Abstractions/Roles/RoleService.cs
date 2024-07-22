@@ -17,36 +17,46 @@ internal sealed class RoleService(
     public async Task<List<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
+        bool viewAll,
         AccountLogged accountLogged)
     {
-        if (isPrivate == null || isPrivate.Value)
+
+        if (isPrivate == null)
         {
             var hasPermission = accountLogged.HasPermission(PermissionKey.GetAllPrivateRoles);
 
-            if (isPrivate == null)
-            {
-                isPrivate = hasPermission ? isPrivate : false;
-            }
-            else if (!hasPermission)
-            {
-                accountLogged.AssertPermission(PermissionKey.GetAllPrivateRoles);
-            }
+            isPrivate = hasPermission
+                    ? null
+                    : false;
         }
 
-        if (Guard.IsNullOrEmpty(appId) && !accountLogged.HasPermission(PermissionKey.GetAllRolesOfTenant))
+        if (isPrivate.HasValue &&
+            isPrivate.Value)
+        {
+            accountLogged.AssertPermission(PermissionKey.GetAllPrivateRoles);
+        }
+
+        if (Guard.IsNullOrEmpty(appId) &&
+            !accountLogged.HasPermission(PermissionKey.GetAllRolesFromAppsOfAccountLogged))
         {
             appId = accountLogged.AppLogged.Id;
         }
 
         if (Guard.IsNotNullOrEmpty(appId))
         {
-            accountLogged.AssertPermission(PermissionKey.GetAllRolesOfTenant);
+            accountLogged.AssertPermission(PermissionKey.GetAllRolesFromAppsOfAccountLogged);
+        }
+
+        if (viewAll)
+        {
+            accountLogged.AssertPermission(PermissionKey.FullAccess);
         }
 
         var roles = await roleRepository
             .GetAllAsync(
             appId,
             isPrivate,
+            viewAll,
             accountLogged)
             .ConfigureAwait(false);
 

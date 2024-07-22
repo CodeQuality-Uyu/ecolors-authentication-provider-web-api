@@ -55,7 +55,8 @@ public class PermissionController(
     public async Task<List<PermissionBasicInfoResponse>> GetAllAsync(
         [FromQuery] string? appId,
         [FromQuery] bool? isPrivate,
-        [FromQuery] string? roleId)
+        [FromQuery] string? roleId,
+        [FromQuery] bool viewAll)
     {
         var accountLogged = this.GetAccountLogged();
 
@@ -64,6 +65,7 @@ public class PermissionController(
             appId,
             isPrivate,
             roleId,
+            viewAll,
             accountLogged)
             .ConfigureAwait(false);
 

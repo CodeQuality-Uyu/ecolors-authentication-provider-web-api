@@ -10,6 +10,7 @@ internal interface IRoleRepository
     Task<List<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
+        bool viewAll,
         AccountLogged accountLogged);
 
     Task<bool> ExistByKeyAsync(RoleKey key);

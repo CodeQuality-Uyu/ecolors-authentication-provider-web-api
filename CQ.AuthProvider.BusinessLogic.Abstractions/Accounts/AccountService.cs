@@ -48,7 +48,9 @@ internal sealed class AccountService(
                 .ConfigureAwait(false);
 
             var session = await sessionService
-                .CreateAsync(identity)
+                .CreateAsync(
+                identity,
+                args.AppId)
                 .ConfigureAwait(false);
 
             var result = new CreateAccountResult(
@@ -137,7 +139,10 @@ internal sealed class AccountService(
             .GetByIdAsync(session.Account.Id)
             .ConfigureAwait(false);
 
-        return new AccountLogged(account, token);
+        return new AccountLogged(
+            account,
+            token,
+            session.App);
     }
 
     public async Task<Account> GetByEmailAsync(string email)

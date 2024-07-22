@@ -8,13 +8,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
 public sealed record class PermissionEfCore()
 {
-    public string Id { get; set; } = Db.NewId();
+    public string Id { get; init; } = Db.NewId();
 
     public string Name { get; set; } = null!;
 
     public string Description { get; set; } = null!;
 
-    public string Key { get; set; } = null!;
+    public string Key { get; init; } = null!;
 
     public bool IsPublic { get; set; }
 
@@ -31,14 +31,12 @@ public sealed record class PermissionEfCore()
     /// <summary>
     /// For new Permission
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="name"></param>
     /// <param name="description"></param>
     /// <param name="key"></param>
     /// <param name="isPublic"></param>
     /// <param name="app"></param>
     public PermissionEfCore(
-        string id,
         string name,
         string description,
         PermissionKey key,
@@ -47,7 +45,6 @@ public sealed record class PermissionEfCore()
         string tenantId)
         : this()
     {
-        Id = id;
         Name = name;
         Description = description;
         Key = key.ToString();
@@ -56,22 +53,14 @@ public sealed record class PermissionEfCore()
         TenantId = tenantId;
     }
 
-    /// <summary>
-    /// For seed data
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    /// <param name="key"></param>
-    internal PermissionEfCore(
-        string name,
-        string description,
-        PermissionKey key,
-        string tenantId)
-        : this()
+    internal PermissionEfCore(Permission permission)
+        : this(permission.Name,
+              permission.Description,
+              permission.Key,
+              permission.IsPublic,
+              permission.App.Id,
+              permission.Tenant.Id)
     {
-        Name = name;
-        Description = description;
-        Key = key.ToString();
-        TenantId = tenantId;
+        Id = permission.Id;
     }
 }

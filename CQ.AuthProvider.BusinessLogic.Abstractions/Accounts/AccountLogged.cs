@@ -3,7 +3,8 @@ using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 
-public record class AccountLogged() : Account
+public record class AccountLogged()
+    : Account
 {
     public string Token { get; init; } = null!;
 
@@ -11,7 +12,8 @@ public record class AccountLogged() : Account
 
     public AccountLogged(
         Account account,
-        string token)
+        string token,
+        App appLogged)
         : this()
     {
         Id = account.Id;
@@ -25,5 +27,6 @@ public record class AccountLogged() : Account
         Roles = account.Roles;
         Tenant = account.Tenant;
         Token = token;
+        AppLogged = appLogged;
     }
 }

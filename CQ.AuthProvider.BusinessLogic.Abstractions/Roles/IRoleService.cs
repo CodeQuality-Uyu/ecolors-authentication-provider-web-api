@@ -8,6 +8,7 @@ public interface IRoleService
     Task<List<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
+        bool viewAll,
         AccountLogged accountLogged);
 
     Task CreateAsync(

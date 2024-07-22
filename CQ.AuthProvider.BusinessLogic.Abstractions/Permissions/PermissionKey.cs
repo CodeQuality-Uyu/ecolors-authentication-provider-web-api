@@ -11,7 +11,7 @@ public sealed record class PermissionKey
     public static readonly PermissionKey GetAllPermissions = new("getall-permission");
     public static readonly PermissionKey GetAllPrivatePermissions = new("getallprivate-permission");
     public static readonly PermissionKey GetAllPermissionsByRoleId = new("getallbyroleid-permission");
-    public static readonly PermissionKey GetAllPermissionsOfTenant = new("getalloftenant-permission");
+    public static readonly PermissionKey GetAllPermissionsFromAppsOfAccountLogged = new("getallfromappsofaccountlogged-permission");
     public static readonly PermissionKey UpdateByIdPermission = new("updatebyid-permission");
     #endregion
 
@@ -21,7 +21,7 @@ public sealed record class PermissionKey
     public static readonly PermissionKey GetByIdRole = new("getbyid-role");
     public static readonly PermissionKey GetAllRoles = new("getall-role");
     public static readonly PermissionKey GetAllPrivateRoles = new("getallprivate-role");
-    public static readonly PermissionKey GetAllRolesOfTenant = new("getalloftenant-role");
+    public static readonly PermissionKey GetAllRolesFromAppsOfAccountLogged = new("getallfromappsofaccountlogged-role");
     public static readonly PermissionKey AddPermissionToRole = new("addpermission-role");
     #endregion
 
@@ -30,12 +30,14 @@ public sealed record class PermissionKey
 
     public static readonly PermissionKey GetAllInvitation = new("getall-invitation");
     
-    public static readonly PermissionKey GetAllInvitationsOfTenant = new("getalloftenant-invitation");
+    public static readonly PermissionKey GetAllInvitationsFromAppsOfAccountLogged = new("getallfromappsofaccountlogged-invitation");
     #endregion
 
     public static readonly PermissionKey CreateAccountFor = new("createcredentialsfor-account");
 
     public static readonly PermissionKey Joker = new("*");
+
+    public static readonly PermissionKey FullAccess = new("full-access");
 
     private readonly string Value;
 

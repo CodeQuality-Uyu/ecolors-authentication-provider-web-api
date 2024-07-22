@@ -1,7 +1,5 @@
 ﻿using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.DataAccess.Mongo.AppConfig;
-using CQ.Extensions.Configuration;
-using CQ.Utility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,15 +11,9 @@ public static class DataAccessConfig
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var authOptions = configuration.GetSection<AuthSection>(AuthSection.Name);
+        var authEngine = Enum.Parse<AuthEngine>(configuration["Auth:Engine"]!);
 
-        Guard.ThrowIsNull(authOptions, "Auth");
-        Guard.ThrowIsNull(authOptions.Fake, "Auth:Fake");
-
-        authOptions.Fake.Build();
-        services.AddSingleton(authOptions);
-
-        switch (authOptions.Engine)
+        switch (authEngine)
         {
             case AuthEngine.Sql:
                 {

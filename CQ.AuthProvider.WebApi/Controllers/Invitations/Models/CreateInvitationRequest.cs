@@ -4,11 +4,14 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 
-public sealed record class CreateInvitationRequest : Request<CreateInvitationArgs>
+public sealed record class CreateInvitationRequest
+    : Request<CreateInvitationArgs>
 {
     public string? Email { get; init; }
 
     public string? RoleId { get; init; }
+
+    public string? AppId { get; init; }
 
     protected override CreateInvitationArgs InnerMap()
     {
@@ -17,6 +20,7 @@ public sealed record class CreateInvitationRequest : Request<CreateInvitationArg
 
         return new CreateInvitationArgs(
             Email!,
-            RoleId!);
+            RoleId!,
+            AppId);
     }
 }

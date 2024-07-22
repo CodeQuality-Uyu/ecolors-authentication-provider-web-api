@@ -1,6 +1,8 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions.Exceptions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Tokens;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
@@ -8,7 +10,9 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 internal sealed class SessionService(
     ISessionRepository sessionRepository,
     IIdentityRepository identityRepository,
-    IAccountRepository accountRepository)
+    IAccountRepository accountRepository,
+    ITokenService tokenService,
+    IAppInternalService appService)
     : ISessionInternalService
 {
     public async Task<Session> CreateAsync(CreateSessionCredentialsArgs args)
@@ -22,21 +26,33 @@ internal sealed class SessionService(
             throw new InvalidCredentialsException(args.Email);
         }
 
-
-        var session = await CreateAsync(identity).ConfigureAwait(false);
+        var session = await CreateAsync(
+            identity,
+            args.AppId)
+            .ConfigureAwait(false);
 
         return session;
     }
 
-    public async Task<Session> CreateAsync(Identity identity)
+    public async Task<Session> CreateAsync(
+        Identity identity,
+        string appId)
     {
         var account = await accountRepository
             .GetByIdAsync(identity.Id)
             .ConfigureAwait(true);
 
+        var app = await appService
+            .GetByIdAsync(
+            appId,
+            account.Tenant);
+
+        var token = tokenService.Create();
+
         var session = new Session(
             account,
-            Db.NewId());
+            app,
+            token);
 
         await sessionRepository
             .CreateAsync(session)

@@ -1,8 +1,6 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.UnitOfWork.EfCore.Core;
-using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Sessions;
@@ -15,10 +13,7 @@ internal sealed class SessionRepository(
 {
     public async Task CreateAsync(Session session)
     {
-        var sessionEfCore = new SessionEfCore(
-            session.Id,
-            session.Token,
-            session.Account.Id);
+        var sessionEfCore = new SessionEfCore(session);
 
         await CreateAsync(sessionEfCore).ConfigureAwait(false);
     }
@@ -32,11 +27,6 @@ internal sealed class SessionRepository(
         var session = await query
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
-
-        if (Guard.IsNull(session))
-        {
-            return null;
-        }
 
         return mapper.Map<Session>(session);
     }
