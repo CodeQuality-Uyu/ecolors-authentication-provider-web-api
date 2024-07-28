@@ -10,10 +10,8 @@ internal interface IRoleRepository
     Task<List<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged);
-
-    Task<bool> ExistByKeyAsync(RoleKey key);
 
     Task RemoveDefaultAsync();
 
@@ -21,10 +19,8 @@ internal interface IRoleRepository
 
     Task CreateBulkAsync(List<Role> roles);
 
-    Task<List<Role>> GetAllByRolesKeyesAsync(List<RoleKey> rolesKeys);
-
     Task<bool> HasPermissionAsync(
-        List<RoleKey> rolesKeys,
+        List<string> ids,
         PermissionKey permissionKey);
 
     Task<Role> GetByIdAsync(string id);
@@ -36,8 +32,6 @@ internal interface IRoleRepository
     Task AddPermissionsAsync(
         string id,
         List<PermissionKey> permissionsKeys);
-
-    Task<Role> GetByKeyAsync(RoleKey key);
 
     Task<Role> GetDefaultAsync();
 }

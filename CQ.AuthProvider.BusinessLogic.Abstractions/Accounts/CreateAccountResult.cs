@@ -12,4 +12,4 @@ public sealed record class CreateAccountResult(
     string Locale,
     string TimeZone,
     string Token,
-    List<RoleKey> Roles);
+    List<string> Roles);

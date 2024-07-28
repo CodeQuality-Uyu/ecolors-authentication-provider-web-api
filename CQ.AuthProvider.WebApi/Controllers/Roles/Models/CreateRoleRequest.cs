@@ -10,8 +10,6 @@ public sealed record class CreateRoleRequest : Request<CreateRoleArgs>
 
     public string? Description { get; init; }
 
-    public string? Key { get; init; }
-
     public List<string>? PermissionKeys { get; init; }
 
     public bool? IsPublic { get; init; }
@@ -24,7 +22,6 @@ public sealed record class CreateRoleRequest : Request<CreateRoleArgs>
     {
         Guard.ThrowIsNullOrEmpty(Name, nameof(Name));
         Guard.ThrowIsNullOrEmpty(Description, nameof(Description));
-        Guard.ThrowIsNullOrEmpty(Key, nameof(Key));
         Guard.ThrowIsNullOrEmpty(PermissionKeys, nameof(PermissionKeys));
         Guard.ThrowIsNull(IsPublic, nameof(IsPublic));
         Guard.ThrowIsNull(IsDefault, nameof(IsDefault));
@@ -33,7 +30,6 @@ public sealed record class CreateRoleRequest : Request<CreateRoleArgs>
         return new CreateRoleArgs(
             Name!,
             Description!,
-            Key!,
             PermissionKeys!,
             IsPublic!.Value,
             IsDefault!.Value,

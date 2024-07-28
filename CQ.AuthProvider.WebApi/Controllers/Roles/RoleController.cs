@@ -68,7 +68,7 @@ public class RoleController(
     public async Task<List<RoleBasicInfoResponse>> GetAllAsync(
         [FromQuery] string? appId,
         [FromQuery] bool? isPrivate,
-        [FromQuery] bool viewAll)
+        [FromQuery] string? tenantId)
     {
         var accountLogged = this.GetAccountLogged();
 
@@ -76,7 +76,7 @@ public class RoleController(
             .GetAllAsync(
             appId,
             isPrivate,
-            viewAll,
+            tenantId,
             accountLogged)
             .ConfigureAwait(false);
 

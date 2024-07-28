@@ -25,7 +25,7 @@ internal sealed class AccountService(
 
         try
         {
-            var role = await GetRoleAsync(args.Role).ConfigureAwait(false);
+            var role = await GetRoleAsync(args.RoleId).ConfigureAwait(false);
             var app = await appService
                 .GetByIdAsync(args.AppId)
                 .ConfigureAwait(false);
@@ -63,7 +63,7 @@ internal sealed class AccountService(
                 account.Locale,
                 account.TimeZone,
                 session.Token,
-                account.Roles.ConvertAll(r => r.Key));
+                account.Roles.ConvertAll(r => r.Name));
 
             return result;
         }
@@ -101,9 +101,9 @@ internal sealed class AccountService(
         return identity;
     }
 
-    private async Task<Role> GetRoleAsync(RoleKey? roleKey)
+    private async Task<Role> GetRoleAsync(string? roleId)
     {
-        if (Guard.IsNull(roleKey))
+        if (Guard.IsNull(roleId))
         {
             return await roleInternalService
                 .GetDefaultAsync()
@@ -111,7 +111,7 @@ internal sealed class AccountService(
         }
 
         return await roleInternalService
-            .GetByKeyAsync(roleKey)
+            .GetByIdAsync(roleId)
             .ConfigureAwait(false);
     }
     #endregion

@@ -12,6 +12,8 @@ public sealed record class AppEfCore()
 
     public string Name { get; init; } = null!;
 
+    public bool IsDefault { get; init; }
+
     public string TenantId { get; init; } = null!;
 
     public TenantEfCore Tenant { get; init; } = null!;

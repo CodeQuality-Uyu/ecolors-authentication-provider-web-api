@@ -5,35 +5,23 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 public sealed record class PermissionKey
 {
     #region Permission
-    public static readonly PermissionKey CreatePermission = new("create-permission");
-    public static readonly PermissionKey CreateBulkPermission = new("createbulk-permission");
-    public static readonly PermissionKey GetByIdPermission = new("getbyid-permission");
-    public static readonly PermissionKey GetAllPermissions = new("getall-permission");
     public static readonly PermissionKey GetAllPrivatePermissions = new("getallprivate-permission");
     public static readonly PermissionKey GetAllPermissionsByRoleId = new("getallbyroleid-permission");
-    public static readonly PermissionKey GetAllPermissionsFromAppsOfAccountLogged = new("getallfromappsofaccountlogged-permission");
-    public static readonly PermissionKey UpdateByIdPermission = new("updatebyid-permission");
+    public static readonly PermissionKey GetAllPermissionsOfAppsOfAccountLogged = new("getallofappsofaccountlogged-permission");
+    public static readonly PermissionKey GetAllPermissionsOfTenant = new("getalloftenant-permission");
     #endregion
 
     #region Role
-    public static readonly PermissionKey CreateRole = new("create-role");
-    public static readonly PermissionKey CreateBulkRole = new("createbulk-role");
-    public static readonly PermissionKey GetByIdRole = new("getbyid-role");
-    public static readonly PermissionKey GetAllRoles = new("getall-role");
     public static readonly PermissionKey GetAllPrivateRoles = new("getallprivate-role");
-    public static readonly PermissionKey GetAllRolesFromAppsOfAccountLogged = new("getallfromappsofaccountlogged-role");
-    public static readonly PermissionKey AddPermissionToRole = new("addpermission-role");
+    public static readonly PermissionKey GetAllRolesOfAppsOfAccountLogged = new("getallofappsofaccountlogged-role");
+    public static readonly PermissionKey GetAllRolesOfTenant = new("getalloftenant-role");
     #endregion
 
     #region Invitation
-    public static readonly PermissionKey CreateInvitation = new("create-invitation");
-
-    public static readonly PermissionKey GetAllInvitation = new("getall-invitation");
-    
-    public static readonly PermissionKey GetAllInvitationsFromAppsOfAccountLogged = new("getallfromappsofaccountlogged-invitation");
+    public static readonly PermissionKey GetAllInvitationsOfCreator = new("getallinvitationsofcreator-invitation");
+    public static readonly PermissionKey GetAllInvitationsOfTenant = new("getalloftenant-invitation");
+    public static readonly PermissionKey GetAllInvitationsOfAppsOfAccountLogged = new("getallofappsofaccountlogged-invitation");
     #endregion
-
-    public static readonly PermissionKey CreateAccountFor = new("createcredentialsfor-account");
 
     public static readonly PermissionKey Joker = new("*");
 

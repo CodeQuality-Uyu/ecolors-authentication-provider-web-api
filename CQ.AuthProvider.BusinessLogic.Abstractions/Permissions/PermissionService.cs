@@ -15,10 +15,10 @@ internal sealed class PermissionService(
         string? appId,
         bool? isPrivate,
         string? roleId,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged)
     {
-        if (isPrivate == null)
+        if (Guard.IsNull(isPrivate))
         {
             var hasPermission = accountLogged.HasPermission(PermissionKey.GetAllPrivatePermissions);
 
@@ -33,34 +33,38 @@ internal sealed class PermissionService(
             accountLogged.AssertPermission(PermissionKey.GetAllPrivatePermissions);
         }
 
-        if (Guard.IsNotNullOrEmpty(roleId))
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllPermissionsByRoleId);
-        }
-
-        if(Guard.IsNullOrEmpty(roleId) &&
+        if (Guard.IsNullOrEmpty(roleId) &&
             !accountLogged.HasPermission(PermissionKey.GetAllPermissionsByRoleId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllPermissionsFromAppsOfAccountLogged) &&
-            !accountLogged.HasPermission(PermissionKey.GETALLPERMISSIONSOFTENANT) &&
             !accountLogged.HasPermission(PermissionKey.FullAccess))
         {
             roleId = accountLogged.Roles.FirstOrDefault()?.Id;
         }
 
-        if (Guard.IsNotNullOrEmpty(appId))
+        if (Guard.IsNotNullOrEmpty(roleId))
         {
-            accountLogged.AssertPermission(PermissionKey.GetAllPermissionsFromAppsOfAccountLogged);
+            accountLogged.AssertPermission(PermissionKey.GetAllPermissionsByRoleId);
         }
 
         if (Guard.IsNullOrEmpty(appId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllPermissionsFromAppsOfAccountLogged) &&
-            !accountLogged.HasPermission(PermissionKey.GETALLPERMISSIONSOFTENANT) &&
+            !accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfAppsOfAccountLogged) &&
+            !accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfTenant) &&
             !accountLogged.HasPermission(PermissionKey.FullAccess))
         {
             appId = accountLogged.AppLogged.Id;
         }
 
-        if (viewAll)
+        if (Guard.IsNotNullOrEmpty(appId))
+        {
+            accountLogged.AssertPermission(PermissionKey.GetAllPermissionsOfAppsOfAccountLogged);
+        }
+
+        if (Guard.IsNotNullOrEmpty(tenantId) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            tenantId = accountLogged.Tenant.Id;
+        }
+
+        if (Guard.IsNotNullOrEmpty(tenantId))
         {
             accountLogged.AssertPermission(PermissionKey.FullAccess);
         }
@@ -70,7 +74,7 @@ internal sealed class PermissionService(
             appId,
             isPrivate,
             roleId,
-            viewAll,
+            tenantId,
             accountLogged)
             .ConfigureAwait(false);
 

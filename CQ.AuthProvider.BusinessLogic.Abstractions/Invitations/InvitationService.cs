@@ -16,37 +16,41 @@ internal sealed class InvitationService(
     public async Task<List<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged)
     {
         if (Guard.IsNotNullOrEmpty(creatorId))
         {
-            accountLogged.AssertPermission(PermissionKey.GetAllInvitationsOfCreators);
+            accountLogged.AssertPermission(PermissionKey.GetAllInvitationsOfCreator);
         }
 
         if (Guard.IsNullOrEmpty(creatorId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfCreators) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsFromAppsOfAccountLogged) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllInvitationOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfCreator) &&
             !accountLogged.HasPermission(PermissionKey.FullAccess))
         {
             creatorId = accountLogged.Id;
         }
 
-        if (Guard.IsNotNullOrEmpty(appId))
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllInvitationsFromAppsOfAccountLogged);
-        }
-
         if (Guard.IsNullOrEmpty(appId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsFromAppsOfAccountLogged) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllInvitationOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfAppsOfAccountLogged) &&
+            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfTenant) &&
             !accountLogged.HasPermission(PermissionKey.FullAccess))
         {
             appId = accountLogged.AppLogged.Id;
         }
 
-        if (viewAll)
+        if (Guard.IsNotNullOrEmpty(appId))
+        {
+            accountLogged.AssertPermission(PermissionKey.GetAllInvitationsOfAppsOfAccountLogged);
+        }
+
+        if (Guard.IsNullOrEmpty(tenantId) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            tenantId = accountLogged.Tenant.Id;
+        }
+
+        if (Guard.IsNotNullOrEmpty(tenantId))
         {
             accountLogged.AssertPermission(PermissionKey.FullAccess);
         }
@@ -55,7 +59,7 @@ internal sealed class InvitationService(
             .GetAllAsync(
             creatorId,
             appId,
-            viewAll,
+            tenantId,
             accountLogged)
             .ConfigureAwait(false);
 

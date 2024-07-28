@@ -15,8 +15,6 @@ public sealed record class Role()
 
     public bool IsPublic { get; init; }
 
-    public RoleKey Key { get; init; } = null!;
-
     public List<Permission> Permissions { get; init; } = [];
 
     public List<App> Apps { get; init; } = [];
@@ -29,7 +27,6 @@ public sealed record class Role()
         string name,
         string description,
         bool isPublic,
-        RoleKey key,
         List<Permission> permissions,
         bool isDefault,
         App app)
@@ -38,7 +35,6 @@ public sealed record class Role()
         Name = name;
         Description = description;
         IsPublic = isPublic;
-        Key = key;
         Permissions = permissions;
         IsDefault = isDefault;
         Apps = [app];

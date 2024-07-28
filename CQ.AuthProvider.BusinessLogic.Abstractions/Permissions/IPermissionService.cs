@@ -8,7 +8,7 @@ public interface IPermissionService
         string? appId,
         bool? isPrivate,
         string? roleId,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged);
 
     Task CreateAsync(

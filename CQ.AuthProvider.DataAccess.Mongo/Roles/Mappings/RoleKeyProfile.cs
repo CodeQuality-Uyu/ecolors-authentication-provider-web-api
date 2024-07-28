@@ -7,7 +7,5 @@ internal sealed class RoleKeyProfile : Profile
 {
     public RoleKeyProfile()
     {
-        CreateMap<List<RoleKey>, List<string>>()
-            .ConvertUsing(source => source.ConvertAll(r => r.ToString()));
     }
 }

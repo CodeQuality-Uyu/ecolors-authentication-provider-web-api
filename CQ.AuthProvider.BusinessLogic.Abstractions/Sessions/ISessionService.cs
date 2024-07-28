@@ -12,11 +12,12 @@ public interface ISessionService
     Task<bool> IsTokenValidAsync(string token);
 }
 
-public interface ISessionInternalService : ISessionService
+public interface ISessionInternalService
+    : ISessionService
 {
     Task<Session> CreateAsync(
         Identity identity,
-        string appId);
+        string? appId);
 
     Task<Session> GetByTokenAsync(string token);
 }

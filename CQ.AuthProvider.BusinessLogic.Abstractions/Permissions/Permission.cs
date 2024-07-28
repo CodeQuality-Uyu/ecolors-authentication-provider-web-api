@@ -38,6 +38,6 @@ public sealed record class Permission()
 
     public bool HasPermission(PermissionKey permission)
     {
-        return Key == PermissionKey.Joker || Key == permission;
+        return (Key == PermissionKey.Joker && permission != PermissionKey.FullAccess) || Key == permission;
     }
 }

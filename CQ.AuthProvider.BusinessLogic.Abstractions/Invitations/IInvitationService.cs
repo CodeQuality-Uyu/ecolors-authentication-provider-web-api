@@ -7,5 +7,9 @@ public interface IInvitationService
 {
     Task CreateAsync(CreateInvitationArgs args);
 
-    Task<List<Invitation>> GetAllAsync(AccountLogged accountLogged);
+    Task<List<Invitation>> GetAllAsync(
+        string? creatorId,
+        string? appId,
+        string? tenantId,
+        AccountLogged accountLogged);
 }

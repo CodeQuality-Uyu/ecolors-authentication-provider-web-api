@@ -56,7 +56,7 @@ public class PermissionController(
         [FromQuery] string? appId,
         [FromQuery] bool? isPrivate,
         [FromQuery] string? roleId,
-        [FromQuery] bool viewAll)
+        [FromQuery] string? tenantId)
     {
         var accountLogged = this.GetAccountLogged();
 
@@ -65,7 +65,7 @@ public class PermissionController(
             appId,
             isPrivate,
             roleId,
-            viewAll,
+            tenantId,
             accountLogged)
             .ConfigureAwait(false);
 

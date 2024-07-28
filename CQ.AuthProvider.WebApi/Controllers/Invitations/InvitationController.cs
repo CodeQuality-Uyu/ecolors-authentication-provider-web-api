@@ -30,12 +30,19 @@ public sealed class InvitationController(
 
     [HttpGet]
     [CQAuthorization]
-    public async Task<List<InvitationBasicInfoResponse>> GetAllAsync()
+    public async Task<List<InvitationBasicInfoResponse>> GetAllAsync(
+        [FromQuery]string? creatorId,
+        [FromQuery]string? appId,
+        [FromQuery]string? tenantId)
     {
         var accountLogged = this.GetAccountLogged();
 
         var invitations = await invitationService
-            .GetAllAsync(accountLogged)
+            .GetAllAsync(
+            creatorId,
+            appId,
+            tenantId,
+            accountLogged)
             .ConfigureAwait(false);
 
         return mapper.Map<List<InvitationBasicInfoResponse>>(invitations);

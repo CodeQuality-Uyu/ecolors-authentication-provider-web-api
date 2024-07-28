@@ -16,7 +16,7 @@ internal sealed class PermissionRepository(
         string? appId,
         bool? isPrivate,
         string? roleId,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged
@@ -27,13 +27,13 @@ internal sealed class PermissionRepository(
         var fullAccessKey = PermissionKey.FullAccess.ToString();
 
         var query = _dbSet
-            .Where(p => viewAll || p.TenantId == accountLogged.Tenant.Id)
+            .Where(p => tenantId == null || p.TenantId == tenantId)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Exists(r => r.RoleId == roleId))
-            .Where(p => p.Key != fullAccessKey || viewAll)
+            .Where(p => p.Key != fullAccessKey || tenantId == null)
             .Where(p =>
             (appId != null && p.AppId == appId) ||
-            (appId == null && (viewAll || canSeeOfTenant || appsIdsOfAccountLogged.Contains(p.AppId))))
+            (appId == null && (tenantId == null || canSeeOfTenant || appsIdsOfAccountLogged.Contains(p.AppId))))
             ;
 
         var permissions = await query

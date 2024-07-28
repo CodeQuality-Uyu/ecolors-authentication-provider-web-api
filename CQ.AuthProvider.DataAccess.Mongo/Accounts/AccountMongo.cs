@@ -60,7 +60,7 @@ namespace CQ.AuthProvider.DataAccess.Mongo.Accounts
             LastName = lastName;
             Locale = locale;
             TimeZone = timeZone;
-            Roles = roles.ConvertAll(r => new MiniAcountRole(r.Key, r.Permissions));
+            Roles = roles.ConvertAll(r => new MiniAcountRole(r.Permissions));
             ProfilePictureUrl = profilePictureUrl;
         }
     }

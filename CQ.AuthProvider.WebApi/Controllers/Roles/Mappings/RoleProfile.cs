@@ -11,8 +11,6 @@ internal sealed class RoleProfile
     {
         #region Get all
         CreateMap<Role, RoleBasicInfoResponse>();
-        CreateMap<RoleKey, string>()
-            .ConvertUsing((source, destination, context) => source.ToString());
         #endregion
     }
 }

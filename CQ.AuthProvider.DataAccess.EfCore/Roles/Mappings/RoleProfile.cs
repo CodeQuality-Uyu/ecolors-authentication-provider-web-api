@@ -10,8 +10,6 @@ internal sealed class RoleProfile
     {
         #region Get all
         CreateMap<RoleEfCore, Role>();
-        CreateMap<string, RoleKey>()
-            .ConvertUsing((source, destination, context) => new RoleKey(source));
         #endregion
     }
 }

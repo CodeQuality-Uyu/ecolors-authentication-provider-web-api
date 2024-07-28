@@ -48,7 +48,7 @@ internal sealed class PermissionRepository(
         string? appId,
         bool? isPrivate,
         string? roleId,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged)
     {
         var permissions = await

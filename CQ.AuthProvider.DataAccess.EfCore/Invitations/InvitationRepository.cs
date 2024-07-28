@@ -16,21 +16,21 @@ internal sealed class InvitationRepository(
     public async Task<List<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged
             .Apps
             .ConvertAll(i => i.Id);
 
-        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.GetAllInvitationsFromTenant);
+        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfTenant);
 
         var query = _dbSet
             .Include(i => i.Creator)
-            .Where(i => viewAll || i.TenantId == accountLogged.Tenant.Id)
-            .Where(i => creatorId == null || i.CreatorId == creatorId)
+            .Where(i => tenantId == null || i.TenantId == tenantId)
             .Where(i => (appId != null && i.AppId == appId) ||
-            (appId == null && (viewAll || canSeeOfTenant || appsIdsOfAccountLogged.Contains(i.AppId))))
+            (appId == null && (tenantId == null || canSeeOfTenant || appsIdsOfAccountLogged.Contains(i.AppId))))
+            .Where(i => creatorId == null || i.CreatorId == creatorId)
             ;
 
         var invitations = await query

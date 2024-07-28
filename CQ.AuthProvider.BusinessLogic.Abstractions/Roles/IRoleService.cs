@@ -8,7 +8,7 @@ public interface IRoleService
     Task<List<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged);
 
     Task CreateAsync(
@@ -26,13 +26,13 @@ public interface IRoleService
 
 internal interface IRoleInternalService : IRoleService
 {
-    Task AssertByKeyAsync(RoleKey key);
+    Task AssertByNameAsync(string id);
 
     Task<bool> HasPermissionAsync(
-        List<RoleKey> keys,
+        List<string> ids,
         PermissionKey permission);
 
-    Task<Role> GetByKeyAsync(RoleKey key);
+    Task<Role> GetByIdAsync(string id);
 
     Task<Role> GetDefaultAsync();
 }

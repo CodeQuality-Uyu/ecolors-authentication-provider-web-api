@@ -11,8 +11,6 @@ public sealed record class RoleMongo
 
     public string Description { get; set; } = null!;
 
-    public string Key { get; init; } = null!;
-
     public List<string> Permissions { get; set; } = [];
 
     public bool IsPublic { get; set; }
@@ -39,7 +37,6 @@ public sealed record class RoleMongo
         string id,
         string name,
         string description,
-        RoleKey key,
         List<Permission> permissions,
         bool isPublic,
         bool isDefault)
@@ -47,7 +44,6 @@ public sealed record class RoleMongo
         Id = id;
         Name = name;
         Description = description;
-        Key = key.ToString();
         Permissions = permissions.ConvertAll(p => p.Key.ToString());
         IsPublic = isPublic;
         IsDefault = isDefault;

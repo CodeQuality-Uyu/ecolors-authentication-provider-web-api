@@ -36,16 +36,20 @@ internal sealed class SessionService(
 
     public async Task<Session> CreateAsync(
         Identity identity,
-        string appId)
+        string? appId)
     {
         var account = await accountRepository
             .GetByIdAsync(identity.Id)
             .ConfigureAwait(true);
 
-        var app = await appService
-            .GetByIdAsync(
-            appId,
-            account.Tenant);
+        var app = account
+            .Apps
+            .FirstOrDefault(a => (appId == null && a.IsDefault) || a.Id == appId);
+
+        if (Guard.IsNull(app))
+        {
+            throw new InvalidOperationException($"Account of email {identity.Email} doesn't exist {(Guard.IsNullOrEmpty(appId) ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app {appId}")}");
+        }
 
         var token = tokenService.Create();
 

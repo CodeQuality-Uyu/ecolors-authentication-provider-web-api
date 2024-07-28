@@ -27,27 +27,13 @@ internal sealed class RoleRepository(
         throw new NotImplementedException();
     }
 
-    public Task<bool> ExistByKeyAsync(RoleKey key)
-    {
-        throw new NotImplementedException();
-    }
 
     public Task<List<PermissionKey>> FilterDuplicatedPermissionsAsync(string id, List<PermissionKey> permissionKey)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Role>> GetAllAsync(string? appId, bool? isPrivate, bool viewAll, AccountLogged accountLogged)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<Role>> GetAllByRolesKeyesAsync(List<RoleKey> rolesKeys)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Role> GetByKeyAsync(RoleKey key)
+    public Task<List<Role>> GetAllAsync(string? appId, bool? isPrivate, string? tenantId, AccountLogged accountLogged)
     {
         throw new NotImplementedException();
     }
@@ -57,7 +43,7 @@ internal sealed class RoleRepository(
         throw new NotImplementedException();
     }
 
-    public Task<bool> HasPermissionAsync(List<RoleKey> rolesKeys, PermissionKey permissionKey)
+    public Task<bool> HasPermissionAsync(List<string> ids, PermissionKey permissionKey)
     {
         throw new NotImplementedException();
     }

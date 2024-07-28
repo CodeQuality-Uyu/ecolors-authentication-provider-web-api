@@ -12,6 +12,8 @@ public sealed record class App()
 
     public Tenant Tenant { get; init; } = null!;
 
+    public bool IsDefault { get; init; }
+
     public App(
         string name,
         Tenant tenant)

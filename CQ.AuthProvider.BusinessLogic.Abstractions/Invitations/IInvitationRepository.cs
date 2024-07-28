@@ -7,6 +7,6 @@ public interface IInvitationRepository
     Task<List<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
-        bool viewAll,
+        string? tenantId,
         AccountLogged accountLogged);
 }
