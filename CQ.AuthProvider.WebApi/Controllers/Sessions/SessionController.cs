@@ -12,7 +12,8 @@ namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
 [Route("sessions")]
 public class SessionController(
     IMapper mapper,
-    ISessionService sessionService) : ControllerBase
+    ISessionService sessionService)
+    : ControllerBase
 {
     [HttpPost("credentials")]
     public async Task<CreateSessionResponse> CreateAsync(CreateSessionCredentialsRequest? request)
@@ -25,7 +26,21 @@ public class SessionController(
             .CreateAsync(createAuth)
             .ConfigureAwait(false);
 
-        return mapper.Map<CreateSessionResponse>(session);
+        return new CreateSessionResponse
+        {
+            AccountId = session.Account.Id,
+            Email = session.Account.Email,
+            FirstName = session.Account.FirstName,
+            LastName = session.Account.LastName,
+            FullName = session.Account.FullName,
+            ProfilePictureUrl = session.Account.ProfilePictureUrl,
+            Token = session.Token,
+            Roles = session.Account.Roles.ConvertAll(r => r.Name),
+            Permissions = session.Account.Roles
+            .SelectMany(r => r.Permissions)
+            .Select(p => p.Key.ToString())
+            .ToList()
+        };
     }
 
     [HttpDelete]

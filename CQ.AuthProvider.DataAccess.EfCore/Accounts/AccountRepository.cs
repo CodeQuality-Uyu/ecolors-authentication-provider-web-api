@@ -53,6 +53,8 @@ internal sealed class AccountRepository(
             .ThenInclude(r => r.Permissions)
             .ThenInclude(p => p.Permission)
             .Include(a => a.Tenant)
+            .Include(a => a.Apps)
+            .ThenInclude(a => a.App)
             .Where(a => a.Id == id);
 
         var account = await query

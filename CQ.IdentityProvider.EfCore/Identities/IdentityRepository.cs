@@ -13,14 +13,18 @@ public sealed class IdentityRepository(
         await DeleteAsync(i => i.Id == id).ConfigureAwait(false);
     }
 
-    public async Task<Identity> GetByCredentialsAsync(string email, string password)
+    public async Task<Identity> GetByCredentialsAsync(
+        string email,
+        string password)
     {
         var identity = await GetAsync(i => i.Email == email && i.Password == password).ConfigureAwait(false);
 
         return identity;
     }
 
-    public async Task UpdatePasswordAsync(string id, string newPassword)
+    public async Task UpdatePasswordAsync(
+        string id,
+        string newPassword)
     {
         var identity = await GetAsync(i => i.Id == id).ConfigureAwait(false);
 

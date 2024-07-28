@@ -1,7 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions.Exceptions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Tokens;
 using CQ.Utility;
 
@@ -11,8 +9,7 @@ internal sealed class SessionService(
     ISessionRepository sessionRepository,
     IIdentityRepository identityRepository,
     IAccountRepository accountRepository,
-    ITokenService tokenService,
-    IAppInternalService appService)
+    ITokenService tokenService)
     : ISessionInternalService
 {
     public async Task<Session> CreateAsync(CreateSessionCredentialsArgs args)
@@ -20,11 +17,6 @@ internal sealed class SessionService(
         var identity = await identityRepository
             .GetByCredentialsAsync(args.Email, args.Password)
             .ConfigureAwait(false);
-
-        if (Guard.IsNull(identity))
-        {
-            throw new InvalidCredentialsException(args.Email);
-        }
 
         var session = await CreateAsync(
             identity,
@@ -83,7 +75,7 @@ internal sealed class SessionService(
 
     public Task<bool> IsTokenValidAsync(string token)
     {
-        var isGuid = Guid.TryParse(token, out var id);
+        var isGuid = Db.IsIdValid(token);
 
         return Task.FromResult(isGuid);
     }

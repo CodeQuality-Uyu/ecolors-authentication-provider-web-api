@@ -1,5 +1,4 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -27,7 +26,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .DropForeignKey("FK_Tenants_Accounts_OwnerId", "Tenants");
 
-            var ownerId = Db.NewId();
+            var ownerId = "5f7dd4f88608458ea68bdc3ef9a94e59";
             var codeQualityTenantId = Db.NewId();
             migrationBuilder
                 .InsertData("Tenants",

@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
+		execute-ef-command-auth-provider.bat = execute-ef-command-auth-provider.bat
+		execute-ef-command-identity-provider.bat = execute-ef-command-identity-provider.bat
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -30,9 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.DataAccess.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.DataAccess.Factory", "CQ.AuthProvider.DataAccess.Factory\CQ.AuthProvider.DataAccess.Factory.csproj", "{7EF130FD-7EDF-4510-8D45-616D6F69DE21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.IdentityProvider.Factory", "CQ.IdentityProvider.Factory\CQ.IdentityProvider.Factory.csproj", "{38580AF3-5E22-45B0-895D-6CC33AE08A3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.IdentityProvider.Factory", "CQ.IdentityProvider.Factory\CQ.IdentityProvider.Factory.csproj", "{38580AF3-5E22-45B0-895D-6CC33AE08A3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.AuthProvider.DataAccess.Mongo", "CQ.AuthProvider.DataAccess.Mongo\CQ.AuthProvider.DataAccess.Mongo.csproj", "{089A7560-B635-4312-B055-B30D0456CB3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.DataAccess.Mongo", "CQ.AuthProvider.DataAccess.Mongo\CQ.AuthProvider.DataAccess.Mongo.csproj", "{089A7560-B635-4312-B055-B30D0456CB3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
