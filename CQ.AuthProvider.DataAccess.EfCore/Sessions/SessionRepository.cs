@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore.Core;
+using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Sessions;
@@ -18,7 +21,7 @@ internal sealed class SessionRepository(
         await CreateAsync(sessionEfCore).ConfigureAwait(false);
     }
 
-    public async Task<Session?> GetOrDefaultByTokenAsync(string token)
+    public async Task<Session> GetByTokenAsync(string token)
     {
         var query = _dbSet
             .Include(s => s.Account)
@@ -28,7 +31,17 @@ internal sealed class SessionRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        return mapper.Map<Session>(session);
+        if (Guard.IsNull(session))
+        {
+            throw new SpecificResourceNotFoundException<Session>(nameof(Session.Token), token);
+        }
+
+        return new Session
+        {
+            Id = session.Id,
+            Token = session.Token,
+            Account = mapper.Map<Account>(session.Account)
+        };
     }
 
     public async Task DeleteByTokenAsync(string token)

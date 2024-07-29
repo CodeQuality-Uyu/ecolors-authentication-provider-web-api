@@ -62,7 +62,7 @@ internal sealed class SessionService(
         Db.ThrowIsInvalidId(token, nameof(token));
 
         var session = await sessionRepository
-            .GetOrDefaultByTokenAsync(token)
+            .GetByTokenAsync(token)
             .ConfigureAwait(false);
 
         if (Guard.IsNull(session))

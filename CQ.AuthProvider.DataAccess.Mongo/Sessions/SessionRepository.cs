@@ -22,7 +22,7 @@ internal sealed class SessionRepository(
         throw new NotImplementedException();
     }
 
-    public Task<Session?> GetOrDefaultByTokenAsync(string token)
+    public Task<Session?> GetByTokenAsync(string token)
     {
         throw new NotImplementedException();
     }
