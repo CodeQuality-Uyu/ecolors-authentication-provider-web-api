@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore.Core;
@@ -36,16 +35,12 @@ internal sealed class SessionRepository(
             throw new SpecificResourceNotFoundException<Session>(nameof(Session.Token), token);
         }
 
-        return new Session
-        {
-            Id = session.Id,
-            Token = session.Token,
-            Account = mapper.Map<Account>(session.Account)
-        };
+        return mapper.Map<Session>(session);
     }
 
     public async Task DeleteByTokenAsync(string token)
     {
-        await DeleteAsync(s => s.Token == token).ConfigureAwait(false);
+        await DeleteAsync(s => s.Token == token)
+            .ConfigureAwait(false);
     }
 }

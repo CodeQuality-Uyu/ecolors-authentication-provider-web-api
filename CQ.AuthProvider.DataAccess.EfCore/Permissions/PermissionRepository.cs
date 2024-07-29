@@ -40,14 +40,7 @@ internal sealed class PermissionRepository(
             .ToListAsync()
             .ConfigureAwait(false);
 
-        return permissions.ConvertAll(p => new Permission
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Description = p.Description,
-            Key = new PermissionKey(p.Key),
-            IsPublic = p.IsPublic
-        });
+        return mapper.Map<List<Permission>>(permissions);
     }
 
     public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionsKeys)
