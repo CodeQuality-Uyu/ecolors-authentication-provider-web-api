@@ -55,7 +55,7 @@ internal static class AuthProviderWebApiConfig
         var fakeAccount = configuration.GetSection<FakeAccountLogged>("Auth:Fake");
         var accountLogged = fakeAccount.Build();
 
-        services.AddSingleton<AccountLogged>(accountLogged);
+        services.AddService<AccountLogged>(accountLogged, LifeTime.Scoped);
 
         return services;
     }

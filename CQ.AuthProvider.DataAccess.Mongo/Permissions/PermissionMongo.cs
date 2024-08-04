@@ -33,13 +33,13 @@ public sealed class PermissionMongo
         string id,
         string name,
         string description,
-        PermissionKey key,
+        string key,
         bool isPublic)
     {
         Id = id;
         Name = name;
         Description = description;
-        Key = key.ToString();
+        Key = key;
         IsPublic = isPublic;
     }
 }

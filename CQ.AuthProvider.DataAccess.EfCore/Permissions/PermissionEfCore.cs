@@ -39,7 +39,7 @@ public sealed record class PermissionEfCore()
     public PermissionEfCore(
         string name,
         string description,
-        PermissionKey key,
+        string key,
         bool isPublic,
         string appId,
         string tenantId)
@@ -47,7 +47,7 @@ public sealed record class PermissionEfCore()
     {
         Name = name;
         Description = description;
-        Key = key.ToString();
+        Key = key;
         IsPublic = isPublic;
         AppId = appId;
         TenantId = tenantId;

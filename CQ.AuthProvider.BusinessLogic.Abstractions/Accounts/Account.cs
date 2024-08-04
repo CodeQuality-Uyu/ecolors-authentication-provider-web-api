@@ -65,23 +65,23 @@ public record class Account()
         Apps = [app];
     }
 
-    public void AssertPermission(PermissionKey permission)
+    public void AssertPermission(string permissionKey)
     {
-        var missingPermission = !HasPermission(permission);
+        var missingPermission = !HasPermission(permissionKey);
 
         if (missingPermission)
         {
-            throw new AccessDeniedException(permission.ToString());
+            throw new AccessDeniedException(permissionKey.ToString());
         }
     }
 
-    public bool HasPermission(PermissionKey permission)
+    public bool HasPermission(string permissionKey)
     {
         var allPermissions = Roles
            .SelectMany(r => r.Permissions)
            .ToList();
 
-        var hasPermission = allPermissions.Exists(p => p.HasPermission(permission));
+        var hasPermission = allPermissions.Exists(p => p.HasPermissionKey(permissionKey));
 
         return hasPermission;
     }

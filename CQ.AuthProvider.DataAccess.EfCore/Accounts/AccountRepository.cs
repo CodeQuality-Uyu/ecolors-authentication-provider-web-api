@@ -29,17 +29,20 @@ internal sealed class AccountRepository(
             account.Apps,
             account.Tenant);
 
-        await CreateAsync(accountEfCore).ConfigureAwait(false);
+        await CreateAsync(accountEfCore)
+            .ConfigureAwait(false);
     }
 
     public async Task<bool> ExistByEmailAsync(string email)
     {
-        return await ExistAsync(a => a.Email == email).ConfigureAwait(false);
+        return await ExistAsync(a => a.Email == email)
+            .ConfigureAwait(false);
     }
 
     public async Task<Account> GetByEmailAsync(string email)
     {
-        var account = await GetAsync(a => a.Email == email).ConfigureAwait(false);
+        var account = await GetAsync(a => a.Email == email)
+            .ConfigureAwait(false);
 
         return mapper.Map<Account>(account);
     }

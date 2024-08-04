@@ -16,7 +16,7 @@ internal sealed class PermissionProfile
                 Id = source.Id,
                 Name = source.Name,
                 Description = source.Description,
-                Key = new PermissionKey(source.Key),
+                Key = source.Key,
                 IsPublic = source.IsPublic
             });
         #endregion
@@ -28,7 +28,7 @@ internal sealed class PermissionProfile
                 Name = source.Permission.Name,
                 Description = source.Permission.Description,
                 IsPublic = source.Permission.IsPublic,
-                Key = options.Mapper.Map<PermissionKey>(source.Permission.Key)
+                Key = source.Permission.Key
             });
     }
 }

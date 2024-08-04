@@ -19,41 +19,17 @@ internal sealed class InvitationService(
         string? tenantId,
         AccountLogged accountLogged)
     {
-        if (Guard.IsNotNullOrEmpty(creatorId))
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllInvitationsOfCreator);
-        }
+        AssertCanFilterInvitationsByCreatorOrSetDefault(
+            ref creatorId,
+            accountLogged);
 
-        if (Guard.IsNullOrEmpty(creatorId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfCreator) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            creatorId = accountLogged.Id;
-        }
+        AssertCanFilterInvitationsByAppIdOrSetDefault(
+            ref appId,
+            accountLogged);
 
-        if (Guard.IsNullOrEmpty(appId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfAppsOfAccountLogged) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfTenant) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            appId = accountLogged.AppLogged.Id;
-        }
-
-        if (Guard.IsNotNullOrEmpty(appId))
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllInvitationsOfAppsOfAccountLogged);
-        }
-
-        if (Guard.IsNullOrEmpty(tenantId) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            tenantId = accountLogged.Tenant.Id;
-        }
-
-        if (Guard.IsNotNullOrEmpty(tenantId))
-        {
-            accountLogged.AssertPermission(PermissionKey.FullAccess);
-        }
+        AssertCanFilterInvitationsByTenantIdOrSetDefault(
+            ref tenantId,
+            accountLogged);
 
         var invitations = await invitationRepository
             .GetAllAsync(
@@ -64,5 +40,61 @@ internal sealed class InvitationService(
             .ConfigureAwait(false);
 
         return invitations;
+    }
+
+    private static void AssertCanFilterInvitationsByCreatorOrSetDefault(
+        ref string? creatorId,
+        AccountLogged accountLogged)
+    {
+        if (Guard.IsNotNullOrEmpty(creatorId) &&
+            accountLogged.Id != creatorId &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            accountLogged.AssertPermission(PermissionKey.CanReadInvitationsOfTenant);
+        }
+
+        if (Guard.IsNullOrEmpty(creatorId) &&
+            !accountLogged.HasPermission(PermissionKey.CanReadInvitationsOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            creatorId = accountLogged.Id;
+        }
+    }
+
+    private static void AssertCanFilterInvitationsByAppIdOrSetDefault(
+        ref string? appId,
+        AccountLogged accountLogged)
+    {
+        if (Guard.IsNotNullOrEmpty(appId) &&
+            !accountLogged.AppsIds.Contains(appId!) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            accountLogged.AssertPermission(PermissionKey.CanReadInvitationsOfTenant);
+        }
+
+        if (Guard.IsNullOrEmpty(appId) &&
+            !accountLogged.HasPermission(PermissionKey.CanReadInvitationsOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            appId = accountLogged.AppLogged.Id;
+        }
+    }
+
+    private static void AssertCanFilterInvitationsByTenantIdOrSetDefault(
+        ref string? tenantId,
+        AccountLogged accountLogged)
+    {
+        if (Guard.IsNotNullOrEmpty(tenantId) &&
+            accountLogged.Tenant.Id != tenantId)
+        {
+            accountLogged.AssertPermission(PermissionKey.FullAccess);
+        }
+
+        if (Guard.IsNullOrEmpty(tenantId) &&
+            !accountLogged.HasPermission(PermissionKey.CanReadInvitationsOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            tenantId = accountLogged.Tenant.Id;
+        }
     }
 }

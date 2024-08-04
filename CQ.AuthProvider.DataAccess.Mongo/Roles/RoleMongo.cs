@@ -44,7 +44,7 @@ public sealed record class RoleMongo
         Id = id;
         Name = name;
         Description = description;
-        Permissions = permissions.ConvertAll(p => p.Key.ToString());
+        Permissions = permissions.ConvertAll(p => p.Key);
         IsPublic = isPublic;
         IsDefault = isDefault;
     }

@@ -8,7 +8,7 @@ public readonly struct CreatePermissionArgs
 
     public string Description { get; init; }
 
-    public PermissionKey Key { get; init; }
+    public string Key { get; init; }
 
     public bool IsPublic { get; init; }
 
@@ -27,12 +27,12 @@ public readonly struct CreatePermissionArgs
         Description = Guard.Normalize(Guard.Encode(description.Trim(), nameof(description)));
         Guard.ThrowIsMoreThan(Description, 200, nameof(Description));
 
-        Key = new PermissionKey(key);
+        Key = Guard.Encode(key, nameof(key));
         IsPublic = isPublic;
 
         if (Guard.IsNotNullOrEmpty(appId))
         {
-            Guard.ThrowIsNullOrEmpty(appId, nameof(appId));
+            Db.ThrowIsInvalidId(appId, nameof(appId));
         }
         AppId = appId;
     }

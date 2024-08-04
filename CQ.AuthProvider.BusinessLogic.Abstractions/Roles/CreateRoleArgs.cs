@@ -9,7 +9,7 @@ public readonly struct CreateRoleArgs
 
     public string Description { get; init; }
 
-    public List<PermissionKey> PermissionKeys { get; init; }
+    public List<string> PermissionKeys { get; init; }
 
     public bool IsPublic { get; init; }
 
@@ -31,7 +31,7 @@ public readonly struct CreateRoleArgs
         Description = Guard.Normalize(Guard.Encode(description, nameof(description)));
         Guard.ThrowIsMoreThan(Description, 200, nameof(Description));
 
-        PermissionKeys = permissionKeys.ConvertAll(p => new PermissionKey(p));
+        PermissionKeys = permissionKeys.ConvertAll(p => Guard.Encode(p, nameof(p)));
 
         IsPublic = isPublic;
         IsDefault = isDefault;

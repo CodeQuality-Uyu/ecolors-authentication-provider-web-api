@@ -22,6 +22,6 @@ public sealed record class MiniAcountRole
     public MiniAcountRole(
         List<Permission> permissions)
     {
-        Permissions = permissions.ConvertAll(p => p.Key.ToString());
+        Permissions = permissions.ConvertAll(p => p.Key);
     }
 }

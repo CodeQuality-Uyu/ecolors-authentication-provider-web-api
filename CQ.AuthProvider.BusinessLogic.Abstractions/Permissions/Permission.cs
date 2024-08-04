@@ -14,9 +14,11 @@ public sealed record class Permission()
 
     public bool IsPublic { get; init; }
 
-    public PermissionKey Key { get; init; } = null!;
+    public PermissionScope Scope { get; init; } = PermissionScope.Endpoint;
 
-    public App App { get; init; } = null!; 
+    public string Key { get; init; } = null!;
+
+    public App App { get; init; } = null!;
 
     public Tenant Tenant { get; init; } = null!;
 
@@ -24,7 +26,7 @@ public sealed record class Permission()
         string name,
         string description,
         bool isPublic,
-        PermissionKey key,
+        string key,
         App app)
         : this()
     {
@@ -36,8 +38,8 @@ public sealed record class Permission()
         Tenant = app.Tenant;
     }
 
-    public bool HasPermission(PermissionKey permission)
+    public bool HasPermissionKey(string permissionKey)
     {
-        return (Key == PermissionKey.Joker && permission != PermissionKey.FullAccess) || Key == permission;
+        return (Key == PermissionKey.Joker && permissionKey != PermissionKey.FullAccess) || Key == permissionKey;
     }
 }

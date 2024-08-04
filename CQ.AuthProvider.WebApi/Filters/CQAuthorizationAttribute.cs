@@ -2,7 +2,6 @@
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.ApiElements.Filters.Extensions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters;
@@ -17,9 +16,7 @@ internal sealed class CQAuthorizationAttribute(string? permission = null)
     {
         var accountLogged = context.GetItem<AccountLogged>(ContextItems.AccountLogged);
 
-        var permissionKey = new PermissionKey(permission);
-
-        var hasPermissionAccount = accountLogged.HasPermission(permissionKey);
+        var hasPermissionAccount = accountLogged.HasPermission(permission);
 
         return Task.FromResult(hasPermissionAccount);
     }

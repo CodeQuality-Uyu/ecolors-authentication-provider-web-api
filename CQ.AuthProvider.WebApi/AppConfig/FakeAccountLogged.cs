@@ -9,7 +9,9 @@ namespace CQ.AuthProvider.WebApi.AppConfig;
 public sealed record class FakeAccountLogged
     : AccountLogged
 {
-    public List<string> AppsIds { get; init; } = [];
+    public new List<string> AppsIds { get; init; } = [];
+
+    public new List<string> RolesIds { get; init; } = [];
 
     public string AppLoggedId { get; init; } = null!;
 
@@ -36,16 +38,18 @@ public sealed record class FakeAccountLogged
         {
             Id = AppLoggedId
         },
-        Roles = PermissionsKeys.Count == 0
-            ? []
-            : [
-            new Role
+        Roles = RolesIds
+        .Select((i, index) => new Role
+        {
+            Id = i,
+            Permissions = index == 0
+            ? PermissionsKeys.ConvertAll(p => new Permission
             {
-                Permissions = PermissionsKeys.ConvertAll(p => new Permission
-                {
-                    Key = new PermissionKey(p)
-                })
-            }],
+                Key = p
+            })
+            : []
+        })
+        .ToList(),
         Tenant = new Tenant
         {
             Id = TenantId

@@ -7,7 +7,8 @@ using System.Net;
 
 namespace CQ.AuthProvider.WebApi.Filters.Exception;
 
-internal sealed class CQAuthExceptionRegistryService : ExceptionStoreService
+internal sealed class CQAuthExceptionRegistryService
+    : ExceptionStoreService
 {
     protected override void RegisterBusinessExceptions()
     {

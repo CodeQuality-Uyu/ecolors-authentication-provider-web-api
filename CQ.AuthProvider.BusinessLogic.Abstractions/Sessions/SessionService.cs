@@ -65,19 +65,7 @@ internal sealed class SessionService(
             .GetByTokenAsync(token)
             .ConfigureAwait(false);
 
-        if (Guard.IsNull(session))
-        {
-            throw new ArgumentException("Invalid token, session has expired", nameof(token));
-        }
-
         return session;
-    }
-
-    public Task<bool> IsTokenValidAsync(string token)
-    {
-        var isGuid = Db.IsIdValid(token);
-
-        return Task.FromResult(isGuid);
     }
 
     public async Task DeleteAsync(AccountLogged accountLogged)

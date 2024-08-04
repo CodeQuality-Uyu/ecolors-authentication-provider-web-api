@@ -16,7 +16,7 @@ public class SessionController(
     : ControllerBase
 {
     [HttpPost("credentials")]
-    public async Task<CreateSessionResponse> CreateAsync(CreateSessionCredentialsRequest? request)
+    public async Task<SessionCreatedResponse> CreateAsync(CreateSessionCredentialsRequest? request)
     {
         Guard.ThrowIsNull(request, nameof(request));
 
@@ -26,21 +26,7 @@ public class SessionController(
             .CreateAsync(createAuth)
             .ConfigureAwait(false);
 
-        return new CreateSessionResponse
-        {
-            AccountId = session.Account.Id,
-            Email = session.Account.Email,
-            FirstName = session.Account.FirstName,
-            LastName = session.Account.LastName,
-            FullName = session.Account.FullName,
-            ProfilePictureUrl = session.Account.ProfilePictureUrl,
-            Token = session.Token,
-            Roles = session.Account.Roles.ConvertAll(r => r.Name),
-            Permissions = session.Account.Roles
-            .SelectMany(r => r.Permissions)
-            .Select(p => p.Key.ToString())
-            .ToList()
-        };
+        return mapper.Map<SessionCreatedResponse>(session);
     }
 
     [HttpDelete]

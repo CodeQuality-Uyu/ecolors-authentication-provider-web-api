@@ -27,11 +27,11 @@ internal interface IRoleRepository
 
     Task<List<PermissionKey>> FilterDuplicatedPermissionsAsync(
         string id,
-        List<PermissionKey> permissionKey);
+        List<string> permissionKey);
 
     Task AddPermissionsAsync(
         string id,
-        List<PermissionKey> permissionsKeys);
+        List<string> permissionsKeys);
 
     Task<Role> GetDefaultAsync();
 }

@@ -8,8 +8,6 @@ public interface ISessionService
     Task<Session> CreateAsync(CreateSessionCredentialsArgs args);
 
     Task DeleteAsync(AccountLogged accountLogged);
-
-    Task<bool> IsTokenValidAsync(string token);
 }
 
 public interface ISessionInternalService

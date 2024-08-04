@@ -19,21 +19,26 @@ internal sealed class PermissionRepository(
         string? tenantId,
         AccountLogged accountLogged)
     {
-        var appsIdsOfAccountLogged = accountLogged
-            .Apps
-            .ConvertAll(a => a.Id);
+        var appsIdsOfAccountLogged = accountLogged.AppsIds;
+        var rolesIds = accountLogged.RolesIds;
 
-        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfTenant);
+        var canReadOfTenant = accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant);
+        var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
+
         var fullAccessKey = PermissionKey.FullAccess.ToString();
 
         var query = _dbSet
             .Where(p => tenantId == null || p.TenantId == tenantId)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
-            .Where(p => roleId == null || p.Roles.Exists(r => r.RoleId == roleId))
-            .Where(p => p.Key != fullAccessKey || tenantId == null)
             .Where(p =>
+            (roleId == null && (canReadOfTenant || hasFullAccess)) ||
+            (roleId != null && p.Roles.Any(r => r.RoleId == roleId)) ||
+            p.Roles.Any(r => rolesIds.Contains(r.RoleId)))
+            .Where(p =>
+            (appId == null && (canReadOfTenant || hasFullAccess)) ||
             (appId != null && p.AppId == appId) ||
-            (appId == null && (tenantId == null || canSeeOfTenant || appsIdsOfAccountLogged.Contains(p.AppId))))
+            appsIdsOfAccountLogged.Contains(p.AppId))
+            .Where(p => p.Key != fullAccessKey || hasFullAccess)
             ;
 
         var permissions = await query
@@ -43,12 +48,13 @@ internal sealed class PermissionRepository(
         return mapper.Map<List<Permission>>(permissions);
     }
 
-    public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionsKeys)
+    public async Task<List<Permission>> GetAllByKeysAsync(
+        List<(string key, string appId)> keys,
+        AccountLogged accountLogged)
     {
-        var keys = mapper.Map<List<string>>(permissionsKeys);
-
         var query = _dbSet
-            .Where(p => keys.Contains(p.Key));
+            .Where(p => keys.Any(i => i.key == p.Key && i.appId == p.AppId))
+            .Where(p => p.TenantId == accountLogged.Tenant.Id);
 
         var permissions = await query
             .ToListAsync()

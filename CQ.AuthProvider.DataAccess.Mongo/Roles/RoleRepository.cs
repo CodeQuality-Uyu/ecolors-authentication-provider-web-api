@@ -12,7 +12,7 @@ internal sealed class RoleRepository(
     : MongoDriverRepository<RoleMongo>(context),
     IRoleRepository
 {
-    public Task AddPermissionsAsync(string id, List<PermissionKey> permissionsKeys)
+    public Task AddPermissionsAsync(string id, List<string> permissionsKeys)
     {
         throw new NotImplementedException();
     }
@@ -28,7 +28,7 @@ internal sealed class RoleRepository(
     }
 
 
-    public Task<List<PermissionKey>> FilterDuplicatedPermissionsAsync(string id, List<PermissionKey> permissionKey)
+    public Task<List<PermissionKey>> FilterDuplicatedPermissionsAsync(string id, List<string> permissionKey)
     {
         throw new NotImplementedException();
     }

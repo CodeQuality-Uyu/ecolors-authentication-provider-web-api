@@ -1,6 +1,6 @@
 ﻿namespace CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
 
-public readonly struct CreateSessionResponse
+public readonly struct SessionCreatedResponse
 {
     public string AccountId { get; init; }
 

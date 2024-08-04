@@ -10,7 +10,7 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 
 internal sealed class RoleService(
     IRoleRepository roleRepository,
-    IPermissionRepository permissionRepository,
+    IPermissionInternalService permissionService,
     IAppInternalService appService)
     : IRoleInternalService
 {
@@ -20,44 +20,17 @@ internal sealed class RoleService(
         string? tenantId,
         AccountLogged accountLogged)
     {
-        if (Guard.IsNull(isPrivate))
-        {
-            var hasPermission = accountLogged.HasPermission(PermissionKey.GetAllPrivateRoles);
+        AssertCanReadPrivateRolesOrSetDefault(
+            ref isPrivate,
+            accountLogged);
 
-            isPrivate = hasPermission
-                    ? null
-                    : false;
-        }
+        AssertCanFilterRolesByAppIdOrSetDefault(
+            ref appId,
+            accountLogged);
 
-        if (isPrivate.HasValue &&
-            isPrivate.Value)
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllPrivateRoles);
-        }
-
-        if (Guard.IsNullOrEmpty(appId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllRolesOfAppsOfAccountLogged) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllRolesOfTenant) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            appId = accountLogged.AppLogged.Id;
-        }
-
-        if (Guard.IsNotNullOrEmpty(appId))
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllRolesOfAppsOfAccountLogged);
-        }
-
-        if(Guard.IsNullOrEmpty(tenantId) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            tenantId = accountLogged.Tenant.Id;
-        }
-
-        if (Guard.IsNotNullOrEmpty(tenantId))
-        {
-            accountLogged.AssertPermission(PermissionKey.FullAccess);
-        }
+        AssertCanFilterRolesByTenantIdOrSetDefault(
+            ref tenantId,
+            accountLogged);
 
         var roles = await roleRepository
             .GetAllAsync(
@@ -68,6 +41,62 @@ internal sealed class RoleService(
             .ConfigureAwait(false);
 
         return roles;
+    }
+
+    private static void AssertCanReadPrivateRolesOrSetDefault(
+        ref bool? isPrivate,
+        AccountLogged accountLogged)
+    {
+        if (PermissionService.IsPrivate(isPrivate))
+        {
+            accountLogged.AssertPermission(PermissionKey.CanReadPrivateRoles);
+        }
+
+        if (Guard.IsNull(isPrivate))
+        {
+            var hasPermission = accountLogged.HasPermission(PermissionKey.CanReadPrivateRoles);
+
+            isPrivate = hasPermission
+                    ? null
+                    : false;
+        }
+    }
+
+    private static void AssertCanFilterRolesByAppIdOrSetDefault(
+        ref string? appId,
+        AccountLogged accountLogged)
+    {
+        if (Guard.IsNotNullOrEmpty(appId) &&
+            !accountLogged.AppsIds.Contains(appId!) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            accountLogged.AssertPermission(PermissionKey.CanReadRolesOfTenant);
+        }
+
+        if (Guard.IsNullOrEmpty(appId) &&
+            !accountLogged.HasPermission(PermissionKey.CanReadRolesOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            appId = accountLogged.AppLogged.Id;
+        }
+    }
+
+    private static void AssertCanFilterRolesByTenantIdOrSetDefault(
+        ref string? tenantId,
+        AccountLogged accountLogged)
+    {
+        if (Guard.IsNotNullOrEmpty(tenantId) &&
+            accountLogged.Tenant.Id != tenantId)
+        {
+            accountLogged.AssertPermission(PermissionKey.FullAccess);
+        }
+
+        if (Guard.IsNullOrEmpty(tenantId) &&
+            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            tenantId = accountLogged.Tenant.Id;
+        }
     }
 
     public async Task AssertByNameAsync(string name)
@@ -87,39 +116,9 @@ internal sealed class RoleService(
         CreateRoleArgs args,
         AccountLogged accountLogged)
     {
-        //await AssertByNameAsync(args.Name).ConfigureAwait(false);
-
-        if (args.IsDefault)
-        {
-            await roleRepository
-                .RemoveDefaultAsync()
-                .ConfigureAwait(false);
-        }
-
-        var permissions = await permissionRepository
-            .GetAllByKeysAsync(args.PermissionKeys)
-            .ConfigureAwait(false);
-
-        var app = accountLogged.AppLogged;
-        if (Guard.IsNotNullOrEmpty(args.AppId))
-        {
-            app = await appService
-                .GetByIdAsync(
-                args.AppId!,
-                accountLogged)
-                .ConfigureAwait(false);
-        }
-
-        var role = new Role(
-            args.Name,
-            args.Description,
-            args.IsPublic,
-            permissions,
-            args.IsDefault,
-            app);
-
-        await roleRepository
-            .CreateAsync(role)
+        await CreateBulkAsync(
+            [args],
+            accountLogged)
             .ConfigureAwait(false);
     }
 
@@ -162,23 +161,14 @@ internal sealed class RoleService(
 
         var allPermissionsKeyes = args
             .SelectMany(a => a.PermissionKeys)
+            .Select(p => (p, args.FirstOrDefault(a => a.PermissionKeys.Contains(p)).AppId ?? accountLogged.AppLogged.Id))
             .ToList();
 
-        var permissions = await permissionRepository
-            .GetAllByKeysAsync(allPermissionsKeyes)
+        var permissions = await permissionService
+            .GetExactAllByKeysAsync(
+            allPermissionsKeyes,
+            accountLogged)
             .ConfigureAwait(false);
-
-        if (permissions.Count != allPermissionsKeyes.Count)
-        {
-            var missingPermissions = allPermissionsKeyes
-                .Where(p => !permissions.Exists(pp => pp.Key == p))
-                .ToList();
-            var missingPermissionsMapped = missingPermissions.ConvertAll(p => p.ToString());
-
-            throw new SpecificResourceNotFoundException<Permission>(
-                [nameof(Permission.Key)],
-                missingPermissionsMapped);
-        }
 
         var appsIds = args
             .GroupBy(r => r.AppId)

@@ -24,19 +24,19 @@ internal sealed class RoleRepository(
         string? tenantId,
         AccountLogged accountLogged)
     {
-        var appsIdsOfAccountLogged = accountLogged
-            .Apps
-            .ConvertAll(a => a.Id);
+        var appsIdsOfAccountLogged = accountLogged.AppsIds;
 
-        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.GetAllRolesOfTenant);
+        var canReadOfTenant = accountLogged.HasPermission(PermissionKey.CanReadRolesOfTenant);
+        var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
 
         var query = _dbSet
             .Where(r => tenantId == null || r.TenantId == tenantId)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
             .Where(r =>
+            (appId == null && (canReadOfTenant || hasFullAccess)) ||
             (appId != null && r.Apps.Any(a => a.AppId == appId)) ||
-            (appId == null && (tenantId == null || canSeeOfTenant || r.Apps.Any(a => appsIdsOfAccountLogged.Contains(a.AppId)))))
-            ;
+            r.Apps.Any(a => appsIdsOfAccountLogged.Contains(a.AppId))
+            );
 
         var roles = await query
             .ToListAsync()
@@ -44,15 +44,6 @@ internal sealed class RoleRepository(
 
         return mapper.Map<List<Role>>(roles);
     }
-
-    //public async Task<bool> ExistByKeyAsync(RoleKey key)
-    //{
-    //    var roleKey = key.ToString();
-
-    //    var existRole = await ExistAsync(r => r.Key == roleKey).ConfigureAwait(false);
-
-    //    return existRole;
-    //}
 
     public async Task RemoveDefaultAsync()
     {
@@ -74,22 +65,6 @@ internal sealed class RoleRepository(
 
         await CreateAsync(roleEfCore).ConfigureAwait(false);
     }
-
-    //public async Task<List<Role>> GetAllByRolesKeyesAsync(List<RoleKey> rolesKeys)
-    //{
-    //    var keys = mapper.Map<List<string>>(rolesKeys);
-
-    //    var query = _dbSet
-    //       .Include(r => r.Permissions)
-    //       .ThenInclude(p => p.Permission)
-    //       .Where(r => keys.Contains(r.Key));
-
-    //    var roles = await query
-    //        .ToListAsync()
-    //        .ConfigureAwait(false);
-
-    //    return mapper.Map<List<Role>>(roles);
-    //}
 
     public async Task<bool> HasPermissionAsync(
         List<string> ids,
@@ -128,12 +103,10 @@ internal sealed class RoleRepository(
 
     public async Task<List<PermissionKey>> FilterDuplicatedPermissionsAsync(
         string id,
-        List<PermissionKey> permissionsKeys)
+        List<string> permissionsKeys)
     {
-        var keys = mapper.Map<List<string>>(permissionsKeys);
-
         var query = _dbSet
-           .Include(r => r.Permissions.Where(p => !keys.Contains(p.Permission.Key)))
+           .Include(r => r.Permissions.Where(p => !permissionsKeys.Contains(p.Permission.Key)))
            .ThenInclude(p => p.Permission)
            .Where(r => r.Id == id);
 
@@ -167,11 +140,10 @@ internal sealed class RoleRepository(
         await CreateBulkAsync(rolesEfCore).ConfigureAwait(false);
     }
 
-    public async Task AddPermissionsAsync(string id, List<PermissionKey> permissionsKeys)
+    public async Task AddPermissionsAsync(string id, List<string> permissionsKeys)
     {
-        var permissionsKeysMapped = mapper.Map<List<string>>(permissionsKeys);
         var permissions = await permissionRepository
-            .GetAllAsync(p => permissionsKeysMapped.Contains(p.Key))
+            .GetAllAsync(p => permissionsKeys.Contains(p.Key))
             .ConfigureAwait(false);
 
         var rolePermissions = permissions.ConvertAll(p => new RolePermission(id, p.Id));

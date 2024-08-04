@@ -1,7 +1,9 @@
 ﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.Tokens
 {
-    internal interface ITokenService
+    public interface ITokenService
     {
         string Create();
+
+        Task<bool> IsValidAsync(string token);
     }
 }

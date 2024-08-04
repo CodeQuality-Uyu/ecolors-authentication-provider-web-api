@@ -22,7 +22,7 @@ public interface IPermissionService
 
 internal interface IPermissionInternalService: IPermissionService
 {
-    Task AssertByKeysAsync(List<PermissionKey> permissionKeys);
-
-    Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> keys);
+    Task<List<Permission>> GetExactAllByKeysAsync(
+        List<(string key, string appId)> keys,
+        AccountLogged accountLogged);
 }

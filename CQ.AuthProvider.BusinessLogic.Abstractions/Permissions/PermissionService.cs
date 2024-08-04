@@ -18,56 +18,21 @@ internal sealed class PermissionService(
         string? tenantId,
         AccountLogged accountLogged)
     {
-        if (Guard.IsNull(isPrivate))
-        {
-            var hasPermission = accountLogged.HasPermission(PermissionKey.GetAllPrivatePermissions);
+        AssertCanReadPrivatePermissionsOrSetDefault(
+            ref isPrivate,
+            accountLogged);
 
-            isPrivate = hasPermission
-                    ? null
-                    : false;
-        }
+        AssertCanFilterPermissionsByRoleIdOrSetDefault(
+            ref roleId,
+            accountLogged);
 
-        if (isPrivate.HasValue &&
-            isPrivate.Value)
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllPrivatePermissions);
-        }
+        AssertCanFilterPermissionsByAppIdOrSetDefault(
+            ref appId,
+            accountLogged);
 
-        if (Guard.IsNullOrEmpty(roleId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllPermissionsByRoleId) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            roleId = accountLogged.Roles.FirstOrDefault()?.Id;
-        }
-
-        if (Guard.IsNotNullOrEmpty(roleId))
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllPermissionsByRoleId);
-        }
-
-        if (Guard.IsNullOrEmpty(appId) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfAppsOfAccountLogged) &&
-            !accountLogged.HasPermission(PermissionKey.GetAllPermissionsOfTenant) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            appId = accountLogged.AppLogged.Id;
-        }
-
-        if (Guard.IsNotNullOrEmpty(appId))
-        {
-            accountLogged.AssertPermission(PermissionKey.GetAllPermissionsOfAppsOfAccountLogged);
-        }
-
-        if (Guard.IsNotNullOrEmpty(tenantId) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            tenantId = accountLogged.Tenant.Id;
-        }
-
-        if (Guard.IsNotNullOrEmpty(tenantId))
-        {
-            accountLogged.AssertPermission(PermissionKey.FullAccess);
-        }
+        AssertCanFilterPermissionsByTenantIdOrSetDefault(
+            ref tenantId,
+            accountLogged);
 
         var permissions = await permissionRepository
             .GetAllAsync(
@@ -81,16 +46,97 @@ internal sealed class PermissionService(
         return permissions;
     }
 
-    public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionKeys)
+    private static void AssertCanReadPrivatePermissionsOrSetDefault(
+        ref bool? isPrivate,
+        AccountLogged accountLogged)
+    {
+        if (IsPrivate(isPrivate))
+        {
+            accountLogged.AssertPermission(PermissionKey.CanReadPrivatePermissions);
+        }
+
+        if (Guard.IsNull(isPrivate))
+        {
+            var hasPermission = accountLogged.HasPermission(PermissionKey.CanReadPrivatePermissions);
+
+            isPrivate = hasPermission
+                    ? null
+                    : false;
+        }
+    }
+
+    public static bool IsPrivate(bool? isPrivate)
+    {
+        return isPrivate.HasValue && isPrivate.Value;
+    }
+
+    private static void AssertCanFilterPermissionsByRoleIdOrSetDefault(
+        ref string? roleId,
+        AccountLogged accountLogged)
+    {
+        if (Guard.IsNullOrEmpty(roleId))
+        {
+            return;
+        }
+
+        if (!accountLogged.RolesIds.Contains(roleId!) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            accountLogged.AssertPermission(PermissionKey.CanReadPermissionsOfTenant);
+        }
+    }
+
+    private static void AssertCanFilterPermissionsByAppIdOrSetDefault(
+        ref string? appId,
+        AccountLogged accountLogged)
+    {
+        if (Guard.IsNotNullOrEmpty(appId) &&
+            !accountLogged.AppsIds.Contains(appId!) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            accountLogged.AssertPermission(PermissionKey.CanReadPermissionsOfTenant);
+        }
+
+        if (Guard.IsNullOrEmpty(appId) &&
+            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            appId = accountLogged.AppLogged.Id;
+        }
+    }
+
+    private static void AssertCanFilterPermissionsByTenantIdOrSetDefault(
+        ref string? tenantId,
+        AccountLogged accountLogged)
+    {
+        if (Guard.IsNotNullOrEmpty(tenantId) &&
+            accountLogged.Tenant.Id != tenantId)
+        {
+            accountLogged.AssertPermission(PermissionKey.FullAccess);
+        }
+
+        if (Guard.IsNullOrEmpty(tenantId) &&
+            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant) &&
+            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        {
+            tenantId = accountLogged.Tenant.Id;
+        }
+    }
+
+    public async Task<List<Permission>> GetExactAllByKeysAsync(
+        List<(string key, string appId)> keys,
+        AccountLogged accountLogged)
     {
         var permissionsSaved = await permissionRepository
-            .GetAllByKeysAsync(permissionKeys)
+            .GetAllByKeysAsync(
+            keys,
+            accountLogged)
             .ConfigureAwait(false);
 
-        if (permissionsSaved.Count != permissionKeys.Count)
+        if (permissionsSaved.Count != keys.Count)
         {
-            var missingPermissions = permissionKeys
-                .Where(pk => !permissionsSaved.Exists(p => p.Key == pk))
+            var missingPermissions = keys
+                .Where(pk => !permissionsSaved.Exists(p => p.Key == pk.key))
                 .ToList();
             var missingPermissionsMapped = missingPermissions.ConvertAll(p => p.ToString());
 
@@ -100,46 +146,13 @@ internal sealed class PermissionService(
         return permissionsSaved;
     }
 
-    public async Task AssertByKeysAsync(List<PermissionKey> permissionKeys)
-    {
-        await GetAllByKeysAsync(permissionKeys)
-            .ConfigureAwait(false);
-    }
-
     public async Task CreateAsync(
         CreatePermissionArgs args,
         AccountLogged accountLogged)
     {
-        var existPermission = await permissionRepository
-            .ExistByKeyAsync(args.Key)
-            .ConfigureAwait(false);
-
-        if (existPermission)
-        {
-            throw new SpecificResourceDuplicatedException<Permission>(
-                nameof(Permission.Key),
-                args.Key.ToString());
-        }
-
-        var app = accountLogged.AppLogged;
-        if (Guard.IsNotNullOrEmpty(args.AppId))
-        {
-            app = await appService
-                .GetByIdAsync(
-                args.AppId!,
-                accountLogged)
-                .ConfigureAwait(false);
-        }
-
-        var permission = new Permission(
-            args.Name,
-            args.Description,
-            args.IsPublic,
-            args.Key,
-            app);
-
-        await permissionRepository
-            .CreateAsync(permission)
+        await CreateBulkAsync(
+            [args],
+            accountLogged)
             .ConfigureAwait(false);
     }
 
@@ -147,36 +160,30 @@ internal sealed class PermissionService(
         List<CreatePermissionArgs> args,
         AccountLogged accountLogged)
     {
-        var permissionKeys = args
-            .Select(p => p.Key)
-            .Distinct()
+        var duplicatedKeys = args
+            .GroupBy(i => i.Key)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key.ToString())
             .ToList();
-
-        if (permissionKeys.Count != args.Count)
+        if (duplicatedKeys.Count != 0)
         {
-            var duplicatedKeys = args
-                .GroupBy(r => r.Key)
-                .Where(g => g.Count() > 1)
-                .Select(g => g.Key.ToString())
-                .ToList();
-
-            throw new SpecificResourceDuplicatedException<Permission>([nameof(Permission.Key)], duplicatedKeys);
+            throw new ArgumentException($"Duplicated keys argument found ${string.Join(",", duplicatedKeys)}");
         }
 
-        var allPermissionsKeyes = args.ConvertAll(a => a.Key);
+        var allPermissionsKeys = args.ConvertAll(a => (a.Key, a.AppId ?? accountLogged.AppLogged.Id));
 
-        var permissionsSaved = await permissionRepository
-            .GetAllByKeysAsync(allPermissionsKeyes)
+        var duplicatedPermissions = await permissionRepository
+            .GetAllByKeysAsync(
+            allPermissionsKeys,
+            accountLogged)
             .ConfigureAwait(false);
-
-        if (permissionsSaved.Count != 0)
+        if (duplicatedPermissions.Count != 0)
         {
-            var permissionsSavedKeys = allPermissionsKeyes
-                .Where(pk => !permissionsSaved.Exists(p => p.Key == pk))
+            var permissionsSavedKeys = allPermissionsKeys
+                .Where(pk => duplicatedPermissions.Exists(p => p.Key == pk.Key))
                 .ToList();
-            var permissionsSavedKeysMapped = permissionsSavedKeys.ConvertAll(p => p.ToString());
 
-            throw new SpecificResourceDuplicatedException<Permission>([nameof(Permission.Key)], permissionsSavedKeysMapped);
+            throw new InvalidOperationException($"Duplicated keys exist ${string.Join(",", permissionsSavedKeys)}");
         }
 
         var appsIds = args
@@ -185,34 +192,22 @@ internal sealed class PermissionService(
             .Select(g => g.Key)
             .ToList();
 
-        List<App> appsSaved = [];
         if (appsIds.Count != 0)
         {
-            appsSaved = await appService
-                .GetAllByIdAsync(
-                appsIds,
-                accountLogged)
-                .ConfigureAwait(false);
+            var validAppsIds = accountLogged.AppsIds;
 
-            if (appsSaved.Count != appsIds.Count)
-            {
-                var missingAppsIds = appsIds
-                    .Where(a => !appsSaved.Exists(aa => aa.Id == a))
-                    .ToList();
+            var missingAppsIds = appsIds
+                .Where(id => !validAppsIds.Contains(id))
+                .ToList();
 
-                throw new SpecificResourceNotFoundException<App>(
-                    [nameof(App.Id)],
-                    missingAppsIds);
-            }
+            throw new InvalidOperationException($"Invalid apps ids {string.Join(",", missingAppsIds)}");
         }
 
         var permissions = args.ConvertAll(p =>
         {
-            var app = accountLogged.AppLogged;
-            if (Guard.IsNotNullOrEmpty(p.AppId))
-            {
-                app = appsSaved.First(a => a.Id == p.AppId);
-            }
+            var app = Guard.IsNotNullOrEmpty(p.AppId)
+            ? accountLogged.Apps.First(a => a.Id == p.AppId)
+            : accountLogged.AppLogged;
 
             return new Permission(
             p.Name,

@@ -59,11 +59,11 @@ internal sealed class PermissionRepository(
         return mapper.Map<List<Permission>>(permissions);
     }
 
-    public async Task<List<Permission>> GetAllByKeysAsync(List<PermissionKey> permissionsKeys)
+    public async Task<List<Permission>> GetAllByKeysAsync(
+        List<(string key, string appId)> keys,
+        AccountLogged accountLogged)
     {
-        var keys = mapper.Map<List<string>>(permissionsKeys);
-
-        var permissions = await GetAllAsync(p => keys.Contains(p.Key));
+        var permissions = await GetAllAsync(p => keys.Any(pp => pp.key == p.Key));
 
         return mapper.Map<List<Permission>>(permissions);
     }

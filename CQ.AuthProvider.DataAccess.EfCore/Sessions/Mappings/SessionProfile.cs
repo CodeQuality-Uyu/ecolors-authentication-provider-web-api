@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Sessions.Mappings;
 
@@ -14,7 +16,15 @@ internal sealed class SessionProfile
             {
                 Id = source.Id,
                 Token = source.Token,
-                Account = options.Mapper.Map<Account>(source.Account)
+                Account = options.Mapper.Map<Account>(source.Account),
+                App = new App
+                {
+                    Id = source.AppId,
+                    Tenant = new Tenant
+                    {
+                        Id = source.Account.TenantId
+                    }
+                },
             });
     }
 }

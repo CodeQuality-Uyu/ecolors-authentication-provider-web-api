@@ -2,6 +2,7 @@
 using CQ.ApiElements.Filters.Extensions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Tokens;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters;
@@ -29,10 +30,10 @@ internal sealed class CQAuthenticationAttribute
         string headerValue,
         AuthorizationFilterContext context)
     {
-        var sessionService = context.GetService<ISessionService>();
+        var sessionService = context.GetService<ITokenService>();
 
         var isFormatValid = await sessionService
-            .IsTokenValidAsync(headerValue)
+            .IsValidAsync(headerValue)
             .ConfigureAwait(false);
 
         return isFormatValid;

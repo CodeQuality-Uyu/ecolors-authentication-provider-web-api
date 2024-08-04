@@ -19,18 +19,19 @@ internal sealed class InvitationRepository(
         string? tenantId,
         AccountLogged accountLogged)
     {
-        var appsIdsOfAccountLogged = accountLogged
-            .Apps
-            .ConvertAll(i => i.Id);
+        var appsIdsOfAccountLogged = accountLogged.AppsIds;
 
-        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.GetAllInvitationsOfTenant);
+        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.CanReadInvitationsOfTenant);
+        var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
 
         var query = _dbSet
             .Include(i => i.Creator)
             .Where(i => tenantId == null || i.TenantId == tenantId)
-            .Where(i => (appId != null && i.AppId == appId) ||
-            (appId == null && (tenantId == null || canSeeOfTenant || appsIdsOfAccountLogged.Contains(i.AppId))))
             .Where(i => creatorId == null || i.CreatorId == creatorId)
+            .Where(i =>
+            (appId == null && (canSeeOfTenant || hasFullAccess)) ||
+            (appId != null && i.AppId == appId) ||
+            (appsIdsOfAccountLogged.Contains(i.AppId)))
             ;
 
         var invitations = await query
