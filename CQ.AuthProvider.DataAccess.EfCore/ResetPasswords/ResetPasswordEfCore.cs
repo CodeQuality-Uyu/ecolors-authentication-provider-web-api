@@ -3,7 +3,7 @@ using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 
-public sealed record class ResetPasswordEfCore
+public sealed record class ResetPasswordEfCore()
 {
     public string Id { get; init; } = null!;
 
@@ -13,27 +13,16 @@ public sealed record class ResetPasswordEfCore
 
     public string Code { get; set; } = null!;
 
-    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 
     public ResetPasswordStatus Status { get; set; } = ResetPasswordStatus.Pending;
-
-    /// <summary>
-    /// For EfCore
-    /// </summary>
-    public ResetPasswordEfCore()
-    {
-    }
-
-    /// <summary>
-    /// For new ResetPassword
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="code"></param>
-    /// <param name="accountId"></param>
+    
+    // For new ResetPassword
     public ResetPasswordEfCore(
         string id,
         string code,
         string accountId)
+        : this()
     {
         Id = id;
         Code = code;

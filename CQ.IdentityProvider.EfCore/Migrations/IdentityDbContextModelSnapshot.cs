@@ -37,6 +37,14 @@ namespace CQ.IdentityProvider.EfCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Identities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "5f7dd4f88608458ea68bdc3ef9a94e59",
+                            Email = "seed@cq.com",
+                            Password = "!12345678"
+                        });
                 });
 #pragma warning restore 612, 618
         }

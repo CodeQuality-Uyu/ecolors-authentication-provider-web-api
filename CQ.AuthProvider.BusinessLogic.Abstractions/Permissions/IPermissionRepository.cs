@@ -13,10 +13,10 @@ internal interface IPermissionRepository
         AccountLogged accountLogged);
 
     Task<List<Permission>> GetAllByKeysAsync(
-        List<(string key, string appId)> keys,
+        List<(string appId, List<string> keys)> keys,
         AccountLogged accountLogged);
 
-    Task<bool> ExistByKeyAsync(PermissionKey permissionKey);
+    Task<bool> ExistByKeyAsync(string key);
 
     Task CreateAsync(Permission permission);
 

@@ -1,6 +1,4 @@
-﻿
-using CQ.AuthProvider.DataAccess.EfCore.Apps;
-using CQ.AuthProvider.DataAccess.EfCore.Tenants;
+﻿using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
@@ -17,21 +15,10 @@ public sealed record class AccountApp()
 
     public AppEfCore App { get; init; } = null!;
 
-    public string TenantId { get; init; } = null!;
-
-    public TenantEfCore Tenant { get; init; } = null!;
-
-    /// <summary>
-    /// For new Account
-    /// </summary>
-    /// <param name="appId"></param>
-    /// <param name="tenantId"></param>
-    public AccountApp(
-        string appId,
-        string tenantId)
+    //For new Account
+    public AccountApp(string appId)
         : this()
     {
         AppId = appId;
-        TenantId = tenantId;
     }
 }

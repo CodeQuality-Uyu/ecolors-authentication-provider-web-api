@@ -12,6 +12,17 @@ public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> option
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Identity>(entity =>
+        {
+            entity
+            .HasData(
+                new Identity
+                {
+                    Id = "5f7dd4f88608458ea68bdc3ef9a94e59",
+                    Email = "seed@cq.com",
+                    Password = "!12345678"
+                });
+        });
     }
 
     public string GetProvider()

@@ -24,7 +24,8 @@ public interface IRoleService
         AddPermissionArgs permissions);
 }
 
-internal interface IRoleInternalService : IRoleService
+internal interface IRoleInternalService
+    : IRoleService
 {
     Task AssertByNameAsync(string id);
 

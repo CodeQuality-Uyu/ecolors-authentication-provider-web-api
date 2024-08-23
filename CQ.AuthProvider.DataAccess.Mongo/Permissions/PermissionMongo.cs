@@ -1,9 +1,8 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.Utility;
+﻿using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.Mongo.Permissions;
 
-public sealed class PermissionMongo
+public sealed class PermissionMongo()
 {
     public string Id { get; init; } = Db.NewId();
 
@@ -15,26 +14,14 @@ public sealed class PermissionMongo
 
     public bool IsPublic { get; init; }
 
-    /// <summary>
-    /// For MongoDriver
-    /// </summary>
-    public PermissionMongo()
-    {
-    }
-
-    /// <summary>
-    /// For new Permission
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    /// <param name="key"></param>
-    /// <param name="isPublic"></param>
+    // For new Permission
     public PermissionMongo(
         string id,
         string name,
         string description,
         string key,
         bool isPublic)
+        : this()
     {
         Id = id;
         Name = name;

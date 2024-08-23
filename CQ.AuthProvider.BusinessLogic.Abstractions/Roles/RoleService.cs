@@ -99,7 +99,7 @@ internal sealed class RoleService(
         }
     }
 
-    public async Task AssertByNameAsync(string name)
+    public Task AssertByNameAsync(string name)
     {
         //var existRoleKey = await roleRepository
         //    .ExistByNameAsync(name)
@@ -126,42 +126,37 @@ internal sealed class RoleService(
         List<CreateRoleArgs> args,
         AccountLogged accountLogged)
     {
-        //var rolesKeys = args
-        //    .Select(p => p.Key)
-        //    .Distinct()
-        //    .ToList();
-
-        //if (rolesKeys.Count != args.Count)
-        //{
-        //    var duplicatedKeys = args
-        //        .GroupBy(r => r.Key)
-        //        .Where(g => g.Count() > 1)
-        //        .Select(g => g.Key.ToString())
-        //        .ToList();
-
-        //    throw new SpecificResourceDuplicatedException<Role>([nameof(Role.Key)], duplicatedKeys);
-        //}
-
         var defaultRoles = args
-            .GroupBy(r => r.IsDefault)
-            .Count(g => g.Count() > 1);
-        if (defaultRoles > 1)
+            .Where(r => r.IsDefault)
+            .GroupBy(r => r.AppId ?? accountLogged.AppLogged.Id)
+            .ToList();
+
+        var duplicatedDefaultRolesInApp = defaultRoles
+            .Where(g => g.Count() > 1)
+            .ToList();
+        if (duplicatedDefaultRolesInApp.Count > 1)
         {
-            throw new SpecificResourceDuplicatedException<Role>(nameof(Role.IsDefault), "true");
+            throw new ArgumentException("Only one role can be default in one app");
         }
 
-        if (defaultRoles == 1)
+        if (defaultRoles.Count != 0)
         {
+            var defaultAppsIds = defaultRoles.ConvertAll(d => d.Key);
             await roleRepository
-                .RemoveDefaultAsync()
+                .RemoveDefaultsAndSaveAsync(
+                defaultAppsIds,
+                accountLogged)
                 .ConfigureAwait(false);
         }
 
-        //await AssertByKeysAsync(rolesKeys).ConfigureAwait(false);
-
         var allPermissionsKeyes = args
+            .GroupBy(a => a.AppId ?? accountLogged.AppLogged.Id)
+            .Select(g =>
+            (g.Key,
+            g
             .SelectMany(a => a.PermissionKeys)
-            .Select(p => (p, args.FirstOrDefault(a => a.PermissionKeys.Contains(p)).AppId ?? accountLogged.AppLogged.Id))
+            .Distinct()
+            .ToList()))
             .ToList();
 
         var permissions = await permissionService

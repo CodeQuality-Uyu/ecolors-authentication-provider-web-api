@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -17,7 +17,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder.Sql("DELETE FROM \"AccountsApps\"");
             migrationBuilder.Sql("DELETE FROM \"AccountsRoles\"");
             migrationBuilder.Sql("DELETE FROM \"Roles\"");
-            migrationBuilder.Sql("DELETE FROM \"RolesApps\"");
             migrationBuilder.Sql("DELETE FROM \"RolesPermissions\"");
             migrationBuilder.Sql("DELETE FROM \"Permissions\"");
             migrationBuilder.Sql("DELETE FROM \"PermissionsApps\"");
@@ -55,21 +54,21 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
-                [jokerId, "Comodin", "Comodin", PermissionKey.Joker.ToString(), false, authProviderWebApiId, codeQualityTenantId]);
+                [jokerId, "Comodin", "Comodin", PermissionKey.Joker, false, authProviderWebApiId, codeQualityTenantId]);
 
             var fullAccessId = Db.NewId();
             migrationBuilder
                 .InsertData("Permissions",
                 ["Id", "Name", "Description", "Key", "IsPublic", "AppId", "TenantId"],
-                [fullAccessId, "Full Access", "Full Access", PermissionKey.FullAccess.ToString(), false, authProviderWebApiId, codeQualityTenantId]);
+                [fullAccessId, "Full Access", "Full Access", PermissionKey.FullAccess, false, authProviderWebApiId, codeQualityTenantId]);
             #endregion
 
             #region Roles
             var authProviderOwnerId = Db.NewId();
             migrationBuilder
                 .InsertData("Roles",
-                ["Id", "Name", "Description", "IsPublic", "IsDefault", "TenantId"],
-                [authProviderOwnerId, "AuthProvider WEB API Owner", "AuthProvider Owner", false, false, codeQualityTenantId]);
+                ["Id", "Name", "Description", "IsPublic", "IsDefault", "TenantId", "AppId"],
+                [authProviderOwnerId, "AuthProvider WEB API Owner", "AuthProvider Owner", false, false, codeQualityTenantId, authProviderWebApiId]);
             #endregion
 
             #region Connect accounts with roles
@@ -98,13 +97,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 [Db.NewId(), ownerId, authProviderWebApiId, codeQualityTenantId]);
             #endregion
 
-            #region Connect roles with apps
-            migrationBuilder
-                .InsertData("RolesApps",
-                ["Id", "RoleId", "AppId", "TenantId"],
-                [Db.NewId(), authProviderOwnerId, authProviderWebApiId, codeQualityTenantId]);
-            #endregion
-
             #region Connect permissions with apps
             migrationBuilder
                 .InsertData("PermissionsApps",
@@ -126,7 +118,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder.Sql("DELETE FROM \"AccountsApps\"");
             migrationBuilder.Sql("DELETE FROM \"AccountsRoles\"");
             migrationBuilder.Sql("DELETE FROM \"Roles\"");
-            migrationBuilder.Sql("DELETE FROM \"RolesApps\"");
             migrationBuilder.Sql("DELETE FROM \"RolesPermissions\"");
             migrationBuilder.Sql("DELETE FROM \"Permissions\"");
             migrationBuilder.Sql("DELETE FROM \"PermissionsApps\"");

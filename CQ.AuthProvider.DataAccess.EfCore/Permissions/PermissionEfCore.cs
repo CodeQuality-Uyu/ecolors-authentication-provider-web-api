@@ -18,24 +18,17 @@ public sealed record class PermissionEfCore()
 
     public bool IsPublic { get; set; }
 
-    public List<RolePermission> Roles { get; init; } = [];
+    public List<RoleEfCore> Roles { get; init; } = [];
 
     public string AppId { get; init; } = null!;
 
     public AppEfCore App { get; init; } = null!;
 
-    public string TenantId { get; init; } = null!;
+    public string? TenantId { get; init; } = null!;
 
-    public TenantEfCore Tenant { get; init; } = null!;
+    public TenantEfCore? Tenant { get; init; } = null!;
 
-    /// <summary>
-    /// For new Permission
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="description"></param>
-    /// <param name="key"></param>
-    /// <param name="isPublic"></param>
-    /// <param name="app"></param>
+    // For new Permission
     public PermissionEfCore(
         string name,
         string description,

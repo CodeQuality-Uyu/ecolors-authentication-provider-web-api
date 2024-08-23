@@ -29,13 +29,13 @@ internal sealed class RoleRepository(
         var canReadOfTenant = accountLogged.HasPermission(PermissionKey.CanReadRolesOfTenant);
         var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
 
-        var query = _dbSet
+        var query = _entities
             .Where(r => tenantId == null || r.TenantId == tenantId)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
             .Where(r =>
             (appId == null && (canReadOfTenant || hasFullAccess)) ||
-            (appId != null && r.Apps.Any(a => a.AppId == appId)) ||
-            r.Apps.Any(a => appsIdsOfAccountLogged.Contains(a.AppId))
+            (appId != null && r.AppId == appId) ||
+            appsIdsOfAccountLogged.Contains(r.AppId)
             );
 
         var roles = await query
@@ -45,25 +45,28 @@ internal sealed class RoleRepository(
         return mapper.Map<List<Role>>(roles);
     }
 
-    public async Task RemoveDefaultAsync()
+    public async Task RemoveDefaultsAndSaveAsync(
+        List<string> appsIds,
+        AccountLogged accountLogged)
     {
-        var role = await GetAsync(r => r.IsDefault).ConfigureAwait(false);
+        var query = _entities
+            .Where(r => r.TenantId == accountLogged.Tenant.Id)
+            .Where(r => appsIds.Contains(r.AppId))
+            .Where(r => r.IsDefault);
 
-        if (Guard.IsNull(role))
+        var roles = await query
+            .ToListAsync()
+            .ConfigureAwait(false);
+
+        roles.ForEach(a =>
         {
-            return;
-        }
+            a.IsDefault = false;
+        });
 
-        role.IsDefault = false;
-
-        await UpdateAsync(role).ConfigureAwait(false);
-    }
-
-    public async Task CreateAsync(Role role)
-    {
-        var roleEfCore = new RoleEfCore(role);
-
-        await CreateAsync(roleEfCore).ConfigureAwait(false);
+        _entities.UpdateRange(roles);
+        await _baseContext
+            .SaveChangesAsync()
+            .ConfigureAwait(false);
     }
 
     public async Task<bool> HasPermissionAsync(
@@ -72,11 +75,10 @@ internal sealed class RoleRepository(
     {
         var permissionKeyMapped = permissionKey.ToString();
 
-        var query = _dbSet
+        var query = _entities
            .Include(r => r.Permissions)
-           .ThenInclude(p => p.Permission)
            .Where(r => ids.Contains(r.Id))
-           .Where(r => r.Permissions.Any(rp => rp.Permission.Key == permissionKeyMapped));
+           .Where(r => r.Permissions.Any(rp => rp.Key == permissionKeyMapped));
 
         var roles = await query
             .CountAsync()
@@ -87,9 +89,8 @@ internal sealed class RoleRepository(
 
     public new async Task<Role> GetByIdAsync(string id)
     {
-        var query = _dbSet
+        var query = _entities
            .Include(r => r.Permissions)
-           .ThenInclude(p => p.Permission)
            .Where(r => r.Id == id);
 
         var role = await query
@@ -105,9 +106,8 @@ internal sealed class RoleRepository(
         string id,
         List<string> permissionsKeys)
     {
-        var query = _dbSet
-           .Include(r => r.Permissions.Where(p => !permissionsKeys.Contains(p.Permission.Key)))
-           .ThenInclude(p => p.Permission)
+        var query = _entities
+           .Include(r => r.Permissions.Where(p => !permissionsKeys.Contains(p.Key)))
            .Where(r => r.Id == id);
 
         var role = await query
@@ -119,9 +119,8 @@ internal sealed class RoleRepository(
 
     public async Task<Role> GetDefaultAsync()
     {
-        var query = _dbSet
+        var query = _entities
             .Include(r => r.Permissions)
-            .ThenInclude(p => p.Permission)
             .Where(r => r.IsDefault);
 
         var role = await query
@@ -137,7 +136,8 @@ internal sealed class RoleRepository(
     {
         var rolesEfCore = roles.ConvertAll(r => new RoleEfCore(r));
 
-        await CreateBulkAsync(rolesEfCore).ConfigureAwait(false);
+        await CreateBulkAsync(rolesEfCore)
+            .ConfigureAwait(false);
     }
 
     public async Task AddPermissionsAsync(string id, List<string> permissionsKeys)

@@ -1,6 +1,4 @@
-﻿
-
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
@@ -13,9 +11,9 @@ internal interface IRoleRepository
         string? tenantId,
         AccountLogged accountLogged);
 
-    Task RemoveDefaultAsync();
-
-    Task CreateAsync(Role role);
+    Task RemoveDefaultsAndSaveAsync(
+        List<string> appsIds,
+        AccountLogged accountLogged);
 
     Task CreateBulkAsync(List<Role> roles);
 

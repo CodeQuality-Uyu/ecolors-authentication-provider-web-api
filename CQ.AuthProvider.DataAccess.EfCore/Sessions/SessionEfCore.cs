@@ -1,5 +1,4 @@
-﻿
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.Utility;
@@ -20,12 +19,7 @@ public sealed record class SessionEfCore()
 
     public AccountEfCore Account { get; init; } = null!;
 
-    /// <summary>
-    /// For new Session
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="token"></param>
-    /// <param name="accountId"></param>
+    // For new Session
     public SessionEfCore(
         string appId,
         string token,

@@ -22,7 +22,7 @@ internal sealed class SessionRepository(
 
     public async Task<Session> GetByTokenAsync(string token)
     {
-        var query = _dbSet
+        var query = _entities
             .Include(s => s.Account)
             .Where(s => s.Token == token);
 
@@ -40,7 +40,7 @@ internal sealed class SessionRepository(
 
     public async Task DeleteByTokenAsync(string token)
     {
-        await DeleteAsync(s => s.Token == token)
+        await DeleteAndSaveAsync(s => s.Token == token)
             .ConfigureAwait(false);
     }
 }

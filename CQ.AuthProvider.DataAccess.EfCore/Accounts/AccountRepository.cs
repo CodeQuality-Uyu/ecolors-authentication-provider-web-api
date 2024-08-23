@@ -50,14 +50,11 @@ internal sealed class AccountRepository(
     public new async Task<Account> GetByIdAsync(string id)
     {
         var query =
-            _dbSet
+            _entities
             .Include(a => a.Roles)
-            .ThenInclude(r => r.Role)
             .ThenInclude(r => r.Permissions)
-            .ThenInclude(p => p.Permission)
             .Include(a => a.Tenant)
             .Include(a => a.Apps)
-            .ThenInclude(a => a.App)
             .Where(a => a.Id == id);
 
         var account = await query

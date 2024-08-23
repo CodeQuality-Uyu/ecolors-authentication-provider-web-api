@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20240728180004_InitialCreation")]
+    [Migration("20240807201204_InitialCreation")]
     partial class InitialCreation
     {
         /// <inheritdoc />
@@ -38,17 +38,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
                     b.HasIndex("AppId");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("AccountsApps");
                 });
@@ -150,34 +144,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.ToTable("Apps");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionApp", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AppId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PermissionId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppId");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("PermissionsApps");
-                });
-
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>
                 {
                     b.Property<string>("Id")
@@ -228,8 +194,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -241,42 +207,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.ToTable("ResetPasswords");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleApp", b =>
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("AppEfCoreId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AppId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppEfCoreId");
-
-                    b.HasIndex("AppId");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("RolesApps");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", b =>
-                {
-                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -298,6 +235,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppId");
 
                     b.HasIndex("TenantId");
 
@@ -381,7 +320,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountApp", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", "Account")
-                        .WithMany("Apps")
+                        .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -392,17 +331,9 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Account");
 
                     b.Navigation("App");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", b =>
@@ -419,13 +350,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountRole", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", "Account")
-                        .WithMany("Roles")
+                        .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", "Role")
-                        .WithMany("Accounts")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -433,7 +364,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -454,37 +385,10 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionApp", b =>
-                {
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
-                        .WithMany("Permissions")
-                        .HasForeignKey("AppId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("App");
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Tenant");
-                });
-
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
-                        .WithMany()
+                        .WithMany("Permissions")
                         .HasForeignKey("AppId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -511,22 +415,12 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleApp", b =>
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", b =>
                 {
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("AppEfCoreId");
-
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
-                        .WithMany()
+                        .WithMany("Roles")
                         .HasForeignKey("AppId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", "Role")
-                        .WithMany("Apps")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
@@ -537,32 +431,19 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.Navigation("App");
 
-                    b.Navigation("Role");
-
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", b =>
-                {
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RolePermission", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", "Permission")
-                        .WithMany("Roles")
+                        .WithMany()
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", "Role")
-                        .WithMany("Permissions")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -570,7 +451,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Permission");
@@ -610,32 +491,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", b =>
-                {
-                    b.Navigation("Apps");
-
-                    b.Navigation("Roles");
-                });
-
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", b =>
                 {
                     b.Navigation("Permissions");
 
                     b.Navigation("Roles");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>
-                {
-                    b.Navigation("Roles");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", b =>
-                {
-                    b.Navigation("Accounts");
-
-                    b.Navigation("Apps");
-
-                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>

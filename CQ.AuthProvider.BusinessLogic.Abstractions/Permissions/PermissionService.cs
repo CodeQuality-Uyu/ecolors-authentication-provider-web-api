@@ -124,7 +124,7 @@ internal sealed class PermissionService(
     }
 
     public async Task<List<Permission>> GetExactAllByKeysAsync(
-        List<(string key, string appId)> keys,
+        List<(string appId, List<string> keys)> keys,
         AccountLogged accountLogged)
     {
         var permissionsSaved = await permissionRepository
@@ -136,7 +136,8 @@ internal sealed class PermissionService(
         if (permissionsSaved.Count != keys.Count)
         {
             var missingPermissions = keys
-                .Where(pk => !permissionsSaved.Exists(p => p.Key == pk.key))
+                .SelectMany(k => k.keys)
+                .Where(pk => !permissionsSaved.Exists(p => p.Key == pk))
                 .ToList();
             var missingPermissionsMapped = missingPermissions.ConvertAll(p => p.ToString());
 
@@ -163,14 +164,18 @@ internal sealed class PermissionService(
         var duplicatedKeys = args
             .GroupBy(i => i.Key)
             .Where(g => g.Count() > 1)
-            .Select(g => g.Key.ToString())
+            .Select(g => g.Key)
             .ToList();
         if (duplicatedKeys.Count != 0)
         {
             throw new ArgumentException($"Duplicated keys argument found ${string.Join(",", duplicatedKeys)}");
         }
 
-        var allPermissionsKeys = args.ConvertAll(a => (a.Key, a.AppId ?? accountLogged.AppLogged.Id));
+        var allPermissionsKeys = args
+            .ConvertAll(a => (a.AppId ?? accountLogged.AppLogged.Id, a.Key))
+            .GroupBy(k => k.Item1)
+            .Select(g => (g.Key, g.Select(i => i.Key).ToList()))
+            .ToList();
 
         var duplicatedPermissions = await permissionRepository
             .GetAllByKeysAsync(
@@ -189,7 +194,7 @@ internal sealed class PermissionService(
         var appsIds = args
             .GroupBy(a => a.AppId)
             .Where(a => Guard.IsNotNullOrEmpty(a.Key))
-            .Select(g => g.Key)
+            .Select(g => g.Key!)
             .ToList();
 
         if (appsIds.Count != 0)

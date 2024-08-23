@@ -1,6 +1,4 @@
-﻿
-using CQ.AuthProvider.DataAccess.EfCore.Roles;
-using CQ.AuthProvider.DataAccess.EfCore.Tenants;
+﻿using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
@@ -17,38 +15,20 @@ public sealed record class AccountRole()
 
     public AccountEfCore Account { get; init; } = null!;
 
-    public string TenantId { get; init; } = null!;
-
-    public TenantEfCore Tenant { get; init; } = null!;
-
-    /// <summary>
-    /// When new Account
-    /// </summary>
-    /// <param name="roleId"></param>
-    /// <param name="tenantId"></param>
-    public AccountRole(
-        string roleId,
-        string tenantId)
+    // When new Account
+    public AccountRole(string roleId)
         : this()
     {
         RoleId = roleId;
-        TenantId = tenantId;
     }
 
-    /// <summary>
-    /// For seed data
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="roleId"></param>
-    /// <param name="tenantId"></param>
+    // For seed data
     internal AccountRole(
         string id,
-        string roleId,
-        string tenantId)
+        string roleId)
         : this()
     {
         AccountId = id;
         RoleId = roleId;
-        TenantId = tenantId;
     }
 }

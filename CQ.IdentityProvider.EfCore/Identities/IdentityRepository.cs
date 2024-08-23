@@ -10,7 +10,7 @@ public sealed class IdentityRepository(
 {
     public async Task DeleteByIdAsync(string id)
     {
-        await DeleteAsync(i => i.Id == id).ConfigureAwait(false);
+        await DeleteAndSaveAsync(i => i.Id == id).ConfigureAwait(false);
     }
 
     public async Task<Identity> GetByCredentialsAsync(
@@ -30,7 +30,7 @@ public sealed class IdentityRepository(
 
         identity.Password = newPassword;
 
-        await UpdateAsync(identity).ConfigureAwait(false);
+        await UpdateAndSaveAsync(identity).ConfigureAwait(false);
     }
 
     async Task IIdentityRepository.CreateAsync(Identity identity)

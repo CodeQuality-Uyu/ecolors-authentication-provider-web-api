@@ -11,8 +11,6 @@ internal sealed class PermissionProfile
     {
         #region Get all
         CreateMap<Permission, PermissionBasicInfoResponse>();
-        CreateMap<PermissionKey, string>()
-            .ConvertUsing((source, destination, context) => source.ToString());
         #endregion
     }
 }

@@ -1,6 +1,4 @@
-﻿using CQ.Utility;
-
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
 public readonly struct PermissionKey
 {

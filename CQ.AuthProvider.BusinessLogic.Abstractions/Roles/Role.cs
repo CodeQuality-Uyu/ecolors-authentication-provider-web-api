@@ -17,7 +17,7 @@ public sealed record class Role()
 
     public List<Permission> Permissions { get; init; } = [];
 
-    public List<App> Apps { get; init; } = [];
+    public App App { get; init; } =null!;
 
     public Tenant Tenant { get; init; } = null!;
 
@@ -37,7 +37,7 @@ public sealed record class Role()
         IsPublic = isPublic;
         Permissions = permissions;
         IsDefault = isDefault;
-        Apps = [app];
+        App = app;
         Tenant = app.Tenant;
     }
 }

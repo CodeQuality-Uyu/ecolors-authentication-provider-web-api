@@ -24,7 +24,7 @@ internal sealed class InvitationRepository(
         var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.CanReadInvitationsOfTenant);
         var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
 
-        var query = _dbSet
+        var query = _entities
             .Include(i => i.Creator)
             .Where(i => tenantId == null || i.TenantId == tenantId)
             .Where(i => creatorId == null || i.CreatorId == creatorId)

@@ -4,7 +4,8 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles.Models;
 
-public sealed record class CreateRoleRequest : Request<CreateRoleArgs>
+public sealed record class CreateRoleRequest
+    : Request<CreateRoleArgs>
 {
     public string? Name { get; init; }
 
@@ -25,7 +26,6 @@ public sealed record class CreateRoleRequest : Request<CreateRoleArgs>
         Guard.ThrowIsNullOrEmpty(PermissionKeys, nameof(PermissionKeys));
         Guard.ThrowIsNull(IsPublic, nameof(IsPublic));
         Guard.ThrowIsNull(IsDefault, nameof(IsDefault));
-        Guard.ThrowIsNullOrEmpty(AppId, nameof(AppId));
 
         return new CreateRoleArgs(
             Name!,
@@ -33,6 +33,6 @@ public sealed record class CreateRoleRequest : Request<CreateRoleArgs>
             PermissionKeys!,
             IsPublic!.Value,
             IsDefault!.Value,
-            AppId!);
+            AppId);
     }
 }

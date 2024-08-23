@@ -25,15 +25,15 @@ internal sealed class PermissionRepository(
         var canReadOfTenant = accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant);
         var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
 
-        var fullAccessKey = PermissionKey.FullAccess.ToString();
+        var fullAccessKey = PermissionKey.FullAccess;
 
-        var query = _dbSet
-            .Where(p => tenantId == null || p.TenantId == tenantId)
+        var query = _entities
+            .Where(p => tenantId == null || p.TenantId == null || p.TenantId == tenantId)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p =>
             (roleId == null && (canReadOfTenant || hasFullAccess)) ||
-            (roleId != null && p.Roles.Any(r => r.RoleId == roleId)) ||
-            p.Roles.Any(r => rolesIds.Contains(r.RoleId)))
+            (roleId != null && p.Roles.Any(r => r.Id == roleId)) ||
+            p.Roles.Any(r => rolesIds.Contains(r.Id)))
             .Where(p =>
             (appId == null && (canReadOfTenant || hasFullAccess)) ||
             (appId != null && p.AppId == appId) ||
@@ -49,11 +49,11 @@ internal sealed class PermissionRepository(
     }
 
     public async Task<List<Permission>> GetAllByKeysAsync(
-        List<(string key, string appId)> keys,
+        List<(string appId, List<string> keys)> keys,
         AccountLogged accountLogged)
     {
-        var query = _dbSet
-            .Where(p => keys.Any(i => i.key == p.Key && i.appId == p.AppId))
+        var query = _entities
+            .Where(p => keys.Any(i => i.keys.Contains(p.Key) && i.appId == p.AppId))
             .Where(p => p.TenantId == accountLogged.Tenant.Id);
 
         var permissions = await query
@@ -63,11 +63,10 @@ internal sealed class PermissionRepository(
         return mapper.Map<List<Permission>>(permissions);
     }
 
-    public async Task<bool> ExistByKeyAsync(PermissionKey permissionKey)
+    public async Task<bool> ExistByKeyAsync(string key)
     {
-        var key = permissionKey.ToString();
-
-        var exist = await ExistAsync(p => p.Key == key).ConfigureAwait(false);
+        var exist = await ExistAsync(p => p.Key == key)
+            .ConfigureAwait(false);
 
         return exist;
     }

@@ -1,5 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.Utility;
+﻿using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 

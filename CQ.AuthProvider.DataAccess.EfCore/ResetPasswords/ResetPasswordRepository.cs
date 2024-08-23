@@ -13,7 +13,7 @@ internal sealed class ResetPasswordRepository(
 {
     public new async Task<ResetPassword> GetByIdAsync(string id)
     {
-        var query = _dbSet
+        var query = _entities
             .Include(r => r.Account)
             .Where(r => r.Id == id);
 
@@ -21,7 +21,7 @@ internal sealed class ResetPasswordRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        this.AssertNullEntity(resetPassword, id, nameof(ResetPassword.Id));
+        AssertNullEntity(resetPassword, id, nameof(ResetPassword.Id));
 
         return mapper.Map<ResetPassword>(resetPassword);
     }
@@ -34,12 +34,12 @@ internal sealed class ResetPasswordRepository(
 
         resetPassword.Status = status;
 
-        await UpdateAsync(resetPassword).ConfigureAwait(false);
+        await UpdateAndSaveAsync(resetPassword).ConfigureAwait(false);
     }
 
     public async Task<ResetPassword> GetByEmailOfAccountAsync(string email)
     {
-        var query = _dbSet
+        var query = _entities
             .Include(r => r.Account)
             .Where(r => r.Account.Email == email);
 
@@ -47,7 +47,7 @@ internal sealed class ResetPasswordRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        this.AssertNullEntity(resetPassword, email, nameof(ResetPassword.Account.Email));
+        AssertNullEntity(resetPassword, email, nameof(ResetPassword.Account.Email));
 
         return mapper.Map<ResetPassword>(resetPassword);
     }
@@ -70,12 +70,12 @@ internal sealed class ResetPasswordRepository(
 
         resetPassword.Code = code;
 
-        await UpdateAsync(resetPassword).ConfigureAwait(false);
+        await UpdateAndSaveAsync(resetPassword).ConfigureAwait(false);
     }
 
     public async Task<ResetPassword> GetActiveByIdAsync(string id)
     {
-        var query = _dbSet
+        var query = _entities
             .Include(r => r.Account)
             .Where(r => r.Id == id)
             .Where(r => r.Status == ResetPasswordStatus.Pending);
@@ -84,7 +84,7 @@ internal sealed class ResetPasswordRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        this.AssertNullEntity(resetPassword, id, nameof(ResetPassword.Id));
+        AssertNullEntity(resetPassword, id, nameof(ResetPassword.Id));
 
         return mapper.Map<ResetPassword>(resetPassword);
     }
