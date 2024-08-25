@@ -1,7 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Emails;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
-using CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords.Exceptions;
-using CQ.Exceptions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
@@ -9,7 +8,9 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
 internal abstract class ResetPasswordService(
     IResetPasswordRepository resetPasswordRepository,
     IIdentityRepository identityRepository,
-    IAccountInternalService accountService) : IResetPasswordService
+    IAccountInternalService accountService,
+    IEmailService emailService)
+    : IResetPasswordService
 {
     public async Task AcceptAsync(
         string id,
@@ -21,38 +22,35 @@ internal abstract class ResetPasswordService(
 
         if (resetPasswordOldApplication.Code != args.Code)
         {
-            throw new CodesNotMatchException(
-                args.Code,
-                resetPasswordOldApplication.Account.Email);
+            throw new InvalidOperationException("Invalid reset password application");
         }
 
         await identityRepository
-            .UpdatePasswordAsync(
+            .UpdatePasswordByIdAsync(
             resetPasswordOldApplication.Account.Id,
             args.NewPassword)
             .ConfigureAwait(false);
 
-        
         await resetPasswordRepository
-            .UpdateStatusByIdAsync(
-            resetPasswordOldApplication.Id,
-            ResetPasswordStatus.Accepted)
+            .DeletePendingAsync(
+            id,
+            args.Code)
             .ConfigureAwait(false);
     }
 
     public async Task CreateAsync(string email)
     {
         var oldResetPassword = await resetPasswordRepository
-            .GetByEmailOfAccountAsync(email)
+            .GetOrDefaultByEmailAsync(email)
             .ConfigureAwait(false);
 
-        var account = await accountService
-            .GetByEmailAsync(email)
-            .ConfigureAwait(false);
-
-        string code = ResetPassword.NewCode();
+        string code;
         if (Guard.IsNull(oldResetPassword))
         {
+            var account = await accountService
+                .GetByEmailAsync(email)
+                .ConfigureAwait(false);
+
             var resetPassword = new ResetPassword(account);
 
             code = resetPassword.Code;
@@ -63,6 +61,8 @@ internal abstract class ResetPasswordService(
         }
         else
         {
+            code = ResetPassword.NewCode();
+            
             await resetPasswordRepository
                 .UpdateCodeByIdAsync(
                 oldResetPassword.Id,
@@ -70,26 +70,10 @@ internal abstract class ResetPasswordService(
                 .ConfigureAwait(false);
         }
 
-        //TODO: send email
-    }
-
-    public async Task<ResetPassword> GetActiveByIdAsync(string id)
-    {
-        var resetPassword = await resetPasswordRepository
-            .GetActiveByIdAsync(id)
-            .ConfigureAwait(false);
-
-        if (resetPassword.HasExpired())
-        {
-            await resetPasswordRepository
-                .UpdateStatusByIdAsync(
-                id,
-                ResetPasswordStatus.Expired)
-                .ConfigureAwait(false);
-
-            throw new SpecificResourceNotFoundException<ResetPassword>(nameof(ResetPassword.Id), id);
-        }
-
-        return resetPassword;
+        await emailService
+            .SendAsync(
+            email,
+            "ResetPassword",
+            code);
     }
 }

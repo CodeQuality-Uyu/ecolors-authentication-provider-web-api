@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Filters;
@@ -23,17 +25,21 @@ public sealed class InvitationController(
 
         var args = request.Map();
 
+        var accountLogged = this.GetAccountLogged();
+
         await invitationService
-            .CreateAsync(args)
+            .CreateAsync(
+            args,
+            accountLogged)
             .ConfigureAwait(false);
     }
 
     [HttpGet]
     [CQAuthorization]
     public async Task<List<InvitationBasicInfoResponse>> GetAllAsync(
-        [FromQuery]string? creatorId,
-        [FromQuery]string? appId,
-        [FromQuery]string? tenantId)
+        [FromQuery] string? creatorId,
+        [FromQuery] string? appId,
+        [FromQuery] string? tenantId)
     {
         var accountLogged = this.GetAccountLogged();
 
@@ -48,23 +54,34 @@ public sealed class InvitationController(
         return mapper.Map<List<InvitationBasicInfoResponse>>(invitations);
     }
 
-    [HttpPatch("{id}/accept")]
-    public async Task AcceptAsync(string id)
-    { 
+    [HttpPut("{id}/accept")]
+    public async Task<AccountCreatedResponse> AcceptAsync(
+        string id,
+        AcceptInvitationRequest request)
+    {
+        var args = request.Map();
+
+        var account = await invitationService
+        .AcceptByIdAsync(
+        id,
+            args)
+            .ConfigureAwait(false);
+
+
+        return mapper.Map<AccountCreatedResponse>(account);
     }
 
-    [HttpPatch("{id}/accept-tenant")]
-    public async Task AcceptTenantAsync(string id)
+    [HttpPut("{id}/declain")]
+    public async Task DeclainAsync(
+        string id,
+        DeclainInvitationRequest request)
     {
-    }
+        var args = request.Map();
 
-    [HttpPatch("{id}/declain")]
-    public async Task DeclainAsync(string id)
-    {
-    }
-
-    [HttpGet("{id}")]
-    public async Task GetActiveByIdAsync(string id)
-    {
+        await invitationService
+            .DeclainByIdAsync(
+            id,
+            args)
+            .ConfigureAwait(false);
     }
 }

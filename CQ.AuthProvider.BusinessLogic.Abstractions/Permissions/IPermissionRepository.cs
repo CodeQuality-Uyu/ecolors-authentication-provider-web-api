@@ -16,9 +16,5 @@ internal interface IPermissionRepository
         List<(string appId, List<string> keys)> keys,
         AccountLogged accountLogged);
 
-    Task<bool> ExistByKeyAsync(string key);
-
-    Task CreateAsync(Permission permission);
-
     Task CreateBulkAsync(List<Permission> permissions);
 }

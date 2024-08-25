@@ -13,6 +13,8 @@ public sealed record class InvitationEfCore()
 
     public string Email { get; init; } = null!;
 
+    public string Code { get; init; } = null!;
+
     public string CreatorId { get; init; } = null!;
 
     public AccountEfCore Creator { get; init; } = null!;
@@ -35,6 +37,7 @@ public sealed record class InvitationEfCore()
 
     public InvitationEfCore(
         string email,
+        string code,
         string roleId,
         string appId,
         string creatorId,
@@ -42,6 +45,7 @@ public sealed record class InvitationEfCore()
         : this()
     {
         Email = email;
+        Code = code;
         RoleId = roleId;
         AppId = appId;
         CreatorId = creatorId;
@@ -50,6 +54,7 @@ public sealed record class InvitationEfCore()
 
     internal InvitationEfCore(Invitation invitation)
         : this(invitation.Email,
+              invitation.Code,
               invitation.Role.Id,
               invitation.App.Id,
               invitation.Creator.Id,
@@ -58,5 +63,15 @@ public sealed record class InvitationEfCore()
         Id = invitation.Id;
         CreatedAt = invitation.CreatedAt;
         ExpiresAt = invitation.ExpiresAt;
+    }
+
+    public bool IsPending()
+    {
+        return ExpiresAt <= DateTime.UtcNow;
+    }
+
+    public bool IsExpired()
+    {
+        return ExpiresAt > DateTime.UtcNow;
     }
 }

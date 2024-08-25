@@ -10,8 +10,9 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 [ApiController]
 [Route("accounts")]
 public class AccountController(
-    IMapper mapper,
-    IAccountService accountService) : ControllerBase
+    IAccountService accountService,
+    IMapper mapper)
+    : ControllerBase
 {
     [HttpPost("credentials")]
     public async Task<AccountCreatedResponse> CreateCredentialsAsync(CreateAccountRequest request)
@@ -34,14 +35,5 @@ public class AccountController(
         await accountService
             .CreateAsync(createAccountFor)
             .ConfigureAwait(false);
-    }
-
-    [HttpGet("me")]
-    [CQAuthentication]
-    public AccountLoggedResponse GetMeAsync()
-    {
-        var accountLogged = this.GetAccountLogged();
-
-        return mapper.Map<AccountLoggedResponse>(accountLogged);
     }
 }

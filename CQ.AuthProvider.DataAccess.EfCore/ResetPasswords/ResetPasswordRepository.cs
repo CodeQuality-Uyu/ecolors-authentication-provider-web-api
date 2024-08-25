@@ -26,18 +26,7 @@ internal sealed class ResetPasswordRepository(
         return mapper.Map<ResetPassword>(resetPassword);
     }
 
-    public async Task UpdateStatusByIdAsync(
-        string id,
-        ResetPasswordStatus status)
-    {
-        var resetPassword = await base.GetByIdAsync(id).ConfigureAwait(false);
-
-        resetPassword.Status = status;
-
-        await UpdateAndSaveAsync(resetPassword).ConfigureAwait(false);
-    }
-
-    public async Task<ResetPassword> GetByEmailOfAccountAsync(string email)
+    public async Task<ResetPassword?> GetOrDefaultByEmailAsync(string email)
     {
         var query = _entities
             .Include(r => r.Account)
@@ -46,8 +35,6 @@ internal sealed class ResetPasswordRepository(
         var resetPassword = await query
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
-
-        AssertNullEntity(resetPassword, email, nameof(ResetPassword.Account.Email));
 
         return mapper.Map<ResetPassword>(resetPassword);
     }
@@ -62,6 +49,17 @@ internal sealed class ResetPasswordRepository(
         await CreateAsync(resetPasswordEfCore).ConfigureAwait(false);
     }
 
+    public async Task DeletePendingAsync(
+        string id,
+        string code)
+    {
+        await DeleteAndSaveAsync(r =>
+        r.Id == id &&
+        r.Code == code &&
+        r.ExpiresAt <= DateTime.UtcNow)
+            .ConfigureAwait(false);
+    }
+
     public async Task UpdateCodeByIdAsync(
         string id,
         string code)
@@ -71,21 +69,5 @@ internal sealed class ResetPasswordRepository(
         resetPassword.Code = code;
 
         await UpdateAndSaveAsync(resetPassword).ConfigureAwait(false);
-    }
-
-    public async Task<ResetPassword> GetActiveByIdAsync(string id)
-    {
-        var query = _entities
-            .Include(r => r.Account)
-            .Where(r => r.Id == id)
-            .Where(r => r.Status == ResetPasswordStatus.Pending);
-
-        var resetPassword = await query
-            .FirstOrDefaultAsync()
-            .ConfigureAwait(false);
-
-        AssertNullEntity(resetPassword, id, nameof(ResetPassword.Id));
-
-        return mapper.Map<ResetPassword>(resetPassword);
     }
 }

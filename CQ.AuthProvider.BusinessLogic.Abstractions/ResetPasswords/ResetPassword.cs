@@ -3,7 +3,7 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
 
-public sealed record class ResetPassword
+public sealed record class ResetPassword()
 {
     public const int TOLERANCE_IN_MINUTES = 15;
 
@@ -13,31 +13,20 @@ public sealed record class ResetPassword
 
     public string Code { get; init; } = NewCode();
 
-    public DateTimeOffset CreatedAt { get; init; }
+    public DateTimeOffset CreatedAt { get; init; } = DateTime.UtcNow;
 
-    public ResetPasswordStatus Status { get; init; }
-
-    /// <summary>
-    /// For mapping
-    /// </summary>
-    public ResetPassword()
-    {
-    }
+    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(TOLERANCE_IN_MINUTES);
 
     public ResetPassword(Account account)
+        : this()
     {
         Account = account;
-    }
-
-    public bool HasExpired()
-    {
-        return CreatedAt.AddMinutes(TOLERANCE_IN_MINUTES) > DateTimeOffset.UtcNow;
     }
 
     public static string NewCode()
     {
         return new Random()
-            .Next(1111, 9999)
+            .Next(100000, 999999)
             .ToString();
     }
 }

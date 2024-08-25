@@ -17,15 +17,7 @@ internal interface IRoleRepository
 
     Task CreateBulkAsync(List<Role> roles);
 
-    Task<bool> HasPermissionAsync(
-        List<string> ids,
-        PermissionKey permissionKey);
-
     Task<Role> GetByIdAsync(string id);
-
-    Task<List<PermissionKey>> FilterDuplicatedPermissionsAsync(
-        string id,
-        List<string> permissionKey);
 
     Task AddPermissionsAsync(
         string id,

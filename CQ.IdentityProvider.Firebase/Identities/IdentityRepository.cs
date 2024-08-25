@@ -6,6 +6,7 @@ using CQ.Utility;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions.Exceptions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.IdentityProvider.Firebase.AppConfig;
+using Google.Apis.Util;
 
 namespace CQ.IdentityProvider.Firebase.Identities;
 
@@ -67,7 +68,7 @@ internal sealed class IdentityRepository(
         }
     }
 
-    public async Task UpdatePasswordAsync(string identityId, string newPassword)
+    public async Task UpdatePasswordByIdAsync(string identityId, string newPassword)
     {
         var userUpdated = new UserRecordArgs
         {

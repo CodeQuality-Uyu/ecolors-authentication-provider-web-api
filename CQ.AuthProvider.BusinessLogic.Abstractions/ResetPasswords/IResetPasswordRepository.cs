@@ -5,17 +5,15 @@ internal interface IResetPasswordRepository
 {
     Task<ResetPassword> GetByIdAsync(string id);
 
-    Task UpdateStatusByIdAsync(
-        string id,
-        ResetPasswordStatus status);
-
-    Task<ResetPassword> GetByEmailOfAccountAsync(string email);
+    Task<ResetPassword?> GetOrDefaultByEmailAsync(string email);
 
     Task CreateAsync(ResetPassword resetPassword);
+
+    Task DeletePendingAsync(
+        string id,
+        string code);
 
     Task UpdateCodeByIdAsync(
         string id,
         string code);
-
-    Task<ResetPassword> GetActiveByIdAsync(string id);
 }

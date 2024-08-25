@@ -69,24 +69,6 @@ internal sealed class RoleRepository(
             .ConfigureAwait(false);
     }
 
-    public async Task<bool> HasPermissionAsync(
-        List<string> ids,
-        PermissionKey permissionKey)
-    {
-        var permissionKeyMapped = permissionKey.ToString();
-
-        var query = _entities
-           .Include(r => r.Permissions)
-           .Where(r => ids.Contains(r.Id))
-           .Where(r => r.Permissions.Any(rp => rp.Key == permissionKeyMapped));
-
-        var roles = await query
-            .CountAsync()
-            .ConfigureAwait(false);
-
-        return roles != 0;
-    }
-
     public new async Task<Role> GetByIdAsync(string id)
     {
         var query = _entities
@@ -100,21 +82,6 @@ internal sealed class RoleRepository(
         Guard.ThrowIsNull(role, nameof(role));
 
         return mapper.Map<Role>(role);
-    }
-
-    public async Task<List<PermissionKey>> FilterDuplicatedPermissionsAsync(
-        string id,
-        List<string> permissionsKeys)
-    {
-        var query = _entities
-           .Include(r => r.Permissions.Where(p => !permissionsKeys.Contains(p.Key)))
-           .Where(r => r.Id == id);
-
-        var role = await query
-            .FirstAsync()
-            .ConfigureAwait(false);
-
-        return mapper.Map<List<PermissionKey>>(role.Permissions);
     }
 
     public async Task<Role> GetDefaultAsync()

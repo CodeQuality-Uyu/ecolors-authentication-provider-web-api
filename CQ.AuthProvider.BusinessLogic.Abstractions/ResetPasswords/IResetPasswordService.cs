@@ -7,6 +7,4 @@ public interface IResetPasswordService
     Task AcceptAsync(
         string id,
         AcceptResetPasswordArgs args);
-
-    Task<ResetPassword> GetActiveByIdAsync(string id);
 }

@@ -22,7 +22,7 @@ public sealed class IdentityRepository(
         return identity;
     }
 
-    public async Task UpdatePasswordAsync(
+    public async Task UpdatePasswordByIdAsync(
         string id,
         string newPassword)
     {

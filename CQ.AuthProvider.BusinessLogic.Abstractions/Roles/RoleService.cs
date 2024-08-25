@@ -99,18 +99,6 @@ internal sealed class RoleService(
         }
     }
 
-    public Task AssertByNameAsync(string name)
-    {
-        //var existRoleKey = await roleRepository
-        //    .ExistByNameAsync(name)
-        //    .ConfigureAwait(false);
-
-        //if (existRoleKey)
-        //{
-        //    throw new SpecificResourceDuplicatedException<Role>(nameof(Role.Name), name);
-        //}
-        throw new NotImplementedException();
-    }
 
     public async Task CreateAsync(
         CreateRoleArgs args,
@@ -126,6 +114,19 @@ internal sealed class RoleService(
         List<CreateRoleArgs> args,
         AccountLogged accountLogged)
     {
+        var appsIds = args
+            .GroupBy(a => a.AppId)
+            .Where(g => Guard.IsNotNullOrEmpty(g.Key))
+            .Select(g => g.Key)
+            .ToList();
+        var invalidAppsIds = appsIds
+            .Where(a => !accountLogged.AppsIds.Contains(a))
+            .ToList();
+        if (invalidAppsIds.Count != 0)
+        {
+            throw new InvalidOperationException($"The following apps are not allowed: {string.Join(",", invalidAppsIds)}");
+        }
+
         var defaultRoles = args
             .Where(r => r.IsDefault)
             .GroupBy(r => r.AppId ?? accountLogged.AppLogged.Id)
@@ -136,7 +137,7 @@ internal sealed class RoleService(
             .ToList();
         if (duplicatedDefaultRolesInApp.Count > 1)
         {
-            throw new ArgumentException("Only one role can be default in one app");
+            throw new ArgumentException("Only one role can be default in an app");
         }
 
         if (defaultRoles.Count != 0)
@@ -152,8 +153,7 @@ internal sealed class RoleService(
         var allPermissionsKeyes = args
             .GroupBy(a => a.AppId ?? accountLogged.AppLogged.Id)
             .Select(g =>
-            (g.Key,
-            g
+            (g.Key, g
             .SelectMany(a => a.PermissionKeys)
             .Distinct()
             .ToList()))
@@ -165,40 +165,12 @@ internal sealed class RoleService(
             accountLogged)
             .ConfigureAwait(false);
 
-        var appsIds = args
-            .GroupBy(r => r.AppId)
-            .Where(a => Guard.IsNotNull(a.Key))
-            .Select(g => g.Key)
-            .ToList();
-
-        List<App> appsSaved = [];
-        if (appsIds.Count != 0)
-        {
-            appsSaved = await appService
-                .GetAllByIdAsync(
-                appsIds,
-                accountLogged)
-                .ConfigureAwait(false);
-            if (appsSaved.Count != appsIds.Count)
-            {
-                var missingAppsIds = appsIds
-                    .Where(a => !appsSaved.Exists(aa => aa.Id == a))
-                    .ToList();
-
-                throw new SpecificResourceNotFoundException<App>(
-                    [nameof(App.Id)],
-                    missingAppsIds);
-            }
-        }
-
         var roles = args
             .ConvertAll(r =>
             {
-                var app = accountLogged.AppLogged;
-                if (Guard.IsNotNullOrEmpty(r.AppId))
-                {
-                    app = appsSaved.First(a => a.Id == r.AppId);
-                }
+                var app = Guard.IsNotNullOrEmpty(r.AppId)
+                ? accountLogged.Apps.First(a => a.Id == r.AppId)
+                : accountLogged.AppLogged;
 
                 return new Role(
                 r.Name,
@@ -214,49 +186,22 @@ internal sealed class RoleService(
             .ConfigureAwait(false);
     }
 
-    //private async Task AssertByKeysAsync(List<RoleKey> rolesKeyes)
-    //{
-    //    var rolesSaved = await roleRepository
-    //        .GetAllByRolesKeyesAsync(rolesKeyes)
-    //        .ConfigureAwait(false);
-
-    //    if (rolesSaved.Count != rolesKeyes.Count)
-    //    {
-    //        var missedKeyes = rolesKeyes
-    //            .Where(pk => !rolesSaved.Exists(p => p.Key == pk))
-    //            .ToList();
-    //        var simpleMissedKeyes = missedKeyes.ConvertAll(r => r.ToString());
-
-    //        throw new SpecificResourceDuplicatedException<Role>([nameof(Role.Key)], simpleMissedKeyes);
-    //    }
-    //}
-
-    public async Task<bool> HasPermissionAsync(
-        List<string> ids,
-        PermissionKey permissionKey)
-    {
-        var existPermission = await roleRepository
-            .HasPermissionAsync(
-            ids,
-            permissionKey)
-            .ConfigureAwait(false);
-
-        return existPermission;
-    }
-
     public async Task AddPermissionByIdAsync(
         string id,
         AddPermissionArgs args)
     {
-        var duplicatedPermissions = await roleRepository
-            .FilterDuplicatedPermissionsAsync(
-            id,
-            args.PermissionsKeys)
+        var role = await roleRepository
+            .GetByIdAsync(id)
             .ConfigureAwait(false);
 
+        var duplicatedPermissions = role
+            .Permissions
+            .Where(p => args.PermissionsKeys.Contains(p.Key))
+            .Select(p => p.Key)
+            .ToList();
         if (duplicatedPermissions.Count != 0)
         {
-            throw new PermissionsDuplicatedException(duplicatedPermissions);
+            throw new InvalidOperationException($"The following permissions are duplicated in the role: {string.Join(",", duplicatedPermissions)}");
         }
 
         await roleRepository

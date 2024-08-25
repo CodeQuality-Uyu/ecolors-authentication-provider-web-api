@@ -53,7 +53,7 @@ internal sealed class PermissionRepository(
         AccountLogged accountLogged)
     {
         var query = _entities
-            .Where(p => keys.Any(i => i.keys.Contains(p.Key) && i.appId == p.AppId))
+            .Where(p => keys.Any(i => i.appId == p.AppId && i.keys.Contains(p.Key)))
             .Where(p => p.TenantId == accountLogged.Tenant.Id);
 
         var permissions = await query
@@ -61,21 +61,6 @@ internal sealed class PermissionRepository(
             .ConfigureAwait(false);
 
         return mapper.Map<List<Permission>>(permissions);
-    }
-
-    public async Task<bool> ExistByKeyAsync(string key)
-    {
-        var exist = await ExistAsync(p => p.Key == key)
-            .ConfigureAwait(false);
-
-        return exist;
-    }
-
-    public async Task CreateAsync(Permission permission)
-    {
-        var permissionEfCore = new PermissionEfCore(permission);
-
-        await CreateAsync(permissionEfCore).ConfigureAwait(false);
     }
 
     public async Task CreateBulkAsync(List<Permission> permissions)

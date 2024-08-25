@@ -22,10 +22,10 @@ namespace CQ.AuthProvider.WebApi.Controllers.ResetPasswords
                 .ConfigureAwait(false);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:Guid}")]
         public async Task AcceptAsync(
             string id,
-            ResetPasswordAcceptedRequest request)
+            ResetPasswordAcceptedRequest? request)
         {
             Guard.ThrowIsNull(request, nameof(request));
 
@@ -35,14 +35,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.ResetPasswords
                 .AcceptAsync(
                 id,
                 args)
-                .ConfigureAwait(false);
-        }
-
-        [HttpGet("{id}")]
-        public async Task GetAsync(string id)
-        {
-            await resetPasswordService
-                .GetActiveByIdAsync(id)
                 .ConfigureAwait(false);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;
@@ -67,5 +68,13 @@ internal sealed class AccountRepository(
         }
 
         return mapper.Map<Account>(account);
+    }
+
+
+    public async Task UpdateByIdAsync(
+        string id,
+        Tenant tenant)
+    {
+        await UpdateAndSaveByIdAsync(id, new { TenantId = tenant.Id }).ConfigureAwait(false);
     }
 }

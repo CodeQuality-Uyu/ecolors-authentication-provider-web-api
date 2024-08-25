@@ -1,5 +1,4 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 using CQ.Exceptions;
@@ -29,19 +28,9 @@ public record class Account()
 
     public List<App> Apps { get; init; } = [];
 
-    public Tenant Tenant { get; init; } = null!;
+    public Tenant Tenant { get; set; } = null!;
 
-    /// <summary>
-    /// For new Account
-    /// </summary>
-    /// <param name="email"></param>
-    /// <param name="firstName"></param>
-    /// <param name="lastName"></param>
-    /// <param name="profilePictureUrl"></param>
-    /// <param name="locale"></param>
-    /// <param name="timeZone"></param>
-    /// <param name="role"></param>
-    /// <param name="tenant"></param>
+    // For new Account
     public Account(
         string email,
         string firstName,

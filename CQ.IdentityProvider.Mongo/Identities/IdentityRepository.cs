@@ -13,7 +13,7 @@ internal sealed class IdentityRepository(IdentityDbContext context)
         await base.CreateAsync(identity).ConfigureAwait(false);
     }
 
-    public async Task UpdatePasswordAsync(string identityId, string newPassword)
+    public async Task UpdatePasswordByIdAsync(string identityId, string newPassword)
     {
         await base.UpdateByIdAsync(identityId, new { Password = newPassword }).ConfigureAwait(false);
     }

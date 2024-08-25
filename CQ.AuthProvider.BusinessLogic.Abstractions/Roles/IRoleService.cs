@@ -27,12 +27,6 @@ public interface IRoleService
 internal interface IRoleInternalService
     : IRoleService
 {
-    Task AssertByNameAsync(string id);
-
-    Task<bool> HasPermissionAsync(
-        List<string> ids,
-        PermissionKey permission);
-
     Task<Role> GetByIdAsync(string id);
 
     Task<Role> GetDefaultAsync();

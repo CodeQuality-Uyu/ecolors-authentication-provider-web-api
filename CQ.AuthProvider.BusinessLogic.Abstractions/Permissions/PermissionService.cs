@@ -1,14 +1,10 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.Exceptions;
 using CQ.Utility;
 using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
-internal sealed class PermissionService(
-    IPermissionRepository permissionRepository,
-    IAppInternalService appService)
+internal sealed class PermissionService(IPermissionRepository permissionRepository)
     : IPermissionInternalService
 {
     public async Task<List<Permission>> GetAllAsync(
@@ -139,9 +135,8 @@ internal sealed class PermissionService(
                 .SelectMany(k => k.keys)
                 .Where(pk => !permissionsSaved.Exists(p => p.Key == pk))
                 .ToList();
-            var missingPermissionsMapped = missingPermissions.ConvertAll(p => p.ToString());
 
-            throw new SpecificResourceNotFoundException<Permission>([nameof(Permission.Key)], missingPermissionsMapped);
+            throw new InvalidOperationException($"The following permissions do not exist: {string.Join(",", missingPermissions)}");
         }
 
         return permissionsSaved;
@@ -184,8 +179,11 @@ internal sealed class PermissionService(
             .ConfigureAwait(false);
         if (duplicatedPermissions.Count != 0)
         {
-            var permissionsSavedKeys = allPermissionsKeys
-                .Where(pk => duplicatedPermissions.Exists(p => p.Key == pk.Key))
+            var onlyPermissionsKeys = allPermissionsKeys
+                .SelectMany(g => g.Item2)
+                .ToList();
+            var permissionsSavedKeys = onlyPermissionsKeys
+                .Where(pk => duplicatedPermissions.Exists(p => p.Key == pk))
                 .ToList();
 
             throw new InvalidOperationException($"Duplicated keys exist ${string.Join(",", permissionsSavedKeys)}");
@@ -201,11 +199,11 @@ internal sealed class PermissionService(
         {
             var validAppsIds = accountLogged.AppsIds;
 
-            var missingAppsIds = appsIds
+            var invalidAppsIds = appsIds
                 .Where(id => !validAppsIds.Contains(id))
                 .ToList();
 
-            throw new InvalidOperationException($"Invalid apps ids {string.Join(",", missingAppsIds)}");
+            throw new InvalidOperationException($"Invalid apps ids {string.Join(",", invalidAppsIds)}");
         }
 
         var permissions = args.ConvertAll(p =>

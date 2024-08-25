@@ -4,7 +4,8 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.ResetPasswords.Models;
 
-public sealed record class ResetPasswordAcceptedRequest : Request<AcceptResetPasswordArgs>
+public sealed record class ResetPasswordAcceptedRequest
+    : Request<AcceptResetPasswordArgs>
 {
     public string? NewPassword { get; init; }
 

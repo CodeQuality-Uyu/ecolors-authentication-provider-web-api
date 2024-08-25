@@ -17,10 +17,8 @@ internal sealed class AccountService(
     : IAccountInternalService
 {
     #region Create
-    public async Task<CreateAccountResult> CreateAsync(CreateAccountArgs args)
+    public async Task<CreateAccountResult> InternalCreationAsync(CreateAccountArgs args)
     {
-        await AssertEmailInUseAsync(args.Email).ConfigureAwait(false);
-
         var identity = await CreateIdentityAsync(args).ConfigureAwait(false);
 
         try
@@ -34,7 +32,7 @@ internal sealed class AccountService(
                 args.Email,
                 args.FirstName,
                 args.LastName,
-                args.ProfilePictureUrl,
+                args.ProfilePictureId,
                 args.Locale,
                 args.TimeZone,
                 role,
@@ -74,6 +72,15 @@ internal sealed class AccountService(
                 .ConfigureAwait(false);
             throw;
         }
+    }
+
+    public async Task<CreateAccountResult> CreateAsync(CreateAccountArgs args)
+    {
+        await AssertEmailInUseAsync(args.Email).ConfigureAwait(false);
+
+        var result = await InternalCreationAsync(args).ConfigureAwait(false);
+
+        return result;
     }
 
     private async Task AssertEmailInUseAsync(string email)
@@ -123,7 +130,7 @@ internal sealed class AccountService(
         Guard.ThrowIsInputInvalidPassword(newPassword, nameof(newPassword));
 
         await identityRepository
-            .UpdatePasswordAsync(
+            .UpdatePasswordByIdAsync(
             userLogged.Id,
             newPassword)
             .ConfigureAwait(false);
@@ -156,6 +163,23 @@ internal sealed class AccountService(
     {
         return await accountRepository
             .GetByIdAsync(id)
+            .ConfigureAwait(false);
+    }
+
+    public async Task UpdateAsync(
+        UpdatePasswordArgs args,
+        AccountLogged accountLogged)
+    {
+        await identityRepository
+            .GetByCredentialsAsync(
+            accountLogged.Email,
+            args.OldPassword)
+            .ConfigureAwait(false);
+
+        await identityRepository
+            .UpdatePasswordByIdAsync(
+            accountLogged.Id,
+            args.NewPassword)
             .ConfigureAwait(false);
     }
 }

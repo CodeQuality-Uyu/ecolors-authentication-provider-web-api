@@ -17,9 +17,9 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts
 
         public string TimeZone { get; init; }
 
-        public string? ProfilePictureUrl { get; init; }
+        public string? ProfilePictureId { get; init; }
 
-        public readonly string? RoleId { get; init; }
+        public string? RoleId { get; init; }
 
         public string AppId { get; init; }
 
@@ -31,7 +31,7 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts
             string locale,
             string timeZone,
             string? roleId,
-            string? profilePictureUrl,
+            string? profilePictureId,
             string appId)
         {
             Email = Guard.Encode(email, nameof(email));
@@ -51,7 +51,12 @@ namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts
                 Db.ThrowIsInvalidId(roleId, nameof(roleId));
             }
             RoleId = roleId;
-            ProfilePictureUrl = profilePictureUrl;
+
+            if (Guard.IsNotNullOrEmpty(profilePictureId))
+            {
+                Db.ThrowIsInvalidId(profilePictureId, nameof(profilePictureId));
+            }
+            ProfilePictureId = profilePictureId;
 
             Db.ThrowIsInvalidId(appId, nameof(appId));
             AppId = appId;

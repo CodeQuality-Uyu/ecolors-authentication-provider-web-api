@@ -9,8 +9,14 @@ public interface IAccountService
     Task<Account> GetByEmailAsync(string email);
 
     Task<Account> GetByIdAsync(string id);
+
+    Task UpdateAsync(
+        UpdatePasswordArgs args,
+        AccountLogged accountLogged);
 }
 
-internal interface IAccountInternalService : IAccountService
+internal interface IAccountInternalService
+    : IAccountService
 {
+    Task<CreateAccountResult> InternalCreationAsync(CreateAccountArgs args);
 }

@@ -32,6 +32,16 @@ public readonly struct CreateRoleArgs
 
         PermissionKeys = permissionKeys.ConvertAll(p => Guard.Encode(p, nameof(p)));
 
+        var duplicatedKeys = PermissionKeys
+            .GroupBy(g => g)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToList();
+        if (duplicatedKeys.Count != 0)
+        {
+            throw new ArgumentException($"The keys must be unique in an app");
+        }
+
         IsPublic = isPublic;
         IsDefault = isDefault;
 

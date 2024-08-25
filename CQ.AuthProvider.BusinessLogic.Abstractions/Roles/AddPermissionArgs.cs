@@ -1,5 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.Utility;
+﻿using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 
@@ -11,5 +10,15 @@ public readonly struct AddPermissionArgs
     {
         Guard.ThrowIsNullOrEmpty(permissionsKeys, nameof(permissionsKeys));
         PermissionsKeys = permissionsKeys.ConvertAll(p => Guard.Encode(p, nameof(permissionsKeys)));
+
+        var duplicatedKeys = PermissionsKeys
+            .GroupBy(g => g)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToList();
+        if (duplicatedKeys.Count != 0)
+        {
+            throw new ArgumentException($"Duplicated keys {string.Join(",", duplicatedKeys)}");
+        }
     }
 }
