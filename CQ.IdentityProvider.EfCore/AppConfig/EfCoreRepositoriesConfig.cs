@@ -11,7 +11,7 @@ namespace CQ.IdentityProvider.EfCore.AppConfig;
 
 public static class EfCoreRepositoriesConfig
 {
-    public static IServiceCollection AddEfCoreRepositories(
+    public static IServiceCollection ConfigureIdentityProvider(
         this IServiceCollection services,
         IConfiguration configuration)
     {

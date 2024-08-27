@@ -8,6 +8,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="CQ.ApiElements" Version="3.0.13" />
+		<PackageReference Include="CQ.AuthProvider.DataAccess.EfCore" Version="1.0.0" />
+		<PackageReference Include="CQ.IdentityProvider.EfCore" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -20,8 +22,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CQ.AuthProvider.BusinessLogic.Abstractions\CQ.AuthProvider.BusinessLogic.Abstractions.csproj" />
-		<ProjectReference Include="..\CQ.AuthProvider.DataAccess.Factory\CQ.AuthProvider.DataAccess.Factory.csproj" />
-		<ProjectReference Include="..\CQ.IdentityProvider.Factory\CQ.IdentityProvider.Factory.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

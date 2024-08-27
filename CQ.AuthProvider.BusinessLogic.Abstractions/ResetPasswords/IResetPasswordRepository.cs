@@ -1,7 +1,7 @@
 ﻿
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
 
-internal interface IResetPasswordRepository
+public interface IResetPasswordRepository
 {
     Task<ResetPassword> GetByIdAsync(string id);
 

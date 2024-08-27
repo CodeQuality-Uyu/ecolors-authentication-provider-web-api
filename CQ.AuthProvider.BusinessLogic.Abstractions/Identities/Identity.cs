@@ -10,7 +10,6 @@ public sealed record class Identity()
 
     public string Password { get; set; } = null!;
 
-
     // For new Identity
     public Identity(
         string email,

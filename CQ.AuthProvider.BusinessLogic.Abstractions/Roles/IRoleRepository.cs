@@ -1,9 +1,8 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 
-internal interface IRoleRepository
+public interface IRoleRepository
 {
     Task<List<Role>> GetAllAsync(
         string? appId,

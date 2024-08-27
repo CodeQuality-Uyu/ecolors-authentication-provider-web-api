@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
@@ -24,7 +23,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 
 public static class EfCoreRepositoriesConfig
 {
-    public static IServiceCollection AddEfCoreRepositories(
+    public static IServiceCollection ConfigureDataAccess(
         this IServiceCollection services,
         IConfiguration configuration)
     {

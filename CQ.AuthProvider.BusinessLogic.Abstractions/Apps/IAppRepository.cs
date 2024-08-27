@@ -1,6 +1,6 @@
 ﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
 
-internal interface IAppRepository
+public interface IAppRepository
 {
     Task<App> GetByIdAsync(string id);
 

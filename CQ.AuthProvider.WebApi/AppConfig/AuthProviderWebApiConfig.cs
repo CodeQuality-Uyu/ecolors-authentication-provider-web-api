@@ -1,11 +1,11 @@
 ﻿using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.AppConfig;
-using CQ.AuthProvider.DataAccess.Factory;
+using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.WebApi.Filters.Exception;
 using CQ.Extensions.Configuration;
 using CQ.Extensions.ServiceCollection;
-using CQ.IdentityProvider.Factory;
+using CQ.IdentityProvider.EfCore.AppConfig;
 
 namespace CQ.AuthProvider.WebApi.AppConfig;
 
@@ -36,6 +36,10 @@ internal static class AuthProviderWebApiConfig
         this IServiceCollection services)
     {
         services
+            //.AddAutoMapper(config =>
+            //{
+            //    config.AddProfile
+            //})
             .AddAutoMapper(typeof(Program));
 
         return services;

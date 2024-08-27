@@ -3,7 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 
-internal interface IAccountRepository
+public interface IAccountRepository
 {
     Task CreateAsync(Account account);
 

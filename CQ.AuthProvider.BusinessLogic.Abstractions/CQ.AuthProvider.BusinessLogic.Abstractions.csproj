@@ -4,6 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<Version>1.0.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,14 +12,8 @@
 		<PackageReference Include="CQ.Exceptions" Version="3.0.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>CQ.AuthProvider.DataAccess.EfCore</_Parameter1>
-		</AssemblyAttribute>
-
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>CQ.AuthProvider.DataAccess.Mongo</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
+	<!--<ItemGroup>
+		<InternalsVisibleTo Include="CQ.AuthProvider.DataAccess.EfCore" />
+	</ItemGroup>-->
 
 </Project>
