@@ -1,18 +1,14 @@
-using CQ.AuthProvider.WebApi.Filters;
-using CQ.AuthProvider.BusinessLogic.AppConfig;
-using CQ.AuthProvider.DataAccess.AppConfig;
-using CQ.ServiceExtension;
+using CQ.AuthProvider.WebApi.AppConfig;
 using CQ.ApiElements.AppConfig;
-using dotenv.net;
+using CQ.AuthProvider.WebApi.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-DotEnv.Load();
-
-builder.Services.AddControllers(
+builder.Services
+    .AddControllers(
     (options) =>
     {
-        options.AddExceptionFilter<CqExceptionFilter>();
+        options.AddExceptionGlobalHandler<CqExceptionFilter>();
     })
     .ConfigureApiBehaviorOptions(options =>
     {
@@ -20,20 +16,24 @@ builder.Services.AddControllers(
         options.SuppressModelStateInvalidFilter = true;
     });
 
-// Add services to the container.
-builder.Services
-.AddHandleException<CQAuthExceptionRegistryService>(LifeTime.Singleton, LifeTime.Singleton)
-.AddCQServices(builder.Configuration)
-.AddCQDataAccess(builder.Configuration);
+var services = builder.Services;
+var configuration = builder.Configuration;
 
+// Add services to the container.
+services
+    .ConfigureApiServices(configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
-app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseCors(policy =>
+policy
+.AllowAnyOrigin()
+.AllowAnyHeader()
+.AllowAnyMethod());
 
 app.MapControllers();
 

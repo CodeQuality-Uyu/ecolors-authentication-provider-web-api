@@ -1,17 +1,13 @@
-﻿using CQ.ApiElements.Filters;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using CQ.ApiElements.Filters.ExceptionFilter;
 
-namespace CQ.AuthProvider.WebApi.Filters
+namespace CQ.AuthProvider.WebApi.Filters;
+
+public sealed class CqExceptionFilter(
+    ExceptionStoreService exceptionStoreService)
+    : ExceptionFilter(exceptionStoreService)
 {
-    public sealed class CqExceptionFilter : ExceptionFilter
+    protected override void LogResponse(ErrorResponse response)
     {
-        public CqExceptionFilter(ExceptionStoreService exceptionStoreService, ExceptionRegistryService exceptionRegistryService) : base(exceptionStoreService, exceptionRegistryService)
-        {
-        }
-
-        protected override void LogResponse(ExceptionResponse response)
-        {
-            Console.WriteLine(response.Context.Exception);
-        }
+        Console.WriteLine(response.Exception);
     }
 }

@@ -1,27 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.WebApi.Filters;
+using CQ.AuthProvider.WebApi.Extensions;
+using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
+using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 
-namespace CQ.AuthProvider.WebApi.Controllers.Accounts
+namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
+
+[ApiController]
+[Route("accounts")]
+public class AccountController(
+    IAccountService accountService,
+    IMapper mapper)
+    : ControllerBase
 {
-    [ApiController]
-    [Route("accounts")]
-    public class AccountController : ControllerBase
+    [HttpPost("credentials")]
+    public async Task<AccountCreatedResponse> CreateCredentialsAsync(CreateAccountRequest request)
     {
-        private readonly IAccountService _accountService;
+        var createAccount = request.Map();
 
-        public AccountController(IAccountService accountService)
-        {
-            this._accountService = accountService;
-        }
+        var account = await accountService
+            .CreateAsync(createAccount)
+            .ConfigureAwait(false);
 
-        [HttpPost("credentials")]
-        public async Task<CreateAccountResponse> CreateCredentialsAsync(CreateAccountRequest request)
-        {
-            var createAccount = request.Map();
+        return mapper.Map<AccountCreatedResponse>(account);
+    }
 
-            var account = await this._accountService.CreateAsync(createAccount);
+    [HttpPost("credentials/for")]
+    [CQAuthorization]
+    public async Task CreateCredentialsForAsync(CreateAccountRequest request)
+    {
+        var createAccountFor = request.Map();
 
-            return new CreateAccountResponse(account);
-        }
+        await accountService
+            .CreateAsync(createAccountFor)
+            .ConfigureAwait(false);
     }
 }

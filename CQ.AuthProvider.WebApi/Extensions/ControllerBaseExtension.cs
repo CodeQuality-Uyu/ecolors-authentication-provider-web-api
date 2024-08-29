@@ -1,15 +1,14 @@
 ﻿using CQ.ApiElements;
 using CQ.ApiElements.Filters.Extensions;
-using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CQ.AuthProvider.WebApi.Extensions
+namespace CQ.AuthProvider.WebApi.Extensions;
+
+public static class ControllerBaseExtension
 {
-    public static class ControllerBaseExtension
+    public static AccountLogged GetAccountLogged(this ControllerBase controller)
     {
-        public static AccountInfo GetAccountLogged(this ControllerBase controller)
-        {
-            return controller.HttpContext.GetItem<AccountInfo>(ContextItems.AccountLogged);
-        }
+        return controller.GetItem<AccountLogged>(ContextItems.AccountLogged);
     }
 }

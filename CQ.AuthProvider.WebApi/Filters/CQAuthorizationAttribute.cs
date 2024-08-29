@@ -1,28 +1,23 @@
 ﻿using CQ.ApiElements;
+using CQ.ApiElements.Filters.Authorizations;
 using CQ.ApiElements.Filters.Extensions;
-using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace CQ.AuthProvider.WebApi.Filters
+namespace CQ.AuthProvider.WebApi.Filters;
+
+internal sealed class CQAuthorizationAttribute(string? permission = null)
+    : SecureAuthorizationAttribute(permission)
 {
-    internal class CQAuthorizationAttribute : CQAuthenticationAttribute
+    protected override Task<bool> HasRequestPermissionAsync(
+        string headerValue,
+        string permission,
+        AuthorizationFilterContext context)
     {
-        public CQAuthorizationAttribute() : base()
-        {
-        }
+        var accountLogged = context.GetItem<AccountLogged>(ContextItems.AccountLogged);
 
-        public CQAuthorizationAttribute(string permission) : base(permission)
-        {
-        }
+        var hasPermissionAccount = accountLogged.HasPermission(permission);
 
-        protected override Task<bool> HasUserPermissionAsync(string token, string permission, AuthorizationFilterContext context)
-        {
-            var account = context.HttpContext.GetItem<AccountInfo>(ContextItems.AccountLogged);
-
-            var hasPermission = account.Permissions.Contains(new PermissionKey(permission));
-            
-            return Task.FromResult(hasPermission);
-        }
+        return Task.FromResult(hasPermissionAccount);
     }
 }
