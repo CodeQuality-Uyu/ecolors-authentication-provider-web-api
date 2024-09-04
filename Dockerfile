@@ -3,13 +3,12 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["CQ.AuthProvider.WebApi/CQ.AuthProvider.WebApi.csproj", "CQ.AuthProvider.WebApi/"]
+COPY ["CQ.AuthProvider.BusinessLogic.Abstractions/CQ.AuthProvider.BusinessLogic.Abstractions.csproj", "CQ.AuthProvider.BusinessLogic.Abstractions/"]
 RUN dotnet restore "./CQ.AuthProvider.WebApi/CQ.AuthProvider.WebApi.csproj"
 COPY . .
 WORKDIR "/src/CQ.AuthProvider.WebApi"
