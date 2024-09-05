@@ -49,8 +49,11 @@ internal sealed class InvitationService(
 
         await emailService.SendAsync(
             args.Email,
-            "InvitationTemplate",
-            invitation.Code);
+            EmailTemplateKey.InviteUser,
+            new
+            {
+                invitation.Code
+            });
 
         await invitationRepository
             .CreateAndSaveAsync(invitation)

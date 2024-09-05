@@ -62,7 +62,7 @@ internal abstract class ResetPasswordService(
         else
         {
             code = ResetPassword.NewCode();
-            
+
             await resetPasswordRepository
                 .UpdateCodeByIdAsync(
                 oldResetPassword.Id,
@@ -73,7 +73,10 @@ internal abstract class ResetPasswordService(
         await emailService
             .SendAsync(
             email,
-            "ResetPassword",
-            code);
+            EmailTemplateKey.ResetPassword,
+            new
+            {
+                code
+            });
     }
 }

@@ -4,7 +4,7 @@
     {
         Task SendAsync(
             string to,
-            string template,
-            string templateParams);
+            EmailTemplateKey templateKey,
+            object templateParams);
     }
 }
