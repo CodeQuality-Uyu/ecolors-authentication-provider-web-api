@@ -13,7 +13,7 @@ public interface IAccountRepository
 
     Task<Account> GetByIdAsync(string id);
 
-    Task UpdateByIdAsync(
+    Task UpdateTenantByIdAsync(
         string id,
         Tenant tenant);
 }

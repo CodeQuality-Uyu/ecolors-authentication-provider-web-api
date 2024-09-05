@@ -71,7 +71,7 @@ internal sealed class AccountRepository(
     }
 
 
-    public async Task UpdateByIdAsync(
+    public async Task UpdateTenantByIdAsync(
         string id,
         Tenant tenant)
     {

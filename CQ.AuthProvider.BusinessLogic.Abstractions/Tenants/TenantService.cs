@@ -1,7 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using System.IO.MemoryMappedFiles;
 
 namespace CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
 
@@ -32,7 +31,7 @@ internal sealed class TenantService(
             .ConfigureAwait(false);
 
         await accountRepository
-            .UpdateByIdAsync(
+            .UpdateTenantByIdAsync(
             accountLogged.Id,
             tenant)
             .ConfigureAwait(false);

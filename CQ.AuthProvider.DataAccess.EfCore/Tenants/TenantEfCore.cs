@@ -10,9 +10,9 @@ public sealed record class TenantEfCore()
 
     public string Name { get; init; } = null!;
 
-    public string OwnerId { get; init; } = null!;
+    public string? OwnerId { get; init; } = null!;
 
-    public AccountEfCore Owner { get; init; } = null!;
+    public AccountEfCore? Owner { get; init; } = null!;
 
     // For new Tenant
     public TenantEfCore(

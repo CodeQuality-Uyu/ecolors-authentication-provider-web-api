@@ -50,7 +50,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     Id = seedTenantId,
                     Name = "Seed Tenant",
-                    OwnerId = seedAccountId,
                 });
         });
 
@@ -114,21 +113,27 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     AppId = authWebApiAppId,
                 })
             ;
+            
+            entity
+            .HasOne(a => a.Tenant)
+            .WithMany()
+            .HasForeignKey(a => a.TenantId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-            //entity
-            //.HasData(new AccountEfCore
-            //{
-            //    Id = seedAccountId,
-            //    FirstName = "Seed",
-            //    LastName = "Seed",
-            //    FullName = "Seed Seed",
-            //    Email = "seed@cq.com",
-            //    Locale = "Uruguay",
-            //    TimeZone = "-3",
-            //    ProfilePictureId = null,
-            //    TenantId = seedTenantId,
-            //    CreatedAt = new DateTime(2024, 1, 1),
-            //});
+            entity
+            .HasData(new AccountEfCore
+            {
+                Id = seedAccountId,
+                FirstName = "Seed",
+                LastName = "Seed",
+                FullName = "Seed Seed",
+                Email = "seed@cq.com",
+                Locale = "Uruguay",
+                TimeZone = "-3",
+                ProfilePictureId = null,
+                TenantId = seedTenantId,
+                CreatedAt = new DateTime(2024, 1, 1),
+            });
         });
 
         const string jokerPermissionId = "e2d42874c56e46319b21eeb817f3b988";
