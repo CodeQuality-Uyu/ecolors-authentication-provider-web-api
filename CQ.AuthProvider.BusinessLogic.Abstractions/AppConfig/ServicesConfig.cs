@@ -1,5 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+using CQ.AuthProvider.BusinessLogic.Abstractions.Emails;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
@@ -30,9 +31,10 @@ public static class ServicesConfig
             .AddScoped<IAppService, AppService>()
             .AddScoped<IAppInternalService, AppService>()
 
-            .AddScoped<ITokenService, GuidTokenService>()
-
             .AddScoped<IInvitationService, InvitationService>()
+
+            .AddScoped<ITokenService, GuidTokenService>()
+            .AddScoped<IEmailService, EmailService>()
             ;
 
         return services;

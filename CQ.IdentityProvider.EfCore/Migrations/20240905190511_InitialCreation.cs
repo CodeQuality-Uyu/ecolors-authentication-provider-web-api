@@ -5,7 +5,7 @@
 namespace CQ.IdentityProvider.EfCore.Migrations
 {
     /// <inheritdoc />
-    public partial class IntialCreation : Migration
+    public partial class InitialCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,7 +26,7 @@ namespace CQ.IdentityProvider.EfCore.Migrations
             migrationBuilder.InsertData(
                 table: "Identities",
                 columns: new[] { "Id", "Email", "Password" },
-                values: new object[] { "5f7dd4f88608458ea68bdc3ef9a94e59", "seed@cq.com", "!12345678" });
+                values: new object[] { "5a0d9e179991499e80db0a15fda4df79", "seed@cq.com", "!12345678" });
         }
 
         /// <inheritdoc />

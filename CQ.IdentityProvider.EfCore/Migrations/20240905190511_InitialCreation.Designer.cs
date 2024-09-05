@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.IdentityProvider.EfCore.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20240808141936_IntialCreation")]
-    partial class IntialCreation
+    [Migration("20240905190511_InitialCreation")]
+    partial class InitialCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,7 +44,7 @@ namespace CQ.IdentityProvider.EfCore.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5f7dd4f88608458ea68bdc3ef9a94e59",
+                            Id = "5a0d9e179991499e80db0a15fda4df79",
                             Email = "seed@cq.com",
                             Password = "!12345678"
                         });

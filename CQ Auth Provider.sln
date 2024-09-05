@@ -24,6 +24,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3- Application", "3- Applic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.BusinessLogic.Abstractions", "CQ.AuthProvider.BusinessLogic.Abstractions\CQ.AuthProvider.BusinessLogic.Abstractions.csproj", "{AEA5F979-8655-4170-961A-87A93F537E53}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.DataAccess.EfCore", "CQ.AuthProvider.DataAccess.EfCore\CQ.AuthProvider.DataAccess.EfCore.csproj", "{9E546418-5584-49F5-A720-F403E97D0904}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.IdentityProvider.EfCore", "CQ.IdentityProvider.EfCore\CQ.IdentityProvider.EfCore.csproj", "{FD739702-BAEA-4F79-BA7D-7C6888C13C6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +42,14 @@ Global
 		{AEA5F979-8655-4170-961A-87A93F537E53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEA5F979-8655-4170-961A-87A93F537E53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEA5F979-8655-4170-961A-87A93F537E53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E546418-5584-49F5-A720-F403E97D0904}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E546418-5584-49F5-A720-F403E97D0904}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E546418-5584-49F5-A720-F403E97D0904}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E546418-5584-49F5-A720-F403E97D0904}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD739702-BAEA-4F79-BA7D-7C6888C13C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD739702-BAEA-4F79-BA7D-7C6888C13C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD739702-BAEA-4F79-BA7D-7C6888C13C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD739702-BAEA-4F79-BA7D-7C6888C13C6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

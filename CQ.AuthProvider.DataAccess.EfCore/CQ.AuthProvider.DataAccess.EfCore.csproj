@@ -4,18 +4,23 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>1.0.1</Version>
+		<Version>1.0.3</Version>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="CQ.UnitOfWork.EfCore" Version="3.0.4" />
+		<PackageReference Include="CQ.UnitOfWork.EfCore" Version="3.0.6" />
 		<PackageReference Include="CQ.Extensions.Configuration" Version="2.0.0" />
 		<PackageReference Include="CQ.Extensions.ServiceCollection" Version="2.0.2" />
-		<PackageReference Include="CQ.AuthProvider.BusinessLogic.Abstractions" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
+
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CQ.AuthProvider.BusinessLogic.Abstractions\CQ.AuthProvider.BusinessLogic.Abstractions.csproj" />
 	</ItemGroup>
 </Project>

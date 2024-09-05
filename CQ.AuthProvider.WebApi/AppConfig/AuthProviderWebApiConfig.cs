@@ -1,10 +1,8 @@
 ﻿using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Abstractions.AppConfig;
-using CQ.AuthProvider.DataAccess.EfCore;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.WebApi.Filters.Exception;
 using CQ.Extensions.ServiceCollection;
-using CQ.IdentityProvider.EfCore;
 using CQ.IdentityProvider.EfCore.AppConfig;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
