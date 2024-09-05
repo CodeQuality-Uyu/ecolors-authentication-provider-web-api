@@ -36,11 +36,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        const string codeQualityOwnerAccountId = "5a0d9e179991499e80db0a15fda4df79";
-        const string authApiOwnerRoleId = "4c00f792d8ed43768846711094902d8c";
+        const string seedAccountId = "5a0d9e179991499e80db0a15fda4df79";
+        const string authWebApiOwnerRoleId = "4c00f792d8ed43768846711094902d8c";
         const string tenantOwnerRoleId = "5c2260fc58864b75a4cad5c0e7dd57cb";
-        const string codeQualityTenantId = "b22fcf202bd84a97936ccf2949e00da4";
-        const string authApiAppId = "d31184dabbc6435eaec86694650c2679";
+        const string seedTenantId = "b22fcf202bd84a97936ccf2949e00da4";
+        const string authWebApiAppId = "d31184dabbc6435eaec86694650c2679";
 
         modelBuilder.Entity<TenantEfCore>(entity =>
         {
@@ -48,9 +48,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasData(
                 new TenantEfCore
                 {
-                    Id = codeQualityTenantId,
-                    Name = "Code Quality",
-                    OwnerId = codeQualityOwnerAccountId,
+                    Id = seedTenantId,
+                    Name = "Seed Tenant",
+                    OwnerId = seedAccountId,
                 });
         });
 
@@ -60,10 +60,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasData(
                 new AppEfCore
                 {
-                    Id = authApiAppId,
+                    Id = authWebApiAppId,
                     Name = "Auth Provider WEB API",
                     IsDefault = true,
-                    TenantId = codeQualityTenantId,
+                    TenantId = seedTenantId,
                 });
         });
 
@@ -87,9 +87,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new AccountRole
                 {
                     Id = "9dc669b28b0f4f3fb8a832961a76a6c9",
-                    AccountId = codeQualityOwnerAccountId,
-                    RoleId = authApiOwnerRoleId,
-                });
+                    AccountId = seedAccountId,
+                    RoleId = authWebApiOwnerRoleId,
+                })
+            ;
 
             entity
             .HasMany(a => a.Apps)
@@ -109,30 +110,25 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new AccountApp
                 {
                     Id = "ef03980ea2a54e4bba92e022fbd33d9b",
-                    AccountId = codeQualityOwnerAccountId,
-                    AppId = authApiAppId,
-                });
+                    AccountId = seedAccountId,
+                    AppId = authWebApiAppId,
+                })
+            ;
 
-            entity
-            .HasOne(a => a.Tenant)
-            .WithMany(t => t.Accounts)
-            .HasForeignKey(a => a.TenantId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-            entity
-            .HasData(new AccountEfCore
-            {
-                Id = codeQualityOwnerAccountId,
-                FirstName = "Seed",
-                LastName = "Seed",
-                FullName = "Seed Seed",
-                Email = "seed@cq.com",
-                Locale = "Uruguay",
-                TimeZone = "-3",
-                ProfilePictureUrl = null,
-                TenantId = codeQualityTenantId,
-                CreatedAt = new DateTime(2024, 1, 1),
-            });
+            //entity
+            //.HasData(new AccountEfCore
+            //{
+            //    Id = seedAccountId,
+            //    FirstName = "Seed",
+            //    LastName = "Seed",
+            //    FullName = "Seed Seed",
+            //    Email = "seed@cq.com",
+            //    Locale = "Uruguay",
+            //    TimeZone = "-3",
+            //    ProfilePictureId = null,
+            //    TenantId = seedTenantId,
+            //    CreatedAt = new DateTime(2024, 1, 1),
+            //});
         });
 
         const string jokerPermissionId = "e2d42874c56e46319b21eeb817f3b988";
@@ -151,7 +147,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read permissions",
                     Description = "Can read permissions",
                     Key = "getall-permission",
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -160,7 +156,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read roles",
                     Description = "Can read roles",
                     Key = "getall-role",
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -169,7 +165,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read permissions of tenant",
                     Description = "Can read permissions of tenant",
                     Key = PermissionKey.CanReadPermissionsOfTenant,
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -178,7 +174,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read private permissions",
                     Description = "Can read private permissions",
                     Key = PermissionKey.CanReadPrivatePermissions,
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -187,7 +183,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read roles of tenant",
                     Description = "Can read roles of tenant",
                     Key = PermissionKey.CanReadRolesOfTenant,
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -196,7 +192,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read private roles",
                     Description = "Can read private roles",
                     Key = PermissionKey.CanReadPrivateRoles,
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -205,9 +201,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read invitations of tenant",
                     Description = "Can read invitations of tenant",
                     Key = PermissionKey.CanReadInvitationsOfTenant,
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = false,
-                    TenantId = codeQualityTenantId
+                    TenantId = seedTenantId
                 },
                 new PermissionEfCore
                 {
@@ -215,7 +211,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Joker",
                     Description = "Joker",
                     Key = PermissionKey.Joker,
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -224,9 +220,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Full access",
                     Description = "Full accesss",
                     Key = PermissionKey.FullAccess,
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = false,
-                    TenantId = codeQualityTenantId,
+                    TenantId = seedTenantId,
                 });
         });
 
@@ -261,13 +257,13 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     Id = "4909564462b040289d0dc0758cf8942e",
-                    RoleId = authApiOwnerRoleId,
+                    RoleId = authWebApiOwnerRoleId,
                     PermissionId = jokerPermissionId,
                 },
                 new RolePermission
                 {
                     Id = "64ec1b6bbd3d4c49b609c0f58359e7ac",
-                    RoleId = authApiOwnerRoleId,
+                    RoleId = authWebApiOwnerRoleId,
                     PermissionId = jokerPermissionId,
                 });
 
@@ -275,12 +271,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasData(
                 new RoleEfCore
                 {
-                    Id = authApiOwnerRoleId,
-                    Name = "Auth API Owner",
-                    Description = "Auth API Owner",
-                    AppId = authApiAppId,
+                    Id = authWebApiOwnerRoleId,
+                    Name = "Auth WEB API Owner",
+                    Description = "Auth WEB API Owner",
+                    AppId = authWebApiAppId,
                     IsPublic = false,
-                    TenantId = codeQualityTenantId,
+                    TenantId = seedTenantId,
                     IsDefault = false,
                 },
                 new RoleEfCore
@@ -288,9 +284,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = tenantOwnerRoleId,
                     Name = "Tenant Owner",
                     Description = "Tenant Owner",
-                    AppId = authApiAppId,
+                    AppId = authWebApiAppId,
                     IsPublic = true,
-                    TenantId = codeQualityTenantId,
+                    TenantId = seedTenantId,
                     IsDefault = false,
                 });
         });

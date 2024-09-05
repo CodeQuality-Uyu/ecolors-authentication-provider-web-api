@@ -13,7 +13,7 @@ public sealed record class AccountEfCore()
 
     public string Email { get; init; } = null!;
 
-    public string? ProfilePictureUrl { get; set; } = null!;
+    public string? ProfilePictureId { get; set; } = null!;
 
     public string FullName { get; set; } = null!;
 
@@ -27,9 +27,9 @@ public sealed record class AccountEfCore()
 
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow.Date;
 
-    public string TenantId { get; init; } = null!;
+    public string? TenantId { get; init; } = null!;
 
-    public TenantEfCore Tenant { get; init; } = null!;
+    public TenantEfCore? Tenant { get; init; } = null!;
 
     public List<RoleEfCore> Roles { get; init; } = [];
 
@@ -45,7 +45,7 @@ public sealed record class AccountEfCore()
         string locale,
         string timeZone,
         List<Role> roles,
-        string? profilePictureUrl,
+        string? profilePictureId,
         List<App> apps,
         Tenant tenant)
         : this()
@@ -55,7 +55,7 @@ public sealed record class AccountEfCore()
         FullName = fullName;
         FirstName = firstName;
         LastName = lastName;
-        ProfilePictureUrl = profilePictureUrl;
+        ProfilePictureId = profilePictureId;
         Locale = locale;
         TimeZone = timeZone;
         TenantId = tenant.Id;
