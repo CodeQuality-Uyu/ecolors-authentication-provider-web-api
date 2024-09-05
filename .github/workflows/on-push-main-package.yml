@@ -4,12 +4,7 @@ on:
   push:
     branches:
       [
-        auth-provider-efcore,
-        auth-provider-mongo,
-        identity-provider-efcore,
-        identity-provider-mongo,
-        identity-provider-firebase,
-        business-data-access
+        '**-provider-**'
       ]
 
 jobs:
