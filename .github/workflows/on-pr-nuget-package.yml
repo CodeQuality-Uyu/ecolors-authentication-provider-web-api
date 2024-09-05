@@ -46,6 +46,9 @@ jobs:
             echo "Unknown branch. Exiting."
             exit 1
           fi
+
+          echo "${{github.event}}"
+
           echo "Package Name: $PACKAGE_NAME"
 
           echo "package_name=$PACKAGE_NAME" >> $GITHUB_ENV
