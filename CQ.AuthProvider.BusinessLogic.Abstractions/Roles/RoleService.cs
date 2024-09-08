@@ -1,12 +1,12 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.Exceptions;
 using CQ.Utility;
 using System.Data;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 internal sealed class RoleService(
     IRoleRepository roleRepository,

@@ -1,7 +1,7 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Identities;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 public interface ISessionService
 {

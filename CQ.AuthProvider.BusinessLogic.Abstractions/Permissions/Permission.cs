@@ -1,8 +1,8 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+namespace CQ.AuthProvider.BusinessLogic.Permissions;
 
 public sealed record class Permission()
 {
@@ -40,6 +40,6 @@ public sealed record class Permission()
 
     public bool HasPermissionKey(string permissionKey)
     {
-        return (Key == PermissionKey.Joker && permissionKey != PermissionKey.FullAccess) || Key == permissionKey;
+        return Key == PermissionKey.Joker && permissionKey != PermissionKey.FullAccess || Key == permissionKey;
     }
 }

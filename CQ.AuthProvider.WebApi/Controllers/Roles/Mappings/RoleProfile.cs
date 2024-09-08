@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.WebApi.Controllers.Roles.Models;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles.Mappings;

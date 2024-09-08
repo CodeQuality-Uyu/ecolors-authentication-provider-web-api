@@ -1,6 +1,6 @@
 ﻿using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 public readonly struct CreateRoleArgs
 {

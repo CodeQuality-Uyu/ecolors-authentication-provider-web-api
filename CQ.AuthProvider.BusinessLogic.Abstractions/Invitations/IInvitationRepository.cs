@@ -1,6 +1,6 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
 public interface IInvitationRepository
 {

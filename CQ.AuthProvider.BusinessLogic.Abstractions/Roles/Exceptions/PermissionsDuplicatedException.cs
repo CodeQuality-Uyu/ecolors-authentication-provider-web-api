@@ -1,6 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions
+namespace CQ.AuthProvider.BusinessLogic.Roles.Exceptions
 {
     public sealed class PermissionsDuplicatedException(List<string> keys)
         : Exception

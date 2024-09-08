@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions.Exceptions
+namespace CQ.AuthProvider.BusinessLogic.Sessions.Exceptions
 {
     public sealed class InvalidCredentialsException : Exception
     {

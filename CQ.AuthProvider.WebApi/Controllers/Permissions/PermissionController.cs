@@ -4,8 +4,8 @@ using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using AutoMapper;
 using CQ.Utility;
 using CQ.AuthProvider.WebApi.Extensions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
 using CQ.ApiElements.Filters.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Permissions;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 

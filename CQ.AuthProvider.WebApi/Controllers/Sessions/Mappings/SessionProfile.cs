@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions.Mappings;

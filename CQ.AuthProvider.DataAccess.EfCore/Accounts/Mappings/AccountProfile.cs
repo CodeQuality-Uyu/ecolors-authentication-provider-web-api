@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts.Mappings;
 

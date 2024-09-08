@@ -1,5 +1,5 @@
 ﻿using CQ.ApiElements.Dtos;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles.Models;

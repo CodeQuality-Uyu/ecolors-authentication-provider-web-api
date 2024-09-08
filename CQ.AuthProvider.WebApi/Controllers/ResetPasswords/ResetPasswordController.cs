@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
+﻿using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.WebApi.Controllers.ResetPasswords.Models;
 using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;

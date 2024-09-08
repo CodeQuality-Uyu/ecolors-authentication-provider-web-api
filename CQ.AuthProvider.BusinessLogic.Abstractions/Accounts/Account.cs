@@ -1,10 +1,10 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Roles;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.Exceptions;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public record class Account()
 {

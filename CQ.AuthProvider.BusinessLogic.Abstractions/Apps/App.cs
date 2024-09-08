@@ -1,8 +1,7 @@
-﻿
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+namespace CQ.AuthProvider.BusinessLogic.Apps;
 
 public sealed record class App()
 {

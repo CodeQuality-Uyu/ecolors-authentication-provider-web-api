@@ -1,11 +1,11 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Emails;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Emails;
+using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
 internal sealed class InvitationService(
     IInvitationRepository invitationRepository,

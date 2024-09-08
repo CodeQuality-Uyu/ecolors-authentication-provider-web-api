@@ -1,5 +1,5 @@
 ﻿using CQ.ApiElements.AppConfig;
-using CQ.AuthProvider.BusinessLogic.Abstractions.AppConfig;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.WebApi.Filters.Exception;
 using CQ.Extensions.ServiceCollection;

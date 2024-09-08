@@ -1,6 +1,6 @@
 ﻿using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public readonly struct CreateAccountArgs
 {

@@ -4,9 +4,9 @@ using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Controllers.Roles.Models;
 using AutoMapper;
 using CQ.Utility;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using CQ.ApiElements.Filters.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Roles;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles;
 

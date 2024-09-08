@@ -1,4 +1,4 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+﻿namespace CQ.AuthProvider.BusinessLogic.Apps;
 
 public interface IAppRepository
 {

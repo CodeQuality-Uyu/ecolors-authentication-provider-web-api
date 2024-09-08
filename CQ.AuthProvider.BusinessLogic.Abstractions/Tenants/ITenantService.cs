@@ -1,7 +1,7 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.UnitOfWork.Abstractions.Repositories;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+namespace CQ.AuthProvider.BusinessLogic.Tenants;
 
 public interface ITenantService
 {

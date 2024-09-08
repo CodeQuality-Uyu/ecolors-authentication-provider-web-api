@@ -1,10 +1,10 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.ResetPasswords;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
 public sealed record class Invitation()
 {

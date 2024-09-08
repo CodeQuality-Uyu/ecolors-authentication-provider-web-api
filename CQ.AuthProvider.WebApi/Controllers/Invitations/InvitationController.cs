@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CQ.ApiElements.Filters.Authorizations;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 using CQ.AuthProvider.WebApi.Extensions;

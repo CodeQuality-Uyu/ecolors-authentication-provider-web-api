@@ -2,9 +2,9 @@
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
 using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.Utility;
 using CQ.ApiElements.Filters.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
 

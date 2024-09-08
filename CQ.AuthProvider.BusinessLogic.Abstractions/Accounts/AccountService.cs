@@ -1,11 +1,11 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.BusinessLogic.Roles;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Exceptions;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 internal sealed class AccountService(
     IAccountRepository accountRepository,

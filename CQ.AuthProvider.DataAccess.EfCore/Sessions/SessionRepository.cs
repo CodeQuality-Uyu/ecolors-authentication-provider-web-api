@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;

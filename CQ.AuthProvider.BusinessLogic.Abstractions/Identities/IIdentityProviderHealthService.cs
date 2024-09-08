@@ -1,4 +1,4 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+﻿namespace CQ.AuthProvider.BusinessLogic.Identities;
 
 public interface IIdentityProviderHealthService
 {

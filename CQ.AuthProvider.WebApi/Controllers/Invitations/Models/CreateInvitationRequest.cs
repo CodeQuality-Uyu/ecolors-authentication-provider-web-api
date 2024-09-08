@@ -1,5 +1,5 @@
 ﻿using CQ.ApiElements.Dtos;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Invitations.Models;

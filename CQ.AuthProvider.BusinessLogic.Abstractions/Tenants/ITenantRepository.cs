@@ -1,6 +1,6 @@
 ﻿using CQ.UnitOfWork.Abstractions.Repositories;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+namespace CQ.AuthProvider.BusinessLogic.Tenants;
 
 public interface ITenantRepository
 {

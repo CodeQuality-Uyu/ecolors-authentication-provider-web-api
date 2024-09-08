@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Permissions.Mappings;

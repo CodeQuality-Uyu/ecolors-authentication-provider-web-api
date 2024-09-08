@@ -1,4 +1,4 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.Tokens
+﻿namespace CQ.AuthProvider.BusinessLogic.Tokens
 {
     public interface ITokenService
     {

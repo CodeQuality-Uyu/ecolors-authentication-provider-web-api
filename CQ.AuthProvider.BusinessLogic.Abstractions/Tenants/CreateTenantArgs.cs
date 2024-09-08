@@ -1,6 +1,6 @@
 ﻿using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+namespace CQ.AuthProvider.BusinessLogic.Tenants;
 
 public readonly struct CreateTenantArgs(string name)
 {

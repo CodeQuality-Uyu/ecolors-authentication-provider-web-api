@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
 

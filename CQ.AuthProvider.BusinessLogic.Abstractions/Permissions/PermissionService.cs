@@ -1,8 +1,8 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.Utility;
 using System.Data;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+namespace CQ.AuthProvider.BusinessLogic.Permissions;
 
 internal sealed class PermissionService(IPermissionRepository permissionRepository)
     : IPermissionInternalService

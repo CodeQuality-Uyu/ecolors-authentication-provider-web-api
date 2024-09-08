@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
 using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Sessions.Mappings;
 

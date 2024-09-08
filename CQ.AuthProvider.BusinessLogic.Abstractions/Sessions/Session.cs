@@ -1,8 +1,8 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 public sealed record class Session()
 {

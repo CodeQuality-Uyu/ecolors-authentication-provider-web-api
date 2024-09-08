@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.Identities;
 using CQ.UnitOfWork.EfCore.Configuration;

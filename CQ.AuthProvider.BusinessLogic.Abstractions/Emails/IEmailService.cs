@@ -1,4 +1,4 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.Emails
+﻿namespace CQ.AuthProvider.BusinessLogic.Emails
 {
     internal interface IEmailService
     {

@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+﻿using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;

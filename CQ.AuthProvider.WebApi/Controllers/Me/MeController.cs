@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Me.Models;
 using CQ.AuthProvider.WebApi.Extensions;

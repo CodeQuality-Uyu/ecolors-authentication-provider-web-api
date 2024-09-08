@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles.Mappings;

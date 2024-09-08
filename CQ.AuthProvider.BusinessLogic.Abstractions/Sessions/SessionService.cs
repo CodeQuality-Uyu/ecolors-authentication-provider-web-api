@@ -1,9 +1,9 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tokens;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.BusinessLogic.Tokens;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 internal sealed class SessionService(
     ISessionRepository sessionRepository,
@@ -36,7 +36,7 @@ internal sealed class SessionService(
 
         var app = account
             .Apps
-            .FirstOrDefault(a => (appId == null && a.IsDefault) || a.Id == appId);
+            .FirstOrDefault(a => appId == null && a.IsDefault || a.Id == appId);
 
         if (Guard.IsNull(app))
         {

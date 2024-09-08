@@ -1,7 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
 public record AcceptInvitationArgs
 {

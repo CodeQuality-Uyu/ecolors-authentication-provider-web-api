@@ -1,14 +1,14 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Emails;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tokens;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Emails;
+using CQ.AuthProvider.BusinessLogic.Invitations;
+using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.Roles;
+using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.AuthProvider.BusinessLogic.Tokens;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.AppConfig;
+namespace CQ.AuthProvider.BusinessLogic.AppConfig;
 
 public static class ServicesConfig
 {

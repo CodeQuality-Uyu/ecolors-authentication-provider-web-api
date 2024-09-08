@@ -1,5 +1,4 @@
-﻿
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+﻿namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 public interface ISessionRepository
 {

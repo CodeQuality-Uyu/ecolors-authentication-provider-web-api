@@ -1,7 +1,7 @@
 ﻿using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Extensions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tokens;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Tokens;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.WebApi.Filters;

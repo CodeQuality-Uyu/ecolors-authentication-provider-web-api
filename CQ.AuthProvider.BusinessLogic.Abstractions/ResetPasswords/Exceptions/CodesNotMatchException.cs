@@ -1,5 +1,4 @@
-﻿
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords.Exceptions;
+﻿namespace CQ.AuthProvider.BusinessLogic.ResetPasswords.Exceptions;
 
 public sealed class CodesNotMatchException(
     string code,

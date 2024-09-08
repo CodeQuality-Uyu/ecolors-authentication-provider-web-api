@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+﻿using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.Utility;

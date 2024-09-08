@@ -1,10 +1,10 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Invitations;
+using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.ResetPasswords;
+using CQ.AuthProvider.BusinessLogic.Roles;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;

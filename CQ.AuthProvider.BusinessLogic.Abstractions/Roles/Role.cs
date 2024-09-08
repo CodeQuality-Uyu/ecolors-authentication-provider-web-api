@@ -1,9 +1,9 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 public sealed record class Role()
 {
@@ -17,7 +17,7 @@ public sealed record class Role()
 
     public List<Permission> Permissions { get; init; } = [];
 
-    public App App { get; init; } =null!;
+    public App App { get; init; } = null!;
 
     public Tenant Tenant { get; init; } = null!;
 

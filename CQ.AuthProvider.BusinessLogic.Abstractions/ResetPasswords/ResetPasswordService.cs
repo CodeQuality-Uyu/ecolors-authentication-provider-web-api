@@ -1,9 +1,9 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Emails;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Emails;
+using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
+namespace CQ.AuthProvider.BusinessLogic.ResetPasswords;
 
 internal abstract class ResetPasswordService(
     IResetPasswordRepository resetPasswordRepository,

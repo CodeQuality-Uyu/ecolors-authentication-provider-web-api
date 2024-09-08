@@ -1,6 +1,6 @@
 ﻿using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Tokens
+namespace CQ.AuthProvider.BusinessLogic.Tokens
 {
     internal sealed class GuidTokenService
         : ITokenService

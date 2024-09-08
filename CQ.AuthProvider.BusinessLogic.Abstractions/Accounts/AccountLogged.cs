@@ -1,8 +1,7 @@
-﻿
-using CQ.AuthProvider.BusinessLogic.Abstractions.Apps;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
 using System.Security.Principal;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public record class AccountLogged()
     : Account,

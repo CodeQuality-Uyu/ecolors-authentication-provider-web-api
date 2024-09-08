@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
+﻿using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;

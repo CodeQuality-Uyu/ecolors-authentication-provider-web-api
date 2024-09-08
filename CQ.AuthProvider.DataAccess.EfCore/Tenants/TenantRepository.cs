@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 

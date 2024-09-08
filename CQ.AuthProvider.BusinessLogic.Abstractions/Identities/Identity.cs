@@ -1,6 +1,6 @@
 ﻿using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+namespace CQ.AuthProvider.BusinessLogic.Identities;
 
 public sealed record class Identity()
 {

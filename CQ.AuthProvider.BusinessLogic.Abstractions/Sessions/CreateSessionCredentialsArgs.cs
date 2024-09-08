@@ -1,6 +1,6 @@
 ﻿using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 public readonly struct CreateSessionCredentialsArgs
 {

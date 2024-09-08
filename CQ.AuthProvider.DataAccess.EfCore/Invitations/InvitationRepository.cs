@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Invitations;
+using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore;

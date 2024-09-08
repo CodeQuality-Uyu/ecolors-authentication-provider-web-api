@@ -1,5 +1,5 @@
 ﻿using CQ.ApiElements.Dtos;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Tenants.Models;

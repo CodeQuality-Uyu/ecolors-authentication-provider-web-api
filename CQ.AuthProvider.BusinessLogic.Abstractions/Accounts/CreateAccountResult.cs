@@ -1,4 +1,4 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public sealed record class CreateAccountResult(
     string Id,

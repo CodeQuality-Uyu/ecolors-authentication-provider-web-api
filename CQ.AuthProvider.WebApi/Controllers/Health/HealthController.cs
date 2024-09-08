@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Identities;
+﻿using CQ.AuthProvider.BusinessLogic.Identities;
 using Microsoft.AspNetCore.Mvc;
 
 using AuthEfCoreDbContext = CQ.AuthProvider.DataAccess.EfCore.AuthDbContext;

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CQ.ApiElements.Filters.Authorizations;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.WebApi.Controllers.Tenants.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.UnitOfWork.Abstractions.Repositories;

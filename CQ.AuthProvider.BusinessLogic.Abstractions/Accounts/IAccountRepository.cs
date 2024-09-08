@@ -1,7 +1,6 @@
-﻿
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Tenants;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public interface IAccountRepository
 {

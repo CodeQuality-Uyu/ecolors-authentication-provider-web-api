@@ -1,7 +1,7 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.ResetPasswords;
+namespace CQ.AuthProvider.BusinessLogic.ResetPasswords;
 
 public sealed record class ResetPassword()
 {

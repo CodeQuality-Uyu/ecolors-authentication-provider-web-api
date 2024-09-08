@@ -1,8 +1,8 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+namespace CQ.AuthProvider.BusinessLogic.Tenants;
 
 internal sealed class TenantService(
     ITenantRepository tenantRepository,

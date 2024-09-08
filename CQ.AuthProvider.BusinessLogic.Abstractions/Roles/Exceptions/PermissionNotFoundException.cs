@@ -1,6 +1,6 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+﻿using CQ.AuthProvider.BusinessLogic.Permissions;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Roles.Exceptions;
+namespace CQ.AuthProvider.BusinessLogic.Roles.Exceptions;
 
 public class PermissionNotFoundException(List<PermissionKey> permissionKeys) : Exception
 {

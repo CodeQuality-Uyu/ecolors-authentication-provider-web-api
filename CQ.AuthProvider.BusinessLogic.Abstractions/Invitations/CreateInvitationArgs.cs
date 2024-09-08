@@ -1,7 +1,6 @@
-﻿
-using CQ.Utility;
+﻿using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Invitations;
+namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
 public readonly struct CreateInvitationArgs
 {

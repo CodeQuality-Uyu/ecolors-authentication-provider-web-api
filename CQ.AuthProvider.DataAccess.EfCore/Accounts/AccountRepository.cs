@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;

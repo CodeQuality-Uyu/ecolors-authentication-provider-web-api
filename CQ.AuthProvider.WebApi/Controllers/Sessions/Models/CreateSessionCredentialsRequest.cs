@@ -1,5 +1,5 @@
 ﻿using CQ.ApiElements.Dtos;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Sessions;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions.Models;

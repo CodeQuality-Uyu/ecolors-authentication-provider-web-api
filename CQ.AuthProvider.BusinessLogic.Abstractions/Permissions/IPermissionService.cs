@@ -1,6 +1,6 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 
-namespace CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
+namespace CQ.AuthProvider.BusinessLogic.Permissions;
 
 public interface IPermissionService
 {

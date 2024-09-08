@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Permissions;
-using CQ.AuthProvider.BusinessLogic.Abstractions.Roles;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
