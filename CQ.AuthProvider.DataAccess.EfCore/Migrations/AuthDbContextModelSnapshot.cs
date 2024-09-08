@@ -457,6 +457,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -469,7 +470,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         new
                         {
                             Id = "b22fcf202bd84a97936ccf2949e00da4",
-                            Name = "Seed Tenant"
+                            Name = "Seed Tenant",
+                            OwnerId = "5a0d9e179991499e80db0a15fda4df79"
                         });
                 });
 
@@ -623,7 +625,9 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Owner");
                 });

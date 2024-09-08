@@ -50,6 +50,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     Id = seedTenantId,
                     Name = "Seed Tenant",
+                    OwnerId = seedAccountId
                 });
         });
 
@@ -131,7 +132,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 Locale = "Uruguay",
                 TimeZone = "-3",
                 ProfilePictureId = null,
-                TenantId = seedTenantId,
+                TenantId = string.Empty,
                 CreatedAt = new DateTime(2024, 1, 1),
             });
         });

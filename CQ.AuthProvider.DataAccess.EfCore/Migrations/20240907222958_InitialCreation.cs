@@ -60,7 +60,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,7 +69,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_Tenants_Accounts_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "Accounts",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -243,14 +244,14 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Tenants",
-                columns: new[] { "Id", "Name", "OwnerId" },
-                values: new object[] { "b22fcf202bd84a97936ccf2949e00da4", "Seed Tenant", null });
-
-            migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "Id", "CreatedAt", "Email", "FirstName", "FullName", "LastName", "Locale", "ProfilePictureId", "TenantId", "TimeZone" },
                 values: new object[] { "5a0d9e179991499e80db0a15fda4df79", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "seed@cq.com", "Seed", "Seed Seed", "Seed", "Uruguay", null, "b22fcf202bd84a97936ccf2949e00da4", "-3" });
+
+            migrationBuilder.InsertData(
+                table: "Tenants",
+                columns: new[] { "Id", "Name", "OwnerId" },
+                values: new object[] { "b22fcf202bd84a97936ccf2949e00da4", "Seed Tenant", "5a0d9e179991499e80db0a15fda4df79" });
 
             migrationBuilder.InsertData(
                 table: "Apps",
