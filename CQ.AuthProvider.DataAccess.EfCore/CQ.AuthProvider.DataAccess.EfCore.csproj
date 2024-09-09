@@ -21,6 +21,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CQ.AuthProvider.BusinessLogic.Abstractions\CQ.AuthProvider.BusinessLogic.Abstractions.csproj" />
+		<ProjectReference Include="..\CQ.AuthProvider.BusinessLogic.Abstractions\CQ.AuthProvider.BusinessLogic.csproj" />
 	</ItemGroup>
 </Project>

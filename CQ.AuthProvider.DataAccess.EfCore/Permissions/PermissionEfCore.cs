@@ -24,9 +24,9 @@ public sealed record class PermissionEfCore()
 
     public AppEfCore App { get; init; } = null!;
 
-    public string? TenantId { get; init; } = null!;
+    public string TenantId { get; init; } = null!;
 
-    public TenantEfCore? Tenant { get; init; } = null!;
+    public TenantEfCore Tenant { get; init; } = null!;
 
     // For new Permission
     public PermissionEfCore(

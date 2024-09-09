@@ -1,5 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Tenants;
-using CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.BusinessLogic.Roles;

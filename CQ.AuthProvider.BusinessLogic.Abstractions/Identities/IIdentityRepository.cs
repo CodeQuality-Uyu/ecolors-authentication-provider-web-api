@@ -1,6 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Abstractions.Accounts;
-
-namespace CQ.AuthProvider.BusinessLogic.Identities;
+﻿namespace CQ.AuthProvider.BusinessLogic.Identities;
 
 public interface IIdentityRepository
 {

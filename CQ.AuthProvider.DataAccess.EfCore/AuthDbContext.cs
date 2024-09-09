@@ -154,6 +154,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Description = "Can read permissions",
                     Key = "getall-permission",
                     AppId = authWebApiAppId,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -163,6 +164,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Description = "Can read roles",
                     Key = "getall-role",
                     AppId = authWebApiAppId,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -172,6 +174,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Description = "Can read permissions of tenant",
                     Key = PermissionKey.CanReadPermissionsOfTenant,
                     AppId = authWebApiAppId,
+                    TenantId = seedTenantId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -181,6 +184,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Description = "Can read private permissions",
                     Key = PermissionKey.CanReadPrivatePermissions,
                     AppId = authWebApiAppId,
+                    TenantId = seedTenantId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -190,6 +194,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Description = "Can read roles of tenant",
                     Key = PermissionKey.CanReadRolesOfTenant,
                     AppId = authWebApiAppId,
+                    TenantId = seedTenantId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -199,6 +204,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Description = "Can read private roles",
                     Key = PermissionKey.CanReadPrivateRoles,
                     AppId = authWebApiAppId,
+                    TenantId = seedTenantId,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -208,27 +214,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Description = "Can read invitations of tenant",
                     Key = PermissionKey.CanReadInvitationsOfTenant,
                     AppId = authWebApiAppId,
-                    IsPublic = false,
-                    TenantId = seedTenantId
-                },
-                new PermissionEfCore
-                {
-                    Id = jokerPermissionId,
-                    Name = "Joker",
-                    Description = "Joker",
-                    Key = PermissionKey.Joker,
-                    AppId = authWebApiAppId,
-                    IsPublic = false,
-                },
-                new PermissionEfCore
-                {
-                    Id = fullAccessPermissionId,
-                    Name = "Full access",
-                    Description = "Full accesss",
-                    Key = PermissionKey.FullAccess,
-                    AppId = authWebApiAppId,
-                    IsPublic = false,
                     TenantId = seedTenantId,
+                    IsPublic = false,
                 });
         });
 
