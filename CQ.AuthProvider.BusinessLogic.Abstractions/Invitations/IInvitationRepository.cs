@@ -11,7 +11,6 @@ public interface IInvitationRepository
     Task<List<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
-        string? tenantId,
         AccountLogged accountLogged);
 
     Task<Invitation> GetPendingByIdAsync(string id);

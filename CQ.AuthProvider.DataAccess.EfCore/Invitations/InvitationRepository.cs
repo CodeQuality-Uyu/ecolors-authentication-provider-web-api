@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Invitations;
-using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
@@ -17,20 +16,16 @@ internal sealed class InvitationRepository(
     public async Task<List<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
-        string? tenantId,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged.AppsIds;
 
-        var canSeeOfTenant = accountLogged.HasPermission(PermissionKey.CanReadInvitationsOfTenant);
-        var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
-
         var query = _entities
             .Include(i => i.Creator)
-            .Where(i => tenantId == null || i.TenantId == tenantId)
+            .Where(i => i.TenantId == accountLogged.Tenant.Id)
             .Where(i => creatorId == null || i.CreatorId == creatorId)
             .Where(i =>
-            (appId == null && (canSeeOfTenant || hasFullAccess)) ||
+            appId == null ||
             (appId != null && i.AppId == appId) ||
             appsIdsOfAccountLogged.Contains(i.AppId))
             .AsNoTracking();

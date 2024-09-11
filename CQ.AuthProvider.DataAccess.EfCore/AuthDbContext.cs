@@ -40,7 +40,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         const string seedAccountId = "5a0d9e179991499e80db0a15fda4df79";
-        const string authWebApiOwnerRoleId = "4c00f792d8ed43768846711094902d8c";
         const string tenantOwnerRoleId = "5c2260fc58864b75a4cad5c0e7dd57cb";
 
         modelBuilder.Entity<TenantEfCore>(entity =>
@@ -50,6 +49,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .WithOne(o => o.Tenant)
             .HasForeignKey<TenantEfCore>(t => t.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
+
+            entity
+            .Property(e => e.OwnerId)
+            .HasMaxLength(450);
 
             entity
             .HasData(
@@ -63,6 +66,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
         modelBuilder.Entity<AppEfCore>(entity =>
         {
+            entity
+            .HasMany(a => a.Permissions)
+            .WithOne(p => p.App)
+            .OnDelete(DeleteBehavior.Cascade);
+
             entity
             .HasData(
                 new AppEfCore
@@ -79,46 +87,17 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             entity
             .HasMany(a => a.Roles)
             .WithMany()
-            .UsingEntity<AccountRole>(
-                r => r
-                .HasOne(a => a.Role)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade),
-
-                p => p
-                .HasOne(p => p.Account)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade))
-            .HasData(
-                new AccountRole
-                {
-                    Id = "9dc669b28b0f4f3fb8a832961a76a6c9",
-                    AccountId = seedAccountId,
-                    RoleId = authWebApiOwnerRoleId,
-                })
-            ;
+            .UsingEntity<AccountRole>();
 
             entity
             .HasMany(a => a.Apps)
             .WithMany()
-            .UsingEntity<AccountApp>(
-                r => r
-                .HasOne(a => a.App)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade),
+            .UsingEntity<AccountApp>();
 
-                p => p
-                .HasOne(p => p.Account)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade))
-            .HasData(
-                new AccountApp
-                {
-                    Id = "ef03980ea2a54e4bba92e022fbd33d9b",
-                    AccountId = seedAccountId,
-                    AppId = AUTH_WEB_API_APP_ID,
-                })
-            ;
+            entity
+            .HasOne(a => a.Tenant)
+            .WithOne(t => t.Owner)
+            .HasForeignKey<AccountEfCore>(a => a.TenantId);
 
             entity
             .HasData(new AccountEfCore
@@ -131,86 +110,55 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 Locale = "Uruguay",
                 TimeZone = "-3",
                 ProfilePictureId = null,
-                TenantId = string.Empty,
+                TenantId = SEED_TENANT_ID,
                 CreatedAt = new DateTime(2024, 1, 1),
             });
         });
 
-        const string jokerPermissionId = "e2d42874c56e46319b21eeb817f3b988";
-        const string fullAccessPermissionId = "920d910719224496b575618a9495d2c4";
-        modelBuilder.Entity<PermissionEfCore>(entity =>
+        modelBuilder.Entity<AccountRole>(entity =>
         {
-            entity.HasData(
-                new PermissionEfCore
+            entity
+            .HasOne(a => a.Role)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity
+                .HasOne(p => p.Account)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity
+            .HasData(
+                new AccountRole
                 {
-                    Id = "d40ad347c7f943e399069eef409b4fa6",
-                    Name = "Can read permissions",
-                    Description = "Can read permissions",
-                    Key = "getall-permission",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = true,
-                },
-                new PermissionEfCore
+                    Id = "1f191c90510d456d84bda9e17fe24f50",
+                    AccountId = seedAccountId,
+                    RoleId = tenantOwnerRoleId,
+                })
+            ;
+        });
+
+        modelBuilder.Entity<AccountApp>(entity =>
+        {
+            entity
+                .HasOne(a => a.App)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity
+                .HasOne(p => p.Account)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity
+            .HasData(
+                new AccountApp
                 {
-                    Id = "aca002cfbf3a47899ff4c16e6be2c029",
-                    Name = "Can read roles",
-                    Description = "Can read roles",
-                    Key = "getall-role",
+                    Id = "ef03980ea2a54e4bba92e022fbd33d9b",
+                    AccountId = seedAccountId,
                     AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = true,
-                },
-                new PermissionEfCore
-                {
-                    Id = "d56a38db0db2439f8ee15a142b22b33b",
-                    Name = "Can read permissions of tenant",
-                    Description = "Can read permissions of tenant",
-                    Key = PermissionKey.CanReadPermissionsOfTenant,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
-                },
-                new PermissionEfCore
-                {
-                    Id = "e0132221c91f44ada257a38d951407d6",
-                    Name = "Can read private permissions",
-                    Description = "Can read private permissions",
-                    Key = PermissionKey.CanReadPrivatePermissions,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
-                },
-                new PermissionEfCore
-                {
-                    Id = "05276f2a25dc4db5b37b0948e05c35ab",
-                    Name = "Can read roles of tenant",
-                    Description = "Can read roles of tenant",
-                    Key = PermissionKey.CanReadRolesOfTenant,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
-                },
-                new PermissionEfCore
-                {
-                    Id = "1ce9908dba38490cbc65389bfeece21e",
-                    Name = "Can read private roles",
-                    Description = "Can read private roles",
-                    Key = PermissionKey.CanReadPrivateRoles,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
-                },
-                new PermissionEfCore
-                {
-                    Id = "80ca0e41ea5046519f351a99b03b294e",
-                    Name = "Can read invitations of tenant",
-                    Description = "Can read invitations of tenant",
-                    Key = PermissionKey.CanReadInvitationsOfTenant,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
-                });
+                })
+            ;
         });
 
         modelBuilder.Entity<RoleEfCore>(entity =>
@@ -218,53 +166,20 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             entity
             .HasOne(r => r.Tenant)
             .WithMany()
+            .OnDelete(DeleteBehavior.Restrict);
+
+            entity
+            .HasOne(r => r.App)
+            .WithMany(a => a.Roles)
             .OnDelete(DeleteBehavior.Cascade);
 
             entity
             .HasMany(r => r.Permissions)
             .WithMany(p => p.Roles)
-            .UsingEntity<RolePermission>(
-                r => r
-                .HasOne(p => p.Permission)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade),
-
-                r => r
-                .HasOne(p => p.Role)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Cascade))
-            .HasData(
-                new RolePermission
-                {
-                    Id = "080873f63bff4e9a9687ac70658b710b",
-                    RoleId = tenantOwnerRoleId,
-                    PermissionId = jokerPermissionId,
-                },
-                new RolePermission
-                {
-                    Id = "4909564462b040289d0dc0758cf8942e",
-                    RoleId = authWebApiOwnerRoleId,
-                    PermissionId = jokerPermissionId,
-                },
-                new RolePermission
-                {
-                    Id = "64ec1b6bbd3d4c49b609c0f58359e7ac",
-                    RoleId = authWebApiOwnerRoleId,
-                    PermissionId = jokerPermissionId,
-                });
+            .UsingEntity<RolePermission>();
 
             entity
             .HasData(
-                new RoleEfCore
-                {
-                    Id = authWebApiOwnerRoleId,
-                    Name = "Auth WEB API Owner",
-                    Description = "Auth WEB API Owner",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    IsPublic = false,
-                    TenantId = SEED_TENANT_ID,
-                    IsDefault = false,
-                },
                 new RoleEfCore
                 {
                     Id = tenantOwnerRoleId,
@@ -274,6 +189,216 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     IsPublic = true,
                     TenantId = SEED_TENANT_ID,
                     IsDefault = false,
+                });
+        });
+
+        var createPermissionPermissionId = "39d20cb8c4d541c6944aeeb678261cea";
+        var getAllPermissionsPermissionId = "d40ad347c7f943e399069eef409b4fa6";
+        var getAllPermissionsOfTenantPermissionId = "d1d34f71201f4b3e8f1c232aef35c40a";
+        var getAllPrivatePermissionsPermissionId = "e0132221c91f44ada257a38d951407d6";
+        var getAllPermissionsOfRolePermissionId = "05276f2a25dc4db5b37b0948e05c35ab";
+
+        var createRolePermissionId = "8b1c2d303f3b45a1aa3ae6af46c8652b";
+        var getAllRolesPermissionId = "aca002cfbf3a47899ff4c16e6be2c029";
+        var getAllRolesOfTenantPermissionId = "1554a06426024ee88baabad7a71d65cf";
+        var getAllPrivateRolesPermissionId = "1ce9908dba38490cbc65389bfeece21e";
+        
+        var getAllInvitations = "80ca0e41ea5046519f351a99b03b294e";
+
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity
+                .HasOne(p => p.Permission)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity
+                .HasOne(p => p.Role)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasData(
+                new RolePermission
+                {
+                    Id = "c07081abf2054ec496bee67b44a2ee2a",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = createPermissionPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "d76afb762df349caadc39b7373ea98ed",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = getAllPermissionsPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "e568c9eb81b24a5cae922c2a9a2ebc41",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = getAllPermissionsOfTenantPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "8d01aeac30dd45599da743bcc3f3ee0d",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = getAllPrivatePermissionsPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "a85e6d40858e4451b8a103bd903b6269",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = getAllPermissionsOfRolePermissionId
+                },
+                new RolePermission
+                {
+                    Id = "be097c9f1b4e4b3088172bcb0c75372b",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = createRolePermissionId
+                },
+                new RolePermission
+                {
+                    Id = "6e3f476ec4354b27af25e025034ee97e",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = getAllRolesPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "fe7a5b81f9284af1857621c234ebc615",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = getAllRolesOfTenantPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "922a41f8597742178605a5ea7c75be32",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = getAllPrivateRolesPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "d26570a4df1a41fea0bf0006f1b87721",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = getAllInvitations
+                });
+        });
+
+        modelBuilder.Entity<PermissionEfCore>(entity =>
+        {
+            entity
+            .HasOne(p => p.Tenant)
+            .WithMany()
+            .OnDelete(DeleteBehavior.NoAction);
+
+            entity
+            .HasOne(p => p.App)
+            .WithMany(a => a.Permissions)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            entity
+            .HasMany(r => r.Roles)
+            .WithMany(p => p.Permissions)
+            .UsingEntity<RolePermission>();
+
+            entity.HasData(
+                new PermissionEfCore
+                {
+                    Id = createPermissionPermissionId,
+                    Name = "Create permission",
+                    Description = "Can create permissions",
+                    Key = "create-permission",
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = getAllPermissionsPermissionId,
+                    Name = "Can read permissions",
+                    Description = "Can read permissions",
+                    Key = "getall-permission",
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = getAllPermissionsOfTenantPermissionId,
+                    Name = "Can read permissions of tenant",
+                    Description = "Can read permissions of tenant",
+                    Key = PermissionKey.CanReadPermissionsOfTenant,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = false,
+                },
+                new PermissionEfCore
+                {
+                    Id = getAllPrivatePermissionsPermissionId,
+                    Name = "Can read private permissions",
+                    Description = "Can read private permissions",
+                    Key = PermissionKey.CanReadPrivatePermissions,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = false,
+                },
+                new PermissionEfCore
+                {
+                    Id = getAllPermissionsOfRolePermissionId,
+                    Name = "Can filter permissions by role",
+                    Description = "Can filter permissions by role",
+                    Key = PermissionKey.CanReadPermissionsOfRole,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = false,
+                },
+
+                new PermissionEfCore
+                {
+                    Id = createRolePermissionId,
+                    Name = "Can create role",
+                    Description = "Can create roles",
+                    Key = "create-role",
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = getAllRolesPermissionId,
+                    Name = "Can read roles",
+                    Description = "Can read roles",
+                    Key = "getall-role",
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = getAllRolesOfTenantPermissionId,
+                    Name = "Can read roles of tenant",
+                    Description = "Can read roles of tenant",
+                    Key = PermissionKey.CanReadRolesOfTenant,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = getAllPrivateRolesPermissionId,
+                    Name = "Can read private roles",
+                    Description = "Can read private roles",
+                    Key = PermissionKey.CanReadPrivateRoles,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = false,
+                },
+
+                new PermissionEfCore
+                {
+                    Id = getAllInvitations,
+                    Name = "Can read invitations of tenant",
+                    Description = "Can read invitations of tenant",
+                    Key = "getall-invitation",
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = true,
                 });
         });
 

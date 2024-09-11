@@ -64,15 +64,15 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         ref string? roleId,
         AccountLogged accountLogged)
     {
-        if (Guard.IsNullOrEmpty(roleId))
+        if (Guard.IsNullOrEmpty(roleId) &&
+            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant))
         {
             return;
         }
 
-        if (!accountLogged.RolesIds.Contains(roleId!) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
+        if (!accountLogged.RolesIds.Contains(roleId!))
         {
-            accountLogged.AssertPermission(PermissionKey.CanReadPermissionsOfTenant);
+            accountLogged.AssertPermission(PermissionKey.CanReadPermissionsOfRole);
         }
     }
 
@@ -80,18 +80,17 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         ref string? appId,
         AccountLogged accountLogged)
     {
-        if (Guard.IsNotNullOrEmpty(appId) &&
-            !accountLogged.AppsIds.Contains(appId!) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            accountLogged.AssertPermission(PermissionKey.CanReadPermissionsOfTenant);
-        }
-
         if (Guard.IsNullOrEmpty(appId) &&
-            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
+            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant))
         {
             appId = accountLogged.AppLogged.Id;
+            return;
+        }
+
+        if (Guard.IsNotNullOrEmpty(appId) &&
+            !accountLogged.AppsIds.Contains(appId!))
+        {
+            accountLogged.AssertPermission(PermissionKey.CanReadPermissionsOfTenant);
         }
     }
 

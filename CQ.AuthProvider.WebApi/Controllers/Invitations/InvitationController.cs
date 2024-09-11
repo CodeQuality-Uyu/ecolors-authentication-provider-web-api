@@ -37,8 +37,7 @@ public sealed class InvitationController(
     [SecureAuthorization]
     public async Task<List<InvitationBasicInfoResponse>> GetAllAsync(
         [FromQuery] string? creatorId,
-        [FromQuery] string? appId,
-        [FromQuery] string? tenantId)
+        [FromQuery] string? appId)
     {
         var accountLogged = this.GetAccountLogged();
 
@@ -46,7 +45,6 @@ public sealed class InvitationController(
             .GetAllAsync(
             creatorId,
             appId,
-            tenantId,
             accountLogged)
             .ConfigureAwait(false);
 

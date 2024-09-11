@@ -11,7 +11,6 @@ public interface IInvitationService
     Task<List<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
-        string? tenantId,
         AccountLogged accountLogged);
 
     Task<CreateAccountResult> AcceptByIdAsync(
