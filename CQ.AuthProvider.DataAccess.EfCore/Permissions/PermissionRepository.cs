@@ -16,29 +16,26 @@ internal sealed class PermissionRepository(
         string? appId,
         bool? isPrivate,
         string? roleId,
-        string? tenantId,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged.AppsIds;
         var rolesIds = accountLogged.RolesIds;
 
         var canReadOfTenant = accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant);
-        var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
 
-        var fullAccessKey = PermissionKey.FullAccess;
+        var appLoggedIsAuthWebApi = accountLogged.AppLogged.Id == AuthDbContext.AUTH_WEB_API_APP_ID;
 
         var query = _entities
-            .Where(p => tenantId == null || p.TenantId == null || p.TenantId == tenantId)
+            .Where(p => (p.AppId == AuthDbContext.AUTH_WEB_API_APP_ID && appLoggedIsAuthWebApi) || p.TenantId == accountLogged.Tenant.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p =>
-            (roleId == null && (canReadOfTenant || hasFullAccess)) ||
+            (roleId == null && canReadOfTenant) ||
             (roleId != null && p.Roles.Any(r => r.Id == roleId)) ||
             p.Roles.Any(r => rolesIds.Contains(r.Id)))
             .Where(p =>
-            (appId == null && (canReadOfTenant || hasFullAccess)) ||
+            (appId == null && canReadOfTenant) ||
             (appId != null && p.AppId == appId) ||
             appsIdsOfAccountLogged.Contains(p.AppId))
-            .Where(p => p.Key != fullAccessKey || hasFullAccess)
             ;
 
         var permissions = await query

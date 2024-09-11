@@ -8,7 +8,6 @@ public interface IPermissionRepository
         string? appId,
         bool? isPrivate,
         string? roleId,
-        string? tenantId,
         AccountLogged accountLogged);
 
     Task<List<Permission>> GetAllByKeysAsync(

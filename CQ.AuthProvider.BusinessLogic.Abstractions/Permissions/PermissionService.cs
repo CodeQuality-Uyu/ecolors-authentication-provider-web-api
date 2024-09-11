@@ -11,7 +11,6 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         string? appId,
         bool? isPrivate,
         string? roleId,
-        string? tenantId,
         AccountLogged accountLogged)
     {
         AssertCanReadPrivatePermissionsOrSetDefault(
@@ -26,16 +25,11 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             ref appId,
             accountLogged);
 
-        AssertCanFilterPermissionsByTenantIdOrSetDefault(
-            ref tenantId,
-            accountLogged);
-
         var permissions = await permissionRepository
             .GetAllAsync(
             appId,
             isPrivate,
             roleId,
-            tenantId,
             accountLogged)
             .ConfigureAwait(false);
 
@@ -98,24 +92,6 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             !accountLogged.HasPermission(PermissionKey.FullAccess))
         {
             appId = accountLogged.AppLogged.Id;
-        }
-    }
-
-    private static void AssertCanFilterPermissionsByTenantIdOrSetDefault(
-        ref string? tenantId,
-        AccountLogged accountLogged)
-    {
-        if (Guard.IsNotNullOrEmpty(tenantId) &&
-            accountLogged.Tenant.Id != tenantId)
-        {
-            accountLogged.AssertPermission(PermissionKey.FullAccess);
-        }
-
-        if (Guard.IsNullOrEmpty(tenantId) &&
-            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            tenantId = accountLogged.Tenant.Id;
         }
     }
 

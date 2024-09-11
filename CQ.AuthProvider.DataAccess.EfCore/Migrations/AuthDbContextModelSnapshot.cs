@@ -85,15 +85,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TimeZone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("Accounts");
 
@@ -199,6 +197,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenantId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -217,7 +216,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             Description = "Can read permissions",
                             IsPublic = true,
                             Key = "getall-permission",
-                            Name = "Can read permissions"
+                            Name = "Can read permissions",
+                            TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
                         new
                         {
@@ -226,7 +226,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             Description = "Can read roles",
                             IsPublic = true,
                             Key = "getall-role",
-                            Name = "Can read roles"
+                            Name = "Can read roles",
+                            TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
                         new
                         {
@@ -235,7 +236,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             Description = "Can read permissions of tenant",
                             IsPublic = false,
                             Key = "can-read-permissions-of-tenant",
-                            Name = "Can read permissions of tenant"
+                            Name = "Can read permissions of tenant",
+                            TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
                         new
                         {
@@ -244,7 +246,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             Description = "Can read private permissions",
                             IsPublic = false,
                             Key = "can-read-private-permissions",
-                            Name = "Can read private permissions"
+                            Name = "Can read private permissions",
+                            TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
                         new
                         {
@@ -253,7 +256,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             Description = "Can read roles of tenant",
                             IsPublic = false,
                             Key = "can-read-roles-of-tenant",
-                            Name = "Can read roles of tenant"
+                            Name = "Can read roles of tenant",
+                            TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
                         new
                         {
@@ -262,7 +266,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             Description = "Can read private roles",
                             IsPublic = false,
                             Key = "can-read-private-roles",
-                            Name = "Can read private roles"
+                            Name = "Can read private roles",
+                            TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
                         new
                         {
@@ -272,25 +277,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             IsPublic = false,
                             Key = "can-read-invitations-of-tenant",
                             Name = "Can read invitations of tenant",
-                            TenantId = "b22fcf202bd84a97936ccf2949e00da4"
-                        },
-                        new
-                        {
-                            Id = "e2d42874c56e46319b21eeb817f3b988",
-                            AppId = "d31184dabbc6435eaec86694650c2679",
-                            Description = "Joker",
-                            IsPublic = false,
-                            Key = "*",
-                            Name = "Joker"
-                        },
-                        new
-                        {
-                            Id = "920d910719224496b575618a9495d2c4",
-                            AppId = "d31184dabbc6435eaec86694650c2679",
-                            Description = "Full accesss",
-                            IsPublic = false,
-                            Key = "full-access",
-                            Name = "Full access",
                             TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         });
                 });
@@ -462,7 +448,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("OwnerId")
+                        .IsUnique();
 
                     b.ToTable("Tenants");
 
@@ -480,13 +467,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
                         .WithMany()
                         .HasForeignKey("AppId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -494,29 +481,18 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Navigation("App");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", b =>
-                {
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Tenant");
-                });
-
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountRole", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -546,7 +522,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("App");
 
@@ -575,7 +552,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("App");
@@ -588,13 +565,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", "Permission")
                         .WithMany()
                         .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Permission");
@@ -613,7 +590,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
                         .WithMany()
                         .HasForeignKey("AppId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -624,12 +601,18 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("Tenant")
+                        .HasForeignKey("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", b =>
+                {
+                    b.Navigation("Tenant")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", b =>

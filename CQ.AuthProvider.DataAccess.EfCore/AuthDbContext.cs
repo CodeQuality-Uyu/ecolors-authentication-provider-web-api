@@ -14,6 +14,9 @@ namespace CQ.AuthProvider.DataAccess.EfCore;
 public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     : EfCoreContext(options)
 {
+    public const string SEED_TENANT_ID = "b22fcf202bd84a97936ccf2949e00da4";
+    public const string AUTH_WEB_API_APP_ID = "d31184dabbc6435eaec86694650c2679";
+
     public DbSet<TenantEfCore> Tenants { get; set; }
 
     public DbSet<AccountEfCore> Accounts { get; set; }
@@ -39,16 +42,20 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         const string seedAccountId = "5a0d9e179991499e80db0a15fda4df79";
         const string authWebApiOwnerRoleId = "4c00f792d8ed43768846711094902d8c";
         const string tenantOwnerRoleId = "5c2260fc58864b75a4cad5c0e7dd57cb";
-        const string seedTenantId = "b22fcf202bd84a97936ccf2949e00da4";
-        const string authWebApiAppId = "d31184dabbc6435eaec86694650c2679";
 
         modelBuilder.Entity<TenantEfCore>(entity =>
         {
             entity
+            .HasOne(t => t.Owner)
+            .WithOne(o => o.Tenant)
+            .HasForeignKey<TenantEfCore>(t => t.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            entity
             .HasData(
                 new TenantEfCore
                 {
-                    Id = seedTenantId,
+                    Id = SEED_TENANT_ID,
                     Name = "Seed Tenant",
                     OwnerId = seedAccountId
                 });
@@ -60,10 +67,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasData(
                 new AppEfCore
                 {
-                    Id = authWebApiAppId,
+                    Id = AUTH_WEB_API_APP_ID,
                     Name = "Auth Provider WEB API",
                     IsDefault = true,
-                    TenantId = seedTenantId,
+                    TenantId = SEED_TENANT_ID,
                 });
         });
 
@@ -76,13 +83,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 r => r
                 .HasOne(a => a.Role)
                 .WithMany()
-                .HasForeignKey(a => a.RoleId)
-                .OnDelete(DeleteBehavior.NoAction),
+                .OnDelete(DeleteBehavior.Cascade),
+
                 p => p
                 .HasOne(p => p.Account)
                 .WithMany()
-                .HasForeignKey(a => a.AccountId)
-                .OnDelete(DeleteBehavior.NoAction))
+                .OnDelete(DeleteBehavior.Cascade))
             .HasData(
                 new AccountRole
                 {
@@ -99,27 +105,20 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 r => r
                 .HasOne(a => a.App)
                 .WithMany()
-                .HasForeignKey(a => a.AppId)
-                .OnDelete(DeleteBehavior.NoAction),
+                .OnDelete(DeleteBehavior.Cascade),
+
                 p => p
                 .HasOne(p => p.Account)
                 .WithMany()
-                .HasForeignKey(a => a.AccountId)
-                .OnDelete(DeleteBehavior.NoAction))
+                .OnDelete(DeleteBehavior.Cascade))
             .HasData(
                 new AccountApp
                 {
                     Id = "ef03980ea2a54e4bba92e022fbd33d9b",
                     AccountId = seedAccountId,
-                    AppId = authWebApiAppId,
+                    AppId = AUTH_WEB_API_APP_ID,
                 })
             ;
-            
-            entity
-            .HasOne(a => a.Tenant)
-            .WithMany()
-            .HasForeignKey(a => a.TenantId)
-            .OnDelete(DeleteBehavior.NoAction);
 
             entity
             .HasData(new AccountEfCore
@@ -141,11 +140,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         const string fullAccessPermissionId = "920d910719224496b575618a9495d2c4";
         modelBuilder.Entity<PermissionEfCore>(entity =>
         {
-            entity
-            .HasOne(p => p.Tenant)
-            .WithMany()
-            .OnDelete(DeleteBehavior.NoAction);
-
             entity.HasData(
                 new PermissionEfCore
                 {
@@ -153,8 +147,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read permissions",
                     Description = "Can read permissions",
                     Key = "getall-permission",
-                    AppId = authWebApiAppId,
-                    TenantId = seedTenantId,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -163,8 +157,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read roles",
                     Description = "Can read roles",
                     Key = "getall-role",
-                    AppId = authWebApiAppId,
-                    TenantId = seedTenantId,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -173,8 +167,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read permissions of tenant",
                     Description = "Can read permissions of tenant",
                     Key = PermissionKey.CanReadPermissionsOfTenant,
-                    AppId = authWebApiAppId,
-                    TenantId = seedTenantId,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -183,8 +177,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read private permissions",
                     Description = "Can read private permissions",
                     Key = PermissionKey.CanReadPrivatePermissions,
-                    AppId = authWebApiAppId,
-                    TenantId = seedTenantId,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -193,8 +187,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read roles of tenant",
                     Description = "Can read roles of tenant",
                     Key = PermissionKey.CanReadRolesOfTenant,
-                    AppId = authWebApiAppId,
-                    TenantId = seedTenantId,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -203,8 +197,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read private roles",
                     Description = "Can read private roles",
                     Key = PermissionKey.CanReadPrivateRoles,
-                    AppId = authWebApiAppId,
-                    TenantId = seedTenantId,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
                     IsPublic = false,
                 },
                 new PermissionEfCore
@@ -213,8 +207,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read invitations of tenant",
                     Description = "Can read invitations of tenant",
                     Key = PermissionKey.CanReadInvitationsOfTenant,
-                    AppId = authWebApiAppId,
-                    TenantId = seedTenantId,
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
                     IsPublic = false,
                 });
         });
@@ -224,7 +218,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             entity
             .HasOne(r => r.Tenant)
             .WithMany()
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
             entity
             .HasMany(r => r.Permissions)
@@ -233,13 +227,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 r => r
                 .HasOne(p => p.Permission)
                 .WithMany()
-                .HasForeignKey(a => a.PermissionId)
-                .OnDelete(DeleteBehavior.NoAction),
+                .OnDelete(DeleteBehavior.Cascade),
+
                 r => r
                 .HasOne(p => p.Role)
                 .WithMany()
-                .HasForeignKey(a => a.RoleId)
-                .OnDelete(DeleteBehavior.NoAction))
+                .OnDelete(DeleteBehavior.Cascade))
             .HasData(
                 new RolePermission
                 {
@@ -267,9 +260,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = authWebApiOwnerRoleId,
                     Name = "Auth WEB API Owner",
                     Description = "Auth WEB API Owner",
-                    AppId = authWebApiAppId,
+                    AppId = AUTH_WEB_API_APP_ID,
                     IsPublic = false,
-                    TenantId = seedTenantId,
+                    TenantId = SEED_TENANT_ID,
                     IsDefault = false,
                 },
                 new RoleEfCore
@@ -277,9 +270,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = tenantOwnerRoleId,
                     Name = "Tenant Owner",
                     Description = "Tenant Owner",
-                    AppId = authWebApiAppId,
+                    AppId = AUTH_WEB_API_APP_ID,
                     IsPublic = true,
-                    TenantId = seedTenantId,
+                    TenantId = SEED_TENANT_ID,
                     IsDefault = false,
                 });
         });
@@ -289,7 +282,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             entity
             .HasOne(s => s.App)
             .WithMany()
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

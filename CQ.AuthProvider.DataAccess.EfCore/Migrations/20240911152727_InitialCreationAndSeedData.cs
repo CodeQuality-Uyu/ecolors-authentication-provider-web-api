@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreation : Migration
+    public partial class InitialCreationAndSeedData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,7 +26,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     Locale = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TimeZone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    TenantId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,7 +70,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         column: x => x.OwnerId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -108,12 +108,14 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_AccountsApps_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AccountsApps_Apps_AppId",
                         column: x => x.AppId,
                         principalTable: "Apps",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -126,7 +128,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsPublic = table.Column<bool>(type: "bit", nullable: false),
                     AppId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,7 +143,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_Permissions_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -169,7 +172,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_Roles_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,7 +198,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_Sessions_Apps_AppId",
                         column: x => x.AppId,
                         principalTable: "Apps",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,12 +217,14 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_AccountsRoles_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AccountsRoles_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -235,12 +242,14 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         name: "FK_RolesPermissions_Permissions_PermissionId",
                         column: x => x.PermissionId,
                         principalTable: "Permissions",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RolesPermissions_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -268,15 +277,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 columns: new[] { "Id", "AppId", "Description", "IsPublic", "Key", "Name", "TenantId" },
                 values: new object[,]
                 {
-                    { "05276f2a25dc4db5b37b0948e05c35ab", "d31184dabbc6435eaec86694650c2679", "Can read roles of tenant", false, "can-read-roles-of-tenant", "Can read roles of tenant", null },
-                    { "1ce9908dba38490cbc65389bfeece21e", "d31184dabbc6435eaec86694650c2679", "Can read private roles", false, "can-read-private-roles", "Can read private roles", null },
+                    { "05276f2a25dc4db5b37b0948e05c35ab", "d31184dabbc6435eaec86694650c2679", "Can read roles of tenant", false, "can-read-roles-of-tenant", "Can read roles of tenant", "b22fcf202bd84a97936ccf2949e00da4" },
+                    { "1ce9908dba38490cbc65389bfeece21e", "d31184dabbc6435eaec86694650c2679", "Can read private roles", false, "can-read-private-roles", "Can read private roles", "b22fcf202bd84a97936ccf2949e00da4" },
                     { "80ca0e41ea5046519f351a99b03b294e", "d31184dabbc6435eaec86694650c2679", "Can read invitations of tenant", false, "can-read-invitations-of-tenant", "Can read invitations of tenant", "b22fcf202bd84a97936ccf2949e00da4" },
-                    { "920d910719224496b575618a9495d2c4", "d31184dabbc6435eaec86694650c2679", "Full accesss", false, "full-access", "Full access", "b22fcf202bd84a97936ccf2949e00da4" },
-                    { "aca002cfbf3a47899ff4c16e6be2c029", "d31184dabbc6435eaec86694650c2679", "Can read roles", true, "getall-role", "Can read roles", null },
-                    { "d40ad347c7f943e399069eef409b4fa6", "d31184dabbc6435eaec86694650c2679", "Can read permissions", true, "getall-permission", "Can read permissions", null },
-                    { "d56a38db0db2439f8ee15a142b22b33b", "d31184dabbc6435eaec86694650c2679", "Can read permissions of tenant", false, "can-read-permissions-of-tenant", "Can read permissions of tenant", null },
-                    { "e0132221c91f44ada257a38d951407d6", "d31184dabbc6435eaec86694650c2679", "Can read private permissions", false, "can-read-private-permissions", "Can read private permissions", null },
-                    { "e2d42874c56e46319b21eeb817f3b988", "d31184dabbc6435eaec86694650c2679", "Joker", false, "*", "Joker", null }
+                    { "aca002cfbf3a47899ff4c16e6be2c029", "d31184dabbc6435eaec86694650c2679", "Can read roles", true, "getall-role", "Can read roles", "b22fcf202bd84a97936ccf2949e00da4" },
+                    { "d40ad347c7f943e399069eef409b4fa6", "d31184dabbc6435eaec86694650c2679", "Can read permissions", true, "getall-permission", "Can read permissions", "b22fcf202bd84a97936ccf2949e00da4" },
+                    { "d56a38db0db2439f8ee15a142b22b33b", "d31184dabbc6435eaec86694650c2679", "Can read permissions of tenant", false, "can-read-permissions-of-tenant", "Can read permissions of tenant", "b22fcf202bd84a97936ccf2949e00da4" },
+                    { "e0132221c91f44ada257a38d951407d6", "d31184dabbc6435eaec86694650c2679", "Can read private permissions", false, "can-read-private-permissions", "Can read private permissions", "b22fcf202bd84a97936ccf2949e00da4" }
                 });
 
             migrationBuilder.InsertData(
@@ -302,11 +309,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     { "4909564462b040289d0dc0758cf8942e", "e2d42874c56e46319b21eeb817f3b988", "4c00f792d8ed43768846711094902d8c" },
                     { "64ec1b6bbd3d4c49b609c0f58359e7ac", "e2d42874c56e46319b21eeb817f3b988", "4c00f792d8ed43768846711094902d8c" }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Accounts_TenantId",
-                table: "Accounts",
-                column: "TenantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountsApps_AccountId",
@@ -381,23 +383,13 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Tenants_OwnerId",
                 table: "Tenants",
-                column: "OwnerId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Accounts_Tenants_TenantId",
-                table: "Accounts",
-                column: "TenantId",
-                principalTable: "Tenants",
-                principalColumn: "Id");
+                column: "OwnerId",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Accounts_Tenants_TenantId",
-                table: "Accounts");
-
             migrationBuilder.DropTable(
                 name: "AccountsApps");
 
