@@ -9,8 +9,10 @@ using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
+using CQ.AuthProvider.DataAccess.EfCore.Permissions.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
+using CQ.AuthProvider.DataAccess.EfCore.Roles.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
 using CQ.Extensions.ServiceCollection;
 using CQ.UnitOfWork.EfCore.Configuration;
@@ -38,7 +40,14 @@ public static class EfCoreRepositoriesConfig
     private static IServiceCollection AddMappings(this IServiceCollection services)
     {
         services
-            .AddAutoMapper(typeof(EfCoreRepositoriesConfig));
+            .AddAutoMapper(config =>
+            {
+                config.DisableConstructorMapping();
+
+                config.AddProfile<PermissionProfile>();
+                config.AddProfile<RoleProfile>();
+            });
+
         return services;
     }
 

@@ -1,13 +1,15 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.UnitOfWork.Abstractions.Repositories;
 
 namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 public interface IRoleService
 {
-    Task<List<Role>> GetAllAsync(
+    Task<Pagination<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
-        string? tenantId,
+        int page,
+        int pageSize,
         AccountLogged accountLogged);
 
     Task CreateAsync(

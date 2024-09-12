@@ -1,6 +1,8 @@
 ﻿using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
+using CQ.AuthProvider.WebApi.Controllers.Permissions.Mappings;
+using CQ.AuthProvider.WebApi.Controllers.Roles.Mappings;
 using CQ.AuthProvider.WebApi.Filters.Exception;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.AppConfig;
@@ -36,11 +38,11 @@ internal static class AuthProviderWebApiConfig
         this IServiceCollection services)
     {
         services
-            //.AddAutoMapper(config =>
-            //{
-            //    config.AddProfile
-            //})
-            .AddAutoMapper(typeof(Program));
+            .AddAutoMapper(config =>
+            {
+                config.AddProfile<PermissionProfile>();
+                config.AddProfile<RoleProfile>();
+            });
 
         return services;
     }

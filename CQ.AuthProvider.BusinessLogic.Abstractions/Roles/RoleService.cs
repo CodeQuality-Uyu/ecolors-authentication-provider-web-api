@@ -1,6 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 using System.Data;
 
@@ -12,10 +13,11 @@ internal sealed class RoleService(
     IAppInternalService appService)
     : IRoleInternalService
 {
-    public async Task<List<Role>> GetAllAsync(
+    public async Task<Pagination<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
-        string? tenantId,
+        int page,
+        int pageSize,
         AccountLogged accountLogged)
     {
         AssertCanReadPrivateRolesOrSetDefault(
@@ -26,15 +28,12 @@ internal sealed class RoleService(
             ref appId,
             accountLogged);
 
-        AssertCanFilterRolesByTenantIdOrSetDefault(
-            ref tenantId,
-            accountLogged);
-
         var roles = await roleRepository
             .GetAllAsync(
             appId,
             isPrivate,
-            tenantId,
+            page,
+            pageSize,
             accountLogged)
             .ConfigureAwait(false);
 
@@ -78,25 +77,6 @@ internal sealed class RoleService(
             appId = accountLogged.AppLogged.Id;
         }
     }
-
-    private static void AssertCanFilterRolesByTenantIdOrSetDefault(
-        ref string? tenantId,
-        AccountLogged accountLogged)
-    {
-        if (Guard.IsNotNullOrEmpty(tenantId) &&
-            accountLogged.Tenant.Id != tenantId)
-        {
-            accountLogged.AssertPermission(PermissionKey.FullAccess);
-        }
-
-        if (Guard.IsNullOrEmpty(tenantId) &&
-            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            tenantId = accountLogged.Tenant.Id;
-        }
-    }
-
 
     public async Task CreateAsync(
         CreateRoleArgs args,

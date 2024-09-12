@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
+using CQ.UnitOfWork.EfCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
@@ -12,10 +14,12 @@ internal sealed class PermissionRepository(
     : EfCoreRepository<PermissionEfCore>(context),
     IPermissionRepository
 {
-    public async Task<List<Permission>> GetAllAsync(
+    public async Task<Pagination<Permission>> GetAllAsync(
         string? appId,
         bool? isPrivate,
         string? roleId,
+        int page,
+        int pageSize,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged.AppsIds;
@@ -39,10 +43,10 @@ internal sealed class PermissionRepository(
             ;
 
         var permissions = await query
-            .ToListAsync()
+            .PaginateAsync(null, page, pageSize)
             .ConfigureAwait(false);
 
-        return mapper.Map<List<Permission>>(permissions);
+        return mapper.Map<Pagination<Permission>>(permissions);
     }
 
     public async Task<List<Permission>> GetAllByKeysAsync(

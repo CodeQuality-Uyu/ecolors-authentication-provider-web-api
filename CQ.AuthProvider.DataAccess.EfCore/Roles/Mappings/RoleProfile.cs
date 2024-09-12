@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Roles;
-using CQ.AuthProvider.DataAccess.EfCore.Accounts;
+using CQ.AuthProvider.BusinessLogic.Utils;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles.Mappings;
 
@@ -10,10 +10,7 @@ internal sealed class RoleProfile
     public RoleProfile()
     {
         #region Get all
-        CreateMap<RoleEfCore, Role>();
+        this.CreatePaginationMap<RoleEfCore, Role>();
         #endregion
-
-        CreateMap<AccountRole, Role>()
-           .ConvertUsing((source, destination, options) => options.Mapper.Map<Role>(source.Role));
     }
 }

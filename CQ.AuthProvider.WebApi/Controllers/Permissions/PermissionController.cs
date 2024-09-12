@@ -6,6 +6,7 @@ using CQ.Utility;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.UnitOfWork.Abstractions.Repositories;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 
@@ -53,10 +54,12 @@ public class PermissionController(
     }
 
     [HttpGet]
-    public async Task<List<PermissionBasicInfoResponse>> GetAllAsync(
+    public async Task<Pagination<PermissionBasicInfoResponse>> GetAllAsync(
         [FromQuery] string? appId,
         [FromQuery] bool? isPrivate,
-        [FromQuery] string? roleId)
+        [FromQuery] string? roleId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
         var accountLogged = this.GetAccountLogged();
 
@@ -65,9 +68,11 @@ public class PermissionController(
             appId,
             isPrivate,
             roleId,
+            page,
+            pageSize,
             accountLogged)
             .ConfigureAwait(false);
 
-        return mapper.Map<List<PermissionBasicInfoResponse>>(permissions);
+        return mapper.Map<Pagination<PermissionBasicInfoResponse>>(permissions);
     }
 }

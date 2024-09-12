@@ -7,6 +7,7 @@ using CQ.Utility;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Roles;
+using CQ.UnitOfWork.Abstractions.Repositories;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles;
 
@@ -66,10 +67,11 @@ public class RoleController(
     }
 
     [HttpGet]
-    public async Task<List<RoleBasicInfoResponse>> GetAllAsync(
+    public async Task<Pagination<RoleBasicInfoResponse>> GetAllAsync(
         [FromQuery] string? appId,
         [FromQuery] bool? isPrivate,
-        [FromQuery] string? tenantId)
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
         var accountLogged = this.GetAccountLogged();
 
@@ -77,10 +79,11 @@ public class RoleController(
             .GetAllAsync(
             appId,
             isPrivate,
-            tenantId,
+            page,
+            pageSize,
             accountLogged)
             .ConfigureAwait(false);
 
-        return mapper.Map<List<RoleBasicInfoResponse>>(roles);
+        return mapper.Map<Pagination<RoleBasicInfoResponse>>(roles);
     }
 }

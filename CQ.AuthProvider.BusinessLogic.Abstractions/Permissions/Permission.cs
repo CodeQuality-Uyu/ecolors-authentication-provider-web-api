@@ -14,8 +14,6 @@ public sealed record class Permission()
 
     public bool IsPublic { get; init; }
 
-    public PermissionScope Scope { get; init; } = PermissionScope.Endpoint;
-
     public string Key { get; init; } = null!;
 
     public App App { get; init; } = null!;

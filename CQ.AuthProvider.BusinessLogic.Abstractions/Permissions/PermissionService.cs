@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 using System.Data;
 
@@ -7,10 +8,12 @@ namespace CQ.AuthProvider.BusinessLogic.Permissions;
 internal sealed class PermissionService(IPermissionRepository permissionRepository)
     : IPermissionInternalService
 {
-    public async Task<List<Permission>> GetAllAsync(
+    public async Task<Pagination<Permission>> GetAllAsync(
         string? appId,
         bool? isPrivate,
         string? roleId,
+        int page,
+        int pageSize,
         AccountLogged accountLogged)
     {
         AssertCanReadPrivatePermissionsOrSetDefault(
@@ -18,7 +21,7 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             accountLogged);
 
         AssertCanFilterPermissionsByRoleIdOrSetDefault(
-            ref roleId,
+            roleId,
             accountLogged);
 
         AssertCanFilterPermissionsByAppIdOrSetDefault(
@@ -30,6 +33,8 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             appId,
             isPrivate,
             roleId,
+            page,
+            pageSize,
             accountLogged)
             .ConfigureAwait(false);
 
@@ -61,7 +66,7 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
     }
 
     private static void AssertCanFilterPermissionsByRoleIdOrSetDefault(
-        ref string? roleId,
+        string? roleId,
         AccountLogged accountLogged)
     {
         if (Guard.IsNullOrEmpty(roleId) &&

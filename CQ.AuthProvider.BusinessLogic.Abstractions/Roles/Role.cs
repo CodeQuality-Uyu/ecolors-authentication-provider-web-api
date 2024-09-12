@@ -23,6 +23,7 @@ public sealed record class Role()
 
     public bool IsDefault { get; init; }
 
+    // For new Role
     public Role(
         string name,
         string description,

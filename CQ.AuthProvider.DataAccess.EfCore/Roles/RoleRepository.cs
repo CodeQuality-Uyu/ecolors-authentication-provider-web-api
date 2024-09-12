@@ -5,6 +5,7 @@ using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
+using CQ.UnitOfWork.EfCore.Extensions;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,31 +19,31 @@ internal sealed class RoleRepository(
     : EfCoreRepository<RoleEfCore>(context),
     IRoleRepository
 {
-    public async Task<List<Role>> GetAllAsync(
+    public async Task<Pagination<Role>> GetAllAsync(
         string? appId,
         bool? isPrivate,
-        string? tenantId,
+        int page,
+        int pageSize,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged.AppsIds;
 
         var canReadOfTenant = accountLogged.HasPermission(PermissionKey.CanReadRolesOfTenant);
-        var hasFullAccess = accountLogged.HasPermission(PermissionKey.FullAccess);
 
         var query = _entities
-            .Where(r => tenantId == null || r.TenantId == tenantId)
+            .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
             .Where(r =>
-            (appId == null && (canReadOfTenant || hasFullAccess)) ||
+            (appId == null && canReadOfTenant) ||
             (appId != null && r.AppId == appId) ||
             appsIdsOfAccountLogged.Contains(r.AppId)
             );
 
         var roles = await query
-            .ToListAsync()
+            .PaginateAsync(null, page, pageSize)
             .ConfigureAwait(false);
 
-        return mapper.Map<List<Role>>(roles);
+        return mapper.Map<Pagination<Role>>(roles);
     }
 
     public async Task RemoveDefaultsAndSaveAsync(
