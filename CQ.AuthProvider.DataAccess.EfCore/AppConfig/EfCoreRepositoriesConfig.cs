@@ -8,6 +8,7 @@ using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;
+using CQ.AuthProvider.DataAccess.EfCore.Invitations.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
@@ -46,6 +47,7 @@ public static class EfCoreRepositoriesConfig
 
                 config.AddProfile<PermissionProfile>();
                 config.AddProfile<RoleProfile>();
+                config.AddProfile<InvitationProfile>();
             });
 
         return services;

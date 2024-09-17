@@ -26,7 +26,7 @@ internal sealed class InvitationService(
         var role = await roleService
             .GetByIdAsync(args.RoleId)
             .ConfigureAwait(false);
-        if (role.App.Id != app.Id)
+        if (role.AppId != app.Id)
         {
             throw new InvalidOperationException($"Role not in app");
         }

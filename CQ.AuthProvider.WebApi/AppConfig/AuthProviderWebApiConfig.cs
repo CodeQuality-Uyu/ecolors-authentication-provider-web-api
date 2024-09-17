@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Roles.Mappings;
 using CQ.AuthProvider.WebApi.Filters.Exception;
+using CQ.Extensions.Environments;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.AppConfig;
 using CQ.UnitOfWork.EfCore.Core;
@@ -52,7 +53,7 @@ internal static class AuthProviderWebApiConfig
         IWebHostEnvironment environment)
         where TContext : EfCoreContext
     {
-        if (environment.IsProduction() || environment.IsDevelopment())
+        if (!environment.IsLocal())
         {
             return services;
         }

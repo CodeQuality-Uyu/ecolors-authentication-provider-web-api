@@ -35,7 +35,7 @@ public sealed record class InvitationEfCore()
 
     public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(Invitation.EXPIRATION_MINUTES);
 
-    public InvitationEfCore(
+    private InvitationEfCore(
         string email,
         string code,
         string roleId,
@@ -58,7 +58,7 @@ public sealed record class InvitationEfCore()
               invitation.Role.Id,
               invitation.App.Id,
               invitation.Creator.Id,
-              invitation.App.Tenant.Id)
+              invitation.Creator.Tenant.Id)
     {
         Id = invitation.Id;
         CreatedAt = invitation.CreatedAt;

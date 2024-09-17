@@ -1,6 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
+using CQ.AuthProvider.DataAccess.EfCore.Invitations;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
@@ -36,6 +37,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     public DbSet<ResetPasswordEfCore> ResetPasswords { get; set; }
 
     public DbSet<AppEfCore> Apps { get; set; }
+
+    public DbSet<InvitationEfCore> Invitations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -542,6 +545,24 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasOne(s => s.App)
             .WithMany()
             .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<InvitationEfCore>(entity =>
+        {
+            entity
+            .HasOne(i => i.Role)
+            .WithMany()
+            .OnDelete(DeleteBehavior.Restrict);
+
+            entity
+            .HasOne(i => i.App)
+            .WithMany()
+            .OnDelete(DeleteBehavior.Cascade);
+
+            entity
+            .HasOne(i => i.Tenant)
+            .WithMany()
+            .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

@@ -19,6 +19,8 @@ public sealed record class Role()
 
     public App App { get; init; } = null!;
 
+    public string AppId => App.Id;
+
     public Tenant Tenant { get; init; } = null!;
 
     public bool IsDefault { get; init; }

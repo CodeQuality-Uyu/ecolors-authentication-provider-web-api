@@ -4,6 +4,7 @@ using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 using CQ.AuthProvider.WebApi.Extensions;
+using CQ.AuthProvider.WebApi.Filters;
 using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ public sealed class InvitationController(
     : ControllerBase
 {
     [HttpPost]
+    [CQAuthentication]
     [SecureAuthorization]
     public async Task CreateAsync(CreateInvitationRequest? request)
     {
@@ -34,6 +36,7 @@ public sealed class InvitationController(
     }
 
     [HttpGet]
+    [CQAuthentication]
     [SecureAuthorization]
     public async Task<List<InvitationBasicInfoResponse>> GetAllAsync(
         [FromQuery] string? creatorId,

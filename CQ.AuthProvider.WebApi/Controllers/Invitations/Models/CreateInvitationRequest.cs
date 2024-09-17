@@ -4,7 +4,7 @@ using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 
-public sealed record class CreateInvitationRequest
+public sealed record CreateInvitationRequest
     : Request<CreateInvitationArgs>
 {
     public string? Email { get; init; }
