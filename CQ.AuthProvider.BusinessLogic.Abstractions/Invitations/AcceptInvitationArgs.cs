@@ -32,14 +32,14 @@ public record AcceptInvitationArgs
     {
         Code = Guard.Encode(code, nameof(code));
 
-        Email = Guard.Encode(Email, nameof(email));
+        Email = Guard.Encode(email, nameof(email));
         Guard.ThrowIsInputInvalidEmail(Email);
 
-        Password = Guard.Encode(Password, nameof(password));
+        Password = Guard.Encode(password, nameof(password));
         Guard.ThrowIsInputInvalidPassword(Password);
 
-        FirstName = Guard.Encode(FirstName, nameof(firstName));
-        LastName = Guard.Encode(LastName, nameof(lastName));
+        FirstName = Guard.Encode(firstName, nameof(firstName));
+        LastName = Guard.Encode(lastName, nameof(lastName));
         Locale = Guard.Encode(locale, nameof(locale));
         TimeZone = Guard.Encode(timeZone, nameof(timeZone));
 

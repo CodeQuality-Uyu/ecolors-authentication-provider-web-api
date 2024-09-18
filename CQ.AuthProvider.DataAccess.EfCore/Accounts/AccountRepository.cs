@@ -15,7 +15,7 @@ internal sealed class AccountRepository(
     : EfCoreRepository<AccountEfCore>(context),
     IAccountRepository
 {
-    public async Task CreateAsync(Account account)
+    public async Task CreateAndSaveAsync(Account account)
     {
         var accountEfCore = new AccountEfCore(
             account.Id,
@@ -25,12 +25,31 @@ internal sealed class AccountRepository(
             account.LastName,
             account.Locale,
             account.TimeZone,
-            account.Roles,
             account.ProfilePictureId,
-            account.Apps,
             account.Tenant);
 
-        await CreateAsync(accountEfCore)
+        var accountRolesEfCore = account
+            .Roles
+            .ConvertAll(r => new AccountRole(account.Id, r.Id));
+
+        var accountAppsEfCore = account
+            .Apps
+            .ConvertAll(a => new AccountApp(account.Id, a.Id));
+
+        await _entities
+            .AddAsync(accountEfCore)
+            .ConfigureAwait(false);
+
+        await _baseContext
+            .AddRangeAsync(accountRolesEfCore)
+            .ConfigureAwait(false);
+
+        await _baseContext
+            .AddRangeAsync(accountAppsEfCore)
+            .ConfigureAwait(false);
+
+        await _baseContext
+            .SaveChangesAsync()
             .ConfigureAwait(false);
     }
 

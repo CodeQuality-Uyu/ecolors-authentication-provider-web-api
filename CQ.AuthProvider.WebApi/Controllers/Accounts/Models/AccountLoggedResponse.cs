@@ -6,7 +6,7 @@ public record class AccountLoggedResponse
 {
     public string Id { get; init; } = null!;
 
-    public string? ProfilePictureUrl { get; init; } = null!;
+    public string? ProfilePictureId { get; init; } = null!;
 
     public string FullName { get; init; } = null!;
 

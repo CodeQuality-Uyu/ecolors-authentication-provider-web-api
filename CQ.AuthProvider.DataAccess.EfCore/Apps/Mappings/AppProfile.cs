@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.DataAccess.EfCore.Accounts;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Apps.Mappings;
 
@@ -9,9 +9,15 @@ internal sealed class AppProfile
 {
     public AppProfile()
     {
-        CreateMap<AppEfCore, App>();
-
-        CreateMap<AccountApp, App>()
-            .ConvertUsing((source, destination, options) => options.Mapper.Map<App>(source.App));
+        #region GetById
+        CreateMap<AppEfCore, App>()
+            .ForMember(
+            destination => destination.Tenant,
+            options => options.MapFrom(
+                source => new Tenant
+                {
+                    Id = source.TenantId
+                }));
+        #endregion
     }
 }

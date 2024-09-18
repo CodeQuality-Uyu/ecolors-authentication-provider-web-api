@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Invitations;
+using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
+using CQ.UnitOfWork.EfCore.Extensions;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,15 +15,16 @@ internal sealed class InvitationRepository(
     : EfCoreRepository<InvitationEfCore>(context),
     IInvitationRepository
 {
-    public async Task<List<Invitation>> GetAllAsync(
+    public async Task<Pagination<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
+        int page,
+        int pageSize,
         AccountLogged accountLogged)
     {
         var appsIdsOfAccountLogged = accountLogged.AppsIds;
 
         var query = _entities
-            .Include(i => i.Creator)
             .Where(i => i.TenantId == accountLogged.Tenant.Id)
             .Where(i => creatorId == null || i.CreatorId == creatorId)
             .Where(i =>
@@ -31,10 +34,10 @@ internal sealed class InvitationRepository(
             .AsNoTracking();
 
         var invitations = await query
-            .ToListAsync()
+            .PaginateAsync(null, page, pageSize)
             .ConfigureAwait(false);
 
-        return mapper.Map<List<Invitation>>(invitations);
+        return mapper.Map<Pagination<Invitation>>(invitations);
     }
 
     public async Task CreateAndSaveAsync(Invitation invitation)

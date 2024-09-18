@@ -6,8 +6,9 @@ public sealed record class CreateAccountResult(
     string FullName,
     string FirstName,
     string LastName,
-    string? ProfilePictureUrl,
+    string? ProfilePictureId,
     string Locale,
     string TimeZone,
     string Token,
-    List<string> Roles);
+    List<string> Roles,
+    List<string> Permissions);

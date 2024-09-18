@@ -19,7 +19,7 @@ internal sealed class AccountService(
     #region Create
     public async Task<CreateAccountResult> InternalCreationAsync(CreateAccountArgs args)
     {
-        var identity = await CreateIdentityAsync(args).ConfigureAwait(false);
+        var identity = await CreateAndSaveIdentityAsync(args).ConfigureAwait(false);
 
         try
         {
@@ -42,12 +42,12 @@ internal sealed class AccountService(
             };
 
             await accountRepository
-                .CreateAsync(account)
+                .CreateAndSaveAsync(account)
                 .ConfigureAwait(false);
 
             var session = await sessionService
                 .CreateAsync(
-                identity,
+                account,
                 args.AppId)
                 .ConfigureAwait(false);
 
@@ -61,7 +61,8 @@ internal sealed class AccountService(
                 account.Locale,
                 account.TimeZone,
                 session.Token,
-                account.Roles.ConvertAll(r => r.Name));
+                account.Roles.ConvertAll(r => r.Name),
+                account.Roles.SelectMany(r => r.Permissions.ConvertAll(p => p.Key)).ToList();
 
             return result;
         }
@@ -95,14 +96,14 @@ internal sealed class AccountService(
         }
     }
 
-    private async Task<Identity> CreateIdentityAsync(CreateAccountArgs newAccount)
+    private async Task<Identity> CreateAndSaveIdentityAsync(CreateAccountArgs newAccount)
     {
         var identity = new Identity(
             newAccount.Email,
             newAccount.Password);
 
         await identityRepository
-            .CreateAsync(identity)
+            .CreateAndSaveAsync(identity)
             .ConfigureAwait(false);
 
         return identity;

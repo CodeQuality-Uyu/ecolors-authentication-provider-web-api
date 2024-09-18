@@ -1,6 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Roles;
+using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Invitations;
@@ -58,15 +59,19 @@ internal sealed class InvitationService(
             .ConfigureAwait(false);
     }
 
-    public async Task<List<Invitation>> GetAllAsync(
+    public async Task<Pagination<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
+        int page,
+        int pageSize,
         AccountLogged accountLogged)
     {
         var invitations = await invitationRepository
             .GetAllAsync(
             creatorId,
             appId,
+            page,
+            pageSize,
             accountLogged)
             .ConfigureAwait(false);
 
@@ -81,7 +86,7 @@ internal sealed class InvitationService(
             .GetPendingByIdAsync(id)
             .ConfigureAwait(false);
 
-        if (invitation.Code != args.Code &&
+        if (invitation.Code != args.Code ||
             invitation.Email != args.Email)
         {
             throw new InvalidOperationException("Invalid email or code");

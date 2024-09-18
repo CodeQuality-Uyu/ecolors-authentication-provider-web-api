@@ -16,19 +16,12 @@ public sealed record class AccountRole()
     public AccountEfCore Account { get; init; } = null!;
 
     // When new Account
-    public AccountRole(string roleId)
-        : this()
-    {
-        RoleId = roleId;
-    }
-
-    // For seed data
-    internal AccountRole(
-        string id,
+    public AccountRole(
+        string accountId,
         string roleId)
         : this()
     {
-        AccountId = id;
+        AccountId = accountId;
         RoleId = roleId;
     }
 }

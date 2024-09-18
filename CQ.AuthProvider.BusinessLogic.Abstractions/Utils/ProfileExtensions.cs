@@ -7,7 +7,6 @@ public static class ProfileExtensions
 {
     public static Profile CreatePaginationMap<TSource, TDestination>(this Profile profile)
     {
-
         profile
             .CreateMap<TSource, TDestination>();
 

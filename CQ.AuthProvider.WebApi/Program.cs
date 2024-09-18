@@ -1,6 +1,5 @@
 using CQ.AuthProvider.WebApi.AppConfig;
 using CQ.ApiElements.AppConfig;
-using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.DataAccess.EfCore;
 using CQ.IdentityProvider.EfCore;
 
@@ -10,7 +9,7 @@ builder.Services
     .AddControllers(
     (options) =>
     {
-        options.AddExceptionGlobalHandler<CqExceptionFilter>();
+        options.AddExceptionGlobalHandler();
     })
     .ConfigureApiBehaviorOptions(options =>
     {

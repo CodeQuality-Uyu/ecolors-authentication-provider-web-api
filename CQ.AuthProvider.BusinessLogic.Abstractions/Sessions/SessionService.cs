@@ -18,8 +18,12 @@ internal sealed class SessionService(
             .GetByCredentialsAsync(args.Email, args.Password)
             .ConfigureAwait(false);
 
+        var account = await accountRepository
+            .GetByIdAsync(identity.Id)
+            .ConfigureAwait(true);
+
         var session = await CreateAsync(
-            identity,
+            account,
             args.AppId)
             .ConfigureAwait(false);
 
@@ -27,12 +31,9 @@ internal sealed class SessionService(
     }
 
     public async Task<Session> CreateAsync(
-        Identity identity,
+        Account account,
         string? appId)
     {
-        var account = await accountRepository
-            .GetByIdAsync(identity.Id)
-            .ConfigureAwait(true);
 
         var app = account
             .Apps
@@ -40,7 +41,7 @@ internal sealed class SessionService(
 
         if (Guard.IsNull(app))
         {
-            throw new InvalidOperationException($"Account of email {identity.Email} doesn't exist {(Guard.IsNullOrEmpty(appId) ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app {appId}")}");
+            throw new InvalidOperationException($"Account of email {account.Email} doesn't exist {(Guard.IsNullOrEmpty(appId) ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app {appId}")}");
         }
 
         var token = tokenService.Create();

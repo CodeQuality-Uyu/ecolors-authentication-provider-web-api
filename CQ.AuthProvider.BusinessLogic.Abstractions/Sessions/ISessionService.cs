@@ -14,7 +14,7 @@ public interface ISessionInternalService
     : ISessionService
 {
     Task<Session> CreateAsync(
-        Identity identity,
+        Account account,
         string? appId);
 
     Task<Session> GetByTokenAsync(string token);

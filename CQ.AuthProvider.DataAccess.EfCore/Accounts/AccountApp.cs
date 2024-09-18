@@ -16,9 +16,12 @@ public sealed record class AccountApp()
     public AppEfCore App { get; init; } = null!;
 
     //For new Account
-    public AccountApp(string appId)
+    public AccountApp(
+        string accountId,
+        string appId)
         : this()
     {
+        AccountId = accountId;
         AppId = appId;
     }
 }

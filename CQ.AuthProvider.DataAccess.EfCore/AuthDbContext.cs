@@ -50,7 +50,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         {
             entity
             .HasOne(t => t.Owner)
-            .WithOne(o => o.Tenant)
+            .WithOne()
             .HasForeignKey<TenantEfCore>(t => t.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -100,8 +100,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
             entity
             .HasOne(a => a.Tenant)
-            .WithOne(t => t.Owner)
-            .HasForeignKey<AccountEfCore>(a => a.TenantId);
+            .WithMany(t => t.Accounts)
+            .HasForeignKey(a => a.TenantId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             entity
             .HasData(new AccountEfCore
@@ -223,6 +224,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         const string getAllRolesOfTenantPermissionId = "1554a06426024ee88baabad7a71d65cf";
         const string getAllPrivateRolesPermissionId = "1ce9908dba38490cbc65389bfeece21e";
 
+        const string createInvitationPermissionId = "f3ba5c2342a248d89eee2977456d54cd";
         const string getAllInvitationsPermissionId = "80ca0e41ea5046519f351a99b03b294e";
 
         const string getAllTenantsPermissionId = "9b079f7461554950bbd981f929568322";
@@ -305,8 +307,14 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     PermissionId = getAllPrivateRolesPermissionId
                 },
             #endregion
-                
-                #region Invitation
+
+            #region Invitation
+                new RolePermission
+                {
+                    Id = "c867b020844a4a6fa495b013bc903b3a",
+                    RoleId = tenantOwnerRoleId,
+                    PermissionId = createInvitationPermissionId
+                },
                 new RolePermission
                 {
                     Id = "d26570a4df1a41fea0bf0006f1b87721",
@@ -479,8 +487,19 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     TenantId = SEED_TENANT_ID,
                     IsPublic = true,
                 },
+
+                new PermissionEfCore
+                {
+                    Id = createInvitationPermissionId,
+                    Name = "Can create invitations",
+                    Description = "Can create invitations",
+                    Key = "create-invitation",
+                    AppId = AUTH_WEB_API_APP_ID,
+                    TenantId = SEED_TENANT_ID,
+                    IsPublic = true,
+                },
             #endregion
-            
+
                 #region Tenant
                 new PermissionEfCore
                 {

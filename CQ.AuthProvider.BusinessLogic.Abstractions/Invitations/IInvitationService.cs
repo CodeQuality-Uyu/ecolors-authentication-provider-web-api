@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.UnitOfWork.Abstractions.Repositories;
 
 namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
@@ -8,9 +9,11 @@ public interface IInvitationService
         CreateInvitationArgs args,
         AccountLogged accountLogged);
 
-    Task<List<Invitation>> GetAllAsync(
+    Task<Pagination<Invitation>> GetAllAsync(
         string? creatorId,
         string? appId,
+        int page,
+        int pageSize,
         AccountLogged accountLogged);
 
     Task<CreateAccountResult> AcceptByIdAsync(

@@ -1,6 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.BusinessLogic.Roles;
-using CQ.AuthProvider.BusinessLogic.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
@@ -44,9 +42,7 @@ public sealed record class AccountEfCore()
         string lastName,
         string locale,
         string timeZone,
-        List<Role> roles,
         string? profilePictureId,
-        List<App> apps,
         Tenant tenant)
         : this()
     {

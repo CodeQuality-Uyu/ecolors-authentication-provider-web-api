@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240918134748_InvitationSeedData")]
+    partial class InvitationSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,7 +96,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("TenantId")
+                        .IsUnique();
 
                     b.ToTable("Accounts");
 
@@ -673,9 +677,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId")
-                        .IsUnique();
-
                     b.ToTable("Tenants");
 
                     b.HasData(
@@ -709,8 +710,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
-                        .WithMany("Accounts")
-                        .HasForeignKey("TenantId")
+                        .WithOne("Owner")
+                        .HasForeignKey("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -869,17 +870,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Navigation("App");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
-                {
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Accounts.AccountEfCore", "Owner")
-                        .WithOne()
-                        .HasForeignKey("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Owner");
-                });
-
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", b =>
                 {
                     b.Navigation("Permissions");
@@ -889,7 +879,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
                 {
-                    b.Navigation("Accounts");
+                    b.Navigation("Owner")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

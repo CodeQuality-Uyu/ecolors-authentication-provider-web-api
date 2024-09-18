@@ -4,8 +4,12 @@ internal sealed class AppService(
     IAppRepository appRepository)
     : IAppInternalService
 {
-    public Task<App> GetByIdAsync(string id)
+    public async Task<App> GetByIdAsync(string id)
     {
-        throw new NotImplementedException();
+        var app = await appRepository
+            .GetByIdAsync(id)
+            .ConfigureAwait(false);
+
+        return app;
     }
 }

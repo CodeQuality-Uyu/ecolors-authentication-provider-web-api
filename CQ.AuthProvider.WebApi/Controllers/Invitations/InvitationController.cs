@@ -5,6 +5,7 @@ using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Filters;
+using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,9 +39,11 @@ public sealed class InvitationController(
     [HttpGet]
     [CQAuthentication]
     [SecureAuthorization]
-    public async Task<List<InvitationBasicInfoResponse>> GetAllAsync(
+    public async Task<Pagination<InvitationBasicInfoResponse>> GetAllAsync(
         [FromQuery] string? creatorId,
-        [FromQuery] string? appId)
+        [FromQuery] string? appId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
         var accountLogged = this.GetAccountLogged();
 
@@ -48,10 +51,12 @@ public sealed class InvitationController(
             .GetAllAsync(
             creatorId,
             appId,
+            page,
+            pageSize,
             accountLogged)
             .ConfigureAwait(false);
 
-        return mapper.Map<List<InvitationBasicInfoResponse>>(invitations);
+        return mapper.Map<Pagination<InvitationBasicInfoResponse>>(invitations);
     }
 
     [HttpPut("{id}/accept")]
