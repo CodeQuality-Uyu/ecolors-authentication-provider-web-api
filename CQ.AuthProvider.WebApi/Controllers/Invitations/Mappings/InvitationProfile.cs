@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
@@ -22,7 +23,7 @@ internal sealed class InvitationProfile
         #endregion
 
         #region Accept
-        CreateMap<CreateAccountRequest, AccountCreatedResponse>();
+        CreateMap<CreateAccountResult, AccountCreatedResponse>();
         #endregion
     }
 }

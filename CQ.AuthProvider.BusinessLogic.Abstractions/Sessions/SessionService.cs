@@ -34,7 +34,6 @@ internal sealed class SessionService(
         Account account,
         string? appId)
     {
-
         var app = account
             .Apps
             .FirstOrDefault(a => appId == null && a.IsDefault || a.Id == appId);

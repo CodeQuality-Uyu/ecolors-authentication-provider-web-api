@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Roles.Mappings;
+using CQ.AuthProvider.WebApi.Controllers.Sessions.Mappings;
 using CQ.AuthProvider.WebApi.Filters.Exception;
 using CQ.Extensions.Environments;
 using CQ.Extensions.ServiceCollection;
@@ -45,6 +46,7 @@ internal static class AuthProviderWebApiConfig
                 config.AddProfile<PermissionProfile>();
                 config.AddProfile<RoleProfile>();
                 config.AddProfile<InvitationProfile>();
+                config.AddProfile<SessionProfile>();
             });
 
         return services;

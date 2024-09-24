@@ -9,6 +9,7 @@ internal sealed class SessionProfile
 {
     public SessionProfile()
     {
+        #region Create
         CreateMap<Session, SessionCreatedResponse>()
             .ConvertUsing((source, destination, options) => new SessionCreatedResponse
             {
@@ -17,7 +18,7 @@ internal sealed class SessionProfile
                 FirstName = source.Account.FirstName,
                 LastName = source.Account.LastName,
                 FullName = source.Account.FullName,
-                ProfilePictureUrl = source.Account.ProfilePictureId,
+                ProfilePictureId = source.Account.ProfilePictureId,
                 Token = source.Token,
                 Roles = source.Account.Roles.ConvertAll(r => r.Name),
                 Permissions = source
@@ -25,7 +26,8 @@ internal sealed class SessionProfile
                 .Roles
                 .SelectMany(r => r.Permissions)
                 .Select(p => p.Key)
-            .ToList()
+                .ToList()
             });
+        #endregion
     }
 }

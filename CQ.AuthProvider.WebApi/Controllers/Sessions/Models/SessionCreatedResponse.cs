@@ -4,7 +4,7 @@ public readonly struct SessionCreatedResponse
 {
     public string AccountId { get; init; }
 
-    public string? ProfilePictureUrl { get; init; }
+    public string? ProfilePictureId { get; init; }
 
     public string Email { get; init; }
 
