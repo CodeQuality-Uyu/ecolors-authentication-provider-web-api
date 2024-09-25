@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CQ.UnitOfWork.EfCore" Version="3.0.6" />
+		<PackageReference Include="CQ.UnitOfWork.EfCore" Version="3.0.9" />
 		
 		<PackageReference Include="CQ.Extensions.Configuration" Version="2.0.0" />
 		<PackageReference Include="CQ.Extensions.ServiceCollection" Version="2.0.2" />

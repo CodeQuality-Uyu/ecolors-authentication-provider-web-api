@@ -18,5 +18,7 @@ public interface IInvitationRepository
 
     Task<Invitation> GetPendingByIdAsync(string id);
 
+    Task DeleteByIdAsync(string id);
+
     Task DeleteAndSaveByIdAsync(string id);
 }

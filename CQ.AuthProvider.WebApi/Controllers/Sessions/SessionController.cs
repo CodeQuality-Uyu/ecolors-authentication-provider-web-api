@@ -23,7 +23,7 @@ public class SessionController(
         var createAuth = request.Map();
 
         var session = await sessionService
-            .CreateAsync(createAuth)
+            .CreateAndSaveAsync(createAuth)
             .ConfigureAwait(false);
 
         return mapper.Map<SessionCreatedResponse>(session);

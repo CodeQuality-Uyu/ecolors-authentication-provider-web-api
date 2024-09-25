@@ -1,16 +1,18 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Roles;
+using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
 internal sealed class InvitationService(
-    IInvitationRepository invitationRepository,
-    IRoleInternalService roleService,
-    IEmailService emailService,
-    IAccountInternalService accountService)
+    IInvitationRepository _invitationRepository,
+    IRoleInternalService _roleService,
+    IEmailService _emailService,
+    IAccountInternalService _accountService,
+    IUnitOfWork _unitOfWork)
     : IInvitationService
 {
     public async Task CreateAsync(
@@ -24,7 +26,7 @@ internal sealed class InvitationService(
         }
         app ??= accountLogged.AppLogged;
 
-        var role = await roleService
+        var role = await _roleService
             .GetByIdAsync(args.RoleId)
             .ConfigureAwait(false);
         if (role.AppId != app.Id)
@@ -32,7 +34,7 @@ internal sealed class InvitationService(
             throw new InvalidOperationException($"Role not in app");
         }
 
-        var existPendingInvitation = await invitationRepository
+        var existPendingInvitation = await _invitationRepository
             .ExistPendingByEmailAsync(args.Email)
             .ConfigureAwait(false);
         if (existPendingInvitation)
@@ -40,13 +42,17 @@ internal sealed class InvitationService(
             throw new InvalidOperationException($"Exist a pending invitation for the email");
         }
 
+        await _accountService
+            .AssertByEmailAsync(args.Email)
+            .ConfigureAwait(false);
+
         var invitation = new Invitation(
             args.Email,
             role,
             app,
             accountLogged);
 
-        await emailService.SendAsync(
+        await _emailService.SendAsync(
             args.Email,
             EmailTemplateKey.InviteUser,
             new
@@ -54,7 +60,7 @@ internal sealed class InvitationService(
                 invitation.Code
             });
 
-        await invitationRepository
+        await _invitationRepository
             .CreateAndSaveAsync(invitation)
             .ConfigureAwait(false);
     }
@@ -66,7 +72,7 @@ internal sealed class InvitationService(
         int pageSize,
         AccountLogged accountLogged)
     {
-        var invitations = await invitationRepository
+        var invitations = await _invitationRepository
             .GetAllAsync(
             creatorId,
             appId,
@@ -82,7 +88,7 @@ internal sealed class InvitationService(
         string id,
         AcceptInvitationArgs args)
     {
-        var invitation = await invitationRepository
+        var invitation = await _invitationRepository
             .GetPendingByIdAsync(id)
             .ConfigureAwait(false);
 
@@ -92,8 +98,8 @@ internal sealed class InvitationService(
             throw new InvalidOperationException("Invalid email or code");
         }
 
-        await invitationRepository
-            .DeleteAndSaveByIdAsync(id)
+        await _invitationRepository
+            .DeleteByIdAsync(id)
             .ConfigureAwait(false);
 
         var account = new CreateAccountArgs(
@@ -107,9 +113,11 @@ internal sealed class InvitationService(
             args.ProfilePictureId,
             invitation.App.Id);
 
-        var result = await accountService
-            .InternalCreationAsync(account)
+        var result = await _accountService
+            .CreateAsync(account)
             .ConfigureAwait(false);
+
+        await _unitOfWork.CommitChangesAsync();
 
         return result;
     }
@@ -118,7 +126,7 @@ internal sealed class InvitationService(
         string id,
         string email)
     {
-        var invitation = await invitationRepository
+        var invitation = await _invitationRepository
             .GetPendingByIdAsync(id)
             .ConfigureAwait(false);
 
@@ -127,7 +135,7 @@ internal sealed class InvitationService(
             throw new InvalidOperationException("Invalid invitation");
         }
 
-        await invitationRepository
+        await _invitationRepository
             .DeleteAndSaveByIdAsync(id)
             .ConfigureAwait(false);
     }

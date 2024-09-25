@@ -15,7 +15,7 @@ internal sealed class AccountRepository(
     : EfCoreRepository<AccountEfCore>(context),
     IAccountRepository
 {
-    public async Task CreateAndSaveAsync(Account account)
+    public async Task CreateAsync(Account account)
     {
         var accountEfCore = new AccountEfCore(
             account.Id,
@@ -46,10 +46,6 @@ internal sealed class AccountRepository(
 
         await _baseContext
             .AddRangeAsync(accountAppsEfCore)
-            .ConfigureAwait(false);
-
-        await _baseContext
-            .SaveChangesAsync()
             .ConfigureAwait(false);
     }
 

@@ -64,10 +64,10 @@ internal sealed class PermissionRepository(
         return mapper.Map<List<Permission>>(permissions);
     }
 
-    public async Task CreateBulkAsync(List<Permission> permissions)
+    async Task IPermissionRepository.CreateBulkAndSaveAsync(List<Permission> permissions)
     {
         var permissionsEfCore = permissions.ConvertAll(p => new PermissionEfCore(p));
 
-        await CreateBulkAsync(permissionsEfCore).ConfigureAwait(false);
+        await CreateBulkAndSaveAsync(permissionsEfCore).ConfigureAwait(false);
     }
 }

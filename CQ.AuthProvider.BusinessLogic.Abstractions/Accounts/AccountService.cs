@@ -3,90 +3,89 @@ using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Exceptions;
+using CQ.UnitOfWork.Abstractions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 internal sealed class AccountService(
-    IAccountRepository accountRepository,
-    IIdentityRepository identityRepository,
-    ISessionInternalService sessionService,
-    IRoleInternalService roleInternalService,
-    IAppInternalService appService
-    )
+    IAccountRepository _accountRepository,
+    IIdentityRepository _identityRepository,
+    ISessionInternalService _sessionService,
+    IRoleInternalService _roleInternalService,
+    IAppInternalService _appService,
+    IUnitOfWork _unitOfWork)
     : IAccountInternalService
 {
     #region Create
-    public async Task<CreateAccountResult> InternalCreationAsync(CreateAccountArgs args)
+    public async Task<CreateAccountResult> CreateAsync(CreateAccountArgs args)
     {
-        var identity = await CreateAndSaveIdentityAsync(args).ConfigureAwait(false);
+        var identity = new Identity(
+            args.Email,
+            args.Password);
 
-        try
+        await _identityRepository
+            .CreateAsync(identity)
+            .ConfigureAwait(false);
+
+        var role = await GetRoleAsync(args.RoleId).ConfigureAwait(false);
+        var app = await _appService
+            .GetByIdAsync(args.AppId)
+            .ConfigureAwait(false);
+
+        var account = new Account(
+            args.Email,
+            args.FirstName,
+            args.LastName,
+            args.ProfilePictureId,
+            args.Locale,
+            args.TimeZone,
+            role,
+            app)
         {
-            var role = await GetRoleAsync(args.RoleId).ConfigureAwait(false);
-            var app = await appService
-                .GetByIdAsync(args.AppId)
-                .ConfigureAwait(false);
+            Id = identity.Id
+        };
 
-            var account = new Account(
-                args.Email,
-                args.FirstName,
-                args.LastName,
-                args.ProfilePictureId,
-                args.Locale,
-                args.TimeZone,
-                role,
-                app)
-            {
-                Id = identity.Id
-            };
+        await _accountRepository
+            .CreateAsync(account)
+            .ConfigureAwait(false);
 
-            await accountRepository
-                .CreateAndSaveAsync(account)
-                .ConfigureAwait(false);
+        var session = await _sessionService
+            .CreateAsync(
+            account,
+            args.AppId)
+            .ConfigureAwait(false);
 
-            var session = await sessionService
-                .CreateAsync(
-                account,
-                args.AppId)
-                .ConfigureAwait(false);
+        var result = new CreateAccountResult(
+            account.Id,
+            account.Email,
+            account.FullName,
+            account.FirstName,
+            account.LastName,
+            account.ProfilePictureId,
+            account.Locale,
+            account.TimeZone,
+            session.Token,
+            account.Roles.ConvertAll(r => r.Name),
+            account.Roles.SelectMany(r => r.Permissions.ConvertAll(p => p.Key)).ToList());
 
-            var result = new CreateAccountResult(
-                account.Id,
-                account.Email,
-                account.FullName,
-                account.FirstName,
-                account.LastName,
-                account.ProfilePictureId,
-                account.Locale,
-                account.TimeZone,
-                session.Token,
-                account.Roles.ConvertAll(r => r.Name),
-                account.Roles.SelectMany(r => r.Permissions.ConvertAll(p => p.Key)).ToList();
-
-            return result;
-        }
-        catch (SpecificResourceNotFoundException<Role>)
-        {
-            await identityRepository
-                .DeleteByIdAsync(identity.Id)
-                .ConfigureAwait(false);
-            throw;
-        }
+        return result;
     }
 
-    public async Task<CreateAccountResult> CreateAsync(CreateAccountArgs args)
+    public async Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs args)
     {
         await AssertEmailInUseAsync(args.Email).ConfigureAwait(false);
 
-        var result = await InternalCreationAsync(args).ConfigureAwait(false);
+        var result = await CreateAsync(args).ConfigureAwait(false);
+
+        await _unitOfWork.CommitChangesAsync().ConfigureAwait(false);
 
         return result;
     }
 
     private async Task AssertEmailInUseAsync(string email)
     {
-        var existAuth = await accountRepository
+        var existAuth = await _accountRepository
             .ExistByEmailAsync(email)
             .ConfigureAwait(false);
 
@@ -96,33 +95,32 @@ internal sealed class AccountService(
         }
     }
 
-    private async Task<Identity> CreateAndSaveIdentityAsync(CreateAccountArgs newAccount)
-    {
-        var identity = new Identity(
-            newAccount.Email,
-            newAccount.Password);
-
-        await identityRepository
-            .CreateAndSaveAsync(identity)
-            .ConfigureAwait(false);
-
-        return identity;
-    }
-
     private async Task<Role> GetRoleAsync(string? roleId)
     {
         if (Guard.IsNull(roleId))
         {
-            return await roleInternalService
+            return await _roleInternalService
                 .GetDefaultAsync()
                 .ConfigureAwait(false);
         }
 
-        return await roleInternalService
+        return await _roleInternalService
             .GetByIdAsync(roleId)
             .ConfigureAwait(false);
     }
     #endregion
+
+    public async Task AssertByEmailAsync(string email)
+    {
+        var existAccount = await _accountRepository
+            .ExistByEmailAsync(email)
+            .ConfigureAwait(false);
+
+        if(existAccount)
+        {
+            throw new InvalidOperationException($"Email {email} is used");
+        }
+    }
 
     public async Task UpdatePasswordAsync(
         string newPassword,
@@ -130,7 +128,7 @@ internal sealed class AccountService(
     {
         Guard.ThrowIsInputInvalidPassword(newPassword, nameof(newPassword));
 
-        await identityRepository
+        await _identityRepository
             .UpdatePasswordByIdAsync(
             userLogged.Id,
             newPassword)
@@ -139,11 +137,11 @@ internal sealed class AccountService(
 
     public async Task<AccountLogged> GetByTokenAsync(string token)
     {
-        var session = await sessionService
+        var session = await _sessionService
             .GetByTokenAsync(token)
             .ConfigureAwait(false);
 
-        var account = await accountRepository
+        var account = await _accountRepository
             .GetByIdAsync(session.Account.Id)
             .ConfigureAwait(false);
 
@@ -155,14 +153,14 @@ internal sealed class AccountService(
 
     public async Task<Account> GetByEmailAsync(string email)
     {
-        return await accountRepository
+        return await _accountRepository
             .GetByEmailAsync(email)
             .ConfigureAwait(false);
     }
 
     public async Task<Account> GetByIdAsync(string id)
     {
-        return await accountRepository
+        return await _accountRepository
             .GetByIdAsync(id)
             .ConfigureAwait(false);
     }
@@ -171,13 +169,13 @@ internal sealed class AccountService(
         UpdatePasswordArgs args,
         AccountLogged accountLogged)
     {
-        await identityRepository
+        await _identityRepository
             .GetByCredentialsAsync(
             accountLogged.Email,
             args.OldPassword)
             .ConfigureAwait(false);
 
-        await identityRepository
+        await _identityRepository
             .UpdatePasswordByIdAsync(
             accountLogged.Id,
             args.NewPassword)

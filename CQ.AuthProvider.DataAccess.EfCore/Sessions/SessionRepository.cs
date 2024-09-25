@@ -13,7 +13,7 @@ internal sealed class SessionRepository(
     : EfCoreRepository<SessionEfCore>(context),
     ISessionRepository
 {
-    public async Task CreateAsync(Session session)
+    async Task ISessionRepository.CreateAsync(Session session)
     {
         var sessionEfCore = new SessionEfCore(session);
 

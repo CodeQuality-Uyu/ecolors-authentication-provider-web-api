@@ -4,7 +4,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public interface IAccountRepository
 {
-    Task CreateAndSaveAsync(Account account);
+    Task CreateAsync(Account account);
 
     Task<bool> ExistByEmailAsync(string email);
 

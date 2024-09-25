@@ -2,7 +2,7 @@
 
 public interface IAccountService
 {
-    Task<CreateAccountResult> CreateAsync(CreateAccountArgs auth);
+    Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs auth);
 
     Task<AccountLogged> GetByTokenAsync(string token);
 
@@ -18,5 +18,7 @@ public interface IAccountService
 internal interface IAccountInternalService
     : IAccountService
 {
-    Task<CreateAccountResult> InternalCreationAsync(CreateAccountArgs args);
+    Task<CreateAccountResult> CreateAsync(CreateAccountArgs args);
+
+    Task AssertByEmailAsync(string email);
 }

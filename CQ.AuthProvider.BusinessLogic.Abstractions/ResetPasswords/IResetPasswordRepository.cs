@@ -6,7 +6,7 @@ public interface IResetPasswordRepository
 
     Task<ResetPassword?> GetOrDefaultByEmailAsync(string email);
 
-    Task CreateAsync(ResetPassword resetPassword);
+    Task CreateAndSaveAsync(ResetPassword resetPassword);
 
     Task DeletePendingAsync(
         string id,

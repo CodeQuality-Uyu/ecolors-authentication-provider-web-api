@@ -56,7 +56,7 @@ internal abstract class ResetPasswordService(
             code = resetPassword.Code;
 
             await resetPasswordRepository
-                .CreateAsync(resetPassword)
+                .CreateAndSaveAsync(resetPassword)
                 .ConfigureAwait(false);
         }
         else

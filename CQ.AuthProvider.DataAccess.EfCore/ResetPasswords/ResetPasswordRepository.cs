@@ -39,14 +39,14 @@ internal sealed class ResetPasswordRepository(
         return mapper.Map<ResetPassword>(resetPassword);
     }
 
-    public async Task CreateAsync(ResetPassword resetPassword)
+    async Task IResetPasswordRepository.CreateAndSaveAsync(ResetPassword resetPassword)
     {
         var resetPasswordEfCore = new ResetPasswordEfCore(
             resetPassword.Id,
             resetPassword.Code,
             resetPassword.Account.Id);
 
-        await CreateAsync(resetPasswordEfCore).ConfigureAwait(false);
+        await CreateAndSaveAsync(resetPasswordEfCore).ConfigureAwait(false);
     }
 
     public async Task DeletePendingAsync(

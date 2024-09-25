@@ -201,7 +201,7 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         });
 
         await permissionRepository
-            .CreateBulkAsync(permissions)
+            .CreateBulkAndSaveAsync(permissions)
             .ConfigureAwait(false);
     }
 }

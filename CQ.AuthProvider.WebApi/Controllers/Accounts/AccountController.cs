@@ -19,7 +19,7 @@ public class AccountController(
         var createAccount = request.Map();
 
         var account = await accountService
-            .CreateAsync(createAccount)
+            .CreateAndSaveAsync(createAccount)
             .ConfigureAwait(false);
 
         return mapper.Map<AccountCreatedResponse>(account);
@@ -32,7 +32,7 @@ public class AccountController(
         var createAccountFor = request.Map();
 
         await accountService
-            .CreateAsync(createAccountFor)
+            .CreateAndSaveAsync(createAccountFor)
             .ConfigureAwait(false);
     }
 }

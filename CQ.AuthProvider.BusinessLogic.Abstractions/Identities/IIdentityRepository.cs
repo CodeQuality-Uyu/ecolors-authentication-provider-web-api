@@ -2,7 +2,7 @@
 
 public interface IIdentityRepository
 {
-    Task CreateAndSaveAsync(Identity identity);
+    Task CreateAsync(Identity identity);
 
     Task UpdatePasswordByIdAsync(
         string identityId,

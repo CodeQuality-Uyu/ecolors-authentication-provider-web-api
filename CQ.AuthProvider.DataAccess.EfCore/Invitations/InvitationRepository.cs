@@ -40,11 +40,11 @@ internal sealed class InvitationRepository(
         return mapper.Map<Pagination<Invitation>>(invitations);
     }
 
-    public async Task CreateAndSaveAsync(Invitation invitation)
+    async Task IInvitationRepository.CreateAndSaveAsync(Invitation invitation)
     {
         var invitationEfCore = mapper.Map<InvitationEfCore>(invitation);
 
-        await CreateAsync(invitationEfCore).ConfigureAwait(false);
+        await CreateAndSaveAsync(invitationEfCore).ConfigureAwait(false);
     }
 
     public async Task<bool> ExistPendingByEmailAsync(string email)
@@ -87,6 +87,16 @@ internal sealed class InvitationRepository(
         AssertNullEntity(invitation, id, nameof(id));
 
         return mapper.Map<Invitation>(invitation);
+    }
+
+    public Task DeleteByIdAsync(string id)
+    {
+        var query = _entities
+            .Where(i => i.Id == id);
+
+        _entities.RemoveRange(query);
+
+        return Task.CompletedTask;
     }
 
     public async Task DeleteAndSaveByIdAsync(string id)

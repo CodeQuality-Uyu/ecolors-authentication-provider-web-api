@@ -104,7 +104,7 @@ internal sealed class RoleRepository(
     {
         var rolesEfCore = roles.ConvertAll(r => new RoleEfCore(r));
 
-        await CreateBulkAsync(rolesEfCore)
+        await CreateBulkAndSaveAsync(rolesEfCore)
             .ConfigureAwait(false);
     }
 
@@ -117,7 +117,7 @@ internal sealed class RoleRepository(
         var rolePermissions = permissions.ConvertAll(p => new RolePermission(id, p.Id));
 
         await rolePermissionRepository
-            .CreateBulkAsync(rolePermissions)
+            .CreateBulkAndSaveAsync(rolePermissions)
             .ConfigureAwait(false);
     }
 }

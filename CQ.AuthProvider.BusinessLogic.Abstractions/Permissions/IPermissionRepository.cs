@@ -17,5 +17,5 @@ public interface IPermissionRepository
         List<(string appId, List<string> keys)> keys,
         AccountLogged accountLogged);
 
-    Task CreateBulkAsync(List<Permission> permissions);
+    Task CreateBulkAndSaveAsync(List<Permission> permissions);
 }

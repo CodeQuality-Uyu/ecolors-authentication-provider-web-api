@@ -15,7 +15,7 @@ internal sealed class TenantRepository
     {
         var tenantEfCore = mapper.Map<TenantEfCore>(tenant);
 
-        await CreateAsync(tenantEfCore).ConfigureAwait(false);
+        await CreateAndSaveAsync(tenantEfCore).ConfigureAwait(false);
     }
 
     public async Task<bool> ExistByNameAsync(string name)

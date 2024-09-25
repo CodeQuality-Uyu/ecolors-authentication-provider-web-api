@@ -9,6 +9,7 @@ using CQ.AuthProvider.WebApi.Filters.Exception;
 using CQ.Extensions.Environments;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.AppConfig;
+using CQ.UnitOfWork.Configuration;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,8 @@ internal static class AuthProviderWebApiConfig
             .AddExceptionGlobalHandlerService<CQAuthExceptionRegistryService>(LifeTime.Singleton)
             
             .AddMappings()
+
+            .AddUnitOfWork(LifeTime.Scoped)
 
             .ConfigureServices()
 

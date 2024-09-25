@@ -33,7 +33,7 @@ public sealed class IdentityRepository(
         await UpdateAndSaveAsync(identity).ConfigureAwait(false);
     }
 
-    public async Task CreateAndSaveAsync(Identity identity)
+    async Task IIdentityRepository.CreateAsync(Identity identity)
     {
         await CreateAsync(identity).ConfigureAwait(false);
     }
