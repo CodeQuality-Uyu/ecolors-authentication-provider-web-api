@@ -18,7 +18,9 @@ public interface IAccountService
 internal interface IAccountInternalService
     : IAccountService
 {
-    Task<CreateAccountResult> CreateAsync(CreateAccountArgs args);
+    Task<CreateAccountResult> CreateAsync(
+        Account account,
+        string password);
 
     Task AssertByEmailAsync(string email);
 }

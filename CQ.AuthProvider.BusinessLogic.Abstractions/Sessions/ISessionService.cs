@@ -1,5 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.BusinessLogic.Apps;
 
 namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
@@ -15,11 +15,7 @@ public interface ISessionInternalService
 {
     Task<Session> CreateAsync(
         Account account,
-        string? appId);
-
-    Task<Session> CreateAndSaveAsync(
-        Account account,
-        string? appId);
+        App app);
 
     Task<Session> GetByTokenAsync(string token);
 }

@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Tokens;
 using CQ.UnitOfWork.Abstractions;
@@ -24,9 +25,19 @@ internal sealed class SessionService(
             .GetByIdAsync(identity.Id)
             .ConfigureAwait(true);
 
-        var session = await CreateAndSaveAsync(
-            account,
-            args.AppId)
+        var app = account
+            .Apps
+            .FirstOrDefault(a => (args.AppId == null && a.IsDefault) || a.Id == args.AppId);
+
+        if (Guard.IsNull(app))
+        {
+            throw new InvalidOperationException($"Account of email {account.Email} doesn't exist {(Guard.IsNullOrEmpty(args.AppId) ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app {args.AppId}")}");
+        }
+
+        var session = await CreateAsync(account, app).ConfigureAwait(false);
+
+        await _unitOfWork
+            .CommitChangesAsync()
             .ConfigureAwait(false);
 
         return session;
@@ -34,17 +45,8 @@ internal sealed class SessionService(
 
     public async Task<Session> CreateAsync(
         Account account,
-        string? appId)
+        App app)
     {
-        var app = account
-            .Apps
-            .FirstOrDefault(a => appId == null && a.IsDefault || a.Id == appId);
-
-        if (Guard.IsNull(app))
-        {
-            throw new InvalidOperationException($"Account of email {account.Email} doesn't exist {(Guard.IsNullOrEmpty(appId) ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app {appId}")}");
-        }
-
         var token = _tokenService.Create();
 
         var session = new Session(
@@ -54,22 +56,6 @@ internal sealed class SessionService(
 
         await _sessionRepository
             .CreateAsync(session)
-            .ConfigureAwait(false);
-
-        return session;
-    }
-
-    public async Task<Session> CreateAndSaveAsync(
-        Account account,
-        string? appId)
-    {
-        var session = await CreateAsync(
-            account,
-            appId)
-            .ConfigureAwait(false);
-
-        await _unitOfWork
-            .CommitChangesAsync()
             .ConfigureAwait(false);
 
         return session;

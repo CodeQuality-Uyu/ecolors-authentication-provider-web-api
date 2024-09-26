@@ -15,6 +15,7 @@ internal sealed class InvitationService(
     IUnitOfWork _unitOfWork)
     : IInvitationService
 {
+
     public async Task CreateAsync(
         CreateInvitationArgs args,
         AccountLogged accountLogged)
@@ -102,20 +103,19 @@ internal sealed class InvitationService(
             .DeleteByIdAsync(id)
             .ConfigureAwait(false);
 
-        var account = new CreateAccountArgs(
+        var account = new Account(
             args.Email,
-            args.Password,
             args.FirstName,
             args.LastName,
+            args.ProfilePictureId,
             args.Locale,
             args.TimeZone,
-            invitation.Role.Id,
-            args.ProfilePictureId,
-            invitation.App.Id);
+            invitation.Role,
+            invitation.App);
 
         var result = await _accountService
-            .CreateAsync(account)
-            .ConfigureAwait(false);
+                .CreateAsync(account, args.Password)
+                .ConfigureAwait(false);
 
         await _unitOfWork.CommitChangesAsync();
 

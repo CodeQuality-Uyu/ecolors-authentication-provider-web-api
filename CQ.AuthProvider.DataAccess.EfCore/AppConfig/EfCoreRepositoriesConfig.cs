@@ -67,6 +67,8 @@ public static class EfCoreRepositoriesConfig
             options
             .UseSqlServer(connectionString),
             LifeTime.Scoped)
+
+            .AddUnitOfWork<AuthDbContext>(LifeTime.Scoped)
             
             .AddAbstractionRepository<AccountEfCore, IAccountRepository, AccountRepository>(LifeTime.Scoped)
             .AddAbstractionRepository<RoleEfCore, IRoleRepository, RoleRepository>(LifeTime.Scoped)

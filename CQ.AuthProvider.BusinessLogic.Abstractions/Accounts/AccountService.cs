@@ -18,33 +18,20 @@ internal sealed class AccountService(
     : IAccountInternalService
 {
     #region Create
-    public async Task<CreateAccountResult> CreateAsync(CreateAccountArgs args)
+    public async Task<CreateAccountResult> CreateAsync(
+        Account account,
+        string password)
     {
         var identity = new Identity(
-            args.Email,
-            args.Password);
+            account.Email,
+            password)
+        {
+            Id = account.Id
+        };
 
         await _identityRepository
-            .CreateAsync(identity)
+            .CreateAndSaveAsync(identity)
             .ConfigureAwait(false);
-
-        var role = await GetRoleAsync(args.RoleId).ConfigureAwait(false);
-        var app = await _appService
-            .GetByIdAsync(args.AppId)
-            .ConfigureAwait(false);
-
-        var account = new Account(
-            args.Email,
-            args.FirstName,
-            args.LastName,
-            args.ProfilePictureId,
-            args.Locale,
-            args.TimeZone,
-            role,
-            app)
-        {
-            Id = identity.Id
-        };
 
         await _accountRepository
             .CreateAsync(account)
@@ -53,7 +40,7 @@ internal sealed class AccountService(
         var session = await _sessionService
             .CreateAsync(
             account,
-            args.AppId)
+            account.Apps[0])
             .ConfigureAwait(false);
 
         var result = new CreateAccountResult(
@@ -76,9 +63,38 @@ internal sealed class AccountService(
     {
         await AssertEmailInUseAsync(args.Email).ConfigureAwait(false);
 
-        var result = await CreateAsync(args).ConfigureAwait(false);
+        var role = await GetRoleAsync(args.RoleId).ConfigureAwait(false);
+        var app = await _appService
+            .GetByIdAsync(args.AppId)
+            .ConfigureAwait(false);
 
-        await _unitOfWork.CommitChangesAsync().ConfigureAwait(false);
+        var account = new Account(
+            args.Email,
+            args.FirstName,
+            args.LastName,
+            args.ProfilePictureId,
+            args.Locale,
+            args.TimeZone,
+            role,
+            app);
+
+        var result = await CreateAsync(
+            account,
+            args.Password)
+            .ConfigureAwait(false);
+
+        try
+        {
+            await _unitOfWork
+                .CommitChangesAsync()
+                .ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            await _identityRepository
+                .DeleteByIdAsync(account.Id)
+                .ConfigureAwait(false);
+        }
 
         return result;
     }
@@ -116,7 +132,7 @@ internal sealed class AccountService(
             .ExistByEmailAsync(email)
             .ConfigureAwait(false);
 
-        if(existAccount)
+        if (existAccount)
         {
             throw new InvalidOperationException($"Email {email} is used");
         }

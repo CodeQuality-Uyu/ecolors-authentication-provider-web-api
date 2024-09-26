@@ -9,8 +9,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="CQ.ApiElements" Version="3.0.14" />
-
-		<PackageReference Include="CQ.UnitOfWork" Version="3.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
