@@ -1,5 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Emails;
+using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
@@ -11,6 +12,7 @@ internal sealed class InvitationService(
     IInvitationRepository _invitationRepository,
     IRoleInternalService _roleService,
     IEmailService _emailService,
+    IIdentityRepository _identityRepository,
     IAccountInternalService _accountService,
     IUnitOfWork _unitOfWork)
     : IInvitationService
@@ -117,7 +119,16 @@ internal sealed class InvitationService(
                 .CreateAsync(account, args.Password)
                 .ConfigureAwait(false);
 
-        await _unitOfWork.CommitChangesAsync();
+        try
+        {
+            await _unitOfWork.CommitChangesAsync();
+        }
+        catch (Exception)
+        {
+            await _identityRepository
+                .DeleteByIdAsync(account.Id)
+                .ConfigureAwait(false);
+        }
 
         return result;
     }
