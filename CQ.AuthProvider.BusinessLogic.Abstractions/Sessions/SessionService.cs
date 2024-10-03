@@ -78,4 +78,16 @@ internal sealed class SessionService(
             .DeleteByTokenAsync(accountLogged.Token)
             .ConfigureAwait(false);
     }
+
+    public async Task<AccountLogged> GetAccountByTokenAsync(string token)
+    {
+        var session = await _sessionRepository
+            .GetByTokenAsync(token)
+            .ConfigureAwait(false);
+
+        return new AccountLogged(
+            session.Account,
+            token,
+            session.App);
+    }
 }

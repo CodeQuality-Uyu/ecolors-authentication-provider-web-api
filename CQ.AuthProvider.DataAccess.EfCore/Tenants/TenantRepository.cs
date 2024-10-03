@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
@@ -39,5 +41,22 @@ internal sealed class TenantRepository
         var tenant = await GetByIdAsync(id).ConfigureAwait(false);
 
         return mapper.Map<Tenant>(tenant);
+    }
+
+    public async Task UpdateOwnerByIdAsync(
+        string id,
+        Account newOwner)
+    {
+        var tenant = await GetByIdAsync(id).ConfigureAwait(false);
+
+        tenant.OwnerId = newOwner.Id;
+    }
+
+    public async Task UpdateNameByIdAndSaveAsync(
+        string id,
+        string newName)
+    {
+        await UpdateAndSaveByIdAsync(id, new { Name = newName })
+            .ConfigureAwait(false);
     }
 }

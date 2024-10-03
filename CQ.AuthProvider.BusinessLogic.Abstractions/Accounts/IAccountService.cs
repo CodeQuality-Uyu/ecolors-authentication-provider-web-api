@@ -4,15 +4,7 @@ public interface IAccountService
 {
     Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs auth);
 
-    Task<AccountLogged> GetByTokenAsync(string token);
-
     Task<Account> GetByEmailAsync(string email);
-
-    Task<Account> GetByIdAsync(string id);
-
-    Task UpdateAsync(
-        UpdatePasswordArgs args,
-        AccountLogged accountLogged);
 }
 
 internal interface IAccountInternalService

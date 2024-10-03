@@ -16,6 +16,10 @@ public interface ITenantService
     Task<Tenant> GetByIdAsync(
         string id,
         AccountLogged accountLogged);
+
+    Task UpdateNameByIdAndSaveAsync(
+        string id,
+        string newName);
 }
 
 internal interface ITenantInternalService

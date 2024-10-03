@@ -25,6 +25,7 @@ services
     .ConfigureApiServices(configuration);
 
 var app = builder.Build();
+
 app
     .Services
     .AddDbContextMissingMigrations<AuthDbContext>(app.Environment)

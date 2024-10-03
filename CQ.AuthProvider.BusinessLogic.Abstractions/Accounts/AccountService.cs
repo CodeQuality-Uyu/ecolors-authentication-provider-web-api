@@ -138,63 +138,10 @@ internal sealed class AccountService(
         }
     }
 
-    public async Task UpdatePasswordAsync(
-        string newPassword,
-        Account userLogged)
-    {
-        Guard.ThrowIsInputInvalidPassword(newPassword, nameof(newPassword));
-
-        await _identityRepository
-            .UpdatePasswordByIdAsync(
-            userLogged.Id,
-            newPassword)
-            .ConfigureAwait(false);
-    }
-
-    public async Task<AccountLogged> GetByTokenAsync(string token)
-    {
-        var session = await _sessionService
-            .GetByTokenAsync(token)
-            .ConfigureAwait(false);
-
-        var account = await _accountRepository
-            .GetByIdAsync(session.Account.Id)
-            .ConfigureAwait(false);
-
-        return new AccountLogged(
-            account,
-            token,
-            session.App);
-    }
-
     public async Task<Account> GetByEmailAsync(string email)
     {
         return await _accountRepository
             .GetByEmailAsync(email)
-            .ConfigureAwait(false);
-    }
-
-    public async Task<Account> GetByIdAsync(string id)
-    {
-        return await _accountRepository
-            .GetByIdAsync(id)
-            .ConfigureAwait(false);
-    }
-
-    public async Task UpdateAsync(
-        UpdatePasswordArgs args,
-        AccountLogged accountLogged)
-    {
-        await _identityRepository
-            .GetByCredentialsAsync(
-            accountLogged.Email,
-            args.OldPassword)
-            .ConfigureAwait(false);
-
-        await _identityRepository
-            .UpdatePasswordByIdAsync(
-            accountLogged.Id,
-            args.NewPassword)
             .ConfigureAwait(false);
     }
 }

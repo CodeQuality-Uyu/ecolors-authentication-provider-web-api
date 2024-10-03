@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Me;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Me.Models;
 using CQ.AuthProvider.WebApi.Extensions;
@@ -11,33 +14,60 @@ namespace CQ.AuthProvider.WebApi.Controllers.Me;
 
 [ApiController]
 [Route("me")]
-[CQAuthentication]
 public sealed class MeController(
-    IAccountService accountService,
-    IMapper mapper)
+    IMeService _meService,
+    ITenantService _tenantService,
+    IMapper _mapper)
     : ControllerBase
 {
-    [HttpGet("me")]
+    [HttpGet]
     public AccountLoggedResponse GetMeAsync()
     {
         var accountLogged = this.GetAccountLogged();
 
-        return mapper.Map<AccountLoggedResponse>(accountLogged);
+        return _mapper.Map<AccountLoggedResponse>(accountLogged);
     }
 
-    [HttpPatch("me/password")]
+    [HttpPatch("password")]
     public async Task UpdatePasswordAsync(UpdatePasswordRequest? request)
     {
         Guard.ThrowIsNull(request, nameof(request));
 
         var args = request.Map();
 
+        await _meService
+            .UpdatePasswordAsync(args)
+            .ConfigureAwait(false);
+    }
+
+
+    [HttpPatch("tenants/owner")]
+    [CQAuthentication]
+    [SecureAuthorization]
+    public async Task TransferTenantAsync(TransferTenantRequest request)
+    {
+        var args = request.Map();
+
         var accountLogged = this.GetAccountLogged();
 
-        await accountService
-            .UpdateAsync(
-            args,
-            accountLogged)
+        await _meService
+            .TransferTenantAsync(args, accountLogged)
+            .ConfigureAwait(false);
+    }
+
+    [HttpPatch("tenants/name")]
+    [CQAuthentication]
+    [SecureAuthorization]
+    public async Task UpdateTenantNameAsync(UpdateTenantNameRequest request)
+    {
+        var args = request.Map();
+
+        var accountLogged = this.GetAccountLogged();
+
+        await _tenantService
+            .UpdateNameByIdAndSaveAsync(
+            accountLogged.Tenant.Id,
+            args)
             .ConfigureAwait(false);
     }
 }

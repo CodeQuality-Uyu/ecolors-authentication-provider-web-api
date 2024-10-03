@@ -44,7 +44,7 @@ public sealed class TenantController(
         return mapper.Map<Pagination<TenantBasicInfoResponse>>(tenants);
     }
 
-    [HttpGet("{id:Guid}")]
+    [HttpGet("{id:guid}")]
     public async Task<TenantDetailInfoResponse> GetByIdAsync(string id)
     {
         var accountLogged = this.GetAccountLogged();

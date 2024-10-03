@@ -8,6 +8,8 @@ public interface ISessionService
     Task<Session> CreateAndSaveAsync(CreateSessionCredentialsArgs args);
 
     Task DeleteAsync(AccountLogged accountLogged);
+
+    Task<AccountLogged> GetAccountByTokenAsync(string token);
 }
 
 public interface ISessionInternalService
@@ -16,6 +18,4 @@ public interface ISessionInternalService
     Task<Session> CreateAsync(
         Account account,
         App app);
-
-    Task<Session> GetByTokenAsync(string token);
 }

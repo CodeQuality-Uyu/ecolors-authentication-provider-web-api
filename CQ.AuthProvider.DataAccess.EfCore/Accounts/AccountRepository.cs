@@ -12,7 +12,7 @@ internal sealed class AccountRepository(
     AuthDbContext context,
     IMapper mapper
     )
-    : EfCoreRepository<AccountEfCore>(context),
+    : AuthDbContextRepository<AccountEfCore>(context),
     IAccountRepository
 {
     public async Task CreateAsync(Account account)
@@ -63,14 +63,16 @@ internal sealed class AccountRepository(
         return mapper.Map<Account>(account);
     }
 
-    public new async Task<Account> GetByIdAsync(string id)
+    async Task<Account> IAccountRepository.GetByIdAsync(string id)
     {
         var query =
             _entities
             .Include(a => a.Roles)
-            .ThenInclude(r => r.Permissions)
+                .ThenInclude(r => r.Permissions)
             .Include(a => a.Tenant)
             .Include(a => a.Apps)
+            .AsNoTracking()
+            .AsSplitQuery()
             .Where(a => a.Id == id);
 
         var account = await query
@@ -85,11 +87,44 @@ internal sealed class AccountRepository(
         return mapper.Map<Account>(account);
     }
 
+    public async Task<Account> GetByIdAsync(
+        string id,
+        params string[] includes)
+    {
+        var queryInclude = InsertIncludes(
+            _entities,
+            [.. includes]);
 
-    public async Task UpdateTenantByIdAsync(
+        var query = queryInclude
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Where(a => a.Id == id);
+
+        var account = await query
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        AssertNullEntity(account, id, nameof(Account.Id));
+
+        return mapper.Map<Account>(account);
+    }
+
+    public async Task UpdateTenantByIdAndSaveAsync(
         string id,
         Tenant tenant)
     {
-        await UpdateAndSaveByIdAsync(id, new { TenantId = tenant.Id }).ConfigureAwait(false);
+        await UpdateAndSaveByIdAsync(id, new { TenantId = tenant.Id })
+            .ConfigureAwait(false);
+    }
+
+    public async Task AddRoleByIdAsync(
+        string id,
+        string roleId)
+    {
+        var accountRole = new AccountRole(id, roleId);
+
+        await _concreteContext
+            .AccountsRoles
+            .AddRangeAsync(accountRole);
     }
 }

@@ -5,43 +5,48 @@ using CQ.UnitOfWork.Abstractions.Repositories;
 namespace CQ.AuthProvider.BusinessLogic.Tenants;
 
 internal sealed class TenantService(
-    ITenantRepository tenantRepository,
-    IAccountRepository accountRepository)
+    ITenantRepository _tenantRepository,
+    IAccountRepository _accountRepository)
     : ITenantInternalService
 {
     public async Task CreateAsync(
         CreateTenantArgs args,
         AccountLogged accountLogged)
     {
-        var existTenant = await tenantRepository
-            .ExistByNameAsync(args.Name)
+        await AssertNameAsync(args.Name)
             .ConfigureAwait(false);
-
-        if (existTenant)
-        {
-            throw new InvalidOperationException("Invalid name");
-        }
 
         var tenant = new Tenant(
             args.Name,
             accountLogged);
 
-        await tenantRepository
+        await _tenantRepository
             .CreateAndSaveAsync(tenant)
             .ConfigureAwait(false);
 
-        await accountRepository
-            .UpdateTenantByIdAsync(
+        await _accountRepository
+            .UpdateTenantByIdAndSaveAsync(
             accountLogged.Id,
             tenant)
             .ConfigureAwait(false);
+    }
+
+    private async Task AssertNameAsync(string name)
+    {
+        var existTenant = await _tenantRepository
+                    .ExistByNameAsync(name)
+                    .ConfigureAwait(false);
+        if (existTenant)
+        {
+            throw new InvalidOperationException("Invalid name");
+        }
     }
 
     public async Task<Pagination<Tenant>> GetAllAsync(
         int page = 1,
         int pageSize = 10)
     {
-        var tenants = await tenantRepository
+        var tenants = await _tenantRepository
             .GetPaginatedAsync(
             page,
             pageSize)
@@ -54,7 +59,7 @@ internal sealed class TenantService(
         string id,
         AccountLogged accountLogged)
     {
-        var tenant = await tenantRepository
+        var tenant = await _tenantRepository
             .GetByIdAsync(id)
             .ConfigureAwait(false);
 
@@ -65,5 +70,17 @@ internal sealed class TenantService(
         }
 
         return tenant;
+    }
+
+    public async Task UpdateNameByIdAndSaveAsync(
+        string id,
+        string newName)
+    {
+        await AssertNameAsync(newName)
+            .ConfigureAwait(false);
+
+        await _tenantRepository
+            .UpdateNameByIdAndSaveAsync(id, newName)
+            .ConfigureAwait(false);
     }
 }

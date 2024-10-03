@@ -66,9 +66,16 @@ public record class Account()
 
     public bool HasPermission(string permissionKey)
     {
+        var hasRole = Roles.Exists(r => r.Id == permissionKey);
+
+        return hasRole || CheckPermission(permissionKey);
+    }
+
+    private bool CheckPermission(string permissionKey)
+    {
         var allPermissions = Roles
            .SelectMany(r => r.Permissions)
-           .ToList();
+        .ToList();
 
         var hasPermission = allPermissions.Exists(p => p.HasPermissionKey(permissionKey));
 
