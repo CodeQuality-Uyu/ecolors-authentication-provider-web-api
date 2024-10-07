@@ -19,6 +19,7 @@ using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Roles.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
+using CQ.AuthProvider.DataAccess.EfCore.Tenants.Mappings;
 using CQ.Extensions.ServiceCollection;
 using CQ.UnitOfWork.EfCore.Configuration;
 using CQ.Utility;
@@ -54,6 +55,7 @@ public static class EfCoreRepositoriesConfig
                 config.AddProfile<InvitationProfile>();
                 config.AddProfile<AppProfile>();
                 config.AddProfile<AccountProfile>();
+                config.AddProfile<TenantProfile>();
             });
 
         return services;
@@ -73,7 +75,7 @@ public static class EfCoreRepositoriesConfig
             LifeTime.Scoped)
 
             .AddUnitOfWork<AuthDbContext>(LifeTime.Scoped)
-            
+
             .AddAbstractionRepository<AccountEfCore, IAccountRepository, AccountRepository>(LifeTime.Scoped)
             .AddAbstractionRepository<RoleEfCore, IRoleRepository, RoleRepository>(LifeTime.Scoped)
             .AddRepositoryForContext<RolePermission, AuthDbContext>(LifeTime.Scoped)

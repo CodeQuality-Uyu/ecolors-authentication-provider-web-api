@@ -29,33 +29,15 @@ public sealed record class RoleEfCore()
 
     public TenantEfCore Tenant { get; init; } = null!;
 
-    // For new Role
-    public RoleEfCore(
-        string name,
-        string description,
-        List<PermissionEfCore> permissions,
-        bool isPublic,
-        bool isDefault,
-        App app)
+    internal RoleEfCore(Role role)
         : this()
     {
-        Name = name;
-        Description = description;
-        IsPublic = isPublic;
-        IsDefault = isDefault;
-        Permissions = permissions;
-        AppId = app.Id;
-        TenantId = app.Tenant.Id;
-    }
-
-    internal RoleEfCore(Role role)
-        : this(role.Name,
-              role.Description,
-              [],
-              role.IsPublic,
-              role.IsDefault,
-              role.App)
-    {
         Id = role.Id;
+        Name = role.Name;
+        Description = role.Description;
+        IsPublic = role.IsPublic;
+        IsDefault = role.IsDefault;
+        AppId = role.App.Id;
+        TenantId = role.Tenant.Id;
     }
 }

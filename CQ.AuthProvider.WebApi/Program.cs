@@ -2,8 +2,14 @@ using CQ.AuthProvider.WebApi.AppConfig;
 using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.DataAccess.EfCore;
 using CQ.IdentityProvider.EfCore;
+using CQ.Extensions.Environments;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (!builder.Environment.IsLocal())
+{
+    builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.None);
+}
 
 builder.Services
     .AddControllers(

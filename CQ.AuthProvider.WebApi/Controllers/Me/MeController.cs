@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using CQ.ApiElements.Filters.Authorizations;
-using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Me;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Me.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Filters;
-using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
@@ -28,15 +26,16 @@ public sealed class MeController(
         return _mapper.Map<AccountLoggedResponse>(accountLogged);
     }
 
-    [HttpPatch("password")]
-    public async Task UpdatePasswordAsync(UpdatePasswordRequest? request)
+    [HttpPatch("password-logged")]
+    [CQAuthentication]
+    public async Task UpdatePasswordAsync(UpdatePasswordLoggedRequest request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
         var args = request.Map();
 
+        var accountLogged = this.GetAccountLogged();
+        
         await _meService
-            .UpdatePasswordAsync(args)
+            .UpdatePasswordLoggedAsync(args, accountLogged)
             .ConfigureAwait(false);
     }
 
@@ -66,7 +65,7 @@ public sealed class MeController(
 
         await _tenantService
             .UpdateNameByIdAndSaveAsync(
-            accountLogged.Tenant.Id,
+            accountLogged.TenantValue.Id,
             args)
             .ConfigureAwait(false);
     }

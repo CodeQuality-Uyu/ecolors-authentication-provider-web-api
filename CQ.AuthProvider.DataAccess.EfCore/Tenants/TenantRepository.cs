@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 namespace CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
 internal sealed class TenantRepository
-    (EfCoreContext context,
+    (AuthDbContext context,
     IMapper mapper)
-    : EfCoreRepository<TenantEfCore>(context),
+    : AuthDbContextRepository<TenantEfCore>(context),
     ITenantRepository
 {
     public async Task CreateAndSaveAsync(Tenant tenant)
@@ -56,7 +56,12 @@ internal sealed class TenantRepository
         string id,
         string newName)
     {
-        await UpdateAndSaveByIdAsync(id, new { Name = newName })
+        var tenant = await GetByIdAsync(id).ConfigureAwait(false);
+
+        tenant.Name = newName;
+
+        await _baseContext
+            .SaveChangesAsync()
             .ConfigureAwait(false);
     }
 }

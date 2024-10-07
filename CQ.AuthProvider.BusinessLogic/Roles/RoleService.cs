@@ -9,8 +9,7 @@ namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 internal sealed class RoleService(
     IRoleRepository roleRepository,
-    IPermissionInternalService permissionService,
-    IAppInternalService appService)
+    IPermissionInternalService permissionService)
     : IRoleInternalService
 {
     public async Task<Pagination<Role>> GetAllAsync(
@@ -20,14 +19,6 @@ internal sealed class RoleService(
         int pageSize,
         AccountLogged accountLogged)
     {
-        AssertCanReadPrivateRolesOrSetDefault(
-            ref isPrivate,
-            accountLogged);
-
-        AssertCanFilterRolesByAppIdOrSetDefault(
-            ref appId,
-            accountLogged);
-
         var roles = await roleRepository
             .GetAllAsync(
             appId,
@@ -38,44 +29,6 @@ internal sealed class RoleService(
             .ConfigureAwait(false);
 
         return roles;
-    }
-
-    private static void AssertCanReadPrivateRolesOrSetDefault(
-        ref bool? isPrivate,
-        AccountLogged accountLogged)
-    {
-        if (PermissionService.IsPrivate(isPrivate))
-        {
-            accountLogged.AssertPermission(PermissionKey.CanReadPrivateRoles);
-        }
-
-        if (Guard.IsNull(isPrivate))
-        {
-            var hasPermission = accountLogged.HasPermission(PermissionKey.CanReadPrivateRoles);
-
-            isPrivate = hasPermission
-                    ? null
-                    : false;
-        }
-    }
-
-    private static void AssertCanFilterRolesByAppIdOrSetDefault(
-        ref string? appId,
-        AccountLogged accountLogged)
-    {
-        if (Guard.IsNotNullOrEmpty(appId) &&
-            !accountLogged.AppsIds.Contains(appId!) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            accountLogged.AssertPermission(PermissionKey.CanReadRolesOfTenant);
-        }
-
-        if (Guard.IsNullOrEmpty(appId) &&
-            !accountLogged.HasPermission(PermissionKey.CanReadRolesOfTenant) &&
-            !accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            appId = accountLogged.AppLogged.Id;
-        }
     }
 
     public async Task CreateAsync(

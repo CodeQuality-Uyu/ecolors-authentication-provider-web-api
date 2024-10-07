@@ -105,15 +105,14 @@ internal sealed class InvitationService(
             .DeleteByIdAsync(id)
             .ConfigureAwait(false);
 
-        var account = new Account(
+        var account = Account.NewForInvitation(
             args.Email,
             args.FirstName,
             args.LastName,
             args.ProfilePictureId,
             args.Locale,
             args.TimeZone,
-            invitation.Role,
-            invitation.App);
+            invitation);
 
         var result = await _accountService
                 .CreateAsync(account, args.Password)

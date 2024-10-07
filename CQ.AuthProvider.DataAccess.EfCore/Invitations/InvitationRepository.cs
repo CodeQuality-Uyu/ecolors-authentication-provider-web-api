@@ -25,7 +25,7 @@ internal sealed class InvitationRepository(
         var appsIdsOfAccountLogged = accountLogged.AppsIds;
 
         var query = _entities
-            .Where(i => i.TenantId == accountLogged.Tenant.Id)
+            .Where(i => i.TenantId == accountLogged.TenantValue.Id)
             .Where(i => creatorId == null || i.CreatorId == creatorId)
             .Where(i =>
             appId == null ||

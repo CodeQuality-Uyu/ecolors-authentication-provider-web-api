@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.Exceptions;
@@ -28,7 +29,11 @@ public record class Account()
 
     public List<App> Apps { get; init; } = [];
 
-    public Tenant Tenant { get; set; } = null!;
+    public Tenant? Tenant { get; init; }
+
+    public bool HasTenant => Guard.IsNotNull(Tenant);
+
+    public Tenant TenantValue => Tenant!;
 
     // For new Account
     public Account(
@@ -53,6 +58,26 @@ public record class Account()
         Tenant = app.Tenant;
         Apps = [app];
     }
+
+    public static Account NewForInvitation(
+        string email,
+        string firstName,
+        string lastName,
+        string? profilePictureUrl,
+        string locale,
+        string timeZone,
+        Invitation invitation) => new(
+            email,
+            firstName,
+            lastName,
+            profilePictureUrl,
+            locale,
+            timeZone,
+            invitation.Role,
+            invitation.App)
+        {
+            Tenant = null
+        };
 
     public void AssertPermission(string permissionKey)
     {

@@ -1,5 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Permissions;
-using CQ.AuthProvider.DataAccess.EfCore.Permissions;
+﻿using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
@@ -20,17 +19,4 @@ public sealed record class AppEfCore()
     public List<RoleEfCore> Roles { get; init; } = [];
 
     public List<PermissionEfCore> Permissions { get; init; } = [];
-
-    // For new App
-    public AppEfCore(
-        string id,
-        string name,
-        string tenantId,
-        List<Permission> permissions)
-        : this()
-    {
-        Id = id;
-        Name = name;
-        TenantId = tenantId;
-    }
 }

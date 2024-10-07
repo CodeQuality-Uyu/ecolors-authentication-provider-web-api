@@ -34,6 +34,11 @@ internal sealed class CQAuthenticationAttribute
             .GetAccountByTokenAsync(headerValue)
             .ConfigureAwait(false);
 
+        if (!account.HasTenant)
+        {
+            throw new InvalidOperationException("Account incomplete, missing tenant");
+        }
+
         return account;
     }
 }

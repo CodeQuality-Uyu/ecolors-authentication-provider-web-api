@@ -58,7 +58,7 @@ public sealed record class InvitationEfCore()
               invitation.Role.Id,
               invitation.App.Id,
               invitation.Creator.Id,
-              invitation.Creator.Tenant.Id)
+              invitation.Creator.TenantValue.Id)
     {
         Id = invitation.Id;
         CreatedAt = invitation.CreatedAt;

@@ -70,7 +70,7 @@ public sealed record class FakeAccountLogged
 
     public string TenantId
     {
-        get => Tenant.Id;
+        get => TenantValue.Id;
         init
         {
             Tenant = new Tenant

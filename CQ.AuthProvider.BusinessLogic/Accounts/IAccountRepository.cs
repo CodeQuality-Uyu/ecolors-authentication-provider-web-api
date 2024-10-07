@@ -1,6 +1,4 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Tenants;
-using System.Linq.Expressions;
-
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public interface IAccountRepository
@@ -22,6 +20,10 @@ public interface IAccountRepository
         Tenant tenant);
 
     Task AddRoleByIdAsync(
+        string id,
+        string roleId);
+
+    Task RemoveRoleByIdAsync(
         string id,
         string roleId);
 }

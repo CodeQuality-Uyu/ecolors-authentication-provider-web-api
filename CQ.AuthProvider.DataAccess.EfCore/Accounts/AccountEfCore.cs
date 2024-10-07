@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
@@ -26,35 +27,26 @@ public sealed record class AccountEfCore()
 
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow.Date;
 
-    public string TenantId { get; init; } = null!;
+    public string? TenantId { get; set; }
 
-    public TenantEfCore Tenant { get; init; } = null!;
+    public TenantEfCore? Tenant { get; init; }
 
     public List<RoleEfCore> Roles { get; init; } = [];
 
     public List<AppEfCore> Apps { get; init; } = [];
 
     // For new AccountEfCore
-    public AccountEfCore(
-        string id,
-        string email,
-        string fullName,
-        string firstName,
-        string lastName,
-        string locale,
-        string timeZone,
-        string? profilePictureId,
-        Tenant tenant)
+    internal AccountEfCore(Account account)
         : this()
     {
-        Id = id;
-        Email = email;
-        FullName = fullName;
-        FirstName = firstName;
-        LastName = lastName;
-        ProfilePictureId = profilePictureId;
-        Locale = locale;
-        TimeZone = timeZone;
-        TenantId = tenant.Id;
+        Id = account.Id;
+        Email = account.Email;
+        FullName = account.FullName;
+        FirstName = account.FirstName;
+        LastName = account.LastName;
+        Locale = account.Locale;
+        TimeZone = account.TimeZone;
+        ProfilePictureId = account.ProfilePictureId;
+        TenantId = account.Tenant?.Id;
     }
 }

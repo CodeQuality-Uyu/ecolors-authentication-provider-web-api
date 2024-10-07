@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
@@ -22,25 +23,13 @@ internal sealed class PermissionRepository(
         int pageSize,
         AccountLogged accountLogged)
     {
-        var appsIdsOfAccountLogged = accountLogged.AppsIds;
-        var rolesIds = accountLogged.RolesIds;
-
-        var canReadOfTenant = accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant);
-
-        var appLoggedIsAuthWebApi = accountLogged.AppLogged.Id == AuthDbContext.AUTH_WEB_API_APP_ID;
+        var appLoggedIsAuthWebApi = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
 
         var query = _entities
-            .Where(p => (p.AppId == AuthDbContext.AUTH_WEB_API_APP_ID && appLoggedIsAuthWebApi) || p.TenantId == accountLogged.Tenant.Id)
+            .Where(p => (appLoggedIsAuthWebApi && p.AppId == AuthConstants.AUTH_WEB_API_APP_ID) || p.TenantId == accountLogged.TenantValue.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
-            .Where(p =>
-            (roleId == null && canReadOfTenant) ||
-            (roleId != null && p.Roles.Any(r => r.Id == roleId)) ||
-            p.Roles.Any(r => rolesIds.Contains(r.Id)))
-            .Where(p =>
-            (appId == null && canReadOfTenant) ||
-            (appId != null && p.AppId == appId) ||
-            appsIdsOfAccountLogged.Contains(p.AppId))
-            ;
+            .Where(p => roleId == null || p.Roles.Any(r => r.Id == roleId))
+            .Where(p => appId == null || p.AppId == appId);
 
         var permissions = await query
             .PaginateAsync(null, page, pageSize)
@@ -55,7 +44,7 @@ internal sealed class PermissionRepository(
     {
         var query = _entities
             .Where(p => keys.Any(i => i.appId == p.AppId && i.keys.Contains(p.Key)))
-            .Where(p => p.TenantId == accountLogged.Tenant.Id);
+            .Where(p => p.TenantId == accountLogged.TenantValue.Id);
 
         var permissions = await query
             .ToListAsync()

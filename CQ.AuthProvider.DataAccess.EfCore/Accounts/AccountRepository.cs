@@ -17,16 +17,7 @@ internal sealed class AccountRepository(
 {
     public async Task CreateAsync(Account account)
     {
-        var accountEfCore = new AccountEfCore(
-            account.Id,
-            account.Email,
-            account.FullName,
-            account.FirstName,
-            account.LastName,
-            account.Locale,
-            account.TimeZone,
-            account.ProfilePictureId,
-            account.Tenant);
+        var accountEfCore = new AccountEfCore(account);
 
         var accountRolesEfCore = account
             .Roles
@@ -96,9 +87,9 @@ internal sealed class AccountRepository(
             [.. includes]);
 
         var query = queryInclude
+            .Where(a => a.Id == id)
             .AsNoTracking()
-            .AsSplitQuery()
-            .Where(a => a.Id == id);
+            .AsSplitQuery();
 
         var account = await query
             .FirstOrDefaultAsync()
@@ -125,6 +116,20 @@ internal sealed class AccountRepository(
 
         await _concreteContext
             .AccountsRoles
-            .AddRangeAsync(accountRole);
+            .AddAsync(accountRole);
+    }
+
+    public Task RemoveRoleByIdAsync(
+        string id,
+        string roleId)
+    {
+        var query = _concreteContext
+            .AccountsRoles
+            .Where(a => a.AccountId == id)
+            .Where(a => a.RoleId == roleId);
+
+        _baseContext.RemoveRange(query);
+
+        return Task.CompletedTask;
     }
 }

@@ -28,32 +28,15 @@ public sealed record class PermissionEfCore()
 
     public TenantEfCore Tenant { get; init; } = null!;
 
-    // For new Permission
-    public PermissionEfCore(
-        string name,
-        string description,
-        string key,
-        bool isPublic,
-        string appId,
-        string tenantId)
+    internal PermissionEfCore(Permission permission)
         : this()
     {
-        Name = name;
-        Description = description;
-        Key = key;
-        IsPublic = isPublic;
-        AppId = appId;
-        TenantId = tenantId;
-    }
-
-    internal PermissionEfCore(Permission permission)
-        : this(permission.Name,
-              permission.Description,
-              permission.Key,
-              permission.IsPublic,
-              permission.App.Id,
-              permission.Tenant.Id)
-    {
         Id = permission.Id;
+        Name = permission.Name;
+        Description = permission.Description;
+        Key = permission.Key;
+        IsPublic = permission.IsPublic;
+        AppId = permission.App.Id;
+        TenantId = permission.Tenant.Id;
     }
 }

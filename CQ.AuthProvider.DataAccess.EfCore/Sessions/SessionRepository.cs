@@ -21,12 +21,11 @@ internal sealed class SessionRepository(
     public async Task<Session> GetByTokenAsync(string token)
     {
         var query = _entities
-            .Include(s => s.Account)
-                .ThenInclude(a => a.Roles)
+            .Include(s => s.Account.Roles)
                     .ThenInclude(r => r.Permissions)
             .Include(a => a.Account.Tenant)
             .Include(a => a.Account.Apps)
-            .Include(s =>s.App)
+            .Include(s => s.App)
             .AsNoTracking()
             .AsSplitQuery()
             .Where(s => s.Token == token);

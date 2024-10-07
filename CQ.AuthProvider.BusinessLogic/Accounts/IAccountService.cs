@@ -4,6 +4,8 @@ public interface IAccountService
 {
     Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs auth);
 
+    Task UpdatePasswordByCredentialsAsync(UpdatePasswordArgs args);
+
     Task<Account> GetByEmailAsync(string email);
 }
 

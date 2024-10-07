@@ -1,5 +1,4 @@
-﻿
-using CQ.AuthProvider.DataAccess.EfCore.Accounts;
+﻿using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Tenants;
@@ -8,7 +7,7 @@ public sealed record class TenantEfCore()
 {
     public string Id { get; init; } = Db.NewId();
 
-    public string Name { get; init; } = null!;
+    public string Name { get; set; } = null!;
 
     public string OwnerId { get; set; } = null!;
 

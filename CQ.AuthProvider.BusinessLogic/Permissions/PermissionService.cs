@@ -16,18 +16,6 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         int pageSize,
         AccountLogged accountLogged)
     {
-        AssertCanReadPrivatePermissionsOrSetDefault(
-            ref isPrivate,
-            accountLogged);
-
-        AssertCanFilterPermissionsByRoleIdOrSetDefault(
-            roleId,
-            accountLogged);
-
-        AssertCanFilterPermissionsByAppIdOrSetDefault(
-            ref appId,
-            accountLogged);
-
         var permissions = await permissionRepository
             .GetAllAsync(
             appId,
@@ -39,64 +27,6 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             .ConfigureAwait(false);
 
         return permissions;
-    }
-
-    private static void AssertCanReadPrivatePermissionsOrSetDefault(
-        ref bool? isPrivate,
-        AccountLogged accountLogged)
-    {
-        if (IsPrivate(isPrivate))
-        {
-            accountLogged.AssertPermission(PermissionKey.CanReadPrivatePermissions);
-        }
-
-        if (Guard.IsNull(isPrivate))
-        {
-            var hasPermission = accountLogged.HasPermission(PermissionKey.CanReadPrivatePermissions);
-
-            isPrivate = hasPermission
-                    ? null
-                    : false;
-        }
-    }
-
-    public static bool IsPrivate(bool? isPrivate)
-    {
-        return isPrivate.HasValue && isPrivate.Value;
-    }
-
-    private static void AssertCanFilterPermissionsByRoleIdOrSetDefault(
-        string? roleId,
-        AccountLogged accountLogged)
-    {
-        if (Guard.IsNullOrEmpty(roleId) &&
-            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant))
-        {
-            return;
-        }
-
-        if (!accountLogged.RolesIds.Contains(roleId!))
-        {
-            accountLogged.AssertPermission(PermissionKey.CanReadPermissionsOfRole);
-        }
-    }
-
-    private static void AssertCanFilterPermissionsByAppIdOrSetDefault(
-        ref string? appId,
-        AccountLogged accountLogged)
-    {
-        if (Guard.IsNullOrEmpty(appId) &&
-            !accountLogged.HasPermission(PermissionKey.CanReadPermissionsOfTenant))
-        {
-            appId = accountLogged.AppLogged.Id;
-            return;
-        }
-
-        if (Guard.IsNotNullOrEmpty(appId) &&
-            !accountLogged.AppsIds.Contains(appId!))
-        {
-            accountLogged.AssertPermission(PermissionKey.CanReadPermissionsOfTenant);
-        }
     }
 
     public async Task<List<Permission>> GetExactAllByKeysAsync(

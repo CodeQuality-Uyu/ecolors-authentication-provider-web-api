@@ -1,8 +1,10 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions;
+using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Me;
 
@@ -10,6 +12,7 @@ internal sealed class MeService(
     IAccountRepository _accountRepository,
     ITenantRepository _tenantRepository,
     IIdentityRepository _identityRepository,
+    IRoleRepository _roleRepository,
     IUnitOfWork _unitOfWork)
     : IMeService
 {
@@ -20,46 +23,57 @@ internal sealed class MeService(
         var newOwner = await _accountRepository
             .GetByIdAsync(
             newOwnerId,
-            [nameof(Account.Tenant)])
+            nameof(Account.Tenant),
+            nameof(Account.Roles))
             .ConfigureAwait(false);
 
-        if (newOwner.Tenant.Id != accountLogged.Tenant.Id)
+        if (newOwner.TenantValue.Id != accountLogged.TenantValue.Id)
         {
             throw new InvalidOperationException("New owner is not in tenant");
         }
 
+        var isTenantOwner = newOwner.HasPermission(AuthConstants.TENANT_OWNER_ROLE_ID);
+        if (isTenantOwner)
+        {
+            return;
+        }
+
         await _tenantRepository
             .UpdateOwnerByIdAsync(
-            accountLogged.Tenant.Id,
+            accountLogged.TenantValue.Id,
             newOwner);
 
-        var notTenantOwner = !newOwner.HasPermission(AuthConstants.TENANT_OWNER_ROLE_ID);
-        if (notTenantOwner)
+        await _accountRepository
+            .AddRoleByIdAsync(newOwnerId, AuthConstants.TENANT_OWNER_ROLE_ID)
+            .ConfigureAwait(false);
+
+        var newRole = await _roleRepository
+            .GetDefaultOrDefaultByAppIdAndTenantIdAsync(AuthConstants.AUTH_WEB_API_APP_ID, accountLogged.TenantValue.Id)
+            .ConfigureAwait(false);
+        if (Guard.IsNotNull(newRole))
         {
             await _accountRepository
-                .AddRoleByIdAsync(
-                newOwnerId,
-                AuthConstants.TENANT_OWNER_ROLE_ID)
+                .AddRoleByIdAsync(accountLogged.Id, newRole.Id)
                 .ConfigureAwait(false);
         }
+
+        await _accountRepository
+            .RemoveRoleByIdAsync(accountLogged.Id, AuthConstants.TENANT_OWNER_ROLE_ID)
+            .ConfigureAwait(false);
 
         await _unitOfWork
             .CommitChangesAsync()
             .ConfigureAwait(false);
     }
 
-    public async Task UpdatePasswordAsync(UpdatePasswordArgs args)
+    public async Task UpdatePasswordLoggedAsync(
+        string newPassword,
+        AccountLogged accountLogged)
     {
-        var identity = await _identityRepository
-            .GetByCredentialsAsync(
-            args.Email,
-            args.OldPassword)
-            .ConfigureAwait(false);
-
         await _identityRepository
             .UpdatePasswordByIdAsync(
-            identity.Id,
-            args.NewPassword)
+            accountLogged.Id,
+            newPassword)
             .ConfigureAwait(false);
     }
 }

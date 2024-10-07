@@ -126,6 +126,21 @@ internal sealed class AccountService(
     }
     #endregion
 
+    public async Task UpdatePasswordByCredentialsAsync(UpdatePasswordArgs args)
+    {
+        var identity = await _identityRepository
+            .GetByCredentialsAsync(
+            args.Email,
+            args.OldPassword)
+            .ConfigureAwait(false);
+
+        await _identityRepository
+            .UpdatePasswordByIdAsync(
+            identity.Id,
+            args.NewPassword)
+            .ConfigureAwait(false);
+    }
+
     public async Task AssertByEmailAsync(string email)
     {
         var existAccount = await _accountRepository

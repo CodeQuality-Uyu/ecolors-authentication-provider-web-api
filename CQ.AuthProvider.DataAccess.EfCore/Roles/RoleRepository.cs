@@ -26,18 +26,10 @@ internal sealed class RoleRepository(
         int pageSize,
         AccountLogged accountLogged)
     {
-        var appsIdsOfAccountLogged = accountLogged.AppsIds;
-
-        var canReadOfTenant = accountLogged.HasPermission(PermissionKey.CanReadRolesOfTenant);
-
         var query = _entities
-            .Where(r => r.TenantId == accountLogged.Tenant.Id)
+            .Where(r => r.TenantId == accountLogged.TenantValue.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
-            .Where(r =>
-            (appId == null && canReadOfTenant) ||
-            (appId != null && r.AppId == appId) ||
-            appsIdsOfAccountLogged.Contains(r.AppId)
-            );
+            .Where(r => appId == null || r.AppId == appId);
 
         var roles = await query
             .PaginateAsync(null, page, pageSize)
@@ -51,7 +43,7 @@ internal sealed class RoleRepository(
         AccountLogged accountLogged)
     {
         var query = _entities
-            .Where(r => r.TenantId == accountLogged.Tenant.Id)
+            .Where(r => r.TenantId == accountLogged.TenantValue.Id)
             .Where(r => appsIds.Contains(r.AppId))
             .Where(r => r.IsDefault);
 
@@ -108,7 +100,9 @@ internal sealed class RoleRepository(
             .ConfigureAwait(false);
     }
 
-    public async Task AddPermissionsAsync(string id, List<string> permissionsKeys)
+    public async Task AddPermissionsAsync(
+        string id,
+        List<string> permissionsKeys)
     {
         var permissions = await permissionRepository
             .GetAllAsync(p => permissionsKeys.Contains(p.Key))
@@ -119,5 +113,22 @@ internal sealed class RoleRepository(
         await rolePermissionRepository
             .CreateBulkAndSaveAsync(rolePermissions)
             .ConfigureAwait(false);
+    }
+
+    public async Task<Role?> GetDefaultOrDefaultByAppIdAndTenantIdAsync(
+        string appId,
+        string tenantId)
+    {
+        var query = _entities
+            .Where(r => r.AppId == appId)
+            .Where(r => r.TenantId == tenantId)
+            .Where(r => r.IsDefault);
+
+        var entity = await query
+            .AsNoTracking()
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        return mapper.Map<Role>(entity);
     }
 }

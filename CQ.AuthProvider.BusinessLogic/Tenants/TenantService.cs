@@ -1,5 +1,4 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 
 namespace CQ.AuthProvider.BusinessLogic.Tenants;
@@ -38,7 +37,7 @@ internal sealed class TenantService(
                     .ConfigureAwait(false);
         if (existTenant)
         {
-            throw new InvalidOperationException("Invalid name");
+            throw new InvalidOperationException("Name is in use");
         }
     }
 
@@ -62,12 +61,6 @@ internal sealed class TenantService(
         var tenant = await _tenantRepository
             .GetByIdAsync(id)
             .ConfigureAwait(false);
-
-        if (tenant.Owner.Id != accountLogged.Id &&
-            accountLogged.HasPermission(PermissionKey.FullAccess))
-        {
-            throw new InvalidOperationException("Invalid tenant");
-        }
 
         return tenant;
     }

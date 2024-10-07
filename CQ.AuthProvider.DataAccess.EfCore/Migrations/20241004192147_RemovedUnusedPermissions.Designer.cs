@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241004192147_RemovedUnusedPermissions")]
+    partial class RemovedUnusedPermissions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -324,7 +327,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             AppId = "d31184dabbc6435eaec86694650c2679",
                             Description = "Can create tenant",
                             IsPublic = true,
-                            Key = "create-tenant",
+                            Key = "create-tenants",
                             Name = "Can create tenant",
                             TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
@@ -334,7 +337,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             AppId = "d31184dabbc6435eaec86694650c2679",
                             Description = "Can update tenant name",
                             IsPublic = true,
-                            Key = "updatetenantname-me",
+                            Key = "patchname-tenants",
                             Name = "Can update tenant name",
                             TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
@@ -344,18 +347,18 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             AppId = "d31184dabbc6435eaec86694650c2679",
                             Description = "Can update tenant owner",
                             IsPublic = true,
-                            Key = "transfertenant-me",
+                            Key = "patchowner-tenants",
                             Name = "Can update tenant owner",
                             TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
                         new
                         {
-                            Id = "7e9af6ea241342c5bb97c634a36c2de2",
+                            Id = "cd4566d8e48b42ce9854722fdaae2fbc",
                             AppId = "d31184dabbc6435eaec86694650c2679",
-                            Description = "Can create app",
+                            Description = "Transfer ownership of tenant",
                             IsPublic = true,
-                            Key = "create-app",
-                            Name = "Can create app",
+                            Key = "transfertenant-me",
+                            Name = "Transfer ownership of tenant",
                             TenantId = "b22fcf202bd84a97936ccf2949e00da4"
                         },
                         new
@@ -564,8 +567,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         },
                         new
                         {
-                            Id = "f368580391cc459c964ce099cebb9b02",
-                            PermissionId = "7e9af6ea241342c5bb97c634a36c2de2",
+                            Id = "edebfdc59b864c3e83b5e353aebfcc26",
+                            PermissionId = "cd4566d8e48b42ce9854722fdaae2fbc",
                             RoleId = "5c2260fc58864b75a4cad5c0e7dd57cb"
                         },
                         new
@@ -578,6 +581,12 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         {
                             Id = "16ef3304b62240b2bd86b4287f14bea3",
                             PermissionId = "33d7733f42214f6785e10a480c45a007",
+                            RoleId = "dfa136595e304b98ad7b55d782c6a12c"
+                        },
+                        new
+                        {
+                            Id = "7ed16be85568479585b49d8ad1a96d2e",
+                            PermissionId = "cd4566d8e48b42ce9854722fdaae2fbc",
                             RoleId = "dfa136595e304b98ad7b55d782c6a12c"
                         });
                 });

@@ -1,5 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Permissions;
-using CQ.AuthProvider.BusinessLogic.Utils;
+﻿using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;
@@ -16,9 +15,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore;
 public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     : EfCoreContext(options)
 {
-    public const string SEED_TENANT_ID = "b22fcf202bd84a97936ccf2949e00da4";
-    public const string AUTH_WEB_API_APP_ID = "d31184dabbc6435eaec86694650c2679";
-
     public DbSet<TenantEfCore> Tenants { get; set; }
 
     public DbSet<AccountEfCore> Accounts { get; set; }
@@ -43,8 +39,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        const string seedTenantId = "b22fcf202bd84a97936ccf2949e00da4";
         const string seedAccountId = "5a0d9e179991499e80db0a15fda4df79";
         const string authWebApiOwnerRoleId = "dfa136595e304b98ad7b55d782c6a12c";
+        const string seedRoleId = "0415b39e83cd4fbdb33c5004a0b65294";
 
         modelBuilder.Entity<TenantEfCore>(entity =>
         {
@@ -62,7 +60,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasData(
                 new TenantEfCore
                 {
-                    Id = SEED_TENANT_ID,
+                    Id = seedTenantId,
                     Name = "Seed Tenant",
                     OwnerId = seedAccountId
                 });
@@ -79,10 +77,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasData(
                 new AppEfCore
                 {
-                    Id = AUTH_WEB_API_APP_ID,
+                    Id = AuthConstants.AUTH_WEB_API_APP_ID,
                     Name = "Auth Provider WEB API",
                     IsDefault = true,
-                    TenantId = SEED_TENANT_ID,
+                    TenantId = seedTenantId,
                 });
         });
 
@@ -115,7 +113,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 Locale = "Uruguay",
                 TimeZone = "-3",
                 ProfilePictureId = null,
-                TenantId = SEED_TENANT_ID,
+                TenantId = seedTenantId,
                 CreatedAt = new DateTime(2024, 1, 1),
             });
         });
@@ -138,13 +136,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     Id = "1f191c90510d456d84bda9e17fe24f50",
                     AccountId = seedAccountId,
-                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                },
-                new AccountRole
-                {
-                    Id = "735eeea5c936492794514b5cc3ecd217",
-                    AccountId = seedAccountId,
-                    RoleId = authWebApiOwnerRoleId,
+                    RoleId = seedRoleId,
                 })
             ;
         });
@@ -167,7 +159,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     Id = "ef03980ea2a54e4bba92e022fbd33d9b",
                     AccountId = seedAccountId,
-                    AppId = AUTH_WEB_API_APP_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                 })
             ;
         });
@@ -196,9 +188,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = AuthConstants.TENANT_OWNER_ROLE_ID,
                     Name = "Tenant Owner",
                     Description = "Tenant Owner",
-                    AppId = AUTH_WEB_API_APP_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
-                    TenantId = SEED_TENANT_ID,
+                    TenantId = seedTenantId,
                     IsDefault = false,
                 },
                 new RoleEfCore
@@ -206,35 +198,40 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = authWebApiOwnerRoleId,
                     Name = "Auth Web Api Owner",
                     Description = "Owner of Auth Web Api App",
-                    AppId = AUTH_WEB_API_APP_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
-                    TenantId = SEED_TENANT_ID,
+                    TenantId = seedTenantId,
+                    IsDefault = false,
+                },
+                new RoleEfCore
+                {
+                    Id = seedRoleId,
+                    Name = "Seed",
+                    Description = "Should be deleted once deployed",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    IsPublic = false,
+                    TenantId = seedTenantId,
                     IsDefault = false,
                 });
         });
 
         const string createPermissionPermissionId = "39d20cb8c4d541c6944aeeb678261cea";
         const string getAllPermissionsPermissionId = "d40ad347c7f943e399069eef409b4fa6";
-        const string getAllPermissionsOfTenantPermissionId = "d1d34f71201f4b3e8f1c232aef35c40a";
-        const string getAllPrivatePermissionsPermissionId = "e0132221c91f44ada257a38d951407d6";
-        const string getAllPermissionsOfRolePermissionId = "05276f2a25dc4db5b37b0948e05c35ab";
 
         const string createRolePermissionId = "8b1c2d303f3b45a1aa3ae6af46c8652b";
         const string getAllRolesPermissionId = "aca002cfbf3a47899ff4c16e6be2c029";
-        const string getAllRolesOfTenantPermissionId = "1554a06426024ee88baabad7a71d65cf";
-        const string getAllPrivateRolesPermissionId = "1ce9908dba38490cbc65389bfeece21e";
 
         const string createInvitationPermissionId = "f3ba5c2342a248d89eee2977456d54cd";
         const string getAllInvitationsPermissionId = "80ca0e41ea5046519f351a99b03b294e";
 
-        const string getAllTenantsPermissionId = "9b079f7461554950bbd981f929568322";
         const string createTenantPermissionid = "9203d8a99d4e4a3b9b47f7db0e81353e";
-        const string patchTenantNamePermissionId = "7d21bd25e0b74951b06772ca348e81fa";
+        const string getAllTenantsPermissionId = "9b079f7461554950bbd981f929568322";
         const string patchTenantOwnerPermissionId = "91cc2fb3a90e4f4aa01c02a363ae44c3";
+        const string patchTenantNamePermissionId = "7d21bd25e0b74951b06772ca348e81fa";
 
         const string getAllAccountsPermissionId = "33d7733f42214f6785e10a480c45a007";
 
-        const string transferTenantPermissionid = "cd4566d8e48b42ce9854722fdaae2fbc";
+        const string createAppPermissionId = "7e9af6ea241342c5bb97c634a36c2de2";
 
         modelBuilder.Entity<RolePermission>(entity =>
         {
@@ -249,6 +246,21 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasData(
+            #region Seed
+                new RolePermission
+                {
+                    Id = "ea84e710483e42eea573260151916d36",
+                    RoleId = seedRoleId,
+                    PermissionId = createInvitationPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "2ea1bb330e3e489cbf3402daacef9905",
+                    RoleId = seedRoleId,
+                    PermissionId = getAllRolesPermissionId
+                },
+            #endregion
+
             #region Tenant Owner
             #region Permission
                 new RolePermission
@@ -262,24 +274,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = "d76afb762df349caadc39b7373ea98ed",
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
                     PermissionId = getAllPermissionsPermissionId
-                },
-                new RolePermission
-                {
-                    Id = "e568c9eb81b24a5cae922c2a9a2ebc41",
-                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    PermissionId = getAllPermissionsOfTenantPermissionId
-                },
-                new RolePermission
-                {
-                    Id = "8d01aeac30dd45599da743bcc3f3ee0d",
-                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    PermissionId = getAllPrivatePermissionsPermissionId
-                },
-                new RolePermission
-                {
-                    Id = "a85e6d40858e4451b8a103bd903b6269",
-                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    PermissionId = getAllPermissionsOfRolePermissionId
                 },
             #endregion
 
@@ -295,18 +289,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = "6e3f476ec4354b27af25e025034ee97e",
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
                     PermissionId = getAllRolesPermissionId
-                },
-                new RolePermission
-                {
-                    Id = "fe7a5b81f9284af1857621c234ebc615",
-                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    PermissionId = getAllRolesOfTenantPermissionId
-                },
-                new RolePermission
-                {
-                    Id = "922a41f8597742178605a5ea7c75be32",
-                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    PermissionId = getAllPrivateRolesPermissionId
                 },
             #endregion
 
@@ -346,12 +328,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 },
             #endregion
 
-            #region Me
+            #region App
                 new RolePermission
                 {
-                    Id = "edebfdc59b864c3e83b5e353aebfcc26",
+                    Id = "f368580391cc459c964ce099cebb9b02",
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    PermissionId = transferTenantPermissionid
+                    PermissionId = createAppPermissionId
                 },
             #endregion
             #endregion
@@ -368,12 +350,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = "16ef3304b62240b2bd86b4287f14bea3",
                     RoleId = authWebApiOwnerRoleId,
                     PermissionId = getAllAccountsPermissionId
-                },
-                new RolePermission
-                {
-                    Id = "7ed16be85568479585b49d8ad1a96d2e",
-                    RoleId = authWebApiOwnerRoleId,
-                    PermissionId = transferTenantPermissionid
                 });
             #endregion
         });
@@ -404,8 +380,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Create permission",
                     Description = "Can create permissions",
                     Key = "create-permission",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -414,39 +390,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read permissions",
                     Description = "Can read permissions",
                     Key = "getall-permission",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
-                },
-                new PermissionEfCore
-                {
-                    Id = getAllPermissionsOfTenantPermissionId,
-                    Name = "Can read permissions of tenant",
-                    Description = "Can read permissions of tenant",
-                    Key = PermissionKey.CanReadPermissionsOfTenant,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
-                },
-                new PermissionEfCore
-                {
-                    Id = getAllPrivatePermissionsPermissionId,
-                    Name = "Can read private permissions",
-                    Description = "Can read private permissions",
-                    Key = PermissionKey.CanReadPrivatePermissions,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
-                },
-                new PermissionEfCore
-                {
-                    Id = getAllPermissionsOfRolePermissionId,
-                    Name = "Can filter permissions by role",
-                    Description = "Can filter permissions by role",
-                    Key = PermissionKey.CanReadPermissionsOfRole,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
                 },
             #endregion
 
@@ -457,8 +403,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can create role",
                     Description = "Can create roles",
                     Key = "create-role",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -467,29 +413,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read roles",
                     Description = "Can read roles",
                     Key = "getall-role",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
-                },
-                new PermissionEfCore
-                {
-                    Id = getAllRolesOfTenantPermissionId,
-                    Name = "Can read roles of tenant",
-                    Description = "Can read roles of tenant",
-                    Key = PermissionKey.CanReadRolesOfTenant,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = true,
-                },
-                new PermissionEfCore
-                {
-                    Id = getAllPrivateRolesPermissionId,
-                    Name = "Can read private roles",
-                    Description = "Can read private roles",
-                    Key = PermissionKey.CanReadPrivateRoles,
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
-                    IsPublic = false,
                 },
             #endregion
 
@@ -500,8 +426,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read invitations of tenant",
                     Description = "Can read invitations of tenant",
                     Key = "getall-invitation",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
 
@@ -511,8 +437,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can create invitations",
                     Description = "Can create invitations",
                     Key = "create-invitation",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
             #endregion
@@ -523,9 +449,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = createTenantPermissionid,
                     Name = "Can create tenant",
                     Description = "Can create tenant",
-                    Key = "create-tenants",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    Key = "create-tenant",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -533,9 +459,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = patchTenantNamePermissionId,
                     Name = "Can update tenant name",
                     Description = "Can update tenant name",
-                    Key = "patchname-tenants",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    Key = "updatetenantname-me",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -543,22 +469,22 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = patchTenantOwnerPermissionId,
                     Name = "Can update tenant owner",
                     Description = "Can update tenant owner",
-                    Key = "patchowner-tenants",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    Key = "transfertenant-me",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
             #endregion
 
-            #region Me
+            #region App
                 new PermissionEfCore
                 {
-                    Id = transferTenantPermissionid,
-                    Name = "Transfer ownership of tenant",
-                    Description = "Transfer ownership of tenant",
-                    Key = "transfertenant-me",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    Id = createAppPermissionId,
+                    Name = "Can create app",
+                    Description = "Can create app",
+                    Key = "create-app",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
             #endregion
@@ -571,8 +497,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read all tenants",
                     Description = "Can read all tenants",
                     Key = "getall-tenants",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 },
                 new PermissionEfCore
@@ -581,8 +507,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read all accounts",
                     Description = "Can read all accounts",
                     Key = "getall-accounts",
-                    AppId = AUTH_WEB_API_APP_ID,
-                    TenantId = SEED_TENANT_ID,
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
                     IsPublic = true,
                 });
             #endregion

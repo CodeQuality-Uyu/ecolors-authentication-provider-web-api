@@ -31,7 +31,7 @@ internal sealed class SessionService(
 
         if (Guard.IsNull(app))
         {
-            throw new InvalidOperationException($"Account of email {account.Email} doesn't exist {(Guard.IsNullOrEmpty(args.AppId) ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app {args.AppId}")}");
+            throw new InvalidOperationException($"Account of email {account.Email} doesn't exist {(Guard.IsNullOrEmpty(args.AppId) ? $"in defualt app of tenant {account.TenantValue.Name}" : $"in app {args.AppId}")}");
         }
 
         var session = await CreateAsync(account, app).ConfigureAwait(false);
@@ -56,17 +56,6 @@ internal sealed class SessionService(
 
         await _sessionRepository
             .CreateAsync(session)
-            .ConfigureAwait(false);
-
-        return session;
-    }
-
-    public async Task<Session> GetByTokenAsync(string token)
-    {
-        Db.ThrowIsInvalidId(token, nameof(token));
-
-        var session = await _sessionRepository
-            .GetByTokenAsync(token)
             .ConfigureAwait(false);
 
         return session;
