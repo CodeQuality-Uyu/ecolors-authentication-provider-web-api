@@ -1,19 +1,20 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.AuthProvider.Abstractions;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Identities;
-using CQ.AuthProvider.BusinessLogic.Tokens;
 using CQ.UnitOfWork.Abstractions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
-internal sealed class SessionService(
+public sealed class SessionService(
     ISessionRepository _sessionRepository,
     IIdentityRepository _identityRepository,
     IAccountRepository _accountRepository,
     ITokenService _tokenService,
     IUnitOfWork _unitOfWork)
-    : ISessionInternalService
+    : ISessionInternalService,
+    IItemLoggedService
 {
     public async Task<Session> CreateAndSaveAsync(CreateSessionCredentialsArgs args)
     {
@@ -47,7 +48,9 @@ internal sealed class SessionService(
         Account account,
         App app)
     {
-        var token = _tokenService.Create();
+        var token = await _tokenService
+            .CreateAsync(account)
+            .ConfigureAwait(false);
 
         var session = new Session(
             account,
@@ -68,15 +71,22 @@ internal sealed class SessionService(
             .ConfigureAwait(false);
     }
 
-    public async Task<AccountLogged> GetAccountByTokenAsync(string token)
+    public async Task<object> GetByHeaderAsync(string header, string value)
     {
         var session = await _sessionRepository
-            .GetByTokenAsync(token)
+            .GetByTokenAsync(value)
             .ConfigureAwait(false);
 
-        return new AccountLogged(
+        var account = new AccountLogged(
             session.Account,
-            token,
+            value,
             session.App);
+
+        if (!account.HasTenant)
+        {
+            throw new InvalidOperationException("Account incomplete, missing tenant");
+        }
+
+        return account;
     }
 }

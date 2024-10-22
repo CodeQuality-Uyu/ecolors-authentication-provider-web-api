@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 using System.Data;
@@ -57,26 +58,17 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         AccountLogged accountLogged)
     {
         await CreateBulkAsync(
-            [args],
+            new CreateBulkPermissionArgs([args]),
             accountLogged)
             .ConfigureAwait(false);
     }
 
     public async Task CreateBulkAsync(
-        List<CreatePermissionArgs> args,
+        CreateBulkPermissionArgs args,
         AccountLogged accountLogged)
     {
-        var duplicatedKeys = args
-            .GroupBy(i => i.Key)
-            .Where(g => g.Count() > 1)
-            .Select(g => g.Key)
-            .ToList();
-        if (duplicatedKeys.Count != 0)
-        {
-            throw new ArgumentException($"Duplicated keys argument found ${string.Join(",", duplicatedKeys)}");
-        }
-
         var allPermissionsKeys = args
+            .Permissions
             .ConvertAll(a => (a.AppId ?? accountLogged.AppLogged.Id, a.Key))
             .GroupBy(k => k.Item1)
             .Select(g => (g.Key, g.Select(i => i.Key).ToList()))
@@ -99,24 +91,9 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             throw new InvalidOperationException($"Duplicated keys exist ${string.Join(",", permissionsSavedKeys)}");
         }
 
-        var appsIds = args
-            .GroupBy(a => a.AppId)
-            .Where(a => Guard.IsNotNullOrEmpty(a.Key))
-            .Select(g => g.Key!)
-            .ToList();
-
-        if (appsIds.Count != 0)
-        {
-            var validAppsIds = accountLogged.AppsIds;
-
-            var invalidAppsIds = appsIds
-                .Where(id => !validAppsIds.Contains(id))
-                .ToList();
-
-            throw new InvalidOperationException($"Invalid apps ids {string.Join(",", invalidAppsIds)}");
-        }
-
-        var permissions = args.ConvertAll(p =>
+        var permissions = args
+            .Permissions
+            .ConvertAll(p =>
         {
             var app = Guard.IsNotNullOrEmpty(p.AppId)
             ? accountLogged.Apps.First(a => a.Id == p.AppId)

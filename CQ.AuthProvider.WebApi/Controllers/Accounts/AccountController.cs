@@ -12,7 +12,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 [Route("accounts")]
 public class AccountController(
     IAccountService _accountService,
-    IMapper mapper)
+    IMapper _mapper)
     : ControllerBase
 {
     [HttpPost("credentials")]
@@ -24,10 +24,10 @@ public class AccountController(
             .CreateAndSaveAsync(createAccount)
             .ConfigureAwait(false);
 
-        return mapper.Map<AccountCreatedResponse>(account);
+        return _mapper.Map<AccountCreatedResponse>(account);
     }
 
-    [HttpPatch("password")]
+    [HttpPatch("me/password")]
     public async Task UpdatePasswordAsync(UpdatePasswordRequest? request)
     {
         Guard.ThrowIsNull(request, nameof(request));

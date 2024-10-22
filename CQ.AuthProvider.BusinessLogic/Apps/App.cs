@@ -15,10 +15,12 @@ public sealed record class App()
 
     public App(
         string name,
+        bool isDefault,
         Tenant tenant)
         : this()
     {
         Name = Guard.Normalize(name);
+        IsDefault = isDefault;
         Tenant = tenant;
     }
 }

@@ -1,17 +1,19 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Invitations;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Invitations;
 
 internal sealed class InvitationRepository(
     AuthDbContext context,
-    IMapper mapper)
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper)
     : EfCoreRepository<InvitationEfCore>(context),
     IInvitationRepository
 {
@@ -24,17 +26,18 @@ internal sealed class InvitationRepository(
     {
         var appsIdsOfAccountLogged = accountLogged.AppsIds;
 
-        var query = _entities
+        var query = Entities
             .Where(i => i.TenantId == accountLogged.TenantValue.Id)
             .Where(i => creatorId == null || i.CreatorId == creatorId)
             .Where(i =>
             appId == null ||
             (appId != null && i.AppId == appId) ||
             appsIdsOfAccountLogged.Contains(i.AppId))
+            .Paginate(page, pageSize)
             .AsNoTracking();
 
         var invitations = await query
-            .PaginateAsync(null, page, pageSize)
+            .ToPaginateAsync(page, pageSize)
             .ConfigureAwait(false);
 
         return mapper.Map<Pagination<Invitation>>(invitations);
@@ -49,7 +52,7 @@ internal sealed class InvitationRepository(
 
     public async Task<bool> ExistPendingByEmailAsync(string email)
     {
-        var query = _entities
+        var query = Entities
             .Where(i => i.Email == email)
             .AsNoTracking();
 
@@ -65,7 +68,7 @@ internal sealed class InvitationRepository(
         if (invitation.IsExpired())
         {
             await DeleteAndSaveAsync(invitation).ConfigureAwait(false);
-            await _baseContext.SaveChangesAsync().ConfigureAwait(false);
+            await BaseContext.SaveChangesAsync().ConfigureAwait(false);
 
             return false;
         }
@@ -75,7 +78,7 @@ internal sealed class InvitationRepository(
 
     public async Task<Invitation> GetPendingByIdAsync(string id)
     {
-        var query = _entities
+        var query = Entities
             .Where(i => i.Id == id)
             .Where(i => DateTime.UtcNow <= i.ExpiresAt)
             .AsNoTracking();
@@ -91,10 +94,10 @@ internal sealed class InvitationRepository(
 
     public Task DeleteByIdAsync(string id)
     {
-        var query = _entities
+        var query = Entities
             .Where(i => i.Id == id);
 
-        _entities.RemoveRange(query);
+        Entities.RemoveRange(query);
 
         return Task.CompletedTask;
     }

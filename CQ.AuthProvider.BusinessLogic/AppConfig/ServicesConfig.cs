@@ -7,7 +7,7 @@ using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Tenants;
-using CQ.AuthProvider.BusinessLogic.Tokens;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig;
@@ -15,6 +15,17 @@ namespace CQ.AuthProvider.BusinessLogic.AppConfig;
 public static class ServicesConfig
 {
     public static IServiceCollection ConfigureServices(
+        this IServiceCollection services)
+    {
+        services
+            .AddServices()
+
+            .AddValidators();
+
+        return services;
+    }
+
+    private static IServiceCollection AddServices(
         this IServiceCollection services)
     {
         services
@@ -35,13 +46,23 @@ public static class ServicesConfig
 
             .AddScoped<IInvitationService, InvitationService>()
 
-            .AddScoped<ITokenService, GuidTokenService>()
             .AddScoped<IEmailService, EmailService>()
 
             .AddScoped<IMeService, MeService>()
 
             .AddScoped<ITenantService, TenantService>()
             ;
+
+        return services;
+    }
+
+    private static IServiceCollection AddValidators(
+        this IServiceCollection services)
+    {
+        services
+            .AddTransient<IValidator<CreateAppArgs>, CreateAppArgsValidator>()
+            .AddTransient<IValidator<CreatePermissionArgs>, CreatePermissionArgsValidator>()
+            .AddTransient<IValidator<CreateBulkPermissionArgs>, CreateBulkPermissionArgsValidator>();
 
         return services;
     }

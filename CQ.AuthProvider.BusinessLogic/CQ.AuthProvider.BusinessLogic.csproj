@@ -8,8 +8,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CQ.UnitOfWork.Abstractions" Version="3.0.7" />
+		<PackageReference Include="CQ.UnitOfWork.Abstractions" Version="3.0.8" />
 		<PackageReference Include="CQ.Exceptions" Version="3.0.0" />
+		<PackageReference Include="FluentValidation" Version="11.10.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\CQ.AuthProvider.Abstractions\CQ.AuthProvider.Abstractions.csproj" />
 	</ItemGroup>
 
 	<!--<ItemGroup>

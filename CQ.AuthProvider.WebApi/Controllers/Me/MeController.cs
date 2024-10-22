@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
+using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Me;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Me.Models;
 using CQ.AuthProvider.WebApi.Extensions;
-using CQ.AuthProvider.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
@@ -26,8 +26,8 @@ public sealed class MeController(
         return _mapper.Map<AccountLoggedResponse>(accountLogged);
     }
 
-    [HttpPatch("password-logged")]
-    [CQAuthentication]
+    [HttpPatch("password")]
+    [SecureAuthentication]
     public async Task UpdatePasswordAsync(UpdatePasswordLoggedRequest request)
     {
         var args = request.Map();
@@ -41,7 +41,7 @@ public sealed class MeController(
 
 
     [HttpPatch("tenants/owner")]
-    [CQAuthentication]
+    [SecureAuthentication]
     [SecureAuthorization]
     public async Task TransferTenantAsync(TransferTenantRequest request)
     {
@@ -49,13 +49,16 @@ public sealed class MeController(
 
         var accountLogged = this.GetAccountLogged();
 
-        await _meService
-            .TransferTenantAsync(args, accountLogged)
+        await _tenantService
+            .UpdateOwnerAsync(
+            accountLogged.TenantValue.Id,
+            args,
+            accountLogged)
             .ConfigureAwait(false);
     }
 
     [HttpPatch("tenants/name")]
-    [CQAuthentication]
+    [SecureAuthentication]
     [SecureAuthorization]
     public async Task UpdateTenantNameAsync(UpdateTenantNameRequest request)
     {

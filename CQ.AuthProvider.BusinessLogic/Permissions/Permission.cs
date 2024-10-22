@@ -28,8 +28,8 @@ public sealed record class Permission()
         App app)
         : this()
     {
-        Name = name;
-        Description = description;
+        Name = Guard.Normalize(name);
+        Description = Guard.Normalize(description);
         IsPublic = isPublic;
         Key = key;
         App = app;

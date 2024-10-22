@@ -232,6 +232,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         const string getAllAccountsPermissionId = "33d7733f42214f6785e10a480c45a007";
 
         const string createAppPermissionId = "7e9af6ea241342c5bb97c634a36c2de2";
+        const string getAllAppsPermissionId = "843aa6fb505b4f919930aeeea10511ee";
 
         modelBuilder.Entity<RolePermission>(entity =>
         {
@@ -334,6 +335,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = "f368580391cc459c964ce099cebb9b02",
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
                     PermissionId = createAppPermissionId
+                },
+                new RolePermission
+                {
+                    Id = "116fcf12e6aa43fa837dce2199ce195c",
+                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
+                    PermissionId = getAllAppsPermissionId
                 },
             #endregion
             #endregion
@@ -483,6 +490,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can create app",
                     Description = "Can create app",
                     Key = "create-app",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = getAllAppsPermissionId,
+                    Name = "Can read apps",
+                    Description = "Can read apps of tenant",
+                    Key = "getall-app",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = seedTenantId,
                     IsPublic = true,

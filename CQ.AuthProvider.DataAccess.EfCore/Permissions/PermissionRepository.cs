@@ -6,12 +6,13 @@ using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
 internal sealed class PermissionRepository(
     AuthDbContext context,
-    IMapper mapper)
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper)
     : EfCoreRepository<PermissionEfCore>(context),
     IPermissionRepository
 {
@@ -25,14 +26,15 @@ internal sealed class PermissionRepository(
     {
         var appLoggedIsAuthWebApi = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
 
-        var query = _entities
+        var query = Entities
             .Where(p => (appLoggedIsAuthWebApi && p.AppId == AuthConstants.AUTH_WEB_API_APP_ID) || p.TenantId == accountLogged.TenantValue.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Any(r => r.Id == roleId))
-            .Where(p => appId == null || p.AppId == appId);
+            .Where(p => appId == null || p.AppId == appId)
+            .Paginate(page, pageSize);
 
         var permissions = await query
-            .PaginateAsync(null, page, pageSize)
+            .ToPaginateAsync(page, pageSize)
             .ConfigureAwait(false);
 
         return mapper.Map<Pagination<Permission>>(permissions);
@@ -42,7 +44,7 @@ internal sealed class PermissionRepository(
         List<(string appId, List<string> keys)> keys,
         AccountLogged accountLogged)
     {
-        var query = _entities
+        var query = Entities
             .Where(p => keys.Any(i => i.appId == p.AppId && i.keys.Contains(p.Key)))
             .Where(p => p.TenantId == accountLogged.TenantValue.Id);
 

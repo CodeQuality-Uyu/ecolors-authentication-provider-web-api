@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Controllers.Roles.Models;
 using AutoMapper;
@@ -8,12 +7,13 @@ using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.UnitOfWork.Abstractions.Repositories;
+using CQ.ApiElements.Filters.Authentications;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles;
 
 [ApiController]
 [Route("roles")]
-[CQAuthentication]
+[SecureAuthentication]
 [SecureAuthorization]
 public class RoleController(
     IMapper mapper,

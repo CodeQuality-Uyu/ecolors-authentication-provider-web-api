@@ -20,6 +20,11 @@ public interface ITenantService
     Task UpdateNameByIdAndSaveAsync(
         string id,
         string newName);
+
+    Task UpdateOwnerAsync(
+        string id,
+        string newOwnerId,
+        AccountLogged accountLogged);
 }
 
 internal interface ITenantInternalService

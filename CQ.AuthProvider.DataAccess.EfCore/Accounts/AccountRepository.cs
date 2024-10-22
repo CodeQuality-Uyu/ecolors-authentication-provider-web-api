@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.Exceptions;
-using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 internal sealed class AccountRepository(
     AuthDbContext context,
-    IMapper mapper
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper
     )
     : AuthDbContextRepository<AccountEfCore>(context),
     IAccountRepository
@@ -27,15 +28,15 @@ internal sealed class AccountRepository(
             .Apps
             .ConvertAll(a => new AccountApp(account.Id, a.Id));
 
-        await _entities
+        await Entities
             .AddAsync(accountEfCore)
             .ConfigureAwait(false);
 
-        await _baseContext
+        await BaseContext
             .AddRangeAsync(accountRolesEfCore)
             .ConfigureAwait(false);
 
-        await _baseContext
+        await BaseContext
             .AddRangeAsync(accountAppsEfCore)
             .ConfigureAwait(false);
     }
@@ -57,7 +58,7 @@ internal sealed class AccountRepository(
     async Task<Account> IAccountRepository.GetByIdAsync(string id)
     {
         var query =
-            _entities
+            Entities
             .Include(a => a.Roles)
                 .ThenInclude(r => r.Permissions)
             .Include(a => a.Tenant)
@@ -83,7 +84,7 @@ internal sealed class AccountRepository(
         params string[] includes)
     {
         var queryInclude = InsertIncludes(
-            _entities,
+            Entities,
             [.. includes]);
 
         var query = queryInclude
@@ -114,7 +115,7 @@ internal sealed class AccountRepository(
     {
         var accountRole = new AccountRole(id, roleId);
 
-        await _concreteContext
+        await ConcreteContext
             .AccountsRoles
             .AddAsync(accountRole);
     }
@@ -123,12 +124,12 @@ internal sealed class AccountRepository(
         string id,
         string roleId)
     {
-        var query = _concreteContext
+        var query = ConcreteContext
             .AccountsRoles
             .Where(a => a.AccountId == id)
             .Where(a => a.RoleId == roleId);
 
-        _baseContext.RemoveRange(query);
+        BaseContext.RemoveRange(query);
 
         return Task.CompletedTask;
     }

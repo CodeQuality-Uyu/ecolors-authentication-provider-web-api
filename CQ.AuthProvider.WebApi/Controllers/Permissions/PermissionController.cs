@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CQ.AuthProvider.WebApi.Filters;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using AutoMapper;
 using CQ.Utility;
@@ -7,32 +6,29 @@ using CQ.AuthProvider.WebApi.Extensions;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
+using CQ.ApiElements.Filters.Authentications;
+using CQ.AuthProvider.BusinessLogic.Utils;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 
 [ApiController]
 [Route("permissions")]
-[CQAuthentication]
+[SecureAuthentication]
 [SecureAuthorization]
 public class PermissionController(
-    IMapper mapper,
-    IPermissionService permissionService
-    )
+    [FromKeyedServices(MapperKeyedService.Presentation)] IMapper mapper,
+    IPermissionService permissionService)
     : ControllerBase
 {
 
     [HttpPost]
-    public async Task CreateAsync(CreatePermissionRequest? request)
+    public async Task CreateAsync(CreatePermissionArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
 
         await permissionService
             .CreateAsync(
-            args,
+            request,
             accountLogged)
             .ConfigureAwait(false);
     }

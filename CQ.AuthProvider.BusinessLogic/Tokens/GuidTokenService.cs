@@ -1,20 +1,20 @@
-﻿using CQ.Utility;
+﻿using CQ.AuthProvider.Abstractions;
+using CQ.Utility;
 
-namespace CQ.AuthProvider.BusinessLogic.Tokens
+namespace CQ.AuthProvider.BusinessLogic.Tokens;
+
+public sealed class GuidTokenService
+    : ITokenService
 {
-    internal sealed class GuidTokenService
-        : ITokenService
+    public Task<string> CreateAsync(object item)
     {
-        public string Create()
-        {
-            return Db.NewId();
-        }
+        return Task.FromResult(Db.NewId());
+    }
 
-        public Task<bool> IsValidAsync(string token)
-        {
-            var isGuid = Db.IsIdValid(token);
+    public Task<bool> IsValidAsync(string header, string value)
+    {
+        var isGuid = Db.IsIdValid(value);
 
-            return Task.FromResult(isGuid);
-        }
+        return Task.FromResult(isGuid);
     }
 }

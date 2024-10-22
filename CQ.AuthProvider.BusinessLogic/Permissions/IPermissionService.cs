@@ -14,11 +14,11 @@ public interface IPermissionService
         AccountLogged accountLogged);
 
     Task CreateAsync(
-        CreatePermissionArgs permission,
+        CreatePermissionArgs args,
         AccountLogged accountLogged);
 
     Task CreateBulkAsync(
-        List<CreatePermissionArgs> permission,
+        CreateBulkPermissionArgs args,
         AccountLogged accountLogged);
 }
 

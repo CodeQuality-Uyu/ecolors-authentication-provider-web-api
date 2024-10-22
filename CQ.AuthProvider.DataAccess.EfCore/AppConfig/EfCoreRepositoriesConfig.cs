@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Permissions;
@@ -6,6 +7,7 @@ using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
@@ -46,16 +48,21 @@ public static class EfCoreRepositoriesConfig
     private static IServiceCollection AddMappings(this IServiceCollection services)
     {
         services
-            .AddAutoMapper(config =>
+            .AddKeyedTransient<IMapper>(MapperKeyedService.DataAccess, (provider, _) =>
             {
-                config.DisableConstructorMapping();
+                var config = new MapperConfiguration(config =>
+                {
+                    config.DisableConstructorMapping();
 
-                config.AddProfile<PermissionProfile>();
-                config.AddProfile<RoleProfile>();
-                config.AddProfile<InvitationProfile>();
-                config.AddProfile<AppProfile>();
-                config.AddProfile<AccountProfile>();
-                config.AddProfile<TenantProfile>();
+                    config.AddProfile<PermissionProfile>();
+                    config.AddProfile<RoleProfile>();
+                    config.AddProfile<InvitationProfile>();
+                    config.AddProfile<AppProfile>();
+                    config.AddProfile<AccountProfile>();
+                    config.AddProfile<TenantProfile>();
+                });
+
+                return config.CreateMapper();
             });
 
         return services;

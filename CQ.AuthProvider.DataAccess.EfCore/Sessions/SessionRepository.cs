@@ -20,7 +20,7 @@ internal sealed class SessionRepository(
 
     public async Task<Session> GetByTokenAsync(string token)
     {
-        var query = _entities
+        var query = Entities
             .Include(s => s.Account.Roles)
                     .ThenInclude(r => r.Permissions)
             .Include(a => a.Account.Tenant)

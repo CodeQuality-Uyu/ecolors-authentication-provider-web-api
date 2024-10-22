@@ -1,19 +1,20 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.BusinessLogic.Roles;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles;
 
 internal sealed class RoleRepository(
     AuthDbContext context,
-    IMapper mapper,
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper,
     IRepository<PermissionEfCore> permissionRepository,
     IRepository<RolePermission> rolePermissionRepository)
     : EfCoreRepository<RoleEfCore>(context),
@@ -26,13 +27,14 @@ internal sealed class RoleRepository(
         int pageSize,
         AccountLogged accountLogged)
     {
-        var query = _entities
+        var query = Entities
             .Where(r => r.TenantId == accountLogged.TenantValue.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
-            .Where(r => appId == null || r.AppId == appId);
+            .Where(r => appId == null || r.AppId == appId)
+            .Paginate(page, pageSize);
 
         var roles = await query
-            .PaginateAsync(null, page, pageSize)
+            .ToPaginateAsync(page, pageSize)
             .ConfigureAwait(false);
 
         return mapper.Map<Pagination<Role>>(roles);
@@ -42,7 +44,7 @@ internal sealed class RoleRepository(
         List<string> appsIds,
         AccountLogged accountLogged)
     {
-        var query = _entities
+        var query = Entities
             .Where(r => r.TenantId == accountLogged.TenantValue.Id)
             .Where(r => appsIds.Contains(r.AppId))
             .Where(r => r.IsDefault);
@@ -56,15 +58,15 @@ internal sealed class RoleRepository(
             a.IsDefault = false;
         });
 
-        _entities.UpdateRange(roles);
-        await _baseContext
+        Entities.UpdateRange(roles);
+        await BaseContext
             .SaveChangesAsync()
             .ConfigureAwait(false);
     }
 
     public new async Task<Role> GetByIdAsync(string id)
     {
-        var query = _entities
+        var query = Entities
            .Include(r => r.Permissions)
            .Where(r => r.Id == id);
 
@@ -79,7 +81,7 @@ internal sealed class RoleRepository(
 
     public async Task<Role> GetDefaultAsync()
     {
-        var query = _entities
+        var query = Entities
             .Include(r => r.Permissions)
             .Where(r => r.IsDefault);
 
@@ -119,7 +121,7 @@ internal sealed class RoleRepository(
         string appId,
         string tenantId)
     {
-        var query = _entities
+        var query = Entities
             .Where(r => r.AppId == appId)
             .Where(r => r.TenantId == tenantId)
             .Where(r => r.IsDefault);

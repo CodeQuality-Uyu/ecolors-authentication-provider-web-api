@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infraestructure", "Infraest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CQ.AuthProvider.BusinessLogic", "CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj", "{C0CB8C7C-83A7-4ACF-90E6-F05FA7D84D01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CQ.AuthProvider.Abstractions", "CQ.AuthProvider.Abstractions\CQ.AuthProvider.Abstractions.csproj", "{D641F102-3F9B-49F7-BDE8-15C970D992B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{C0CB8C7C-83A7-4ACF-90E6-F05FA7D84D01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0CB8C7C-83A7-4ACF-90E6-F05FA7D84D01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0CB8C7C-83A7-4ACF-90E6-F05FA7D84D01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D641F102-3F9B-49F7-BDE8-15C970D992B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D641F102-3F9B-49F7-BDE8-15C970D992B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D641F102-3F9B-49F7-BDE8-15C970D992B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D641F102-3F9B-49F7-BDE8-15C970D992B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{FD739702-BAEA-4F79-BA7D-7C6888C13C6D} = {1943B42B-4A75-4267-81BC-B569CB0F400F}
 		{1943B42B-4A75-4267-81BC-B569CB0F400F} = {60573164-8477-4A1D-960D-F1D899DF612E}
 		{C0CB8C7C-83A7-4ACF-90E6-F05FA7D84D01} = {60573164-8477-4A1D-960D-F1D899DF612E}
+		{D641F102-3F9B-49F7-BDE8-15C970D992B0} = {60573164-8477-4A1D-960D-F1D899DF612E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1E735191-9CD7-4B16-A9B1-296B3D817C3F}

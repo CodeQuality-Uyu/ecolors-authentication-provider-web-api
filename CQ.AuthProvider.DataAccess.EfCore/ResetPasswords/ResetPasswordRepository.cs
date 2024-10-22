@@ -13,7 +13,7 @@ internal sealed class ResetPasswordRepository(
 {
     public new async Task<ResetPassword> GetByIdAsync(string id)
     {
-        var query = _entities
+        var query = Entities
             .Include(r => r.Account)
             .Where(r => r.Id == id);
 
@@ -28,7 +28,7 @@ internal sealed class ResetPasswordRepository(
 
     public async Task<ResetPassword?> GetOrDefaultByEmailAsync(string email)
     {
-        var query = _entities
+        var query = Entities
             .Include(r => r.Account)
             .Where(r => r.Account.Email == email);
 

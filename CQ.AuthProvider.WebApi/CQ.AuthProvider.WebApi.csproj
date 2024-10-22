@@ -8,11 +8,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CQ.ApiElements" Version="3.0.14" />
+	  <Compile Remove="Controllers\Accounts\Mappings\**" />
+	  <Content Remove="Controllers\Accounts\Mappings\**" />
+	  <EmbeddedResource Remove="Controllers\Accounts\Mappings\**" />
+	  <None Remove="Controllers\Accounts\Mappings\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="dotenv.net" Version="3.1.2" />
+		<PackageReference Include="CQ.ApiElements" Version="3.0.16" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="1.4.0" />
 
 	</ItemGroup>
 
@@ -21,10 +28,6 @@
 		
 		<ProjectReference Include="..\CQ.AuthProvider.DataAccess.EfCore\CQ.AuthProvider.DataAccess.EfCore.csproj" />
 		<ProjectReference Include="..\CQ.IdentityProvider.EfCore\CQ.IdentityProvider.EfCore.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Controllers\Accounts\Mappings\" />
 	</ItemGroup>
 
 </Project>

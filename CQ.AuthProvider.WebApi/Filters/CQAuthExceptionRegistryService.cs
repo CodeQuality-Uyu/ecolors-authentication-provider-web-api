@@ -5,7 +5,7 @@ using CQ.AuthProvider.BusinessLogic.Sessions.Exceptions;
 using CQ.Exceptions;
 using System.Net;
 
-namespace CQ.AuthProvider.WebApi.Filters.Exception;
+namespace CQ.AuthProvider.WebApi.Filters;
 
 internal sealed class CQAuthExceptionRegistryService
     : ExceptionStoreService
@@ -15,8 +15,8 @@ internal sealed class CQAuthExceptionRegistryService
         #region Specific exceptions
         #region Role controller
         #region Create
-        this
-            .AddOriginExceptions(new("Role", "Create"))
+        
+            AddOriginExceptions(new("Role", "Create"))
             .AddException<PermissionNotFoundException>(
             HttpStatusCode.Conflict,
             "ResourceNotFound",
@@ -25,8 +25,8 @@ internal sealed class CQAuthExceptionRegistryService
         #endregion
 
         #region Add permission
-        this
-            .AddOriginExceptions(new("Role", "AddPermission"))
+        
+            AddOriginExceptions(new("Role", "AddPermission"))
             .AddException<PermissionNotFoundException>(
             HttpStatusCode.Conflict,
             "ResourceNotFound",
@@ -41,8 +41,8 @@ internal sealed class CQAuthExceptionRegistryService
         #endregion
 
         #region Auth controller
-        this
-            .AddOriginExceptions(
+        
+            AddOriginExceptions(
             new("Auth", "CreateCredentials"))
             .AddException<ResourceDuplicatedException>(
                 HttpStatusCode.Conflict,
@@ -68,8 +68,8 @@ internal sealed class CQAuthExceptionRegistryService
         #endregion
 
         #region Generic exceptions
-        this
-            .AddGenericException<InvalidCredentialsException>(
+        
+            AddGenericException<InvalidCredentialsException>(
             HttpStatusCode.BadRequest,
             "InvalidCredentials",
             (exception, context) => $"The credentials provided are incorrect"

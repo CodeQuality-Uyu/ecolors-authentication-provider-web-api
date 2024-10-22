@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Apps.Mappings;
 
@@ -18,6 +19,10 @@ internal sealed class AppProfile
                 {
                     Id = source.TenantId
                 }));
+        #endregion
+
+        #region GetAll
+        this.CreateOnlyPaginationMap<AppEfCore, App>();
         #endregion
     }
 }

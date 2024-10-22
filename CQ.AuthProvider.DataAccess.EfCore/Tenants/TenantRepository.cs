@@ -60,7 +60,7 @@ internal sealed class TenantRepository
 
         tenant.Name = newName;
 
-        await _baseContext
+        await BaseContext
             .SaveChangesAsync()
             .ConfigureAwait(false);
     }

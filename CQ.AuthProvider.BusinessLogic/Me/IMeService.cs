@@ -3,12 +3,7 @@
 namespace CQ.AuthProvider.BusinessLogic.Me;
 public interface IMeService
 {
-
     Task UpdatePasswordLoggedAsync(
         string newPassword,
-        AccountLogged accountLogged);
-
-    Task TransferTenantAsync(
-        string newOwnerId,
         AccountLogged accountLogged);
 }

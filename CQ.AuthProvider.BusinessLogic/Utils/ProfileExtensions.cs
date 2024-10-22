@@ -12,7 +12,7 @@ public static class ProfileExtensions
 
         profile
             .CreateMap<Pagination<TSource>, Pagination<TDestination>>()
-            .ConvertUsing((source, destination, context) => new Pagination<TDestination>(context.Mapper.Map<List<TDestination>>(source.Items), source.TotalItems, source.TotalPages));
+            .ConvertUsing((source, destination, context) => new Pagination<TDestination>(context.Mapper.Map<List<TDestination>>(source.Items), source.TotalItems, source.TotalPages, source.Page, source.PageSize));
 
         return profile;
     }
@@ -21,7 +21,7 @@ public static class ProfileExtensions
     {
         profile
             .CreateMap<Pagination<TSource>, Pagination<TDestination>>()
-            .ConvertUsing((source, destination, context) => new Pagination<TDestination>(context.Mapper.Map<List<TDestination>>(source.Items), source.TotalItems, source.TotalPages));
+            .ConvertUsing((source, destination, context) => new Pagination<TDestination>(context.Mapper.Map<List<TDestination>>(source.Items), source.TotalItems, source.TotalPages, source.Page, source.PageSize));
 
         return profile;
     }
