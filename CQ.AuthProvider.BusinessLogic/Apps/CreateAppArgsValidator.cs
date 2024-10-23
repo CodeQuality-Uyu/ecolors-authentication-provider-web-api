@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CQ.AuthProvider.BusinessLogic.Permissions;
+using FluentValidation;
 
 namespace CQ.AuthProvider.BusinessLogic.Apps;
 
@@ -8,7 +9,6 @@ public sealed class CreateAppArgsValidator
     public CreateAppArgsValidator()
     {
         RuleFor(a => a.Name)
-            .NotNull().WithMessage("Can't be null")
-            .NotEmpty().WithMessage("Can't be empty");
+            .RequiredString();
     }
 }

@@ -1,26 +1,13 @@
-﻿using CQ.ApiElements.Dtos;
+﻿namespace CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 
-namespace CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
-
-public record class AccountLoggedResponse
-{
-    public string Id { get; init; } = null!;
-
-    public string? ProfilePictureId { get; init; } = null!;
-
-    public string FullName { get; init; } = null!;
-
-    public string FirstName { get; init; } = null!;
-
-    public string LastName { get; init; } = null!;
-
-    public string Email { get; init; } = null!;
-
-    public string Locale { get; init; } = null!;
-
-    public string TimeZone { get; init; } = null!;
-
-    public List<string> Roles { get; init; } = null!;
-
-    public List<string> Permissions { get; init; } = null!;
-}
+public sealed record AccountLoggedResponse(
+    string Id,
+    string? ProfilePictureId,
+    string FullName,
+    string FirstName,
+    string LastName,
+    string Email,
+    string Locale,
+    string TimeZone,
+    List<string> RolesNames,
+    List<string> PermissionsKeyes);

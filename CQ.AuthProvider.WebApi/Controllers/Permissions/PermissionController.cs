@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using AutoMapper;
-using CQ.Utility;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Permissions;
@@ -34,17 +33,13 @@ public class PermissionController(
     }
 
     [HttpPost("bulk")]
-    public async Task CreateBulkAsync(CreatePermissionBulkRequest? request)
+    public async Task CreateBulkAsync(CreateBulkPermissionArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
 
         await permissionService
             .CreateBulkAsync(
-            args,
+            request,
             accountLogged)
             .ConfigureAwait(false);
     }

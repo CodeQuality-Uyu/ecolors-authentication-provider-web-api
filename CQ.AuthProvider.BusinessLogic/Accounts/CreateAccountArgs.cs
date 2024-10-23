@@ -1,38 +1,16 @@
-﻿using CQ.Utility;
+﻿namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
-namespace CQ.AuthProvider.BusinessLogic.Accounts;
-
-public readonly struct CreateAccountArgs
-{
-    public string Email { get; init; }
-
-    public string Password { get; init; }
-
-    public string FirstName { get; init; }
-
-    public string LastName { get; init; }
-
-    public string Locale { get; init; }
-
-    public string TimeZone { get; init; }
-
-    public string? ProfilePictureId { get; init; }
-
-    public string? RoleId { get; init; }
-
-    public string AppId { get; init; }
-
-    public CreateAccountArgs(
-        string email,
-        string password,
-        string firstName,
-        string lastName,
-        string locale,
-        string timeZone,
-        string? roleId,
-        string? profilePictureId,
-        string appId)
-    {
+public sealed record CreateAccountArgs(
+    string Email,
+    string Password,
+    string FirstName,
+    string LastName,
+    string Locale,
+    string TimeZone,
+    string? ProfilePictureId,
+    string? RoleId,
+    string AppId);
+/*
         Email = Guard.Encode(email, nameof(email));
         Guard.ThrowIsInputInvalidEmail(Email);
 
@@ -65,5 +43,3 @@ public readonly struct CreateAccountArgs
             Db.ThrowIsInvalidId(roleId, nameof(roleId));
         }
         RoleId = roleId;
-    }
-}

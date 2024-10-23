@@ -1,11 +1,17 @@
-﻿using CQ.AuthProvider.BusinessLogic.Utils;
+﻿using CQ.ApiElements;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.Utility;
 using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc.Filters;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Interceptors;
 
 namespace CQ.AuthProvider.BusinessLogic.Permissions;
 
 internal sealed class CreateBulkPermissionArgsValidator
-    : AbstractValidator<CreateBulkPermissionArgs>
+    : AbstractValidator<CreateBulkPermissionArgs>,
+    IValidatorInterceptor
 {
     public CreateBulkPermissionArgsValidator()
     {
@@ -20,47 +26,50 @@ internal sealed class CreateBulkPermissionArgsValidator
                 .Where(g => g.Count() > 1)
                 .Select(g => g.Key)
                 .ToList();
-                if (duplicatedKeys.Count != 0)
-                {
-                    return false;
-                }
 
-                return true;
+                return duplicatedKeys.Count == 0;
             })
-            .WithMessage("Duplicated permissions keys")
+            .WithMessage("Duplicated permissions keys");
+    }
 
-            .Must(permissions =>
-            {
-                var existPermissionsWithoutAppId = permissions.Exists(p => Guard.IsNull(p.AppId));
-                if (existPermissionsWithoutAppId && accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID)
-                {
-                    return false;
-                }
+    public ValidationResult? AfterValidation(
+        ActionExecutingContext actionExecutingContext,
+        IValidationContext validationContext)
+    {
+        var validationResult = new ValidationResult();
+        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItems.AccountLogged];
 
-                return true;
-            })
-            .WithMessage("Can't create permission to auth api app")
-            
-            .Must(permissions =>
-            {
-                var appsIds = permissions
+        var args = (CreateBulkPermissionArgs)validationContext.InstanceToValidate;
+        var permissions = args.Permissions;
+
+        var appsIds = permissions
                     .GroupBy(a => a.AppId)
                     .Where(a => Guard.IsNotNullOrEmpty(a.Key))
                 .Select(g => g.Key!)
                     .ToList();
 
-                if (appsIds.Count != 0)
-                {
-                    var validAppsIds = accountLogged.AppsIds;
+        if (appsIds.Count != 0)
+        {
+            var validAppsIds = accountLogged.AppsIds;
 
-                    var invalidAppsIds = appsIds
-                        .Where(id => !validAppsIds.Contains(id))
-                        .ToList();
+            var invalidAppsIds = appsIds
+                .Where(id => !validAppsIds.Contains(id))
+                .ToList();
 
-                    return false;
-                }
-                return true;
-            })
-            .WithMessage("Some appIds are invalid");
+            validationResult.Errors.Add(new ValidationFailure("AppId",$"Invalid apps ids {string.Join(",", invalidAppsIds)}"));
+        }
+
+        var existPermissionsWithoutAppId = permissions.Exists(p => Guard.IsNull(p.AppId));
+        if (existPermissionsWithoutAppId && accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID)
+        {
+            validationResult.Errors.Add(new ValidationFailure("AppId", "Can't create to auth api app"));
+        }
+
+        return validationResult;
+    }
+
+    public IValidationContext? BeforeValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
+    {
+        return null;
     }
 }

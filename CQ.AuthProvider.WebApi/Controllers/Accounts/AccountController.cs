@@ -3,8 +3,7 @@ using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using AutoMapper;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.WebApi.Controllers.Me.Models;
-using CQ.Utility;
+using CQ.AuthProvider.BusinessLogic.Utils;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 
@@ -12,41 +11,33 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 [Route("accounts")]
 public class AccountController(
     IAccountService _accountService,
-    IMapper _mapper)
+    [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
     : ControllerBase
 {
     [HttpPost("credentials")]
-    public async Task<AccountCreatedResponse> CreateCredentialsAsync(CreateAccountRequest request)
+    public async Task<AccountCreatedResponse> CreateCredentialsAsync(CreateAccountArgs request)
     {
-        var createAccount = request.Map();
-
         var account = await _accountService
-            .CreateAndSaveAsync(createAccount)
+            .CreateAndSaveAsync(request)
             .ConfigureAwait(false);
 
         return _mapper.Map<AccountCreatedResponse>(account);
     }
 
     [HttpPatch("me/password")]
-    public async Task UpdatePasswordAsync(UpdatePasswordRequest? request)
+    public async Task UpdatePasswordAsync(UpdatePasswordArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var args = request.Map();
-
         await _accountService
-            .UpdatePasswordByCredentialsAsync(args)
+            .UpdatePasswordByCredentialsAsync(request)
             .ConfigureAwait(false);
     }
 
     [HttpPost("credentials/for")]
     [SecureAuthorization]
-    public async Task CreateCredentialsForAsync(CreateAccountRequest request)
+    public async Task CreateCredentialsForAsync(CreateAccountArgs request)
     {
-        var createAccountFor = request.Map();
-
         await _accountService
-            .CreateAndSaveAsync(createAccountFor)
+            .CreateAndSaveAsync(request)
             .ConfigureAwait(false);
     }
 }

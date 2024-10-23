@@ -13,11 +13,11 @@ public interface IRoleService
         AccountLogged accountLogged);
 
     Task CreateAsync(
-        CreateRoleArgs role,
+        CreateRoleArgs args,
         AccountLogged accountLogged);
 
     Task CreateBulkAsync(
-        List<CreateRoleArgs> roles,
+        CreateBulkRoleArgs args,
         AccountLogged accountLogged);
 
     Task AddPermissionByIdAsync(

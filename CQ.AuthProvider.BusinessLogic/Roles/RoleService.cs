@@ -1,5 +1,4 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
@@ -36,40 +35,20 @@ internal sealed class RoleService(
         AccountLogged accountLogged)
     {
         await CreateBulkAsync(
-            [args],
+            new CreateBulkRoleArgs([args]),
             accountLogged)
             .ConfigureAwait(false);
     }
 
     public async Task CreateBulkAsync(
-        List<CreateRoleArgs> args,
+        CreateBulkRoleArgs args,
         AccountLogged accountLogged)
     {
-        var appsIds = args
-            .GroupBy(a => a.AppId)
-            .Where(g => Guard.IsNotNullOrEmpty(g.Key))
-            .Select(g => g.Key)
-            .ToList();
-        var invalidAppsIds = appsIds
-            .Where(a => !accountLogged.AppsIds.Contains(a))
-            .ToList();
-        if (invalidAppsIds.Count != 0)
-        {
-            throw new InvalidOperationException($"The following apps are not allowed: {string.Join(",", invalidAppsIds)}");
-        }
-
         var defaultRoles = args
+            .Roles
             .Where(r => r.IsDefault)
             .GroupBy(r => r.AppId ?? accountLogged.AppLogged.Id)
             .ToList();
-
-        var duplicatedDefaultRolesInApp = defaultRoles
-            .Where(g => g.Count() > 1)
-            .ToList();
-        if (duplicatedDefaultRolesInApp.Count > 1)
-        {
-            throw new ArgumentException("Only one role can be default in an app");
-        }
 
         if (defaultRoles.Count != 0)
         {
@@ -82,6 +61,7 @@ internal sealed class RoleService(
         }
 
         var allPermissionsKeyes = args
+            .Roles
             .GroupBy(a => a.AppId ?? accountLogged.AppLogged.Id)
             .Select(g =>
             (g.Key, g
@@ -97,6 +77,7 @@ internal sealed class RoleService(
             .ConfigureAwait(false);
 
         var roles = args
+            .Roles
             .ConvertAll(r =>
             {
                 var app = Guard.IsNotNullOrEmpty(r.AppId)

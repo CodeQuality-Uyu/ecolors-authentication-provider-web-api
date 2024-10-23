@@ -20,33 +20,25 @@ public class RoleController(
     IRoleService roleService) : ControllerBase
 {
     [HttpPost]
-    public async Task CreateAsync(CreateRoleRequest? request)
+    public async Task CreateAsync(CreateRoleArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
 
         await roleService
             .CreateAsync(
-            args,
+            request,
             accountLogged)
             .ConfigureAwait(false);
     }
 
     [HttpPost("bulk")]
-    public async Task CreateBulkAsync(CreateRoleBulkRequest? request)
+    public async Task CreateBulkAsync(CreateBulkRoleArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
 
         await roleService
             .CreateBulkAsync(
-            args,
+            request,
             accountLogged)
             .ConfigureAwait(false);
     }
