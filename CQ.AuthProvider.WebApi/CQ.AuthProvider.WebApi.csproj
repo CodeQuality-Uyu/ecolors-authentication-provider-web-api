@@ -8,13 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Controllers\Accounts\Mappings\**" />
-	  <Content Remove="Controllers\Accounts\Mappings\**" />
-	  <EmbeddedResource Remove="Controllers\Accounts\Mappings\**" />
-	  <None Remove="Controllers\Accounts\Mappings\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="CQ.ApiElements" Version="3.0.16" />
 	</ItemGroup>
 

@@ -4,12 +4,15 @@ using AutoMapper;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Utils;
+using CQ.ApiElements.Filters.Authentications;
+using CQ.UnitOfWork.Abstractions.Repositories;
+using CQ.AuthProvider.WebApi.Extensions;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 
 [ApiController]
 [Route("accounts")]
-public class AccountController(
+public sealed class AccountController(
     IAccountService _accountService,
     [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
     : ControllerBase
@@ -39,5 +42,21 @@ public class AccountController(
         await _accountService
             .CreateAndSaveAsync(request)
             .ConfigureAwait(false);
+    }
+
+    [HttpGet]
+    [SecureAuthentication]
+    [SecureAuthorization]
+    public async Task<Pagination<AccountBasicInfoResponse>> GetAllAsync(
+        [FromQuery]int page = 1,
+        [FromQuery]int pageSize = 10)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        var accounts = await _accountService
+            .GetAllAsync(page, pageSize, accountLogged)
+            .ConfigureAwait(false);
+
+        return _mapper.Map<Pagination<AccountBasicInfoResponse>>(accounts);
     }
 }

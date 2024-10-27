@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using CQ.UnitOfWork.EfCore.Core;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
 internal sealed class TenantRepository
     (AuthDbContext context,
-    IMapper mapper)
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper)
     : AuthDbContextRepository<TenantEfCore>(context),
     ITenantRepository
 {

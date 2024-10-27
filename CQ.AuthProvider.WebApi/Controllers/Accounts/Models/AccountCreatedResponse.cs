@@ -1,8 +1,6 @@
 ﻿
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 
-public sealed record class AccountCreatedResponse
-    : AccountLoggedResponse
-{
-    public string Token { get; init; } = null!;
-}
+public sealed record AccountCreatedResponse(
+    AccountLoggedResponse Account,
+    string Token);

@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Sessions;
 
 internal sealed class SessionRepository(
     AuthDbContext context,
-    IMapper mapper)
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper)
     : EfCoreRepository<SessionEfCore>(context),
     ISessionRepository
 {

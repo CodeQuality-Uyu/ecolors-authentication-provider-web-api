@@ -63,14 +63,14 @@ internal static class ValidatorExtensions
     public static IRuleBuilderOptions<T, string?> ValidId<T>(this IRuleBuilder<T, string?> validator)
     {
         var options = validator
-            .Must((appId) =>
+            .Must((id) =>
             {
-                if (Guard.IsNull(appId))
+                if (Guard.IsNull(id))
                 {
                     return true;
                 }
 
-                return Db.IsIdValid(appId);
+                return Db.IsIdValid(id);
             })
             .WithMessage("Invalid id");
 

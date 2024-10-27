@@ -1,4 +1,6 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.UnitOfWork.Abstractions.Repositories;
+
+namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public interface IAccountService
 {
@@ -7,6 +9,11 @@ public interface IAccountService
     Task UpdatePasswordByCredentialsAsync(UpdatePasswordArgs args);
 
     Task<Account> GetByEmailAsync(string email);
+
+    Task<Pagination<Account>> GetAllAsync(
+        int page,
+        int pageSize,
+        AccountLogged accountLogged);
 }
 
 internal interface IAccountInternalService

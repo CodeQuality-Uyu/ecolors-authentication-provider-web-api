@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 
 internal sealed class ResetPasswordRepository(
     EfCoreContext context,
-    IMapper mapper)
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper _mapper)
     : EfCoreRepository<ResetPasswordEfCore>(context),
     IResetPasswordRepository
 {
@@ -23,7 +25,7 @@ internal sealed class ResetPasswordRepository(
 
         AssertNullEntity(resetPassword, id, nameof(ResetPassword.Id));
 
-        return mapper.Map<ResetPassword>(resetPassword);
+        return _mapper.Map<ResetPassword>(resetPassword);
     }
 
     public async Task<ResetPassword?> GetOrDefaultByEmailAsync(string email)
@@ -36,7 +38,7 @@ internal sealed class ResetPasswordRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        return mapper.Map<ResetPassword>(resetPassword);
+        return _mapper.Map<ResetPassword>(resetPassword);
     }
 
     async Task IResetPasswordRepository.CreateAndSaveAsync(ResetPassword resetPassword)

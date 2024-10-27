@@ -1,4 +1,4 @@
 # C# Style Rules
 [*.cs]
 # Namespace declaration style: `file-scoped` for single-line, `block-scoped` for curly braces
-csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_style_namespace_declarations = file_scoped:error

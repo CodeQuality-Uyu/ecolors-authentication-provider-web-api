@@ -327,6 +327,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
                     PermissionId = patchTenantOwnerPermissionId
                 },
+                new RolePermission
+                {
+                    Id = "16ef3304b62240b2bd86b4287f14bea3",
+                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
+                    PermissionId = getAllAccountsPermissionId
+                },
             #endregion
 
             #region App
@@ -351,12 +357,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = "89c5ad347a8f41c0864a4a37f7be5224",
                     RoleId = authWebApiOwnerRoleId,
                     PermissionId = getAllTenantsPermissionId
-                },
-                new RolePermission
-                {
-                    Id = "16ef3304b62240b2bd86b4287f14bea3",
-                    RoleId = authWebApiOwnerRoleId,
-                    PermissionId = getAllAccountsPermissionId
                 });
             #endregion
         });
@@ -504,6 +504,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     TenantId = seedTenantId,
                     IsPublic = true,
                 },
+                new PermissionEfCore
+                {
+                    Id = getAllAccountsPermissionId,
+                    Name = "Can read all accounts",
+                    Description = "Can read all accounts",
+                    Key = "getall-account",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
+                    IsPublic = true,
+                },
             #endregion
             #endregion
 
@@ -514,16 +524,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read all tenants",
                     Description = "Can read all tenants",
                     Key = "getall-tenants",
-                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
-                    TenantId = seedTenantId,
-                    IsPublic = true,
-                },
-                new PermissionEfCore
-                {
-                    Id = getAllAccountsPermissionId,
-                    Name = "Can read all accounts",
-                    Description = "Can read all accounts",
-                    Key = "getall-accounts",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = seedTenantId,
                     IsPublic = true,

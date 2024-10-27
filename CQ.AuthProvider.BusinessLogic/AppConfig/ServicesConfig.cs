@@ -8,7 +8,6 @@ using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig;
@@ -64,16 +63,11 @@ public static class ServicesConfig
             .AddTransient<IValidator<CreateAppArgs>, CreateAppArgsValidator>()
             .AddTransient<IValidator<CreatePermissionArgs>, CreatePermissionArgsValidator>()
             .AddTransient<IValidator<CreateBulkPermissionArgs>, CreateBulkPermissionArgsValidator>()
-            .AddTransient<IValidator<CreateRoleArgs>, CreateRoleArgsValidator>();
+            .AddTransient<IValidator<CreateRoleArgs>, CreateRoleArgsValidator>()
+            .AddTransient<IValidator<CreateBulkRoleArgs>, CreateBulkRoleArgsValidator>()
+            .AddTransient<IValidator<CreateAccountArgs>, CreateAccountArgsValidator>()
+            ;
 
         return services;
     }
-}
-
-public interface ICustomValidator<in T> : IValidator<T>
-{
-    Task<ValidationResult> ValidateAsync(
-        AccountLogged accountLogged,
-        IValidationContext context,
-        CancellationToken cancellation = new CancellationToken());
 }

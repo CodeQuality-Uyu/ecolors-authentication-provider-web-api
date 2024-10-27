@@ -6,5 +6,5 @@ public readonly struct TenantDetailInfoResponse
 
     public string Name { get; init; }
 
-    public AccountBasicInfoResponse Owner { get; init; }
+    public OwnerTenantBasicInfoResponse Owner { get; init; }
 }

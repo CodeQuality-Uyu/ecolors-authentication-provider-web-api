@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.UnitOfWork.Abstractions.Repositories;
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public interface IAccountRepository
@@ -26,4 +27,9 @@ public interface IAccountRepository
     Task RemoveRoleByIdAsync(
         string id,
         string roleId);
+
+    Task<Pagination<Account>> GetAllAsync(
+        string tenantId,
+        int page,
+        int pageSize);
 }

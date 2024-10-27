@@ -4,6 +4,7 @@ using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.Exceptions;
 using CQ.UnitOfWork.Abstractions;
+using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
@@ -61,9 +62,16 @@ internal sealed class AccountService(
 
     public async Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs args)
     {
-        await AssertEmailInUseAsync(args.Email).ConfigureAwait(false);
+        var existAuth = await _accountRepository
+            .ExistByEmailAsync(args.Email)
+            .ConfigureAwait(false);
+        if (existAuth)
+        {
+            throw new SpecificResourceDuplicatedException<Account>(nameof(Account.Email), args.Email);
+        }
 
         var role = await GetRoleAsync(args.RoleId).ConfigureAwait(false);
+
         var app = await _appService
             .GetByIdAsync(args.AppId)
             .ConfigureAwait(false);
@@ -97,18 +105,6 @@ internal sealed class AccountService(
         }
 
         return result;
-    }
-
-    private async Task AssertEmailInUseAsync(string email)
-    {
-        var existAuth = await _accountRepository
-            .ExistByEmailAsync(email)
-            .ConfigureAwait(false);
-
-        if (existAuth)
-        {
-            throw new SpecificResourceDuplicatedException<Account>(nameof(Account.Email), email);
-        }
     }
 
     private async Task<Role> GetRoleAsync(string? roleId)
@@ -158,5 +154,17 @@ internal sealed class AccountService(
         return await _accountRepository
             .GetByEmailAsync(email)
             .ConfigureAwait(false);
+    }
+
+    public async Task<Pagination<Account>> GetAllAsync(
+        int page,
+        int pageSize,
+        AccountLogged accountLogged)
+    {
+        var accounts = await _accountRepository
+            .GetAllAsync(accountLogged.TenantValue.Id, page, pageSize)
+            .ConfigureAwait(false);
+
+        return accounts;
     }
 }

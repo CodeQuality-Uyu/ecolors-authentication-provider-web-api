@@ -5,6 +5,7 @@ using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Tokens;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
+using CQ.AuthProvider.WebApi.Controllers.Accounts.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Apps.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Mappings;
@@ -94,6 +95,7 @@ internal static class AuthProviderWebApiConfig
                     config.AddProfile<InvitationProfile>();
                     config.AddProfile<SessionProfile>();
                     config.AddProfile<AppProfile>();
+                    config.AddProfile<AccountProfile>();
                 });
 
                 return config.CreateMapper();
