@@ -22,6 +22,7 @@ internal sealed class CreateAccountArgsValidator
             .RequiredString();
 
         RuleFor(a => a.Email)
+            .RequiredString()
             .EmailAddress()
             .WithMessage("Invalid format");
 

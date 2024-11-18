@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace CQ.AuthProvider.BusinessLogic.Apps;
 
-public sealed class CreateAppArgsValidator
+internal sealed class CreateAppArgsValidator
     : AbstractValidator<CreateAppArgs>
 {
     public CreateAppArgsValidator()

@@ -10,7 +10,7 @@ namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
 internal sealed class InvitationService(
     IInvitationRepository _invitationRepository,
-    IRoleInternalService _roleService,
+    IRoleRepository _roleRepository,
     IEmailService _emailService,
     IIdentityRepository _identityRepository,
     IAccountInternalService _accountService,
@@ -29,7 +29,7 @@ internal sealed class InvitationService(
         }
         app ??= accountLogged.AppLogged;
 
-        var role = await _roleService
+        var role = await _roleRepository
             .GetByIdAsync(args.RoleId)
             .ConfigureAwait(false);
         if (role.AppId != app.Id)
@@ -60,6 +60,7 @@ internal sealed class InvitationService(
             EmailTemplateKey.InviteUser,
             new
             {
+                CreatorName = accountLogged.FullName,
                 invitation.Code
             });
 

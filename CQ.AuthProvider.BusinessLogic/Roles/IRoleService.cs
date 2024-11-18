@@ -28,8 +28,6 @@ public interface IRoleService
 internal interface IRoleInternalService
     : IRoleService
 {
-    Task<Role> GetByIdAsync(string id);
-
     Task<Role> GetDefaultAsync();
 }
 

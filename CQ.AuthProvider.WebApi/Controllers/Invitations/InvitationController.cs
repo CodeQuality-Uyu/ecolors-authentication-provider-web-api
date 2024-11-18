@@ -14,24 +14,20 @@ namespace CQ.AuthProvider.WebApi.Controllers.Invitations;
 [ApiController]
 [Route("invitations")]
 public sealed class InvitationController(
-    IMapper mapper,
-    IInvitationService invitationService)
+    IMapper _mapper,
+    IInvitationService _invitationService)
     : ControllerBase
 {
     [HttpPost]
     [SecureAuthentication]
     [SecureAuthorization]
-    public async Task CreateAsync(CreateInvitationRequest? request)
+    public async Task CreateAsync(CreateInvitationArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
 
-        await invitationService
+        await _invitationService
             .CreateAsync(
-            args,
+            request,
             accountLogged)
             .ConfigureAwait(false);
     }
@@ -47,7 +43,7 @@ public sealed class InvitationController(
     {
         var accountLogged = this.GetAccountLogged();
 
-        var invitations = await invitationService
+        var invitations = await _invitationService
             .GetAllAsync(
             creatorId,
             appId,
@@ -56,7 +52,7 @@ public sealed class InvitationController(
             accountLogged)
             .ConfigureAwait(false);
 
-        return mapper.Map<Pagination<InvitationBasicInfoResponse>>(invitations);
+        return _mapper.Map<Pagination<InvitationBasicInfoResponse>>(invitations);
     }
 
     [HttpPut("{id}/accept")]
@@ -66,14 +62,14 @@ public sealed class InvitationController(
     {
         var args = request.Map();
 
-        var account = await invitationService
+        var account = await _invitationService
         .AcceptByIdAsync(
         id,
             args)
             .ConfigureAwait(false);
 
 
-        return mapper.Map<AccountCreatedResponse>(account);
+        return _mapper.Map<AccountCreatedResponse>(account);
     }
 
     [HttpPut("{id}/declain")]
@@ -83,7 +79,7 @@ public sealed class InvitationController(
     {
         var args = request.Map();
 
-        await invitationService
+        await _invitationService
             .DeclainByIdAsync(
             id,
             args)

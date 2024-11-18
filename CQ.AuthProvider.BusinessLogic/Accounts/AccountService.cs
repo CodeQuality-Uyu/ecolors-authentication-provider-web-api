@@ -13,7 +13,7 @@ internal sealed class AccountService(
     IAccountRepository _accountRepository,
     IIdentityRepository _identityRepository,
     ISessionInternalService _sessionService,
-    IRoleInternalService _roleInternalService,
+    IRoleRepository _roleRepository,
     IAppInternalService _appService,
     IUnitOfWork _unitOfWork)
     : IAccountInternalService
@@ -111,12 +111,12 @@ internal sealed class AccountService(
     {
         if (Guard.IsNull(roleId))
         {
-            return await _roleInternalService
+            return await _roleRepository
                 .GetDefaultAsync()
                 .ConfigureAwait(false);
         }
 
-        return await _roleInternalService
+        return await _roleRepository
             .GetByIdAsync(roleId)
             .ConfigureAwait(false);
     }

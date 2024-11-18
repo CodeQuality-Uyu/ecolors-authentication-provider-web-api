@@ -123,15 +123,6 @@ internal sealed class RoleService(
             .ConfigureAwait(false);
     }
 
-    public async Task<Role> GetByIdAsync(string id)
-    {
-        var role = await roleRepository
-            .GetByIdAsync(id)
-            .ConfigureAwait(false);
-
-        return role;
-    }
-
     public async Task<Role> GetDefaultAsync()
     {
         var roleDefault = await roleRepository
