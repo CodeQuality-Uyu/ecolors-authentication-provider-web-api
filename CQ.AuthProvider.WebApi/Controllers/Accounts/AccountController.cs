@@ -7,6 +7,7 @@ using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.AuthProvider.WebApi.Extensions;
+using CQ.ApiElements;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 
@@ -36,7 +37,7 @@ public sealed class AccountController(
     }
 
     [HttpPost("credentials/for")]
-    [SecureAuthorization]
+    [BearerAuthentication]
     public async Task CreateCredentialsForAsync(CreateAccountArgs request)
     {
         await _accountService
@@ -45,8 +46,8 @@ public sealed class AccountController(
     }
 
     [HttpGet]
-    [SecureAuthentication]
-    [SecureAuthorization]
+    [BearerAuthentication]
+    [SecureAuthorization(ContextItem.AccountLogged)]
     public async Task<Pagination<AccountBasicInfoResponse>> GetAllAsync(
         [FromQuery]int page = 1,
         [FromQuery]int pageSize = 10)

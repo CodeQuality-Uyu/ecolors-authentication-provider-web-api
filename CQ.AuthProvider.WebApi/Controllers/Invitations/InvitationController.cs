@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CQ.ApiElements;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Invitations;
@@ -6,7 +7,6 @@ using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Invitations;
@@ -19,8 +19,8 @@ public sealed class InvitationController(
     : ControllerBase
 {
     [HttpPost]
-    [SecureAuthentication]
-    [SecureAuthorization]
+    [BearerAuthentication]
+    [SecureAuthorization(ContextItem.AccountLogged)]
     public async Task CreateAsync(CreateInvitationArgs request)
     {
         var accountLogged = this.GetAccountLogged();
@@ -33,8 +33,8 @@ public sealed class InvitationController(
     }
 
     [HttpGet]
-    [SecureAuthentication]
-    [SecureAuthorization]
+    [BearerAuthentication]
+    [SecureAuthorization(ContextItem.AccountLogged)]
     public async Task<Pagination<InvitationBasicInfoResponse>> GetAllAsync(
         [FromQuery] string? creatorId,
         [FromQuery] string? appId,

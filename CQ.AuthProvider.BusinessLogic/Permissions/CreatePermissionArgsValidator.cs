@@ -5,6 +5,7 @@ using CQ.Utility;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Options;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Interceptors;
 
 namespace CQ.AuthProvider.BusinessLogic.Permissions;
@@ -73,6 +74,39 @@ internal static class ValidatorExtensions
                 return Db.IsIdValid(id);
             })
             .WithMessage("Invalid id");
+
+        return options;
+    }
+
+    public static IRuleBuilderOptions<T, string?> Email<T>(this IRuleBuilder<T, string?> validator)
+    {
+        var options = validator
+            .RequiredString()
+            .EmailAddress()
+            .WithMessage("Invalid format");
+
+        return options;
+    }
+
+    public static IRuleBuilderOptions<T, string?> Password<T>(this IRuleBuilder<T, string?> validator)
+    {
+        var options = validator
+            .RequiredString()
+            .MinimumLength(6)
+            .WithMessage("Minimum 6 characters")
+            .Must(password =>
+            {
+                try
+                {
+                    Guard.ThrowIsInputInvalidPassword(password);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            })
+            .WithMessage("Invalid, must have a special character");
 
         return options;
     }

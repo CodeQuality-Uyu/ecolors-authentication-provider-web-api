@@ -17,17 +17,17 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 keyColumn: "Id",
                 keyValue: "735eeea5c936492794514b5cc3ecd217");
 
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "AppId", "Description", "IsDefault", "IsPublic", "Name", "TenantId" },
+                values: new object[] { "0415b39e83cd4fbdb33c5004a0b65294", "d31184dabbc6435eaec86694650c2679", "Should be deleted once deployed", false, false, "Seed", "b22fcf202bd84a97936ccf2949e00da4" });
+
             migrationBuilder.UpdateData(
                 table: "AccountsRoles",
                 keyColumn: "Id",
                 keyValue: "1f191c90510d456d84bda9e17fe24f50",
                 column: "RoleId",
                 value: "0415b39e83cd4fbdb33c5004a0b65294");
-
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "AppId", "Description", "IsDefault", "IsPublic", "Name", "TenantId" },
-                values: new object[] { "0415b39e83cd4fbdb33c5004a0b65294", "d31184dabbc6435eaec86694650c2679", "Should be deleted once deployed", false, false, "Seed", "b22fcf202bd84a97936ccf2949e00da4" });
 
             migrationBuilder.InsertData(
                 table: "RolesPermissions",

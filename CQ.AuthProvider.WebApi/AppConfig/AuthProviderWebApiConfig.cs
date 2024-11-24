@@ -62,9 +62,9 @@ internal static class AuthProviderWebApiConfig
         IConfiguration configuration)
     {
         services
-            .AddExceptionGlobalHandlerService<CQAuthExceptionRegistryService>(LifeTime.Singleton)
+            .AddExceptionGlobalHandlerService<CQAuthExceptionRegistryService>(LifeTime.Transient)
 
-            .AddTokenService<GuidTokenService>(LifeTime.Transient)
+            .AddTokenService<GuidTokenService>(LifeTime.Singleton)
 
             .AddItemLoggedService<SessionService>(LifeTime.Scoped)
 

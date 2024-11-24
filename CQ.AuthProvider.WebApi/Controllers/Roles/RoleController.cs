@@ -8,13 +8,14 @@ using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.ApiElements.Filters.Authentications;
+using CQ.ApiElements;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Roles;
 
 [ApiController]
 [Route("roles")]
-[SecureAuthentication]
-[SecureAuthorization]
+[BearerAuthentication]
+[SecureAuthorization(ContextItem.AccountLogged)]
 public class RoleController(
     IMapper mapper,
     IRoleService roleService) : ControllerBase

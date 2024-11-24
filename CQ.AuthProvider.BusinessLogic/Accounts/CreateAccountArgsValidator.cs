@@ -1,5 +1,4 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Permissions;
-using CQ.Utility;
 using FluentValidation;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
@@ -22,27 +21,10 @@ internal sealed class CreateAccountArgsValidator
             .RequiredString();
 
         RuleFor(a => a.Email)
-            .RequiredString()
-            .EmailAddress()
-            .WithMessage("Invalid format");
+            .Email();
 
         RuleFor(a => a.Password)
-            .RequiredString()
-            .MinimumLength(6)
-            .WithMessage("Minimum 6 characters")
-            .Must(password =>
-            {
-                try
-                {
-                    Guard.ThrowIsInputInvalidPassword(password);
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            })
-            .WithMessage("Invalid, must have a special character");
+            .Password();
 
         RuleFor(a => a.RoleId)
             .ValidId();

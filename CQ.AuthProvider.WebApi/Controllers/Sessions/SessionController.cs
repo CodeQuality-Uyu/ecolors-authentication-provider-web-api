@@ -5,6 +5,7 @@ using AutoMapper;
 using CQ.Utility;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.ApiElements;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
 
@@ -30,7 +31,7 @@ public class SessionController(
     }
 
     [HttpDelete]
-    [SecureAuthorization]
+    [SecureAuthorization(ContextItem.AccountLogged)]
     public async Task DeleteAsync()
     {
         var accountLogged = this.GetAccountLogged();

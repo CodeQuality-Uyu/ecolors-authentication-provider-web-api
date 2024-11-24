@@ -67,6 +67,7 @@ public static class ServicesConfig
             .AddTransient<IValidator<CreateBulkRoleArgs>, CreateBulkRoleArgsValidator>()
             .AddTransient<IValidator<CreateAccountArgs>, CreateAccountArgsValidator>()
             .AddTransient<IValidator<CreateInvitationArgs>, CreateInvitationArgsValidator>()
+            .AddTransient<IValidator<UpdatePasswordArgs>, UpdatePasswordArgsValidator>()
             ;
 
         return services;

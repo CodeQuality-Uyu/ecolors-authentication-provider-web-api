@@ -9,6 +9,6 @@ public static class ControllerBaseExtension
 {
     public static AccountLogged GetAccountLogged(this ControllerBase controller)
     {
-        return controller.GetItem<AccountLogged>(ContextItems.AccountLogged);
+        return controller.GetItem<AccountLogged>(ContextItem.AccountLogged);
     }
 }

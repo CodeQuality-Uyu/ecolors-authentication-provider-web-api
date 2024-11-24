@@ -5,21 +5,21 @@ using CQ.AuthProvider.WebApi.Extensions;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.BusinessLogic.Utils;
+using CQ.ApiElements.Filters.Authentications;
+using CQ.ApiElements;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 
 [ApiController]
 [Route("permissions")]
-[SecureAuthentication]
-[SecureAuthorization]
+[BearerAuthentication]
+[SecureAuthorization(ContextItem.AccountLogged)]
 public class PermissionController(
     [FromKeyedServices(MapperKeyedService.Presentation)] IMapper mapper,
     IPermissionService permissionService)
     : ControllerBase
 {
-
     [HttpPost]
     public async Task CreateAsync(CreatePermissionArgs request)
     {

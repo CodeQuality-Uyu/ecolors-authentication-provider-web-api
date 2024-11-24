@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CQ.ApiElements.Filters.Authentications;
-using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Apps.Models;
@@ -12,14 +11,14 @@ namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
 [ApiController]
 [Route("apps")]
-[SecureAuthentication]
+[BearerAuthentication]
 public sealed class AppController(
     IAppService _appService,
     [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
     : ControllerBase
 {
     [HttpPost]
-    [SecureAuthorization]
+    [BearerAuthentication]
     public async Task CreateAsync(CreateAppArgs request)
     {
         var accountLogged = this.GetAccountLogged();
@@ -30,7 +29,7 @@ public sealed class AppController(
     }
 
     [HttpGet]
-    [SecureAuthorization]
+    [BearerAuthentication]
     public async Task<Pagination<AppBasicInfoResponse>> GetAllAsync(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)

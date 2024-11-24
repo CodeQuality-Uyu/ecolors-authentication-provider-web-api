@@ -14,7 +14,7 @@ public sealed class SessionService(
     ITokenService _tokenService,
     IUnitOfWork _unitOfWork)
     : ISessionInternalService,
-    IItemLoggedService
+    IBearerLoggedService
 {
     public async Task<Session> CreateAndSaveAsync(CreateSessionCredentialsArgs args)
     {
@@ -71,7 +71,7 @@ public sealed class SessionService(
             .ConfigureAwait(false);
     }
 
-    public async Task<object> GetByHeaderAsync(string header, string value)
+    public async Task<object> GetByHeaderAsync(string value)
     {
         var session = await _sessionRepository
             .GetByTokenAsync(value)
