@@ -15,26 +15,6 @@ services
     {
         options.AddExceptionGlobalHandler();
     });
-    //.ConfigureApiBehaviorOptions(options =>
-    //{
-    //    options.InvalidModelStateResponseFactory = context =>
-    //    {
-    //        var errors = context
-    //        .ModelState
-    //        .SelectMany(x => x.Value.Errors)
-    //        .Select(x => x.ErrorMessage)
-    //        .ToList();
-
-    //        var errorResponse = new
-    //        {
-    //            InnerCode = "RequestInvalid",
-    //            Message = "There is some problem with the request or with the values",
-    //            Errors = errors
-    //        };
-
-    //        return new BadRequestObjectResult(errorResponse);
-    //    };
-    //});
 
 // Add services to the container.
 services

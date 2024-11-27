@@ -230,6 +230,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         const string patchTenantNamePermissionId = "7d21bd25e0b74951b06772ca348e81fa";
 
         const string getAllAccountsPermissionId = "33d7733f42214f6785e10a480c45a007";
+        const string createCredentialsForPermissionId = "";
 
         const string createAppPermissionId = "7e9af6ea241342c5bb97c634a36c2de2";
         const string getAllAppsPermissionId = "843aa6fb505b4f919930aeeea10511ee";
