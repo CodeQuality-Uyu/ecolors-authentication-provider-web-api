@@ -1,22 +1,10 @@
-﻿using CQ.Utility;
-
-namespace CQ.AuthProvider.BusinessLogic.Identities;
+﻿namespace CQ.AuthProvider.BusinessLogic.Identities;
 
 public sealed record class Identity()
 {
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
-    public string Email { get; init; } = null!;
+    public required string Email { get; init; }
 
-    public string Password { get; set; } = null!;
-
-    // For new Identity
-    public Identity(
-        string email,
-        string password)
-        : this()
-    {
-        Email = email;
-        Password = password;
-    }
+    public required string Password { get; set; }
 }

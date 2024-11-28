@@ -14,16 +14,16 @@ public interface ITenantService
         int pageSize = 10);
 
     Task<Tenant> GetByIdAsync(
-        string id,
+        Guid id,
         AccountLogged accountLogged);
 
     Task UpdateNameByIdAndSaveAsync(
-        string id,
+        Guid id,
         string newName);
 
     Task UpdateOwnerAsync(
-        string id,
-        string newOwnerId,
+        Guid id,
+        Guid newOwnerId,
         AccountLogged accountLogged);
 }
 

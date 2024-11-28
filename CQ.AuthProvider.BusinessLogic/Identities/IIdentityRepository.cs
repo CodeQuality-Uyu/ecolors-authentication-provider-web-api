@@ -5,10 +5,10 @@ public interface IIdentityRepository
     Task CreateAndSaveAsync(Identity identity);
 
     Task UpdatePasswordByIdAsync(
-        string identityId,
+        Guid identityId,
         string newPassword);
 
-    Task DeleteByIdAsync(string id);
+    Task DeleteByIdAsync(Guid id);
 
     Task<Identity> GetByCredentialsAsync(
         string email,

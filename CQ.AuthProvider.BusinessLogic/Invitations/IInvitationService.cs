@@ -10,17 +10,17 @@ public interface IInvitationService
         AccountLogged accountLogged);
 
     Task<Pagination<Invitation>> GetAllAsync(
-        string? creatorId,
-        string? appId,
+        Guid? creatorId,
+        Guid? appId,
         int page,
         int pageSize,
         AccountLogged accountLogged);
 
     Task<CreateAccountResult> AcceptByIdAsync(
-        string id,
+        Guid id,
         AcceptInvitationArgs args);
 
     Task DeclainByIdAsync(
-        string id,
+        Guid id,
         string email);
 }

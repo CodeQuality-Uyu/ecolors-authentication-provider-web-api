@@ -23,7 +23,7 @@ internal sealed class InvitationService(
         AccountLogged accountLogged)
     {
         var app = accountLogged.Apps.Find(a => a.Id == args.AppId);
-        if (Guard.IsNotNullOrEmpty(args.AppId) && Guard.IsNull(app))
+        if (args.AppId.HasValue && Guard.IsNull(app))
         {
             throw new InvalidOperationException($"App is not allowed");
         }
@@ -70,8 +70,8 @@ internal sealed class InvitationService(
     }
 
     public async Task<Pagination<Invitation>> GetAllAsync(
-        string? creatorId,
-        string? appId,
+        Guid? creatorId,
+        Guid? appId,
         int page,
         int pageSize,
         AccountLogged accountLogged)
@@ -89,7 +89,7 @@ internal sealed class InvitationService(
     }
 
     public async Task<CreateAccountResult> AcceptByIdAsync(
-        string id,
+        Guid id,
         AcceptInvitationArgs args)
     {
         var invitation = await _invitationRepository
@@ -134,7 +134,7 @@ internal sealed class InvitationService(
     }
 
     public async Task DeclainByIdAsync(
-        string id,
+        Guid id,
         string email)
     {
         var invitation = await _invitationRepository

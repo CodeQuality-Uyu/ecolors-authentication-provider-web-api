@@ -18,7 +18,7 @@ public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> option
             .HasData(
                 new Identity
                 {
-                    Id = "5a0d9e179991499e80db0a15fda4df79",
+                    Id = Guid.Parse("5a0d9e179991499e80db0a15fda4df79"),
                     Email = "seed@cq.com",
                     Password = "!12345678"
                 });

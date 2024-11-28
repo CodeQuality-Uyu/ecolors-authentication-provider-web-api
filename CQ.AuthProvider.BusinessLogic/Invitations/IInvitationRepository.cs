@@ -10,15 +10,15 @@ public interface IInvitationRepository
     Task<bool> ExistPendingByEmailAsync(string email);
 
     Task<Pagination<Invitation>> GetAllAsync(
-        string? creatorId,
-        string? appId,
+        Guid? creatorId,
+        Guid? appId,
         int page,
         int pageSize,
         AccountLogged accountLogged);
 
-    Task<Invitation> GetPendingByIdAsync(string id);
+    Task<Invitation> GetPendingByIdAsync(Guid id);
 
-    Task DeleteByIdAsync(string id);
+    Task DeleteByIdAsync(Guid id);
 
-    Task DeleteAndSaveByIdAsync(string id);
+    Task DeleteAndSaveByIdAsync(Guid id);
 }

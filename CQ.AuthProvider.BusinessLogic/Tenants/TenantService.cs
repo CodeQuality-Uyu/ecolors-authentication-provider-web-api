@@ -21,9 +21,11 @@ internal sealed class TenantService(
         await AssertNameAsync(args.Name)
             .ConfigureAwait(false);
 
-        var tenant = new Tenant(
-            args.Name,
-            accountLogged);
+        var tenant = new Tenant
+        {
+            Name = args.Name,
+            Owner = accountLogged
+        };
 
         await _tenantRepository
             .CreateAndSaveAsync(tenant)
@@ -61,7 +63,7 @@ internal sealed class TenantService(
     }
 
     public async Task<Tenant> GetByIdAsync(
-        string id,
+        Guid id,
         AccountLogged accountLogged)
     {
         var tenant = await _tenantRepository
@@ -72,7 +74,7 @@ internal sealed class TenantService(
     }
 
     public async Task UpdateNameByIdAndSaveAsync(
-        string id,
+        Guid id,
         string newName)
     {
         await AssertNameAsync(newName)
@@ -85,8 +87,8 @@ internal sealed class TenantService(
 
 
     public async Task UpdateOwnerAsync(
-        string id,
-        string newOwnerId,
+        Guid id,
+        Guid newOwnerId,
         AccountLogged accountLogged)
     {
         var newOwner = await _accountRepository
@@ -101,7 +103,7 @@ internal sealed class TenantService(
             throw new InvalidOperationException("New owner is not in tenant");
         }
 
-        var isTenantOwner = newOwner.HasPermission(AuthConstants.TENANT_OWNER_ROLE_ID);
+        var isTenantOwner = newOwner.HasPermission(AuthConstants.TENANT_OWNER_ROLE_ID.ToString());
         if (isTenantOwner)
         {
             return;

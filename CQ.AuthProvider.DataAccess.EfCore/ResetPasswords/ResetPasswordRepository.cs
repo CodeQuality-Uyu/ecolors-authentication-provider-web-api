@@ -13,7 +13,7 @@ internal sealed class ResetPasswordRepository(
     : EfCoreRepository<ResetPasswordEfCore>(context),
     IResetPasswordRepository
 {
-    public new async Task<ResetPassword> GetByIdAsync(string id)
+    public new async Task<ResetPassword> GetByIdAsync(Guid id)
     {
         var query = Entities
             .Include(r => r.Account)
@@ -52,7 +52,7 @@ internal sealed class ResetPasswordRepository(
     }
 
     public async Task DeletePendingAsync(
-        string id,
+        Guid id,
         string code)
     {
         await DeleteAndSaveAsync(r =>
@@ -63,7 +63,7 @@ internal sealed class ResetPasswordRepository(
     }
 
     public async Task UpdateCodeByIdAsync(
-        string id,
+        Guid id,
         string code)
     {
         var resetPassword = await base.GetByIdAsync(id).ConfigureAwait(false);

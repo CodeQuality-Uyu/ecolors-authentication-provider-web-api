@@ -23,11 +23,11 @@ internal sealed class AccountService(
         Account account,
         string password)
     {
-        var identity = new Identity(
-            account.Email,
-            password)
+        var identity = new Identity
         {
-            Id = account.Id
+            Id = account.Id,
+            Email = account.Email,
+            Password = password
         };
 
         await _identityRepository
@@ -107,7 +107,7 @@ internal sealed class AccountService(
         return result;
     }
 
-    private async Task<Role> GetRoleAsync(string? roleId)
+    private async Task<Role> GetRoleAsync(Guid? roleId)
     {
         if (Guard.IsNull(roleId))
         {
@@ -117,7 +117,7 @@ internal sealed class AccountService(
         }
 
         return await _roleRepository
-            .GetByIdAsync(roleId)
+            .GetByIdAsync(roleId.Value)
             .ConfigureAwait(false);
     }
     #endregion

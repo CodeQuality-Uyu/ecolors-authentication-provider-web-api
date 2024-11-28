@@ -24,11 +24,19 @@ public async Task CreateAsync(Account account)
 
     var accountRolesEfCore = account
         .Roles
-        .ConvertAll(r => new AccountRole(account.Id, r.Id));
+        .ConvertAll(r => new AccountRole
+        {
+            AccountId = account.Id,
+            RoleId = r.Id
+        });
 
     var accountAppsEfCore = account
         .Apps
-        .ConvertAll(a => new AccountApp(account.Id, a.Id));
+        .ConvertAll(a => new AccountApp
+        {
+            AccountId = account.Id,
+            AppId = a.Id
+        });
 
     await Entities
         .AddAsync(accountEfCore)
@@ -57,7 +65,7 @@ public async Task<Account> GetByEmailAsync(string email)
     return _mapper.Map<Account>(account);
 }
 
-async Task<Account> IAccountRepository.GetByIdAsync(string id)
+async Task<Account> IAccountRepository.GetByIdAsync(Guid id)
 {
     var query =
         Entities
@@ -75,14 +83,14 @@ async Task<Account> IAccountRepository.GetByIdAsync(string id)
 
     if (Guard.IsNull(account))
     {
-        throw new SpecificResourceNotFoundException<Account>(nameof(Account.Id), id);
+        throw new SpecificResourceNotFoundException<Account>(nameof(Account.Id), id.ToString());
     }
 
     return _mapper.Map<Account>(account);
 }
 
 public async Task<Account> GetByIdAsync(
-    string id,
+    Guid id,
     params string[] includes)
 {
     var queryInclude = InsertIncludes(
@@ -98,24 +106,28 @@ public async Task<Account> GetByIdAsync(
         .FirstOrDefaultAsync()
         .ConfigureAwait(false);
 
-    AssertNullEntity(account, id, nameof(Account.Id));
+    AssertNullEntity(account, id.ToString(), nameof(Account.Id));
 
     return _mapper.Map<Account>(account);
 }
 
 public async Task UpdateTenantByIdAndSaveAsync(
-    string id,
+    Guid id,
     Tenant tenant)
 {
-    await UpdateAndSaveByIdAsync(id, new { TenantId = tenant.Id })
+    await UpdateAndSaveByIdAsync(id.ToString(), new { TenantId = tenant.Id })
         .ConfigureAwait(false);
 }
 
 public async Task AddRoleByIdAsync(
-    string id,
-    string roleId)
+    Guid id,
+    Guid roleId)
 {
-    var accountRole = new AccountRole(id, roleId);
+    var accountRole = new AccountRole
+    {
+        AccountId = id,
+        RoleId = roleId
+    };
 
     await ConcreteContext
         .AccountsRoles
@@ -123,8 +135,8 @@ public async Task AddRoleByIdAsync(
 }
 
 public Task RemoveRoleByIdAsync(
-    string id,
-    string roleId)
+    Guid id,
+    Guid roleId)
 {
     var query = ConcreteContext
         .AccountsRoles
@@ -137,7 +149,7 @@ public Task RemoveRoleByIdAsync(
 }
 
 public async Task<Pagination<Account>> GetAllAsync(
-    string tenantId,
+    Guid tenantId,
     int page,
     int pageSize)
 {

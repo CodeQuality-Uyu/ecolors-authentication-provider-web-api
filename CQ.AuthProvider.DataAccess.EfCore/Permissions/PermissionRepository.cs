@@ -17,9 +17,9 @@ internal sealed class PermissionRepository(
     IPermissionRepository
 {
     public async Task<Pagination<Permission>> GetAllAsync(
-        string? appId,
+        Guid? appId,
         bool? isPrivate,
-        string? roleId,
+        Guid? roleId,
         int page,
         int pageSize,
         AccountLogged accountLogged)
@@ -41,7 +41,7 @@ internal sealed class PermissionRepository(
     }
 
     public async Task<List<Permission>> GetAllByKeysAsync(
-        List<(string appId, List<string> keys)> keys,
+        List<(Guid appId, List<string> keys)> keys,
         AccountLogged accountLogged)
     {
         var query = Entities

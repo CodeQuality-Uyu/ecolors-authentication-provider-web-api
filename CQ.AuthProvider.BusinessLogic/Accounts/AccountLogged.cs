@@ -9,9 +9,9 @@ public record class AccountLogged()
 {
     public string Token { get; init; } = null!;
 
-    public List<string> AppsIds => Apps.ConvertAll(a => a.Id);
+    public List<Guid> AppsIds => Apps.ConvertAll(a => a.Id);
 
-    public List<string> RolesIds => Roles.ConvertAll(r => r.Id);
+    public List<Guid> RolesIds => Roles.ConvertAll(r => r.Id);
 
     public App AppLogged { get; init; } = null!;
 

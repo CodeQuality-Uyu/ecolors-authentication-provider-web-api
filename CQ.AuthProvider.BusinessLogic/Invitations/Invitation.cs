@@ -10,7 +10,7 @@ public sealed record class Invitation()
 {
     public const int EXPIRATION_MINUTES = 15;
 
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Email { get; init; } = null!;
 

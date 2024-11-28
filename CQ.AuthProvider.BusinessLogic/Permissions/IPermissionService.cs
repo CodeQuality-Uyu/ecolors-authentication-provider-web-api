@@ -6,9 +6,9 @@ namespace CQ.AuthProvider.BusinessLogic.Permissions;
 public interface IPermissionService
 {
     Task<Pagination<Permission>> GetAllAsync(
-        string? appId,
+        Guid? appId,
         bool? isPrivate,
-        string? roleId,
+        Guid? roleId,
         int page,
         int pageSize,
         AccountLogged accountLogged);
@@ -26,6 +26,6 @@ internal interface IPermissionInternalService
     : IPermissionService
 {
     Task<List<Permission>> GetExactAllByKeysAsync(
-        List<(string appId, List<string> keys)> keys,
+        List<(Guid appId, List<string> keys)> keys,
         AccountLogged accountLogged);
 }

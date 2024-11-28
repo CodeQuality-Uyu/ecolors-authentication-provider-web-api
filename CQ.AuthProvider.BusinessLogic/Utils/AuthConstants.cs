@@ -1,6 +1,6 @@
 ﻿namespace CQ.AuthProvider.BusinessLogic.Utils;
 public static class AuthConstants
 {
-    public const string TENANT_OWNER_ROLE_ID = "5c2260fc58864b75a4cad5c0e7dd57cb";
-    public const string AUTH_WEB_API_APP_ID = "d31184dabbc6435eaec86694650c2679";
+    public static readonly Guid TENANT_OWNER_ROLE_ID = Guid.Parse("cf4a209a-8dbd-4dac-85d9-ed899424b49e");
+    public static readonly Guid AUTH_WEB_API_APP_ID = Guid.Parse("f4ad89eb-6a0b-427a-8aef-b6bc736884dc");
 }

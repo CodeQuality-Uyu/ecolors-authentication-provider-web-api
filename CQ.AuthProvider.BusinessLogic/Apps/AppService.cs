@@ -28,7 +28,7 @@ internal sealed class AppService(
             .ConfigureAwait(false);
     }
 
-    public async Task<App> GetByIdAsync(string id)
+    public async Task<App> GetByIdAsync(Guid id)
     {
         var app = await _appRepository
             .GetByIdAsync(id)

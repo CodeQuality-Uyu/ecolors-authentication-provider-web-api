@@ -5,9 +5,9 @@ namespace CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 
 public sealed record class ResetPasswordEfCore()
 {
-    public string Id { get; init; } = null!;
+    public Guid Id { get; init; } = Guid.NewGuid();
 
-    public string AccountId { get; init; } = null!;
+    public Guid AccountId { get; init; }
 
     public AccountEfCore Account { get; init; } = null!;
 
@@ -19,9 +19,9 @@ public sealed record class ResetPasswordEfCore()
 
     // For new ResetPassword
     public ResetPasswordEfCore(
-        string id,
+        Guid id,
         string code,
-        string accountId)
+        Guid accountId)
         : this()
     {
         Id = id;

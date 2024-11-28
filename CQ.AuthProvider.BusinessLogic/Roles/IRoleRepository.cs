@@ -6,27 +6,27 @@ namespace CQ.AuthProvider.BusinessLogic.Roles;
 public interface IRoleRepository
 {
     Task<Pagination<Role>> GetAllAsync(
-        string? appId,
+        Guid? appId,
         bool? isPrivate,
         int page,
         int pageSize,
         AccountLogged accountLogged);
 
     Task RemoveDefaultsAndSaveAsync(
-        List<string> appsIds,
+        List<Guid> appsIds,
         AccountLogged accountLogged);
 
     Task CreateBulkAsync(List<Role> roles);
 
-    Task<Role> GetByIdAsync(string id);
+    Task<Role> GetByIdAsync(Guid id);
 
     Task AddPermissionsAsync(
-        string id,
+        Guid id,
         List<string> permissionsKeys);
 
     Task<Role> GetDefaultAsync();
 
     Task<Role?> GetDefaultOrDefaultByAppIdAndTenantIdAsync(
-        string appId,
-        string tenantId);
+        Guid appId,
+        Guid tenantId);
 }

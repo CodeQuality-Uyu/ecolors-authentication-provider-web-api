@@ -1,7 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using CQ.Utility;
 using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Roles;
@@ -12,7 +11,7 @@ internal sealed class RoleService(
     : IRoleInternalService
 {
     public async Task<Pagination<Role>> GetAllAsync(
-        string? appId,
+        Guid? appId,
         bool? isPrivate,
         int page,
         int pageSize,
@@ -80,17 +79,20 @@ internal sealed class RoleService(
             .Roles
             .ConvertAll(r =>
             {
-                var app = Guard.IsNotNullOrEmpty(r.AppId)
+                var app = r.AppId.HasValue
                 ? accountLogged.Apps.First(a => a.Id == r.AppId)
                 : accountLogged.AppLogged;
 
-                return new Role(
-                r.Name,
-                r.Description,
-                r.IsPublic,
-                permissions,
-                r.IsDefault,
-                app);
+                return new Role
+                {
+                    Name = r.Name,
+                    Description = r.Description,
+                    IsPublic = r.IsPublic,
+                    Permissions = permissions,
+                    IsDefault = r.IsDefault,
+                    App = app,
+                    Tenant = app.Tenant
+                };
             });
 
         await roleRepository
@@ -99,7 +101,7 @@ internal sealed class RoleService(
     }
 
     public async Task AddPermissionByIdAsync(
-        string id,
+        Guid id,
         AddPermissionArgs args)
     {
         var role = await roleRepository

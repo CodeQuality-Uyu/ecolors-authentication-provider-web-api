@@ -6,7 +6,7 @@ namespace CQ.AuthProvider.BusinessLogic.Roles;
 public interface IRoleService
 {
     Task<Pagination<Role>> GetAllAsync(
-        string? appId,
+        Guid? appId,
         bool? isPrivate,
         int page,
         int pageSize,
@@ -21,7 +21,7 @@ public interface IRoleService
         AccountLogged accountLogged);
 
     Task AddPermissionByIdAsync(
-        string id,
+        Guid id,
         AddPermissionArgs permissions);
 }
 

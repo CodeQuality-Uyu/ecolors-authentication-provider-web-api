@@ -10,9 +10,9 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
     : IPermissionInternalService
 {
     public async Task<Pagination<Permission>> GetAllAsync(
-        string? appId,
+        Guid? appId,
         bool? isPrivate,
-        string? roleId,
+        Guid? roleId,
         int page,
         int pageSize,
         AccountLogged accountLogged)
@@ -31,7 +31,7 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
     }
 
     public async Task<List<Permission>> GetExactAllByKeysAsync(
-        List<(string appId, List<string> keys)> keys,
+        List<(Guid appId, List<string> keys)> keys,
         AccountLogged accountLogged)
     {
         var permissionsSaved = await permissionRepository
@@ -95,7 +95,7 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             .Permissions
             .ConvertAll(p =>
         {
-            var app = Guard.IsNotNullOrEmpty(p.AppId)
+            var app = p.AppId.HasValue
             ? accountLogged.Apps.First(a => a.Id == p.AppId)
             : accountLogged.AppLogged;
 

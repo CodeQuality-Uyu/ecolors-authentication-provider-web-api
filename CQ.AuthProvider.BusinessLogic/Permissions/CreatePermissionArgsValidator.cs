@@ -5,7 +5,6 @@ using CQ.Utility;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Interceptors;
 
 namespace CQ.AuthProvider.BusinessLogic.Permissions;
@@ -33,7 +32,7 @@ internal sealed class CreatePermissionArgsValidator
         IValidationContext validationContext)
     {
         var validationResult = new ValidationResult();
-        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItems.AccountLogged];
+        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItem.AccountLogged];
 
         var args = (CreatePermissionArgs)validationContext.InstanceToValidate;
 
@@ -61,7 +60,7 @@ internal static class ValidatorExtensions
 
         return options;
     }
-    public static IRuleBuilderOptions<T, string?> ValidId<T>(this IRuleBuilder<T, string?> validator)
+    public static IRuleBuilderOptions<T, Guid?> ValidId<T>(this IRuleBuilder<T, Guid?> validator)
     {
         var options = validator
             .Must((id) =>
@@ -71,8 +70,17 @@ internal static class ValidatorExtensions
                     return true;
                 }
 
-                return Db.IsIdValid(id);
+                return id != Guid.Empty;
             })
+            .WithMessage("Invalid id");
+
+        return options;
+    }
+
+    public static IRuleBuilderOptions<T, Guid> ValidId<T>(this IRuleBuilder<T, Guid> validator)
+    {
+        var options = validator
+            .Must((id) => id != Guid.Empty)
             .WithMessage("Invalid id");
 
         return options;

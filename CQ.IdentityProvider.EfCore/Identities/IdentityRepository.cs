@@ -8,7 +8,7 @@ public sealed class IdentityRepository(
     : EfCoreRepository<Identity>(context),
     IIdentityRepository
 {
-    public async Task DeleteByIdAsync(string id)
+    public async Task DeleteByIdAsync(Guid id)
     {
         await DeleteAndSaveAsync(i => i.Id == id).ConfigureAwait(false);
     }
@@ -23,7 +23,7 @@ public sealed class IdentityRepository(
     }
 
     public async Task UpdatePasswordByIdAsync(
-        string id,
+        Guid id,
         string newPassword)
     {
         var identity = await GetAsync(i => i.Id == id).ConfigureAwait(false);

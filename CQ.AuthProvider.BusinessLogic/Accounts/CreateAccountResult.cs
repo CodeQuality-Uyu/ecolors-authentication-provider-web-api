@@ -1,7 +1,7 @@
 ﻿namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public sealed record class CreateAccountResult(
-    string Id,
+    Guid Id,
     string Email,
     string FullName,
     string FirstName,

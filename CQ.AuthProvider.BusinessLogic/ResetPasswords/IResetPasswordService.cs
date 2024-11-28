@@ -5,6 +5,6 @@ public interface IResetPasswordService
     Task CreateAsync(string email);
 
     Task AcceptAsync(
-        string id,
+        Guid id,
         AcceptResetPasswordArgs args);
 }

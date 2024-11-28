@@ -9,7 +9,7 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public record class Account()
 {
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Email { get; init; } = null!;
 
@@ -91,7 +91,7 @@ public record class Account()
 
     public bool HasPermission(string permissionKey)
     {
-        var hasRole = Roles.Exists(r => r.Id == permissionKey);
+        var hasRole = Roles.Exists(r => r.Id.ToString() == permissionKey);
 
         return hasRole || CheckPermission(permissionKey);
     }

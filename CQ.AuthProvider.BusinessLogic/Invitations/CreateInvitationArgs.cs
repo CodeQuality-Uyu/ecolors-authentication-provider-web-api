@@ -2,5 +2,5 @@
 
 public sealed record CreateInvitationArgs(
     string Email,
-    string RoleId,
-    string? AppId);
+    Guid RoleId,
+    Guid? AppId);

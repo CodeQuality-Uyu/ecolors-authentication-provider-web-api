@@ -7,7 +7,7 @@ public sealed record class ResetPassword()
 {
     public const int TOLERANCE_IN_MINUTES = 15;
 
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public Account Account { get; init; } = null!;
 

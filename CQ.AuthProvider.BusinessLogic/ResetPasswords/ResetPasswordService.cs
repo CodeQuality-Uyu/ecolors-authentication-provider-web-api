@@ -13,7 +13,7 @@ internal abstract class ResetPasswordService(
     : IResetPasswordService
 {
     public async Task AcceptAsync(
-        string id,
+        Guid id,
         AcceptResetPasswordArgs args)
     {
         var resetPasswordOldApplication = await resetPasswordRepository

@@ -21,7 +21,7 @@ internal sealed class AppRepository(
         await CreateAndSaveAsync(appEfCore).ConfigureAwait(false);
     }
 
-    public async Task<bool> ExistsByNameInTenantAsync(string name, string tenantId)
+    public async Task<bool> ExistsByNameInTenantAsync(string name, Guid tenantId)
     {
         var query = ConcreteContext
             .Apps
@@ -35,7 +35,7 @@ internal sealed class AppRepository(
         return exist;
     }
 
-    public async Task<List<App>> GetByIdsAsync(List<string> ids)
+    public async Task<List<App>> GetByIdsAsync(List<Guid> ids)
     {
         var apps = await GetAllAsync(a => ids.Contains(a.Id))
             .ConfigureAwait(false);
@@ -43,7 +43,7 @@ internal sealed class AppRepository(
         return _mapper.Map<List<App>>(apps);
     }
 
-    async Task<App> IAppRepository.GetByIdAsync(string id)
+    async Task<App> IAppRepository.GetByIdAsync(Guid id)
     {
         var app = await GetByIdAsync(id)
             .ConfigureAwait(false);
@@ -52,7 +52,7 @@ internal sealed class AppRepository(
     }
 
     public async Task<Pagination<App>> GetAllAsync(
-        string tenantId,
+        Guid tenantId,
         int page,
         int pageSize)
     {

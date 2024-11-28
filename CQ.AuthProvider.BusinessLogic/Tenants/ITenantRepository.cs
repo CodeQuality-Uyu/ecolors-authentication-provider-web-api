@@ -13,13 +13,13 @@ public interface ITenantRepository
         int page = 10,
         int pageSize = 10);
 
-    Task<Tenant> GetByIdAsync(string id);
+    Task<Tenant> GetByIdAsync(Guid id);
 
     Task UpdateOwnerByIdAsync(
-        string id,
+        Guid id,
         Account newOwner);
 
     Task UpdateNameByIdAndSaveAsync(
-        string id,
+        Guid id,
         string newName);
 }

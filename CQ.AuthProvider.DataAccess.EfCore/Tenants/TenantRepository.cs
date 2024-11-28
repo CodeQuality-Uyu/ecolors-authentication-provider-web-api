@@ -36,7 +36,7 @@ internal sealed class TenantRepository
         return mapper.Map<Pagination<Tenant>>(tenants);
     }
 
-    async Task<Tenant> ITenantRepository.GetByIdAsync(string id)
+    async Task<Tenant> ITenantRepository.GetByIdAsync(Guid id)
     {
         var tenant = await GetByIdAsync(id).ConfigureAwait(false);
 
@@ -44,7 +44,7 @@ internal sealed class TenantRepository
     }
 
     public async Task UpdateOwnerByIdAsync(
-        string id,
+        Guid id,
         Account newOwner)
     {
         var tenant = await GetByIdAsync(id).ConfigureAwait(false);
@@ -53,7 +53,7 @@ internal sealed class TenantRepository
     }
 
     public async Task UpdateNameByIdAndSaveAsync(
-        string id,
+        Guid id,
         string newName)
     {
         var tenant = await GetByIdAsync(id).ConfigureAwait(false);

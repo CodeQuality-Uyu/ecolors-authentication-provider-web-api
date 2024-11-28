@@ -10,26 +10,26 @@ public interface IAccountRepository
 
     Task<Account> GetByEmailAsync(string email);
 
-    Task<Account> GetByIdAsync(string id);
+    Task<Account> GetByIdAsync(Guid id);
 
     Task<Account> GetByIdAsync(
-        string id,
+        Guid id,
         params string[] includes);
 
     Task UpdateTenantByIdAndSaveAsync(
-        string id,
+        Guid id,
         Tenant tenant);
 
     Task AddRoleByIdAsync(
-        string id,
-        string roleId);
+        Guid id,
+        Guid roleId);
 
     Task RemoveRoleByIdAsync(
-        string id,
-        string roleId);
+        Guid id,
+        Guid roleId);
 
     Task<Pagination<Account>> GetAllAsync(
-        string tenantId,
+        Guid tenantId,
         int page,
         int pageSize);
 }

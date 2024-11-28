@@ -18,5 +18,5 @@ public interface IAppService
 internal interface IAppInternalService
     : IAppService
 {
-    Task<App> GetByIdAsync(string id);
+    Task<App> GetByIdAsync(Guid id);
 }

@@ -20,11 +20,11 @@ public sealed record class PermissionEfCore()
 
     public List<RoleEfCore> Roles { get; init; } = [];
 
-    public string AppId { get; init; } = null!;
+    public Guid AppId { get; init; }
 
     public AppEfCore App { get; init; } = null!;
 
-    public string TenantId { get; init; } = null!;
+    public Guid TenantId { get; init; }
 
     public TenantEfCore Tenant { get; init; } = null!;
 

@@ -9,25 +9,25 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Invitations;
 
 public sealed record class InvitationEfCore()
 {
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Email { get; init; } = null!;
 
     public string Code { get; init; } = null!;
 
-    public string CreatorId { get; init; } = null!;
+    public Guid CreatorId { get; init; }
 
     public AccountEfCore Creator { get; init; } = null!;
 
-    public string RoleId { get; init; } = null!;
+    public Guid RoleId { get; init; }
 
     public RoleEfCore Role { get; init; } = null!;
 
-    public string AppId { get; init; } = null!;
+    public Guid AppId { get; init; }
 
     public AppEfCore App { get; init; } = null!;
 
-    public string TenantId { get; init; } = null!;
+    public Guid TenantId { get; init; }
 
     public TenantEfCore Tenant { get; init; } = null!;
 
@@ -38,10 +38,10 @@ public sealed record class InvitationEfCore()
     private InvitationEfCore(
         string email,
         string code,
-        string roleId,
-        string appId,
-        string creatorId,
-        string tenantId)
+        Guid roleId,
+        Guid appId,
+        Guid creatorId,
+        Guid tenantId)
         : this()
     {
         Email = email;

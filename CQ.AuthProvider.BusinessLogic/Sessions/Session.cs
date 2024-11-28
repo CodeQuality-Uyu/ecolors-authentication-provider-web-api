@@ -6,7 +6,7 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 public sealed record class Session()
 {
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Token { get; init; } = null!;
 

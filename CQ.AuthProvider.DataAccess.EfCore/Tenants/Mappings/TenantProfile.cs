@@ -25,7 +25,7 @@ internal sealed class TenantOwnerResolver()
     {
         if(Guard.IsNull(sourceMember))
         {
-            var ownerId = context.Items[nameof(TenantEfCore.OwnerId)] as string;
+            var ownerId = (Guid)context.Items[nameof(TenantEfCore.OwnerId)];
 
             return new Account
             {

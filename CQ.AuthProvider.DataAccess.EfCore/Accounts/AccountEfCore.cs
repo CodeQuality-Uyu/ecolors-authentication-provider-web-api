@@ -1,15 +1,13 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
-using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 public sealed record class AccountEfCore()
 {
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Email { get; init; } = null!;
 
@@ -27,7 +25,7 @@ public sealed record class AccountEfCore()
 
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow.Date;
 
-    public string? TenantId { get; set; }
+    public Guid? TenantId { get; init; }
 
     public TenantEfCore? Tenant { get; init; }
 

@@ -18,8 +18,8 @@ internal sealed class InvitationRepository(
     IInvitationRepository
 {
     public async Task<Pagination<Invitation>> GetAllAsync(
-        string? creatorId,
-        string? appId,
+        Guid? creatorId,
+        Guid? appId,
         int page,
         int pageSize,
         AccountLogged accountLogged)
@@ -76,7 +76,7 @@ internal sealed class InvitationRepository(
         return invitation.IsPending();
     }
 
-    public async Task<Invitation> GetPendingByIdAsync(string id)
+    public async Task<Invitation> GetPendingByIdAsync(Guid id)
     {
         var query = Entities
             .Where(i => i.Id == id)
@@ -92,7 +92,7 @@ internal sealed class InvitationRepository(
         return mapper.Map<Invitation>(invitation);
     }
 
-    public Task DeleteByIdAsync(string id)
+    public Task DeleteByIdAsync(Guid id)
     {
         var query = Entities
             .Where(i => i.Id == id);
@@ -102,7 +102,7 @@ internal sealed class InvitationRepository(
         return Task.CompletedTask;
     }
 
-    public async Task DeleteAndSaveByIdAsync(string id)
+    public async Task DeleteAndSaveByIdAsync(Guid id)
     {
         await DeleteAndSaveAsync(i => i.Id == id).ConfigureAwait(false);
     }

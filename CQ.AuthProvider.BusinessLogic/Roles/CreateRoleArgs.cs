@@ -7,4 +7,4 @@ public sealed record CreateRoleArgs(
     List<string> PermissionKeys,
     bool IsPublic,
     bool IsDefault,
-    string? AppId);
+    Guid? AppId);

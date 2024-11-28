@@ -37,15 +37,15 @@ internal sealed class CreateBulkPermissionArgsValidator
         IValidationContext validationContext)
     {
         var validationResult = new ValidationResult();
-        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItems.AccountLogged];
+        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItem.AccountLogged];
 
         var args = (CreateBulkPermissionArgs)validationContext.InstanceToValidate;
         var permissions = args.Permissions;
 
         var appsIds = permissions
                     .GroupBy(a => a.AppId)
-                    .Where(a => Guard.IsNotNullOrEmpty(a.Key))
-                .Select(g => g.Key!)
+                    .Where(a => a.Key.HasValue)
+                    .Select(g => g.Key!)
                     .ToList();
 
         if (appsIds.Count != 0)
@@ -53,7 +53,7 @@ internal sealed class CreateBulkPermissionArgsValidator
             var validAppsIds = accountLogged.AppsIds;
 
             var invalidAppsIds = appsIds
-                .Where(id => !validAppsIds.Contains(id))
+                .Where(id => !validAppsIds.Contains(id.Value))
                 .ToList();
 
             validationResult.Errors.Add(new ValidationFailure("AppId",$"Invalid apps ids {string.Join(",", invalidAppsIds)}"));

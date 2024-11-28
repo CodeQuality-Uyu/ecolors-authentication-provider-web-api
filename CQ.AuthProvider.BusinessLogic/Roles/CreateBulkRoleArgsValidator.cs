@@ -35,18 +35,18 @@ internal sealed class CreateBulkRoleArgsValidator
     public ValidationResult? AfterValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
     {
         var validationResult = new ValidationResult();
-        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItems.AccountLogged];
+        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItem.AccountLogged];
 
         var args = (CreateBulkRoleArgs)validationContext.InstanceToValidate;
         var roles = args.Roles;
 
         var appsIds = roles
-            .Where(g => Guard.IsNotNullOrEmpty(g.AppId))
             .GroupBy(a => a.AppId)
+            .Where(g => g.Key.HasValue)
             .Select(g => g.Key)
             .ToList();
         var invalidAppsIds = appsIds
-            .Where(a => !accountLogged.AppsIds.Contains(a))
+            .Where(a => !accountLogged.AppsIds.Contains(a.Value))
             .ToList();
         if (invalidAppsIds.Count != 0)
         {

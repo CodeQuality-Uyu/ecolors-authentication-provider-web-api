@@ -5,4 +5,4 @@ public sealed record CreatePermissionArgs(
     string Description,
     string Key,
     bool IsPublic,
-    string? AppId);
+    Guid? AppId);

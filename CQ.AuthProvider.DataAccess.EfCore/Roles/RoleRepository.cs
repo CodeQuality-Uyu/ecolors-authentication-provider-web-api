@@ -21,7 +21,7 @@ internal sealed class RoleRepository(
     IRoleRepository
 {
     public async Task<Pagination<Role>> GetAllAsync(
-        string? appId,
+        Guid? appId,
         bool? isPrivate,
         int page,
         int pageSize,
@@ -41,7 +41,7 @@ internal sealed class RoleRepository(
     }
 
     public async Task RemoveDefaultsAndSaveAsync(
-        List<string> appsIds,
+        List<Guid> appsIds,
         AccountLogged accountLogged)
     {
         var query = Entities
@@ -64,7 +64,7 @@ internal sealed class RoleRepository(
             .ConfigureAwait(false);
     }
 
-    public new async Task<Role> GetByIdAsync(string id)
+    public new async Task<Role> GetByIdAsync(Guid id)
     {
         var query = Entities
            .Include(r => r.Permissions)
@@ -103,14 +103,18 @@ internal sealed class RoleRepository(
     }
 
     public async Task AddPermissionsAsync(
-        string id,
+        Guid id,
         List<string> permissionsKeys)
     {
         var permissions = await permissionRepository
             .GetAllAsync(p => permissionsKeys.Contains(p.Key))
             .ConfigureAwait(false);
 
-        var rolePermissions = permissions.ConvertAll(p => new RolePermission(id, p.Id));
+        var rolePermissions = permissions.ConvertAll(p => new RolePermission
+        {
+            RoleId = id,
+            PermissionId = p.Id
+        });
 
         await rolePermissionRepository
             .CreateBulkAndSaveAsync(rolePermissions)
@@ -118,8 +122,8 @@ internal sealed class RoleRepository(
     }
 
     public async Task<Role?> GetDefaultOrDefaultByAppIdAndTenantIdAsync(
-        string appId,
-        string tenantId)
+        Guid appId,
+        Guid tenantId)
     {
         var query = Entities
             .Where(r => r.AppId == appId)

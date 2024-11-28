@@ -8,5 +8,5 @@ public sealed record CreateAccountArgs(
     string Locale,
     string TimeZone,
     string? ProfilePictureId,
-    string? RoleId,
-    string AppId);
+    Guid? RoleId,
+    Guid AppId);

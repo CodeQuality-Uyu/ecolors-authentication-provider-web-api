@@ -5,7 +5,7 @@ namespace CQ.AuthProvider.BusinessLogic.Apps;
 
 public sealed record class App()
 {
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Name { get; init; } = null!;
 
