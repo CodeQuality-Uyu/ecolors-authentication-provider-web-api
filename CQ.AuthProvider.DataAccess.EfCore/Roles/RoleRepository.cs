@@ -79,10 +79,10 @@ internal sealed class RoleRepository(
         return mapper.Map<Role>(role);
     }
 
-    public async Task<Role> GetDefaultAsync()
+    public async Task<Role> GetDefaultByTenantIdAsync(Guid tenantId)
     {
         var query = Entities
-            .Include(r => r.Permissions)
+            .Where(r => r.TenantId == tenantId)
             .Where(r => r.IsDefault);
 
         var role = await query

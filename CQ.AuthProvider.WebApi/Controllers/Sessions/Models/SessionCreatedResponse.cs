@@ -2,7 +2,7 @@
 
 public readonly struct SessionCreatedResponse
 {
-    public string AccountId { get; init; }
+    public Guid AccountId { get; init; }
 
     public string? ProfilePictureId { get; init; }
 

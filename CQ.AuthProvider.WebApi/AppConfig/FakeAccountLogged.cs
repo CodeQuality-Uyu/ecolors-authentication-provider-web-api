@@ -9,7 +9,7 @@ namespace CQ.AuthProvider.WebApi.AppConfig;
 public sealed record class FakeAccountLogged
     : AccountLogged
 {
-    public new List<string> AppsIds
+    public new List<Guid> AppsIds
     {
         get => Apps.ConvertAll(i => i.Id);
 
@@ -22,7 +22,7 @@ public sealed record class FakeAccountLogged
         }
     }
 
-    public new List<string> RolesIds
+    public new List<Guid> RolesIds
     {
         get => Roles.ConvertAll(i => i.Id);
 
@@ -37,7 +37,7 @@ public sealed record class FakeAccountLogged
         }
     }
 
-    public string AppLoggedId
+    public Guid AppLoggedId
     {
         get => AppLogged.Id;
 
@@ -68,7 +68,7 @@ public sealed record class FakeAccountLogged
         }
     }
 
-    public string TenantId
+    public Guid TenantId
     {
         get => TenantValue.Id;
         init

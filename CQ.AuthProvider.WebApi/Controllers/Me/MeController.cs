@@ -46,14 +46,12 @@ public sealed class MeController(
     [SecureAuthorization(ContextItem.AccountLogged)]
     public async Task TransferTenantAsync(TransferTenantRequest request)
     {
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
 
         await _tenantService
             .UpdateOwnerAsync(
             accountLogged.TenantValue.Id,
-            args,
+            request.NewOwnerId,
             accountLogged)
             .ConfigureAwait(false);
     }

@@ -38,8 +38,13 @@ public sealed class AccountController(
 
     [HttpPost("credentials/for")]
     [BearerAuthentication]
-    public async Task CreateCredentialsForAsync(CreateAccountArgs request)
+    [SecureAuthorization(ContextItem.AccountLogged)]
+    public async Task CreateCredentialsForAsync(CreateAccountForArgs request)
     {
+        var accountLogged = this.GetAccountLogged();
+
+        request.TenantId = accountLogged.TenantValue.Id;
+
         await _accountService
             .CreateAndSaveAsync(request)
             .ConfigureAwait(false);

@@ -2,7 +2,6 @@
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
 using AutoMapper;
-using CQ.Utility;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.ApiElements;
@@ -17,14 +16,10 @@ public class SessionController(
     : ControllerBase
 {
     [HttpPost("credentials")]
-    public async Task<SessionCreatedResponse> CreateAsync(CreateSessionCredentialsRequest? request)
+    public async Task<SessionCreatedResponse> CreateAsync(CreateSessionCredentialsArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var createAuth = request.Map();
-
         var session = await sessionService
-            .CreateAndSaveAsync(createAuth)
+            .CreateAndSaveAsync(request)
             .ConfigureAwait(false);
 
         return mapper.Map<SessionCreatedResponse>(session);

@@ -22,9 +22,9 @@ public class ResetPasswordController(IResetPasswordService resetPasswordService)
             .ConfigureAwait(false);
     }
 
-    [HttpPut("{id:Guid}")]
+    [HttpPut("{id}")]
     public async Task AcceptAsync(
-        string id,
+        Guid id,
         ResetPasswordAcceptedRequest? request)
     {
         Guard.ThrowIsNull(request, nameof(request));

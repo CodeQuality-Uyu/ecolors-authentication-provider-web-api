@@ -36,8 +36,8 @@ public sealed class InvitationController(
     [BearerAuthentication]
     [SecureAuthorization(ContextItem.AccountLogged)]
     public async Task<Pagination<InvitationBasicInfoResponse>> GetAllAsync(
-        [FromQuery] string? creatorId,
-        [FromQuery] string? appId,
+        [FromQuery] Guid? creatorId,
+        [FromQuery] Guid? appId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
@@ -57,7 +57,7 @@ public sealed class InvitationController(
 
     [HttpPut("{id}/accept")]
     public async Task<AccountCreatedResponse> AcceptAsync(
-        string id,
+        Guid id,
         AcceptInvitationRequest request)
     {
         var args = request.Map();
@@ -74,7 +74,7 @@ public sealed class InvitationController(
 
     [HttpPut("{id}/declain")]
     public async Task DeclainAsync(
-        string id,
+        Guid id,
         DeclainInvitationRequest request)
     {
         var args = request.Map();

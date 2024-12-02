@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Apps;
+﻿using CQ.ApiElements.Dtos;
+using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
@@ -70,7 +71,7 @@ internal sealed class AccountService(
             throw new SpecificResourceDuplicatedException<Account>(nameof(Account.Email), args.Email);
         }
 
-        var role = await GetRoleAsync(args.RoleId).ConfigureAwait(false);
+        var role = await GetRoleAsync(args.RoleId,args.TenantId).ConfigureAwait(false);
 
         var app = await _appService
             .GetByIdAsync(args.AppId)
@@ -107,12 +108,14 @@ internal sealed class AccountService(
         return result;
     }
 
-    private async Task<Role> GetRoleAsync(Guid? roleId)
+    private async Task<Role> GetRoleAsync(
+        Guid? roleId,
+        Guid tenantId)
     {
         if (Guard.IsNull(roleId))
         {
             return await _roleRepository
-                .GetDefaultAsync()
+                .GetDefaultByTenantIdAsync(tenantId)
                 .ConfigureAwait(false);
         }
 
@@ -127,7 +130,7 @@ internal sealed class AccountService(
         var identity = await _identityRepository
             .GetByCredentialsAsync(
             args.Email,
-            args.OldPassword)
+            args.Code)
             .ConfigureAwait(false);
 
         await _identityRepository

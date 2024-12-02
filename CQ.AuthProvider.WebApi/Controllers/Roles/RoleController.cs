@@ -2,7 +2,6 @@
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Controllers.Roles.Models;
 using AutoMapper;
-using CQ.Utility;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Roles;
@@ -45,11 +44,8 @@ public class RoleController(
     }
 
     [HttpPost("{id}/permissions")]
-    public async Task AddPermissionAsync(string id, AddPermissionRequest request)
+    public async Task AddPermissionAsync(Guid id, AddPermissionRequest request)
     {
-        Db.ThrowIsInvalidId(id, nameof(id));
-        Guard.ThrowIsNull(request, nameof(request));
-
         var args = request.Map();
 
         await roleService
@@ -61,7 +57,7 @@ public class RoleController(
 
     [HttpGet]
     public async Task<Pagination<RoleBasicInfoResponse>> GetAllAsync(
-        [FromQuery] string? appId,
+        [FromQuery] Guid? appId,
         [FromQuery] bool? isPrivate,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)

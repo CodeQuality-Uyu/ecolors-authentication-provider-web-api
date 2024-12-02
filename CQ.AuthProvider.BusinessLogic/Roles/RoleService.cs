@@ -124,13 +124,4 @@ internal sealed class RoleService(
             args.PermissionsKeys)
             .ConfigureAwait(false);
     }
-
-    public async Task<Role> GetDefaultAsync()
-    {
-        var roleDefault = await roleRepository
-            .GetDefaultAsync()
-            .ConfigureAwait(false);
-
-        return roleDefault;
-    }
 }

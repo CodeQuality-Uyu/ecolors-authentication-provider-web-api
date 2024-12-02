@@ -46,9 +46,9 @@ public class PermissionController(
 
     [HttpGet]
     public async Task<Pagination<PermissionBasicInfoResponse>> GetAllAsync(
-        [FromQuery] string? appId,
+        [FromQuery] Guid? appId,
         [FromQuery] bool? isPrivate,
-        [FromQuery] string? roleId,
+        [FromQuery] Guid? roleId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {

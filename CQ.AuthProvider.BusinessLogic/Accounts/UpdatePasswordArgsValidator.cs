@@ -10,7 +10,7 @@ internal sealed class UpdatePasswordArgsValidator
         RuleFor(a => a.Email)
             .Email();
 
-        RuleFor(a => a.OldPassword)
+        RuleFor(a => a.Code)
             .Password();
 
         RuleFor(a => a.NewPassword)
