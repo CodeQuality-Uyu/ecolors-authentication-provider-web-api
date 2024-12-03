@@ -2,13 +2,12 @@
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
-using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
 public sealed record class PermissionEfCore()
 {
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Name { get; set; } = null!;
 

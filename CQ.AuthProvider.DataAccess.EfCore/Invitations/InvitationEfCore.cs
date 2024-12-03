@@ -3,7 +3,6 @@ using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
-using CQ.Utility;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Invitations;
 
@@ -58,7 +57,7 @@ public sealed record class InvitationEfCore()
               invitation.Role.Id,
               invitation.App.Id,
               invitation.Creator.Id,
-              invitation.Creator.TenantValue.Id)
+              invitation.Creator.Tenant.Id)
     {
         Id = invitation.Id;
         CreatedAt = invitation.CreatedAt;

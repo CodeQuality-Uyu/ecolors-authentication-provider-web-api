@@ -165,7 +165,7 @@ internal sealed class AccountService(
         AccountLogged accountLogged)
     {
         var accounts = await _accountRepository
-            .GetAllAsync(accountLogged.TenantValue.Id, page, pageSize)
+            .GetAllAsync(accountLogged.Tenant.Id, page, pageSize)
             .ConfigureAwait(false);
 
         return accounts;

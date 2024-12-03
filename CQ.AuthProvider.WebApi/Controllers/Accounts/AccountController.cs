@@ -43,7 +43,7 @@ public sealed class AccountController(
     {
         var accountLogged = this.GetAccountLogged();
 
-        request.TenantId = accountLogged.TenantValue.Id;
+        request.TenantId = accountLogged.Tenant.Id;
 
         await _accountService
             .CreateAndSaveAsync(request)

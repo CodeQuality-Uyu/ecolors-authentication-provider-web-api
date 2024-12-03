@@ -98,7 +98,7 @@ internal sealed class TenantService(
             nameof(Account.Roles))
             .ConfigureAwait(false);
 
-        if (newOwner.TenantValue.Id != id)
+        if (newOwner.Tenant.Id != id)
         {
             throw new InvalidOperationException("New owner is not in tenant");
         }

@@ -28,7 +28,7 @@ internal sealed class RoleRepository(
         AccountLogged accountLogged)
     {
         var query = Entities
-            .Where(r => r.TenantId == accountLogged.TenantValue.Id)
+            .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
             .Where(r => appId == null || r.AppId == appId)
             .Paginate(page, pageSize);
@@ -45,7 +45,7 @@ internal sealed class RoleRepository(
         AccountLogged accountLogged)
     {
         var query = Entities
-            .Where(r => r.TenantId == accountLogged.TenantValue.Id)
+            .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => appsIds.Contains(r.AppId))
             .Where(r => r.IsDefault);
 

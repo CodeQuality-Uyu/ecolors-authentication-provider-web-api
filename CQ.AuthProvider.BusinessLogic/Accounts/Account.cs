@@ -29,11 +29,7 @@ public record class Account()
 
     public List<App> Apps { get; init; } = [];
 
-    public Tenant? Tenant { get; init; }
-
-    public bool HasTenant => Guard.IsNotNull(Tenant);
-
-    public Tenant TenantValue => Tenant!;
+    public Tenant Tenant { get; init; } = null!;
 
     // For new Account
     public Account(

@@ -8,7 +8,7 @@ public sealed record class RolePermission()
 
     public RoleEfCore Role { get; init; } = null!;
 
-    public required string PermissionId { get; init; }
+    public required Guid PermissionId { get; init; }
 
     public PermissionEfCore Permission { get; init; } = null!;
 }

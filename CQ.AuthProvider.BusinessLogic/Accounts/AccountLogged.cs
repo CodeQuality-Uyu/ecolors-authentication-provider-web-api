@@ -32,7 +32,7 @@ public record class AccountLogged()
         Locale = account.Locale;
         TimeZone = account.TimeZone;
         Roles = account.Roles;
-        Tenant = account.TenantValue;
+        Tenant = account.Tenant;
         Token = token;
         AppLogged = appLogged;
     }

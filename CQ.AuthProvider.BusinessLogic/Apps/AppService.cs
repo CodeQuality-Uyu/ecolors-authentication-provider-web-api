@@ -12,7 +12,7 @@ internal sealed class AppService(
         AccountLogged accountLogged)
     {
         var existAppWithName = await _appRepository
-            .ExistsByNameInTenantAsync(args.Name, accountLogged.TenantValue.Id);
+            .ExistsByNameInTenantAsync(args.Name, accountLogged.Tenant.Id);
         if (existAppWithName)
         {
             throw new InvalidOperationException("Name is in used");
@@ -21,7 +21,7 @@ internal sealed class AppService(
         var app = new App(
             args.Name,
             args.IsDefault,
-            accountLogged.TenantValue);
+            accountLogged.Tenant);
 
         await _appRepository
             .CreateAndSaveAsync(app)
@@ -43,7 +43,7 @@ internal sealed class AppService(
         AccountLogged accountLogged)
     {
         var apps = await _appRepository
-            .GetAllAsync(accountLogged.TenantValue.Id, page, pageSize)
+            .GetAllAsync(accountLogged.Tenant.Id, page, pageSize)
             .ConfigureAwait(false);
 
         return apps;

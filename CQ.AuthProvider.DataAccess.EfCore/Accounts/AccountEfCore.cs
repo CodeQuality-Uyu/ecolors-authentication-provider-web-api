@@ -25,9 +25,9 @@ public sealed record class AccountEfCore()
 
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow.Date;
 
-    public Guid? TenantId { get; init; }
+    public Guid TenantId { get; init; }
 
-    public TenantEfCore? Tenant { get; init; }
+    public TenantEfCore Tenant { get; init; } = null!;
 
     public List<RoleEfCore> Roles { get; init; } = [];
 
@@ -45,6 +45,6 @@ public sealed record class AccountEfCore()
         Locale = account.Locale;
         TimeZone = account.TimeZone;
         ProfilePictureId = account.ProfilePictureId;
-        TenantId = account.Tenant?.Id;
+        TenantId = account.Tenant.Id;
     }
 }

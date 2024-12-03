@@ -27,7 +27,7 @@ internal sealed class PermissionRepository(
         var appLoggedIsAuthWebApi = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
 
         var query = Entities
-            .Where(p => (appLoggedIsAuthWebApi && p.AppId == AuthConstants.AUTH_WEB_API_APP_ID) || p.TenantId == accountLogged.TenantValue.Id)
+            .Where(p => (appLoggedIsAuthWebApi && p.AppId == AuthConstants.AUTH_WEB_API_APP_ID) || p.TenantId == accountLogged.Tenant.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Any(r => r.Id == roleId))
             .Where(p => appId == null || p.AppId == appId)
@@ -46,7 +46,7 @@ internal sealed class PermissionRepository(
     {
         var query = Entities
             .Where(p => keys.Any(i => i.appId == p.AppId && i.keys.Contains(p.Key)))
-            .Where(p => p.TenantId == accountLogged.TenantValue.Id);
+            .Where(p => p.TenantId == accountLogged.Tenant.Id);
 
         var permissions = await query
             .ToListAsync()

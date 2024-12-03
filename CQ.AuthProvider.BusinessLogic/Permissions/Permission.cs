@@ -6,7 +6,7 @@ namespace CQ.AuthProvider.BusinessLogic.Permissions;
 
 public sealed record class Permission()
 {
-    public string Id { get; init; } = Db.NewId();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Name { get; init; } = null!;
 

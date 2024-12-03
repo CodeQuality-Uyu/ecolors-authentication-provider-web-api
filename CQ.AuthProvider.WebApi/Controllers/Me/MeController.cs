@@ -50,7 +50,7 @@ public sealed class MeController(
 
         await _tenantService
             .UpdateOwnerAsync(
-            accountLogged.TenantValue.Id,
+            accountLogged.Tenant.Id,
             request.NewOwnerId,
             accountLogged)
             .ConfigureAwait(false);
@@ -67,7 +67,7 @@ public sealed class MeController(
 
         await _tenantService
             .UpdateNameByIdAndSaveAsync(
-            accountLogged.TenantValue.Id,
+            accountLogged.Tenant.Id,
             args)
             .ConfigureAwait(false);
     }
