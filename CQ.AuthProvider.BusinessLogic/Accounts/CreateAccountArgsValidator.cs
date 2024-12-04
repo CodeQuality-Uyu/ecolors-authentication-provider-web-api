@@ -26,6 +26,34 @@ internal sealed class CreateAccountArgsValidator
         RuleFor(a => a.Password)
             .Password();
 
+        RuleFor(a => a.AppId)
+            .ValidId();
+    }
+}
+
+internal sealed class CreateAccountForArgsValidator
+    : AbstractValidator<CreateAccountForArgs>
+{
+    public CreateAccountForArgsValidator()
+    {
+        RuleFor(a => a.FirstName)
+            .RequiredString();
+
+        RuleFor(a => a.LastName)
+            .RequiredString();
+
+        RuleFor(a => a.Locale)
+            .RequiredString();
+
+        RuleFor(a => a.TimeZone)
+            .RequiredString();
+
+        RuleFor(a => a.Email)
+            .Email();
+
+        RuleFor(a => a.Password)
+            .Password();
+
         RuleFor(a => a.RoleId)
             .ValidId();
 

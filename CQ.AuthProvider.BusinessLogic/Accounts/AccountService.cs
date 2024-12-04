@@ -1,9 +1,8 @@
-﻿using CQ.ApiElements.Dtos;
-using CQ.AuthProvider.BusinessLogic.Apps;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.Exceptions;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
@@ -20,7 +19,7 @@ internal sealed class AccountService(
     : IAccountInternalService
 {
     #region Create
-    public async Task<CreateAccountResult> CreateAsync(
+    public async Task<CreateAccountResult> CreateIdentityAndSaveAsync(
         Account account,
         string password)
     {
@@ -63,33 +62,59 @@ internal sealed class AccountService(
 
     public async Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs args)
     {
-        var existAuth = await _accountRepository
-            .ExistByEmailAsync(args.Email)
-            .ConfigureAwait(false);
-        if (existAuth)
-        {
-            throw new SpecificResourceDuplicatedException<Account>(nameof(Account.Email), args.Email);
-        }
-
-        var role = await GetRoleAsync(args.RoleId,args.TenantId).ConfigureAwait(false);
+        await AssertExistenseOfEmailAsync(args.Email).ConfigureAwait(false);
 
         var app = await _appService
             .GetByIdAsync(args.AppId)
             .ConfigureAwait(false);
 
-        var account = new Account(
+        var role = await _roleRepository
+                .GetDefaultByTenantIdAsync(app.Id, app.Tenant.Id)
+                .ConfigureAwait(false);
+
+        return await CreateAccountAsync(
             args.Email,
+            args.Password,
             args.FirstName,
             args.LastName,
             args.ProfilePictureId,
             args.Locale,
             args.TimeZone,
-            role,
-            app);
+            app,
+            role)
+            .ConfigureAwait(false);
+    }
 
-        var result = await CreateAsync(
+    private async Task<CreateAccountResult> CreateAccountAsync(
+        string email,
+        string password,
+        string firstName,
+        string lastName,
+        string? profilePictureId,
+        string locale,
+        string timeZone,
+        App app,
+        Role role)
+    {
+        firstName = Guard.Normalize(firstName);
+        lastName = Guard.Normalize(lastName);
+        var account = new Account
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            FullName = $"{firstName} {lastName}",
+            ProfilePictureId = profilePictureId,
+            Locale = locale,
+            TimeZone = timeZone,
+            Roles = [role],
+            Tenant = app.Tenant,
+            Apps = [app]
+        };
+
+        var result = await CreateIdentityAndSaveAsync(
             account,
-            args.Password)
+            password)
             .ConfigureAwait(false);
 
         try
@@ -108,14 +133,55 @@ internal sealed class AccountService(
         return result;
     }
 
+    private async Task AssertExistenseOfEmailAsync(string email)
+    {
+        var existAuth = await _accountRepository
+            .ExistByEmailAsync(email)
+            .ConfigureAwait(false);
+        if (existAuth)
+        {
+            throw new InvalidOperationException($"Email ({email}) is in use");
+        }
+    }
+
+    public async Task<CreateAccountResult> CreateAndSaveAsync(
+        CreateAccountForArgs args,
+        AccountLogged accountLogged)
+    {
+        await AssertExistenseOfEmailAsync(args.Email).ConfigureAwait(false);
+
+        var app = await _appService
+            .GetByIdAsync(args.AppId ?? accountLogged.AppLogged.Id)
+            .ConfigureAwait(false);
+
+        var role = await GetRoleAsync(
+            args.RoleId,
+            app.Id,
+            app.Tenant.Id)
+            .ConfigureAwait(false);
+
+        return await CreateAccountAsync(
+            args.Email,
+            args.Password,
+            args.FirstName,
+            args.LastName,
+            args.ProfilePictureId,
+            args.Locale,
+            args.TimeZone,
+            app,
+            role)
+            .ConfigureAwait(false);
+    }
+
     private async Task<Role> GetRoleAsync(
         Guid? roleId,
+        Guid appId,
         Guid tenantId)
     {
-        if (Guard.IsNull(roleId))
+        if(roleId == null)
         {
             return await _roleRepository
-                .GetDefaultByTenantIdAsync(tenantId)
+                .GetDefaultByTenantIdAsync(appId, tenantId)
                 .ConfigureAwait(false);
         }
 

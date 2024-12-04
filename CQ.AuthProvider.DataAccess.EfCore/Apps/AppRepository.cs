@@ -56,15 +56,13 @@ internal sealed class AppRepository(
         int page,
         int pageSize)
     {
-        var query = ConcreteContext
-            .Apps
-            .Where(a => a.TenantId == tenantId)
-            .Paginate(page, pageSize);
-
-        var pagiantion = await query
-            .ToPaginateAsync(page, pageSize)
+        var pagination = await Entities
+            .ToPaginateAsync(
+            a => a.TenantId == tenantId,
+            page,
+            pageSize)
             .ConfigureAwait(false);
 
-        return _mapper.Map<Pagination<App>>(pagiantion);
+        return _mapper.Map<Pagination<App>>(pagination);
     }
 }

@@ -8,8 +8,6 @@ public readonly struct RoleBasicInfoResponse
 
     public string Description { get; init; }
 
-    public string Key { get; init; }
-
     public bool IsPublic { get; init; }
 
     public bool IsDefault { get; init; }

@@ -43,10 +43,8 @@ public sealed class AccountController(
     {
         var accountLogged = this.GetAccountLogged();
 
-        request.TenantId = accountLogged.Tenant.Id;
-
         await _accountService
-            .CreateAndSaveAsync(request)
+            .CreateAndSaveAsync(request, accountLogged)
             .ConfigureAwait(false);
     }
 
@@ -54,8 +52,8 @@ public sealed class AccountController(
     [BearerAuthentication]
     [SecureAuthorization(ContextItem.AccountLogged)]
     public async Task<Pagination<AccountBasicInfoResponse>> GetAllAsync(
-        [FromQuery]int page = 1,
-        [FromQuery]int pageSize = 10)
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
         var accountLogged = this.GetAccountLogged();
 

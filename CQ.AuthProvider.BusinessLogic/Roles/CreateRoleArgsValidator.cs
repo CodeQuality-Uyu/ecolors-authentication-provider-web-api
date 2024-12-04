@@ -1,5 +1,9 @@
-﻿using CQ.AuthProvider.BusinessLogic.Permissions;
+﻿using CQ.ApiElements;
+using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Permissions;
 using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CQ.AuthProvider.BusinessLogic.Roles;
 
@@ -14,9 +18,24 @@ internal sealed class CreateRoleArgsValidator
         RuleFor(r => r.Description)
             .RequiredString();
 
-        RuleFor(r => r.PermissionKeys)
+        RuleFor(r => r.IsDefault)
+            .Required();
+
+        RuleFor(r => r.IsPublic)
+            .Required();
+
+        RuleFor(r => r.AppId)
+            .ValidId();
+
+        RuleFor(r => r.PermissionsKeys)
+            .Required()
             .Must(permissionKeys =>
             {
+                if(permissionKeys == null)
+                {
+                    return false;
+                }
+
                 var duplicatedKeys = permissionKeys
                 .GroupBy(g => g)
                 .Where(g => g.Count() > 1)
@@ -25,9 +44,24 @@ internal sealed class CreateRoleArgsValidator
 
                 return duplicatedKeys.Count == 0;
             })
-            .WithMessage("Duplicated permission keys");
+            .WithMessage("Can't have duplicated permissions keys");
+    }
 
-        RuleFor(r => r.AppId)
-            .ValidId();
+    public ValidationResult? AfterValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
+    {
+        var validationResult = new ValidationResult();
+        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItem.AccountLogged];
+
+        var args = (CreateRoleArgs)validationContext.InstanceToValidate;
+
+        var accountLoggedHasApp = accountLogged.AppsIds.Contains(args.AppId.Value);
+        if (args.AppId == null || accountLoggedHasApp)
+        {
+            return validationResult;
+        }
+
+        validationResult.Errors.Add(new ValidationFailure("AppId", $"Account doen't have this AppId ({args.AppId})"));
+
+        return validationResult;
     }
 }

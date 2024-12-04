@@ -4,7 +4,11 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public interface IAccountService
 {
-    Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs auth);
+    Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs args);
+    
+    Task<CreateAccountResult> CreateAndSaveAsync(
+        CreateAccountForArgs args,
+        AccountLogged accountLogged);
 
     Task UpdatePasswordByCredentialsAsync(UpdatePasswordArgs args);
 
@@ -19,7 +23,7 @@ public interface IAccountService
 internal interface IAccountInternalService
     : IAccountService
 {
-    Task<CreateAccountResult> CreateAsync(
+    Task<CreateAccountResult> CreateIdentityAndSaveAsync(
         Account account,
         string password);
 

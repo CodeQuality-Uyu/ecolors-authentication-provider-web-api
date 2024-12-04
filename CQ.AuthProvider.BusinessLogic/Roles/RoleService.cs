@@ -1,13 +1,15 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
+using CQ.Utility;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 internal sealed class RoleService(
-    IRoleRepository roleRepository,
-    IPermissionInternalService permissionService)
+    IRoleRepository _roleRepository,
+    IPermissionRepository _permissionRepository)
     : IRoleInternalService
 {
     public async Task<Pagination<Role>> GetAllAsync(
@@ -17,7 +19,7 @@ internal sealed class RoleService(
         int pageSize,
         AccountLogged accountLogged)
     {
-        var roles = await roleRepository
+        var roles = await _roleRepository
             .GetAllAsync(
             appId,
             isPrivate,
@@ -46,34 +48,36 @@ internal sealed class RoleService(
         var defaultRoles = args
             .Roles
             .Where(r => r.IsDefault)
-            .GroupBy(r => r.AppId ?? accountLogged.AppLogged.Id)
-            .ToList();
+            .ToList()
+            .ConvertAll(r => r.AppId ?? accountLogged.AppLogged.Id);
 
         if (defaultRoles.Count != 0)
         {
-            var defaultAppsIds = defaultRoles.ConvertAll(d => d.Key);
-            await roleRepository
+            await _roleRepository
                 .RemoveDefaultsAndSaveAsync(
-                defaultAppsIds,
+                defaultRoles,
                 accountLogged)
                 .ConfigureAwait(false);
         }
 
         var allPermissionsKeyes = args
             .Roles
-            .GroupBy(a => a.AppId ?? accountLogged.AppLogged.Id)
-            .Select(g =>
-            (g.Key, g
-            .SelectMany(a => a.PermissionKeys)
-            .Distinct()
-            .ToList()))
+            .SelectMany(r => r.PermissionsKeys.ConvertAll(p => (r.AppId ?? accountLogged.AppLogged.Id, p)).Distinct())
             .ToList();
 
-        var permissions = await permissionService
-            .GetExactAllByKeysAsync(
+        var permissions = await _permissionRepository
+            .GetAllByKeysAsync(
             allPermissionsKeyes,
             accountLogged)
             .ConfigureAwait(false);
+        if (permissions.Count != allPermissionsKeyes.Count)
+        {
+            var missingPermissions = allPermissionsKeyes
+                .Where(pk => !permissions.Exists(p => p.App.Id == pk.Item1 && p.Key == pk.p))
+                .ToList();
+
+            throw new InvalidOperationException($"The following permissions do not exist: {string.Join(",", missingPermissions)}");
+        }
 
         var roles = args
             .Roles
@@ -91,11 +95,11 @@ internal sealed class RoleService(
                     Permissions = permissions,
                     IsDefault = r.IsDefault,
                     App = app,
-                    Tenant = app.Tenant
+                    Tenant = accountLogged.Tenant
                 };
             });
 
-        await roleRepository
+        await _roleRepository
             .CreateBulkAsync(roles)
             .ConfigureAwait(false);
     }
@@ -104,7 +108,7 @@ internal sealed class RoleService(
         Guid id,
         AddPermissionArgs args)
     {
-        var role = await roleRepository
+        var role = await _roleRepository
             .GetByIdAsync(id)
             .ConfigureAwait(false);
 
@@ -118,7 +122,7 @@ internal sealed class RoleService(
             throw new InvalidOperationException($"The following permissions are duplicated in the role: {string.Join(",", duplicatedPermissions)}");
         }
 
-        await roleRepository
+        await _roleRepository
             .AddPermissionsAsync(
             id,
             args.PermissionsKeys)

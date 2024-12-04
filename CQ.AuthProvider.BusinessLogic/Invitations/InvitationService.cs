@@ -1,10 +1,12 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
+using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
@@ -106,17 +108,24 @@ internal sealed class InvitationService(
             .DeleteByIdAsync(id)
             .ConfigureAwait(false);
 
-        var account = Account.NewForInvitation(
-            args.Email,
-            args.FirstName,
-            args.LastName,
-            args.ProfilePictureId,
-            args.Locale,
-            args.TimeZone,
-            invitation);
+        var firstName = Guard.Normalize(args.FirstName);
+        var lastName = Guard.Normalize(args.LastName);
+        var account = new Account
+        {
+            Email = args.Email,
+            FirstName = firstName,
+            LastName = lastName,
+            FullName = $"{firstName} {lastName}",
+            ProfilePictureId = args.ProfilePictureId,
+            Locale = args.Locale,
+            TimeZone = args.TimeZone,
+            Roles = [invitation.Role],
+            Tenant = invitation.App.Tenant,
+            Apps = [invitation.App]
+        };
 
         var result = await _accountService
-                .CreateAsync(account, args.Password)
+                .CreateIdentityAndSaveAsync(account, args.Password)
                 .ConfigureAwait(false);
 
         try

@@ -1,4 +1,9 @@
 # C# Style Rules
+
+[**/Migrations/*.cs]
+generated_code = true
+
 [*.cs]
+
 # Namespace declaration style: `file-scoped` for single-line, `block-scoped` for curly braces
 csharp_style_namespace_declarations = file_scoped:error

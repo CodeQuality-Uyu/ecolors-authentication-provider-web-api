@@ -2,8 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace CQ.AuthProvider.DataAccess.EfCore;
-internal class AuthDbContextRepository<TEntity>(AuthDbContext context)
-    : EfCoreRepositoryContext<TEntity, AuthDbContext>(context)
+internal class AuthDbContextRepository<TEntity>(AuthDbContext _context)
+    : EfCoreRepositoryContext<TEntity, AuthDbContext>(_context)
     where TEntity : class
 {
     protected IQueryable<TEntity> InsertIncludes(

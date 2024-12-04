@@ -24,7 +24,9 @@ public interface IRoleRepository
         Guid id,
         List<string> permissionsKeys);
 
-    Task<Role> GetDefaultByTenantIdAsync(Guid tenantId);
+    Task<Role> GetDefaultByTenantIdAsync(
+        Guid appId,
+        Guid tenantId);
 
     Task<Role?> GetDefaultOrDefaultByAppIdAndTenantIdAsync(
         Guid appId,

@@ -12,156 +12,154 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 internal sealed class AccountRepository(
-AuthDbContext context,
+AuthDbContext _context,
 [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper _mapper
 )
-: AuthDbContextRepository<AccountEfCore>(context),
+: AuthDbContextRepository<AccountEfCore>(_context),
 IAccountRepository
 {
-public async Task CreateAsync(Account account)
-{
-    var accountEfCore = new AccountEfCore(account);
-
-    var accountRolesEfCore = account
-        .Roles
-        .ConvertAll(r => new AccountRole
-        {
-            AccountId = account.Id,
-            RoleId = r.Id
-        });
-
-    var accountAppsEfCore = account
-        .Apps
-        .ConvertAll(a => new AccountApp
-        {
-            AccountId = account.Id,
-            AppId = a.Id
-        });
-
-    await Entities
-        .AddAsync(accountEfCore)
-        .ConfigureAwait(false);
-
-    await BaseContext
-        .AddRangeAsync(accountRolesEfCore)
-        .ConfigureAwait(false);
-
-    await BaseContext
-        .AddRangeAsync(accountAppsEfCore)
-        .ConfigureAwait(false);
-}
-
-public async Task<bool> ExistByEmailAsync(string email)
-{
-    return await ExistAsync(a => a.Email == email)
-        .ConfigureAwait(false);
-}
-
-public async Task<Account> GetByEmailAsync(string email)
-{
-    var account = await GetAsync(a => a.Email == email)
-        .ConfigureAwait(false);
-
-    return _mapper.Map<Account>(account);
-}
-
-async Task<Account> IAccountRepository.GetByIdAsync(Guid id)
-{
-    var query =
-        Entities
-        .Include(a => a.Roles)
-            .ThenInclude(r => r.Permissions)
-        .Include(a => a.Tenant)
-        .Include(a => a.Apps)
-        .AsNoTracking()
-        .AsSplitQuery()
-        .Where(a => a.Id == id);
-
-    var account = await query
-        .FirstOrDefaultAsync()
-        .ConfigureAwait(false);
-
-    if (Guard.IsNull(account))
+    public async Task CreateAsync(Account account)
     {
-        throw new SpecificResourceNotFoundException<Account>(nameof(Account.Id), id.ToString());
+        var accountEfCore = new AccountEfCore(account);
+
+        var accountRolesEfCore = account
+            .Roles
+            .ConvertAll(r => new AccountRole
+            {
+                AccountId = account.Id,
+                RoleId = r.Id
+            });
+
+        var accountAppsEfCore = account
+            .Apps
+            .ConvertAll(a => new AccountApp
+            {
+                AccountId = account.Id,
+                AppId = a.Id
+            });
+
+        await Entities
+            .AddAsync(accountEfCore)
+            .ConfigureAwait(false);
+
+        await BaseContext
+            .AddRangeAsync(accountRolesEfCore)
+            .ConfigureAwait(false);
+
+        await BaseContext
+            .AddRangeAsync(accountAppsEfCore)
+            .ConfigureAwait(false);
     }
 
-    return _mapper.Map<Account>(account);
-}
-
-public async Task<Account> GetByIdAsync(
-    Guid id,
-    params string[] includes)
-{
-    var queryInclude = InsertIncludes(
-        Entities,
-        [.. includes]);
-
-    var query = queryInclude
-        .Where(a => a.Id == id)
-        .AsNoTracking()
-        .AsSplitQuery();
-
-    var account = await query
-        .FirstOrDefaultAsync()
-        .ConfigureAwait(false);
-
-    AssertNullEntity(account, id.ToString(), nameof(Account.Id));
-
-    return _mapper.Map<Account>(account);
-}
-
-public async Task UpdateTenantByIdAndSaveAsync(
-    Guid id,
-    Tenant tenant)
-{
-    await UpdateAndSaveByIdAsync(id.ToString(), new { TenantId = tenant.Id })
-        .ConfigureAwait(false);
-}
-
-public async Task AddRoleByIdAsync(
-    Guid id,
-    Guid roleId)
-{
-    var accountRole = new AccountRole
+    public async Task<bool> ExistByEmailAsync(string email)
     {
-        AccountId = id,
-        RoleId = roleId
-    };
+        return await ExistAsync(a => a.Email == email)
+            .ConfigureAwait(false);
+    }
 
-    await ConcreteContext
-        .AccountsRoles
-        .AddAsync(accountRole);
-}
+    public async Task<Account> GetByEmailAsync(string email)
+    {
+        var account = await GetAsync(a => a.Email == email)
+            .ConfigureAwait(false);
 
-public Task RemoveRoleByIdAsync(
-    Guid id,
-    Guid roleId)
-{
-    var query = ConcreteContext
-        .AccountsRoles
-        .Where(a => a.AccountId == id)
-        .Where(a => a.RoleId == roleId);
+        return _mapper.Map<Account>(account);
+    }
 
-    BaseContext.RemoveRange(query);
+    async Task<Account> IAccountRepository.GetByIdAsync(Guid id)
+    {
+        var query =
+            Entities
+            .Include(a => a.Roles)
+                .ThenInclude(r => r.Permissions)
+            .Include(a => a.Tenant)
+            .Include(a => a.Apps)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Where(a => a.Id == id);
 
-    return Task.CompletedTask;
-}
+        var account = await query
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
 
-public async Task<Pagination<Account>> GetAllAsync(
-    Guid tenantId,
-    int page,
-    int pageSize)
-{
-    var query = ConcreteContext
-        .Accounts
-        .Where(a => a.TenantId == tenantId)
-        .Paginate(page, pageSize);
+        if (Guard.IsNull(account))
+        {
+            throw new SpecificResourceNotFoundException<Account>(nameof(Account.Id), id.ToString());
+        }
 
-    var paginated = await query
-        .ToPaginateAsync(page, pageSize)
-        .ConfigureAwait(false);
+        return _mapper.Map<Account>(account);
+    }
 
-    return _mapper.Map<Pagination<Account>>(paginated);
-}
+    public async Task<Account> GetByIdAsync(
+        Guid id,
+        params string[] includes)
+    {
+        var queryInclude = InsertIncludes(
+            Entities,
+            [.. includes]);
+
+        var query = queryInclude
+            .Where(a => a.Id == id)
+            .AsNoTracking()
+            .AsSplitQuery();
+
+        var account = await query
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        AssertNullEntity(account, id.ToString(), nameof(Account.Id));
+
+        return _mapper.Map<Account>(account);
+    }
+
+    public async Task UpdateTenantByIdAndSaveAsync(
+        Guid id,
+        Tenant tenant)
+    {
+        await UpdateAndSaveByIdAsync(id.ToString(), new { TenantId = tenant.Id })
+            .ConfigureAwait(false);
+    }
+
+    public async Task AddRoleByIdAsync(
+        Guid id,
+        Guid roleId)
+    {
+        var accountRole = new AccountRole
+        {
+            AccountId = id,
+            RoleId = roleId
+        };
+
+        await ConcreteContext
+            .AccountsRoles
+            .AddAsync(accountRole);
+    }
+
+    public Task RemoveRoleByIdAsync(
+        Guid id,
+        Guid roleId)
+    {
+        var query = ConcreteContext
+            .AccountsRoles
+            .Where(a => a.AccountId == id)
+            .Where(a => a.RoleId == roleId);
+
+        BaseContext.RemoveRange(query);
+
+        return Task.CompletedTask;
+    }
+
+    public async Task<Pagination<Account>> GetAllAsync(
+        Guid tenantId,
+        int page,
+        int pageSize)
+    {
+        var query = Entities
+            .Where(a => a.TenantId == tenantId);
+
+        var paginated = await query
+            .ToPaginateAsync(page, pageSize)
+            .ConfigureAwait(false);
+
+        return _mapper.Map<Pagination<Account>>(paginated);
+    }
 }

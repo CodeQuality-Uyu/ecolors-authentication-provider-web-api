@@ -5,8 +5,10 @@ using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 
@@ -30,8 +32,7 @@ internal sealed class PermissionRepository(
             .Where(p => (appLoggedIsAuthWebApi && p.AppId == AuthConstants.AUTH_WEB_API_APP_ID) || p.TenantId == accountLogged.Tenant.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Any(r => r.Id == roleId))
-            .Where(p => appId == null || p.AppId == appId)
-            .Paginate(page, pageSize);
+            .Where(p => appId == null || p.AppId == appId);
 
         var permissions = await query
             .ToPaginateAsync(page, pageSize)
@@ -41,14 +42,28 @@ internal sealed class PermissionRepository(
     }
 
     public async Task<List<Permission>> GetAllByKeysAsync(
-        List<(Guid appId, List<string> keys)> keys,
+        List<(Guid appId, string key)> keys,
         AccountLogged accountLogged)
     {
-        var query = Entities
-            .Where(p => keys.Any(i => i.appId == p.AppId && i.keys.Contains(p.Key)))
-            .Where(p => p.TenantId == accountLogged.Tenant.Id);
+        var keyesMapped = JsonConvert.SerializeObject(keys);
 
-        var permissions = await query
+        // Define raw SQL query
+        var sql = @"
+        SELECT p.*
+        FROM Permissions AS p
+        INNER JOIN OPENJSON(@keyAppJson) 
+        WITH (
+            Item1 UNIQUEIDENTIFIER,
+            Item2 NVARCHAR(MAX)
+        ) AS j
+        ON [p].[AppId] = [j].[Item1] AND [p].[Key] = [j].[Item2]
+        WHERE p.TenantId = @tenantId AND @keyAppJson IS NOT NULL AND LEN(@keyAppJson) > 2";
+
+        // Execute the raw query
+        var permissions = await Entities
+            .FromSqlRaw(sql,
+                new SqlParameter("@keyAppJson", keyesMapped),
+                new SqlParameter("@tenantId", accountLogged.Tenant.Id))
             .ToListAsync()
             .ConfigureAwait(false);
 

@@ -55,11 +55,20 @@ internal static class ValidatorExtensions
     public static IRuleBuilderOptions<T, string> RequiredString<T>(this IRuleBuilder<T, string> validator)
     {
         var options = validator
-        .NotNull().WithMessage("Can't be null")
-        .NotEmpty().WithMessage("Can't be empty");
+            .Required()
+            .NotEmpty().WithMessage("Can't be empty");
 
         return options;
     }
+
+    public static IRuleBuilderOptions<T, TProp> Required<T, TProp>(this IRuleBuilder<T, TProp> validator)
+    {
+        var options = validator
+            .NotNull().WithMessage("Can't be null");
+
+        return options;
+    }
+
     public static IRuleBuilderOptions<T, Guid?> ValidId<T>(this IRuleBuilder<T, Guid?> validator)
     {
         var options = validator

@@ -1,6 +1,5 @@
 ﻿using CQ.ApiElements;
 using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.Utility;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -50,13 +49,13 @@ internal sealed class CreateBulkRoleArgsValidator
             .ToList();
         if (invalidAppsIds.Count != 0)
         {
-            validationResult.Errors.Add(new ValidationFailure("AppId", $"Invalid apps ids {string.Join(",", invalidAppsIds)}"));
+            validationResult.Errors.Add(new ValidationFailure("AppId", $"Account doen't have this AppsIds ({string.Join(",", invalidAppsIds)})"));
         }
 
         var defaultRoles = args
         .Roles
         .Where(r => r.IsDefault)
-        .GroupBy(r => r.AppId ?? accountLogged.AppLogged.Id)
+        .GroupBy(r => r.AppId)
         .ToList();
 
         var duplicatedDefaultRolesInApp = defaultRoles
@@ -64,7 +63,7 @@ internal sealed class CreateBulkRoleArgsValidator
             .ToList();
         if (duplicatedDefaultRolesInApp.Count > 1)
         {
-            validationResult.Errors.Add(new ValidationFailure("AppId", "Only one role can be default in an app"));
+            validationResult.Errors.Add(new ValidationFailure("IsDefault", "Only one role can be default in an app"));
         }
 
         return validationResult;

@@ -72,7 +72,7 @@ public record class Account()
             invitation.Role,
             invitation.App)
         {
-            Tenant = null
+            Tenant = invitation.App.Tenant
         };
 
     public void AssertPermission(string permissionKey)

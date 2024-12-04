@@ -33,7 +33,6 @@ internal sealed class InvitationRepository(
             appId == null ||
             (appId != null && i.AppId == appId) ||
             appsIdsOfAccountLogged.Contains(i.AppId))
-            .Paginate(page, pageSize)
             .AsNoTracking();
 
         var invitations = await query

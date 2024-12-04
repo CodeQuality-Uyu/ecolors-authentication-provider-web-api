@@ -25,7 +25,4 @@ public interface IPermissionService
 internal interface IPermissionInternalService
     : IPermissionService
 {
-    Task<List<Permission>> GetExactAllByKeysAsync(
-        List<(Guid appId, List<string> keys)> keys,
-        AccountLogged accountLogged);
 }

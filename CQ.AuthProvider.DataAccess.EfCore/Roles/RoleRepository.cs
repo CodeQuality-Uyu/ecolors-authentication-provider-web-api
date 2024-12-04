@@ -6,7 +6,6 @@ using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
-using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,8 +29,7 @@ internal sealed class RoleRepository(
         var query = Entities
             .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
-            .Where(r => appId == null || r.AppId == appId)
-            .Paginate(page, pageSize);
+            .Where(r => appId == null || r.AppId == appId);
 
         var roles = await query
             .ToPaginateAsync(page, pageSize)
@@ -64,6 +62,9 @@ internal sealed class RoleRepository(
             .ConfigureAwait(false);
     }
 
+    /*
+     * Include used in: RoleService
+     */
     public new async Task<Role> GetByIdAsync(Guid id)
     {
         var query = Entities
@@ -74,14 +75,17 @@ internal sealed class RoleRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        Guard.ThrowIsNull(role, nameof(role));
+        AssertNullEntity(role, id, nameof(Role.Id));
 
         return mapper.Map<Role>(role);
     }
 
-    public async Task<Role> GetDefaultByTenantIdAsync(Guid tenantId)
+    public async Task<Role> GetDefaultByTenantIdAsync(
+        Guid appId,
+        Guid tenantId)
     {
         var query = Entities
+            .Where(r => r.AppId == appId)
             .Where(r => r.TenantId == tenantId)
             .Where(r => r.IsDefault);
 
@@ -89,7 +93,7 @@ internal sealed class RoleRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        Guard.ThrowIsNull(role, nameof(role));
+        AssertNullEntity(role, tenantId, nameof(Role.Tenant));
 
         return mapper.Map<Role>(role);
     }

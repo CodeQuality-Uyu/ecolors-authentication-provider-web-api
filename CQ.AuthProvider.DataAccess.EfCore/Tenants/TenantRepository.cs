@@ -3,6 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
+using CQ.UnitOfWork.EfCore.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Tenants;
@@ -31,7 +32,9 @@ internal sealed class TenantRepository
         int page = 1,
         int pageSize = 10)
     {
-        var tenants = await GetPagedAsync(null, page, pageSize).ConfigureAwait(false);
+        var tenants = await Entities
+            .ToPaginateAsync(page, pageSize)
+            .ConfigureAwait(false);
 
         return mapper.Map<Pagination<Tenant>>(tenants);
     }

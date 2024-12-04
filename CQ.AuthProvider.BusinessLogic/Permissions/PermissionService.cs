@@ -6,7 +6,7 @@ using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Permissions;
 
-internal sealed class PermissionService(IPermissionRepository permissionRepository)
+internal sealed class PermissionService(IPermissionRepository _permissionRepository)
     : IPermissionInternalService
 {
     public async Task<Pagination<Permission>> GetAllAsync(
@@ -17,7 +17,7 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         int pageSize,
         AccountLogged accountLogged)
     {
-        var permissions = await permissionRepository
+        var permissions = await _permissionRepository
             .GetAllAsync(
             appId,
             isPrivate,
@@ -28,29 +28,6 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             .ConfigureAwait(false);
 
         return permissions;
-    }
-
-    public async Task<List<Permission>> GetExactAllByKeysAsync(
-        List<(Guid appId, List<string> keys)> keys,
-        AccountLogged accountLogged)
-    {
-        var permissionsSaved = await permissionRepository
-            .GetAllByKeysAsync(
-            keys,
-            accountLogged)
-            .ConfigureAwait(false);
-
-        if (permissionsSaved.Count != keys.Count)
-        {
-            var missingPermissions = keys
-                .SelectMany(k => k.keys)
-                .Where(pk => !permissionsSaved.Exists(p => p.Key == pk))
-                .ToList();
-
-            throw new InvalidOperationException($"The following permissions do not exist: {string.Join(",", missingPermissions)}");
-        }
-
-        return permissionsSaved;
     }
 
     public async Task CreateAsync(
@@ -70,23 +47,18 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         var allPermissionsKeys = args
             .Permissions
             .ConvertAll(a => (a.AppId ?? accountLogged.AppLogged.Id, a.Key))
-            .GroupBy(k => k.Item1)
-            .Select(g => (g.Key, g.Select(i => i.Key).ToList()))
+            .Distinct()
             .ToList();
 
-        var duplicatedPermissions = await permissionRepository
+        var duplicatedPermissions = await _permissionRepository
             .GetAllByKeysAsync(
             allPermissionsKeys,
             accountLogged)
             .ConfigureAwait(false);
         if (duplicatedPermissions.Count != 0)
         {
-            var onlyPermissionsKeys = allPermissionsKeys
-                .SelectMany(g => g.Item2)
-                .ToList();
-            var permissionsSavedKeys = onlyPermissionsKeys
-                .Where(pk => duplicatedPermissions.Exists(p => p.Key == pk))
-                .ToList();
+            var permissionsSavedKeys = duplicatedPermissions
+                .ConvertAll(p => (p.App.Id, p.Key));
 
             throw new InvalidOperationException($"Duplicated keys exist ${string.Join(",", permissionsSavedKeys)}");
         }
@@ -107,7 +79,7 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             app);
         });
 
-        await permissionRepository
+        await _permissionRepository
             .CreateBulkAndSaveAsync(permissions)
             .ConfigureAwait(false);
     }
