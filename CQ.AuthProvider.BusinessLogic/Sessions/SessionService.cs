@@ -32,7 +32,7 @@ public sealed class SessionService(
 
         if (Guard.IsNull(app))
         {
-            throw new InvalidOperationException($"Account of email {account.Email} doesn't exist {(args.AppId == null ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app {args.AppId}")}");
+            throw new InvalidOperationException($"Account ({account.Email}) doesn't exist {(args.AppId == null ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app ({args.AppId})")}");
         }
 
         var session = await CreateAsync(account, app).ConfigureAwait(false);

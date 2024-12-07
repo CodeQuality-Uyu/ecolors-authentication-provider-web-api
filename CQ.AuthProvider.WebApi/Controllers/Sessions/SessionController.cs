@@ -5,13 +5,14 @@ using AutoMapper;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.ApiElements;
+using CQ.AuthProvider.BusinessLogic.Utils;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
 
 [ApiController]
 [Route("sessions")]
 public class SessionController(
-    IMapper mapper,
+    [FromKeyedServices(MapperKeyedService.Presentation)] IMapper mapper,
     ISessionService sessionService)
     : ControllerBase
 {
