@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -14,7 +15,7 @@ namespace CQ.IdentityProvider.EfCore.Migrations
                 name: "Identities",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -26,7 +27,7 @@ namespace CQ.IdentityProvider.EfCore.Migrations
             migrationBuilder.InsertData(
                 table: "Identities",
                 columns: new[] { "Id", "Email", "Password" },
-                values: new object[] { "5a0d9e179991499e80db0a15fda4df79", "seed@cq.com", "!12345678" });
+                values: new object[] { new Guid("0ee82ee9-f480-4b13-ad68-579dc83dfa0d"), "seed@cq.com", "!12345678" });
         }
 
         /// <inheritdoc />

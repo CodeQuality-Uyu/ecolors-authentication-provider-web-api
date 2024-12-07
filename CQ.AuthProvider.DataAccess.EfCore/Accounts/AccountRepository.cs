@@ -73,18 +73,15 @@ IAccountRepository
                 .ThenInclude(r => r.Permissions)
             .Include(a => a.Tenant)
             .Include(a => a.Apps)
+            .Where(a => a.Id == id)
             .AsNoTracking()
-            .AsSplitQuery()
-            .Where(a => a.Id == id);
+            .AsSplitQuery();
 
         var account = await query
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        if (Guard.IsNull(account))
-        {
-            throw new SpecificResourceNotFoundException<Account>(nameof(Account.Id), id.ToString());
-        }
+        AssertNullEntity(account, id, nameof(Account.Id));
 
         return _mapper.Map<Account>(account);
     }

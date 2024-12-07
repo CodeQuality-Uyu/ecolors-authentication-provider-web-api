@@ -9,6 +9,7 @@ internal sealed class AccountProfile
 {
     public AccountProfile()
     {
-        this.CreatePaginationMap<AccountEfCore, Account>();
+        CreateMap<AccountEfCore, Account>().MaxDepth(2);
+        this.CreateOnlyPaginationMap<AccountEfCore, Account>();
     }
 }
