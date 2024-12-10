@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CQ.ApiElements;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Tenants;
@@ -13,7 +12,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Tenants;
 [ApiController]
 [Route("tenants")]
 [BearerAuthentication]
-[SecureAuthorization(ContextItem.AccountLogged)]
+[SecureAuthorization]
 public sealed class TenantController(
     ITenantService tenantService,
     IMapper mapper)

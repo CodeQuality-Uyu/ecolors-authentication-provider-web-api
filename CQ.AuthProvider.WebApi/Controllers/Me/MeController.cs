@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CQ.ApiElements;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Me;
@@ -43,7 +42,7 @@ public sealed class MeController(
 
     [HttpPatch("tenants/owner")]
     [BearerAuthentication]
-    [SecureAuthorization(ContextItem.AccountLogged)]
+    [SecureAuthorization]
     public async Task TransferTenantAsync(TransferTenantRequest request)
     {
         var accountLogged = this.GetAccountLogged();
@@ -58,7 +57,7 @@ public sealed class MeController(
 
     [HttpPatch("tenants/name")]
     [BearerAuthentication]
-    [SecureAuthorization(ContextItem.AccountLogged)]
+    [SecureAuthorization]
     public async Task UpdateTenantNameAsync(UpdateTenantNameRequest request)
     {
         var args = request.Map();

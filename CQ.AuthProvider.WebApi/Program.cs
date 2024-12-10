@@ -2,6 +2,8 @@ using CQ.AuthProvider.WebApi.AppConfig;
 using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.DataAccess.EfCore;
 using CQ.IdentityProvider.EfCore;
+using CQ.Extensions.Configuration;
+using CQ.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,9 +34,12 @@ app
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 
+
+var origins = app.Configuration.GetSection<string[]>("Cors:Origins");
+Guard.ThrowIsNullOrEmpty(origins?.ToList(), "Cors:Origins");
 app.UseCors(policy =>
 policy
-.AllowAnyOrigin()
+.WithOrigins(origins)
 .AllowAnyHeader()
 .AllowAnyMethod());
 

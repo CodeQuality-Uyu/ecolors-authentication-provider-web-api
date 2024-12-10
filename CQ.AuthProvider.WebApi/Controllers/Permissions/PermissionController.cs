@@ -7,14 +7,13 @@ using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.ApiElements.Filters.Authentications;
-using CQ.ApiElements;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Permissions;
 
 [ApiController]
 [Route("permissions")]
 [BearerAuthentication]
-[SecureAuthorization(ContextItem.AccountLogged)]
+[SecureAuthorization]
 public class PermissionController(
     [FromKeyedServices(MapperKeyedService.Presentation)] IMapper mapper,
     IPermissionService permissionService)

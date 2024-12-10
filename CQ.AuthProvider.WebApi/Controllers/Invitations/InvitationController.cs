@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CQ.ApiElements;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Invitations;
@@ -20,7 +19,7 @@ public sealed class InvitationController(
 {
     [HttpPost]
     [BearerAuthentication]
-    [SecureAuthorization(ContextItem.AccountLogged)]
+    [SecureAuthorization]
     public async Task CreateAsync(CreateInvitationArgs request)
     {
         var accountLogged = this.GetAccountLogged();
@@ -34,7 +33,7 @@ public sealed class InvitationController(
 
     [HttpGet]
     [BearerAuthentication]
-    [SecureAuthorization(ContextItem.AccountLogged)]
+    [SecureAuthorization]
     public async Task<Pagination<InvitationBasicInfoResponse>> GetAllAsync(
         [FromQuery] Guid? creatorId,
         [FromQuery] Guid? appId,

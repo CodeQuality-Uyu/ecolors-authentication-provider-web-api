@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CQ.ApiElements" Version="3.0.17" />
+		<PackageReference Include="CQ.ApiElements" Version="3.0.21" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -17,7 +17,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />
-		
 		<ProjectReference Include="..\CQ.AuthProvider.DataAccess.EfCore\CQ.AuthProvider.DataAccess.EfCore.csproj" />
 		<ProjectReference Include="..\CQ.IdentityProvider.EfCore\CQ.IdentityProvider.EfCore.csproj" />
 	</ItemGroup>

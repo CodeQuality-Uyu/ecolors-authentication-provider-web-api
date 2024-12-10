@@ -64,10 +64,6 @@ internal static class AuthProviderWebApiConfig
         services
             .AddExceptionGlobalHandlerService<CQAuthExceptionRegistryService>(LifeTime.Transient)
 
-            .AddTokenService<GuidTokenService>(LifeTime.Singleton)
-
-            .AddItemLoggedService<SessionService>(LifeTime.Scoped)
-
             .AddMappings()
 
             .ConfigureServices()
@@ -77,6 +73,10 @@ internal static class AuthProviderWebApiConfig
             .ConfigureIdentityProvider(configuration)
 
             .AddFakeAuthentication<FakeAccountLogged>(configuration)
+
+            .AddTokenService<GuidTokenService>(LifeTime.Transient)
+
+            .AddItemLoggedService<SessionService>(LifeTime.Scoped)
             ;
 
         return services;
