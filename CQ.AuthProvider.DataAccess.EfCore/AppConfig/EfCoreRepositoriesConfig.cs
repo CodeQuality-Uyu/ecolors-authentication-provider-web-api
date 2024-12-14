@@ -60,6 +60,7 @@ public static class EfCoreRepositoriesConfig
                     config.AddProfile<AppProfile>();
                     config.AddProfile<AccountProfile>();
                     config.AddProfile<TenantProfile>();
+                    config.AddProfile<ResetPasswordProfile>();
                 });
 
                 return config.CreateMapper();

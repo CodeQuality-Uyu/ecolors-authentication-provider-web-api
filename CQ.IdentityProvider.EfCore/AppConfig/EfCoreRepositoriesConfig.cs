@@ -23,6 +23,7 @@ public static class EfCoreRepositoriesConfig
             (options) =>
             options.UseSqlServer(connectionString),
             LifeTime.Scoped)
+
             .AddScoped<IIdentityProviderHealthService, IdentityDbContext>()
 
             .AddAbstractionRepository<Identity, IIdentityRepository, IdentityRepository>(LifeTime.Scoped)

@@ -64,7 +64,8 @@ internal static class ValidatorExtensions
     public static IRuleBuilderOptions<T, TProp> Required<T, TProp>(this IRuleBuilder<T, TProp> validator)
     {
         var options = validator
-            .NotNull().WithMessage("Can't be null");
+            .NotNull()
+            .WithMessage("Can't be null");
 
         return options;
     }
@@ -95,7 +96,7 @@ internal static class ValidatorExtensions
         return options;
     }
 
-    public static IRuleBuilderOptions<T, string?> Email<T>(this IRuleBuilder<T, string?> validator)
+    public static IRuleBuilderOptions<T, string?> RequiredEmail<T>(this IRuleBuilder<T, string?> validator)
     {
         var options = validator
             .RequiredString()
@@ -105,7 +106,7 @@ internal static class ValidatorExtensions
         return options;
     }
 
-    public static IRuleBuilderOptions<T, string?> Password<T>(this IRuleBuilder<T, string?> validator)
+    public static IRuleBuilderOptions<T, string?> RequiredPassword<T>(this IRuleBuilder<T, string?> validator)
     {
         var options = validator
             .RequiredString()

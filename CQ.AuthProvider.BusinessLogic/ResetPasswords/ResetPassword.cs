@@ -1,5 +1,4 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.ResetPasswords;
 
@@ -11,22 +10,20 @@ public sealed record class ResetPassword()
 
     public Account Account { get; init; } = null!;
 
-    public string Code { get; init; } = NewCode();
+    public int Code { get; init; } = NewCode();
 
-    public DateTimeOffset CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
-    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(TOLERANCE_IN_MINUTES);
+    public DateTimeOffset ExpiresAt { get; init; } = DateTimeOffset.UtcNow.AddMinutes(TOLERANCE_IN_MINUTES);
 
-    public ResetPassword(Account account)
-        : this()
+    public static ResetPassword New(Account account) => new()
     {
-        Account = account;
-    }
+        Account = account
+    };
 
-    public static string NewCode()
+    public static int NewCode()
     {
         return new Random()
-            .Next(100000, 999999)
-            .ToString();
+            .Next(100000, 999999);
     }
 }

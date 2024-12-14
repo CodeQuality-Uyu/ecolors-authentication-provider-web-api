@@ -21,10 +21,10 @@ internal sealed class CreateAccountArgsValidator
             .RequiredString();
 
         RuleFor(a => a.Email)
-            .Email();
+            .RequiredEmail();
 
         RuleFor(a => a.Password)
-            .Password();
+            .RequiredPassword();
 
         RuleFor(a => a.AppId)
             .ValidId();
@@ -49,10 +49,10 @@ internal sealed class CreateAccountForArgsValidator
             .RequiredString();
 
         RuleFor(a => a.Email)
-            .Email();
+            .RequiredEmail();
 
         RuleFor(a => a.Password)
-            .Password();
+            .RequiredPassword();
 
         RuleFor(a => a.RoleId)
             .ValidId();

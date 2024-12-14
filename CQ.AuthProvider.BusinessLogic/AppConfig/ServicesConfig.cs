@@ -4,6 +4,7 @@ using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Me;
 using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Tenants;
@@ -19,6 +20,8 @@ public static class ServicesConfig
     {
         services
             .AddServices()
+
+            .AddEmailServices()
 
             .AddValidators();
 
@@ -46,13 +49,21 @@ public static class ServicesConfig
 
             .AddScoped<IInvitationService, InvitationService>()
 
-            .AddScoped<IEmailService, EmailService>()
+            .AddScoped<IResetPasswordService, ResetPasswordService>()
 
             .AddScoped<IMeService, MeService>()
 
             .AddScoped<ITenantService, TenantService>()
             ;
 
+        return services;
+    }
+
+    private static IServiceCollection AddEmailServices(this IServiceCollection services)
+    {
+        services
+            .AddTransient<IEmailService, EmailService>();
+        
         return services;
     }
 
@@ -70,6 +81,8 @@ public static class ServicesConfig
             .AddTransient<IValidator<CreateInvitationArgs>, CreateInvitationArgsValidator>()
             .AddTransient<IValidator<UpdatePasswordArgs>, UpdatePasswordArgsValidator>()
             .AddTransient<IValidator<CreateSessionCredentialsArgs>, CreateSessionCredentialsArgsValidator>()
+            .AddTransient<IValidator<AcceptResetPasswordArgs>, AcceptResetPasswordArgsValidator>()
+            .AddTransient<IValidator<CreateResetPasswordArgs>, CreateResetPasswordArgsValidator>()
             ;
 
         return services;

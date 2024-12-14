@@ -15,7 +15,7 @@ internal sealed class RoleProfile
             .ForMember(
             destination => destination.App,
             options => options.MapFrom(
-                source => new App()
+                source => new App
                 {
                     Id = source.AppId
                 }));

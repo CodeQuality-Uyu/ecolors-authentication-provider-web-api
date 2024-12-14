@@ -14,7 +14,30 @@ internal sealed class InvitationProfile
     {
         #region Create
         CreateMap<Invitation, InvitationEfCore>()
-            .ConvertUsing((source, destination, context) => new InvitationEfCore(source));
+            .ForMember(destination => destination.AppId,
+            options => options.MapFrom(
+                source => source.App.Id))
+            .ForMember(destination => destination.App,
+            options => options.Ignore())
+
+            .ForMember(destination => destination.RoleId,
+            options => options.MapFrom(
+                source => source.Role.Id))
+            .ForMember(destination => destination.Role,
+            options => options.Ignore())
+
+            .ForMember(destination => destination.TenantId,
+            options => options.MapFrom(
+                source => source.Tenant.Id))
+            .ForMember(destination => destination.Tenant,
+            options => options.Ignore())
+
+            .ForMember(destination => destination.CreatorId,
+            options => options.MapFrom(
+                source => source.Creator.Id))
+            .ForMember(destination => destination.Creator,
+            options => options.Ignore())
+            ;
         #endregion
 
         #region GetAll

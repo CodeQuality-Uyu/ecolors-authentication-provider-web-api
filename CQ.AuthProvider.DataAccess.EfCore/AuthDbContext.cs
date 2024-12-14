@@ -46,9 +46,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         modelBuilder.Entity<TenantEfCore>(entity =>
         {
             entity
-            .HasOne(t => t.Owner)
+            .Ignore(t => t.Owner);
+
+            entity
+            .HasMany(t => t.Accounts)
             .WithOne(a => a.Tenant)
-            .HasForeignKey<TenantEfCore>(t => t.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
 
             entity
@@ -90,12 +92,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasMany(a => a.Apps)
             .WithMany()
             .UsingEntity<AccountApp>();
-
-            entity
-            .HasOne(a => a.Tenant)
-            .WithOne(t => t.Owner)
-            .HasForeignKey<AccountEfCore>(a => a.TenantId)
-            .OnDelete(DeleteBehavior.Restrict);
 
             entity
             .HasData(new AccountEfCore

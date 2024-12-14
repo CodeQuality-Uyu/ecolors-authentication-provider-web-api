@@ -293,7 +293,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 name: "IX_Accounts_TenantId",
                 table: "Accounts",
                 column: "TenantId",
-                unique: true);
+                unique: false);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountsApps_AccountId",

@@ -10,9 +10,9 @@ public interface IAccountService
         CreateAccountForArgs args,
         AccountLogged accountLogged);
 
-    Task UpdatePasswordByCredentialsAsync(UpdatePasswordArgs args);
-
-    Task<Account> GetByEmailAsync(string email);
+    Task UpdatePasswordAsync(
+        UpdatePasswordArgs args,
+        AccountLogged accountLogged);
 
     Task<Pagination<Account>> GetAllAsync(
         int page,

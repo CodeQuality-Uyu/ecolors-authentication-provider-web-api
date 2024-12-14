@@ -11,16 +11,16 @@ public sealed record class ResetPasswordEfCore()
 
     public AccountEfCore Account { get; init; } = null!;
 
-    public string Code { get; set; } = null!;
+    public int Code { get; set; }
 
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
-    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(ResetPassword.TOLERANCE_IN_MINUTES);
+    public DateTimeOffset ExpiresAt { get; init; } = DateTimeOffset.UtcNow.AddMinutes(ResetPassword.TOLERANCE_IN_MINUTES);
 
     // For new ResetPassword
     public ResetPasswordEfCore(
         Guid id,
-        string code,
+        int code,
         Guid accountId)
         : this()
     {

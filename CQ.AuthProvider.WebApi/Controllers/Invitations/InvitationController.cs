@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Invitations;
-using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.UnitOfWork.Abstractions.Repositories;
@@ -13,7 +14,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Invitations;
 [ApiController]
 [Route("invitations")]
 public sealed class InvitationController(
-    IMapper _mapper,
+    [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper,
     IInvitationService _invitationService)
     : ControllerBase
 {
@@ -55,33 +56,28 @@ public sealed class InvitationController(
     }
 
     [HttpPut("{id}/accept")]
-    public async Task<AccountCreatedResponse> AcceptAsync(
+    public async Task<CreateAccountResult> AcceptAsync(
         Guid id,
-        AcceptInvitationRequest request)
+        AcceptInvitationArgs request)
     {
-        var args = request.Map();
-
         var account = await _invitationService
         .AcceptByIdAsync(
-        id,
-            args)
+            id,
+            request)
             .ConfigureAwait(false);
 
-
-        return _mapper.Map<AccountCreatedResponse>(account);
+        return account;
     }
 
     [HttpPut("{id}/declain")]
     public async Task DeclainAsync(
         Guid id,
-        DeclainInvitationRequest request)
+        DeclainInvitationArgs request)
     {
-        var args = request.Map();
-
         await _invitationService
             .DeclainByIdAsync(
             id,
-            args)
+            request)
             .ConfigureAwait(false);
     }
 }

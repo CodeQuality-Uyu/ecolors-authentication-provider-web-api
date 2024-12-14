@@ -26,11 +26,7 @@ public sealed class IdentityRepository(
         Guid id,
         string newPassword)
     {
-        var identity = await GetAsync(i => i.Id == id).ConfigureAwait(false);
-
-        identity.Password = newPassword;
-
-        await UpdateAndSaveAsync(identity).ConfigureAwait(false);
+        await UpdateAndSaveByIdAsync(id, new { Password = newPassword }).ConfigureAwait(false);
     }
 
     async Task IIdentityRepository.CreateAndSaveAsync(Identity identity)

@@ -1,10 +1,8 @@
 ﻿namespace CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 
-public readonly struct InvitationBasicInfoResponse
+public sealed record InvitationBasicInfoResponse(
+    Guid Id,
+    string Email)
 {
-    public string Id { get; init; }
-
-    public string Email { get; init; }
-
     public bool HasExpired { get; init; }
 }

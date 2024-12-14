@@ -22,5 +22,5 @@ public interface IInvitationService
 
     Task DeclainByIdAsync(
         Guid id,
-        string email);
+        DeclainInvitationArgs args);
 }

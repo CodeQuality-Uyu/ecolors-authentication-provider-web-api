@@ -23,7 +23,7 @@ public sealed record class AccountEfCore()
 
     public string TimeZone { get; set; } = null!;
 
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow.Date;
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow.Date;
 
     public Guid TenantId { get; init; }
 
@@ -33,18 +33,16 @@ public sealed record class AccountEfCore()
 
     public List<AppEfCore> Apps { get; init; } = [];
 
-    // For new AccountEfCore
-    internal AccountEfCore(Account account)
-        : this()
+    internal static AccountEfCore New(Account account) => new()
     {
-        Id = account.Id;
-        Email = account.Email;
-        FullName = account.FullName;
-        FirstName = account.FirstName;
-        LastName = account.LastName;
-        Locale = account.Locale;
-        TimeZone = account.TimeZone;
-        ProfilePictureId = account.ProfilePictureId;
-        TenantId = account.Tenant.Id;
-    }
+        Id = account.Id,
+        Email = account.Email,
+        FullName = account.FullName,
+        FirstName = account.FirstName,
+        LastName = account.LastName,
+        Locale = account.Locale,
+        TimeZone = account.TimeZone,
+        ProfilePictureId = account.ProfilePictureId,
+        TenantId = account.Tenant.Id,
+    };
 }

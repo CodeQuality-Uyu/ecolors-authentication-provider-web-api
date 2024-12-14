@@ -11,4 +11,6 @@ public sealed record class TenantEfCore()
     public Guid OwnerId { get; set; }
 
     public AccountEfCore Owner { get; set; } = null!;
+
+    public List<AccountEfCore> Accounts { get; init; } = [];
 }

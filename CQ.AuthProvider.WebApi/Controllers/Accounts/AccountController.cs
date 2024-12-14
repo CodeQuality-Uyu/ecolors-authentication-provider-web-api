@@ -18,20 +18,23 @@ public sealed class AccountController(
     : ControllerBase
 {
     [HttpPost("credentials")]
-    public async Task<AccountCreatedResponse> CreateCredentialsAsync(CreateAccountArgs request)
+    public async Task<CreateAccountResult> CreateCredentialsAsync(CreateAccountArgs request)
     {
         var account = await _accountService
             .CreateAndSaveAsync(request)
             .ConfigureAwait(false);
 
-        return _mapper.Map<AccountCreatedResponse>(account);
+        return account;
     }
 
     [HttpPatch("me/password")]
+    [BearerAuthentication]
     public async Task UpdatePasswordAsync(UpdatePasswordArgs request)
     {
+        var accountLogged = this.GetAccountLogged();
+
         await _accountService
-            .UpdatePasswordByCredentialsAsync(request)
+            .UpdatePasswordAsync(request, accountLogged)
             .ConfigureAwait(false);
     }
 

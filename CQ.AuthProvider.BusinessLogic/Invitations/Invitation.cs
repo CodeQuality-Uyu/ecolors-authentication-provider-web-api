@@ -2,7 +2,7 @@
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
-using CQ.Utility;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 
 namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
@@ -14,7 +14,7 @@ public sealed record class Invitation()
 
     public string Email { get; init; } = null!;
 
-    public string Code { get; init; } = null!;
+    public int Code { get; init; } = ResetPassword.NewCode();
 
     public Account Creator { get; init; } = null!;
 
@@ -22,22 +22,22 @@ public sealed record class Invitation()
 
     public App App { get; init; } = null!;
 
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public Tenant Tenant { get; init; } = null!;
 
-    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(EXPIRATION_MINUTES);
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
-    // For new Invitation
-    public Invitation(
+    public DateTimeOffset ExpiresAt { get; init; } = DateTimeOffset.UtcNow.AddMinutes(EXPIRATION_MINUTES);
+
+    public static Invitation New(
         string email,
         Role role,
         App app,
-        Account creator)
-        : this()
-    {
-        Email = email;
-        Role = role;
-        App = app;
-        Creator = creator;
-        Code = ResetPassword.NewCode();
-    }
+        Account creator) => new()
+        {
+            Email = email,
+            Role = role,
+            App = app,
+            Creator = creator,
+            Tenant = creator.Tenant
+        };
 }

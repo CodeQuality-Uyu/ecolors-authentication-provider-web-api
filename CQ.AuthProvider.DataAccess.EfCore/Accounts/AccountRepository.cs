@@ -2,10 +2,8 @@
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
-using CQ.Exceptions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Extensions;
-using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,7 +18,7 @@ IAccountRepository
 {
     public async Task CreateAsync(Account account)
     {
-        var accountEfCore = new AccountEfCore(account);
+        var accountEfCore = AccountEfCore.New(account);
 
         var accountRolesEfCore = account
             .Roles

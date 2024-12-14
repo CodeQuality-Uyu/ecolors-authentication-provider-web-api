@@ -1,12 +1,10 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
-using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Invitations;
 
@@ -51,7 +49,7 @@ internal sealed class InvitationService(
             .AssertByEmailAsync(args.Email)
             .ConfigureAwait(false);
 
-        var invitation = new Invitation(
+        var invitation = Invitation.New(
             args.Email,
             role,
             app,
@@ -64,7 +62,8 @@ internal sealed class InvitationService(
             {
                 CreatorName = accountLogged.FullName,
                 invitation.Code
-            });
+            })
+            .ConfigureAwait(false);
 
         await _invitationRepository
             .CreateAndSaveAsync(invitation)
@@ -110,19 +109,14 @@ internal sealed class InvitationService(
 
         var firstName = Guard.Normalize(args.FirstName);
         var lastName = Guard.Normalize(args.LastName);
-        var account = new Account
-        {
-            Email = args.Email,
-            FirstName = firstName,
-            LastName = lastName,
-            FullName = $"{firstName} {lastName}",
-            ProfilePictureId = args.ProfilePictureId,
-            Locale = args.Locale,
-            TimeZone = args.TimeZone,
-            Roles = [invitation.Role],
-            Tenant = invitation.App.Tenant,
-            Apps = [invitation.App]
-        };
+        var account = Account.NewFromInvitation(
+            args.Email,
+            firstName,
+            lastName,
+            args.ProfilePictureId,
+            args.Locale,
+            args.TimeZone,
+            invitation);
 
         var result = await _accountService
                 .CreateIdentityAndSaveAsync(account, args.Password)
@@ -144,15 +138,15 @@ internal sealed class InvitationService(
 
     public async Task DeclainByIdAsync(
         Guid id,
-        string email)
+        DeclainInvitationArgs args)
     {
         var invitation = await _invitationRepository
             .GetPendingByIdAsync(id)
             .ConfigureAwait(false);
 
-        if (invitation.Email != email)
+        if (invitation.Email != args.Email && invitation.Code != args.Code)
         {
-            throw new InvalidOperationException("Invalid invitation");
+            throw new InvalidOperationException("The info of the invitation is invalid");
         }
 
         await _invitationRepository

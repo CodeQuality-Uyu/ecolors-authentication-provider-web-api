@@ -8,16 +8,21 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 
 internal sealed class ResetPasswordRepository(
-    EfCoreContext context,
+    AuthDbContext _context,
     [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper _mapper)
-    : EfCoreRepository<ResetPasswordEfCore>(context),
+    : EfCoreRepository<ResetPasswordEfCore>(_context),
     IResetPasswordRepository
 {
-    public new async Task<ResetPassword> GetByIdAsync(Guid id)
+    public async Task<ResetPassword> GetActiveForAcceptanceAsync(
+        Guid id,
+        string email,
+        int code)
     {
         var query = Entities
-            .Include(r => r.Account)
-            .Where(r => r.Id == id);
+            .Where(r => r.Id == id)
+            .Where(r => r.Account.Email == email)
+            .Where(r => r.Code == code)
+            .Where(r => DateTimeOffset.UtcNow <= r.ExpiresAt);
 
         var resetPassword = await query
             .FirstOrDefaultAsync()
@@ -51,20 +56,15 @@ internal sealed class ResetPasswordRepository(
         await CreateAndSaveAsync(resetPasswordEfCore).ConfigureAwait(false);
     }
 
-    public async Task DeletePendingAsync(
-        Guid id,
-        string code)
+    public async Task DeleteByIdAsync(Guid id)
     {
-        await DeleteAndSaveAsync(r =>
-        r.Id == id &&
-        r.Code == code &&
-        r.ExpiresAt <= DateTime.UtcNow)
+        await DeleteAndSaveAsync(r => r.Id == id)
             .ConfigureAwait(false);
     }
 
     public async Task UpdateCodeByIdAsync(
         Guid id,
-        string code)
+        int code)
     {
         var resetPassword = await base.GetByIdAsync(id).ConfigureAwait(false);
 

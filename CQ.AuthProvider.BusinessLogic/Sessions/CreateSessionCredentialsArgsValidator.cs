@@ -9,10 +9,10 @@ internal sealed class CreateSessionCredentialsArgsValidator
     public CreateSessionCredentialsArgsValidator()
     {
         RuleFor(a => a.Email)
-            .Email();
+            .RequiredEmail();
 
         RuleFor(a => a.Password)
-            .Password();
+            .RequiredPassword();
 
         RuleFor(a => a.AppId)
             .ValidId();

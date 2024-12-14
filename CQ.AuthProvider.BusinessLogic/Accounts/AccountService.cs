@@ -1,11 +1,10 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
@@ -96,21 +95,15 @@ internal sealed class AccountService(
         App app,
         Role role)
     {
-        firstName = Guard.Normalize(firstName);
-        lastName = Guard.Normalize(lastName);
-        var account = new Account
-        {
-            Email = email,
-            FirstName = firstName,
-            LastName = lastName,
-            FullName = $"{firstName} {lastName}",
-            ProfilePictureId = profilePictureId,
-            Locale = locale,
-            TimeZone = timeZone,
-            Roles = [role],
-            Tenant = app.Tenant,
-            Apps = [app]
-        };
+        var account = Account.New(
+            email,
+            firstName,
+            lastName,
+            profilePictureId,
+            locale,
+            timeZone,
+            role,
+            app);
 
         var result = await CreateIdentityAndSaveAsync(
             account,
@@ -128,6 +121,8 @@ internal sealed class AccountService(
             await _identityRepository
                 .DeleteByIdAsync(account.Id)
                 .ConfigureAwait(false);
+
+            throw;
         }
 
         return result;
@@ -157,7 +152,7 @@ internal sealed class AccountService(
         var role = await GetRoleAsync(
             args.RoleId,
             app.Id,
-            app.Tenant.Id)
+            accountLogged.Tenant.Id)
             .ConfigureAwait(false);
 
         return await CreateAccountAsync(
@@ -178,7 +173,7 @@ internal sealed class AccountService(
         Guid appId,
         Guid tenantId)
     {
-        if(roleId == null)
+        if (roleId == null)
         {
             return await _roleRepository
                 .GetDefaultByTenantIdAsync(appId, tenantId)
@@ -191,17 +186,13 @@ internal sealed class AccountService(
     }
     #endregion
 
-    public async Task UpdatePasswordByCredentialsAsync(UpdatePasswordArgs args)
+    public async Task UpdatePasswordAsync(
+        UpdatePasswordArgs args,
+        AccountLogged accountLogged)
     {
-        var identity = await _identityRepository
-            .GetByCredentialsAsync(
-            args.Email,
-            args.Code)
-            .ConfigureAwait(false);
-
         await _identityRepository
             .UpdatePasswordByIdAsync(
-            identity.Id,
+            accountLogged.Id,
             args.NewPassword)
             .ConfigureAwait(false);
     }
@@ -216,13 +207,6 @@ internal sealed class AccountService(
         {
             throw new InvalidOperationException($"Email {email} is used");
         }
-    }
-
-    public async Task<Account> GetByEmailAsync(string email)
-    {
-        return await _accountRepository
-            .GetByEmailAsync(email)
-            .ConfigureAwait(false);
     }
 
     public async Task<Pagination<Account>> GetAllAsync(

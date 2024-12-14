@@ -59,7 +59,8 @@ internal static class AuthProviderWebApiConfig
 
     public static IServiceCollection ConfigureApiServices(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHostEnvironment environment)
     {
         services
             .AddExceptionGlobalHandlerService<CQAuthExceptionRegistryService>(LifeTime.Transient)
@@ -72,7 +73,7 @@ internal static class AuthProviderWebApiConfig
 
             .ConfigureIdentityProvider(configuration)
 
-            .AddFakeAuthentication<FakeAccountLogged>(configuration)
+            .AddFakeAuthentication<FakeAccountLogged>(configuration, environment, fakeAuthenticationLifeTime: LifeTime.Transient)
 
             .AddTokenService<GuidTokenService>(LifeTime.Transient)
 

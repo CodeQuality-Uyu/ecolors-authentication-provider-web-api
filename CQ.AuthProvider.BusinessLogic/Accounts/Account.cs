@@ -2,7 +2,6 @@
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Tenants;
-using CQ.Exceptions;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
@@ -31,59 +30,49 @@ public record class Account()
 
     public Tenant Tenant { get; init; } = null!;
 
-    // For new Account
-    public Account(
+    public static Account New(
         string email,
         string firstName,
         string lastName,
-        string? profilePictureUrl,
+        string? profilePictureId,
         string locale,
         string timeZone,
         Role role,
         App app)
-        : this()
     {
-        Email = email;
-        FirstName = Guard.Normalize(firstName);
-        LastName = Guard.Normalize(lastName);
-        FullName = $"{FirstName} {LastName}";
-        ProfilePictureId = profilePictureUrl;
-        Locale = locale;
-        TimeZone = timeZone;
-        Roles = [role];
-        Tenant = app.Tenant;
-        Apps = [app];
+        firstName = Guard.Normalize(firstName);
+        lastName = Guard.Normalize(lastName);
+
+        return new Account
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            FullName = $"{firstName} {lastName}",
+            ProfilePictureId = profilePictureId,
+            Locale = locale,
+            TimeZone = timeZone,
+            Roles = [role],
+            Tenant = app.Tenant,
+            Apps = [app]
+        };
     }
 
-    public static Account NewForInvitation(
+    public static Account NewFromInvitation(
         string email,
         string firstName,
         string lastName,
         string? profilePictureUrl,
         string locale,
         string timeZone,
-        Invitation invitation) => new(
-            email,
+        Invitation invitation) => New(email,
             firstName,
             lastName,
             profilePictureUrl,
             locale,
             timeZone,
             invitation.Role,
-            invitation.App)
-        {
-            Tenant = invitation.App.Tenant
-        };
-
-    public void AssertPermission(string permissionKey)
-    {
-        var missingPermission = !HasPermission(permissionKey);
-
-        if (missingPermission)
-        {
-            throw new AccessDeniedException(permissionKey.ToString());
-        }
-    }
+            invitation.App);
 
     public bool HasPermission(string permissionKey)
     {
@@ -95,8 +84,8 @@ public record class Account()
     private bool CheckPermission(string permissionKey)
     {
         var allPermissions = Roles
-           .SelectMany(r => r.Permissions)
-        .ToList();
+            .SelectMany(r => r.Permissions)
+            .ToList();
 
         var hasPermission = allPermissions.Exists(p => p.HasPermissionKey(permissionKey));
 

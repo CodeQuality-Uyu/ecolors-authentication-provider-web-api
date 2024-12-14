@@ -1,7 +1,7 @@
 ﻿namespace CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 
 public sealed record AccountBasicInfoResponse(
-    string Id,
+    Guid Id,
     string FirstName,
     string LastName,
     string FullName,

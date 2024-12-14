@@ -2,7 +2,7 @@
 
 public interface IResetPasswordService
 {
-    Task CreateAsync(string email);
+    Task CreateAsync(CreateResetPasswordArgs args);
 
     Task AcceptAsync(
         Guid id,

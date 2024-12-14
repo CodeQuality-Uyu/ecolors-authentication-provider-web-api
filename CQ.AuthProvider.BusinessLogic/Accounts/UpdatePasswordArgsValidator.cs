@@ -7,13 +7,7 @@ internal sealed class UpdatePasswordArgsValidator
 {
     public UpdatePasswordArgsValidator()
     {
-        RuleFor(a => a.Email)
-            .Email();
-
-        RuleFor(a => a.Code)
-            .Password();
-
         RuleFor(a => a.NewPassword)
-            .Password();
+            .RequiredPassword();
     }
 }

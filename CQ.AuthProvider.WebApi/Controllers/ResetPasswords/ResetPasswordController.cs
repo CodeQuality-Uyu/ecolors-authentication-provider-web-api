@@ -1,6 +1,4 @@
 ﻿using CQ.AuthProvider.BusinessLogic.ResetPasswords;
-using CQ.AuthProvider.WebApi.Controllers.ResetPasswords.Models;
-using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CQ.AuthProvider.WebApi.Controllers.ResetPasswords;
@@ -11,30 +9,22 @@ public class ResetPasswordController(IResetPasswordService resetPasswordService)
     : ControllerBase
 {
     [HttpPost]
-    public async Task CreateAsync(ResetPasswordRequest? request)
+    public async Task CreateAsync(CreateResetPasswordArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var email = request.Map();
-
         await resetPasswordService
-            .CreateAsync(email)
+            .CreateAsync(request)
             .ConfigureAwait(false);
     }
 
     [HttpPut("{id}")]
     public async Task AcceptAsync(
         Guid id,
-        ResetPasswordAcceptedRequest? request)
+        AcceptResetPasswordArgs request)
     {
-        Guard.ThrowIsNull(request, nameof(request));
-
-        var args = request.Map();
-
         await resetPasswordService
             .AcceptAsync(
             id,
-            args)
+            request)
             .ConfigureAwait(false);
     }
 }

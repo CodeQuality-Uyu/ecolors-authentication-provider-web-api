@@ -2,17 +2,18 @@
 
 public interface IResetPasswordRepository
 {
-    Task<ResetPassword> GetByIdAsync(Guid id);
+    Task<ResetPassword> GetActiveForAcceptanceAsync(
+        Guid id,
+        string email,
+        int code);
 
     Task<ResetPassword?> GetOrDefaultByEmailAsync(string email);
 
     Task CreateAndSaveAsync(ResetPassword resetPassword);
 
-    Task DeletePendingAsync(
-        Guid id,
-        string code);
+    Task DeleteByIdAsync(Guid id);
 
     Task UpdateCodeByIdAsync(
         Guid id,
-        string code);
+        int code);
 }

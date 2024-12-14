@@ -12,7 +12,7 @@ public sealed record class InvitationEfCore()
 
     public string Email { get; init; } = null!;
 
-    public string Code { get; init; } = null!;
+    public int Code { get; init; }
 
     public Guid CreatorId { get; init; }
 
@@ -30,39 +30,9 @@ public sealed record class InvitationEfCore()
 
     public TenantEfCore Tenant { get; init; } = null!;
 
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
 
-    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(Invitation.EXPIRATION_MINUTES);
-
-    private InvitationEfCore(
-        string email,
-        string code,
-        Guid roleId,
-        Guid appId,
-        Guid creatorId,
-        Guid tenantId)
-        : this()
-    {
-        Email = email;
-        Code = code;
-        RoleId = roleId;
-        AppId = appId;
-        CreatorId = creatorId;
-        TenantId = tenantId;
-    }
-
-    internal InvitationEfCore(Invitation invitation)
-        : this(invitation.Email,
-              invitation.Code,
-              invitation.Role.Id,
-              invitation.App.Id,
-              invitation.Creator.Id,
-              invitation.Creator.Tenant.Id)
-    {
-        Id = invitation.Id;
-        CreatedAt = invitation.CreatedAt;
-        ExpiresAt = invitation.ExpiresAt;
-    }
+    public DateTimeOffset ExpiresAt { get; init; } = DateTimeOffset.UtcNow.AddMinutes(Invitation.EXPIRATION_MINUTES);
 
     public bool IsPending()
     {
