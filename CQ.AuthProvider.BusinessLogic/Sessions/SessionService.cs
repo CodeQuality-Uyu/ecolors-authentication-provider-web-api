@@ -14,8 +14,10 @@ public sealed class SessionService(
     ITokenService _tokenService,
     IUnitOfWork _unitOfWork)
     : ISessionInternalService,
-    IBearerLoggedService
+    IItemLoggedService
 {
+    public string AuthorizationTypeHandled => "Bearer";
+
     public async Task<Session> CreateAndSaveAsync(CreateSessionCredentialsArgs args)
     {
         var identity = await _identityRepository

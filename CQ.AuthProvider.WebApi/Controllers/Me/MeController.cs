@@ -3,10 +3,12 @@ using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Me.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
 
@@ -16,7 +18,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Me;
 public sealed class MeController(
     IAccountService _accountService,
     ITenantService _tenantService,
-    IMapper _mapper)
+    [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
     : ControllerBase
 {
     [HttpGet]

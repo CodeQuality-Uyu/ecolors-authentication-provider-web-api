@@ -2,9 +2,7 @@
 
 public interface IItemLoggedService
 {
-    Task<object> GetByHeaderAsync(string value);
-}
+    string AuthorizationTypeHandled { get; }
 
-public interface IBearerLoggedService : IItemLoggedService
-{
+    Task<object> GetByHeaderAsync(string value);
 }
