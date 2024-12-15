@@ -20,6 +20,7 @@ using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Roles.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
+using CQ.AuthProvider.DataAccess.EfCore.Sessions.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants.Mappings;
 using CQ.Extensions.ServiceCollection;
@@ -61,6 +62,7 @@ public static class EfCoreRepositoriesConfig
                     config.AddProfile<AccountProfile>();
                     config.AddProfile<TenantProfile>();
                     config.AddProfile<ResetPasswordProfile>();
+                    config.AddProfile<SessionProfile>();
                 });
 
                 return config.CreateMapper();

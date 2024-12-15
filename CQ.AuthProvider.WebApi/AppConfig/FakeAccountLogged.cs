@@ -50,7 +50,7 @@ public sealed record class FakeAccountLogged
         }
     }
 
-    public List<string> PermissionsKeys
+    public new List<string> PermissionsKeys
     {
         get => Roles
             .SelectMany(r => r.Permissions)

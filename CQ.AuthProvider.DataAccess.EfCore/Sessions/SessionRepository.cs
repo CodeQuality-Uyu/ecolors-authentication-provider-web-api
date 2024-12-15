@@ -25,9 +25,7 @@ internal sealed class SessionRepository(
         var query = Entities
             .Include(s => s.Account.Roles)
                     .ThenInclude(r => r.Permissions)
-            .Include(a => a.Account.Tenant)
             .Include(a => a.Account.Apps)
-            .Include(s => s.App)
             .AsNoTracking()
             .AsSplitQuery()
             .Where(s => s.Token == token);

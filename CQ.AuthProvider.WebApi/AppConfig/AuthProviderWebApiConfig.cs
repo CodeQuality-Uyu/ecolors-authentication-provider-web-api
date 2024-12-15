@@ -8,6 +8,7 @@ using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Apps.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Invitations.Mappings;
+using CQ.AuthProvider.WebApi.Controllers.Me;
 using CQ.AuthProvider.WebApi.Controllers.Permissions.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Roles.Mappings;
 using CQ.AuthProvider.WebApi.Controllers.Sessions.Mappings;
@@ -91,6 +92,7 @@ internal static class AuthProviderWebApiConfig
             {
                 var config = new MapperConfiguration(config =>
                 {
+                    config.AddProfile<MeProfile>();
                     config.AddProfile<PermissionProfile>();
                     config.AddProfile<RoleProfile>();
                     config.AddProfile<InvitationProfile>();

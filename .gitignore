@@ -4,6 +4,7 @@
 # mstest test results
 TestResults
 *.nupkg
+pack.bat
 
 .env*
 appsettings*.json

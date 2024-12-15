@@ -6,6 +6,7 @@ using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Me.Models;
+using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -22,11 +23,11 @@ public sealed class MeController(
     : ControllerBase
 {
     [HttpGet]
-    public AccountLoggedResponse GetMeAsync()
+    public SessionCreatedResponse GetMeAsync()
     {
         var accountLogged = this.GetAccountLogged();
 
-        return _mapper.Map<AccountLoggedResponse>(accountLogged);
+        return _mapper.Map<SessionCreatedResponse>(accountLogged);
     }
 
     [HttpPatch("me/password")]

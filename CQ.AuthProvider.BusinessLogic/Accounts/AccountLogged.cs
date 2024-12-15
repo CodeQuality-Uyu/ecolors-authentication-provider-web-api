@@ -13,6 +13,8 @@ public record class AccountLogged()
 
     public List<Guid> RolesIds => Roles.ConvertAll(r => r.Id);
 
+    public List<string> PermissionsKeys => Roles.SelectMany(r => r.Permissions).Select(p => p.Key).ToList();
+
     public App AppLogged { get; init; } = null!;
 
     public virtual IIdentity? Identity => null;
