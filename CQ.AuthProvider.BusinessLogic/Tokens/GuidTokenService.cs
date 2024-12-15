@@ -10,7 +10,7 @@ public sealed class GuidTokenService
 
     public Task<string> CreateAsync(object item)
     {
-        return Task.FromResult(Db.NewId());
+        return Task.FromResult($"Bearer {Db.NewId()}");
     }
 
     public Task<bool> IsValidAsync(string value)
