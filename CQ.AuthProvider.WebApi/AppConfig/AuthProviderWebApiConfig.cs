@@ -110,7 +110,7 @@ internal static class AuthProviderWebApiConfig
         IWebHostEnvironment environment)
         where TContext : EfCoreContext
     {
-        if (!environment.IsLocal())
+        if (environment.IsProd())
         {
             return services;
         }
