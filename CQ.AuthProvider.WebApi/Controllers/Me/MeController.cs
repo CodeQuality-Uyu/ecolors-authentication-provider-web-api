@@ -9,7 +9,6 @@ using CQ.AuthProvider.WebApi.Controllers.Me.Models;
 using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
 
