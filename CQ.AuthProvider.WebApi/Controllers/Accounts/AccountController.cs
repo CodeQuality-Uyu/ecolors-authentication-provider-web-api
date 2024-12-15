@@ -27,17 +27,6 @@ public sealed class AccountController(
         return account;
     }
 
-    [HttpPatch("me/password")]
-    [BearerAuthentication]
-    public async Task UpdatePasswordAsync(UpdatePasswordArgs request)
-    {
-        var accountLogged = this.GetAccountLogged();
-
-        await _accountService
-            .UpdatePasswordAsync(request, accountLogged)
-            .ConfigureAwait(false);
-    }
-
     [HttpPost("credentials/for")]
     [BearerAuthentication]
     [SecureAuthorization]

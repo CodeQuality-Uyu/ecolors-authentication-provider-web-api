@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
-using CQ.AuthProvider.BusinessLogic.Me;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
 using CQ.AuthProvider.WebApi.Controllers.Me.Models;
@@ -11,9 +11,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
 
 [ApiController]
+[BearerAuthentication]
 [Route("me")]
 public sealed class MeController(
-    IMeService _meService,
+    IAccountService _accountService,
     ITenantService _tenantService,
     IMapper _mapper)
     : ControllerBase
@@ -26,22 +27,18 @@ public sealed class MeController(
         return _mapper.Map<AccountLoggedResponse>(accountLogged);
     }
 
-    [HttpPatch("password")]
-    [BearerAuthentication]
-    public async Task UpdatePasswordAsync(UpdatePasswordLoggedRequest request)
+    [HttpPatch("me/password")]
+    public async Task UpdatePasswordAsync(UpdatePasswordArgs request)
     {
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
-        
-        await _meService
-            .UpdatePasswordLoggedAsync(args, accountLogged)
+
+        await _accountService
+            .UpdatePasswordAsync(request, accountLogged)
             .ConfigureAwait(false);
     }
 
 
     [HttpPatch("tenants/owner")]
-    [BearerAuthentication]
     [SecureAuthorization]
     public async Task TransferTenantAsync(TransferTenantRequest request)
     {
@@ -56,7 +53,6 @@ public sealed class MeController(
     }
 
     [HttpPatch("tenants/name")]
-    [BearerAuthentication]
     [SecureAuthorization]
     public async Task UpdateTenantNameAsync(UpdateTenantNameRequest request)
     {
