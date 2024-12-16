@@ -30,9 +30,9 @@ public sealed record class InvitationEfCore()
 
     public TenantEfCore Tenant { get; init; } = null!;
 
-    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 
-    public DateTimeOffset ExpiresAt { get; init; } = DateTimeOffset.UtcNow.AddMinutes(Invitation.EXPIRATION_MINUTES);
+    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(Invitation.EXPIRATION_MINUTES);
 
     public bool IsPending()
     {

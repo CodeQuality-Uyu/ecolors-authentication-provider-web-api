@@ -13,9 +13,9 @@ public sealed record class ResetPasswordEfCore()
 
     public int Code { get; set; }
 
-    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 
-    public DateTimeOffset ExpiresAt { get; init; } = DateTimeOffset.UtcNow.AddMinutes(ResetPassword.TOLERANCE_IN_MINUTES);
+    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(ResetPassword.TOLERANCE_IN_MINUTES);
 
     // For new ResetPassword
     public ResetPasswordEfCore(

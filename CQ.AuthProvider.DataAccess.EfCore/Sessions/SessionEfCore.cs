@@ -10,6 +10,8 @@ public sealed record class SessionEfCore()
 
     public string Token { get; init; } = null!;
 
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+
     public Guid AppId { get; init; }
 
     public AppEfCore App { get; init; } = null!;

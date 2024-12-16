@@ -52,7 +52,7 @@ internal sealed class AccountService(
             account.ProfilePictureId,
             account.Locale,
             account.TimeZone,
-            session.Token,
+            $"Bearer {session.Token}",
             account.Roles.ConvertAll(r => r.Name),
             account.Roles.SelectMany(r => r.Permissions.ConvertAll(p => p.Key)).ToList());
 

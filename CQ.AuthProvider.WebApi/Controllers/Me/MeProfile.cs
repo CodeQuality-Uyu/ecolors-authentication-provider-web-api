@@ -17,7 +17,7 @@ internal sealed class MeProfile
                 source.FirstName,
                 source.LastName,
                 source.FullName,
-                source.Token,
+                $"Bearer {source.Token}",
                 source.Roles.ConvertAll(r => r.Name),
                 source.PermissionsKeys
             ));

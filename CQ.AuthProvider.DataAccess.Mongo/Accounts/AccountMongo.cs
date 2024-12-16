@@ -23,7 +23,7 @@ namespace CQ.AuthProvider.DataAccess.Mongo.Accounts
 
         public string TimeZone { get; set; } = null!;
 
-        public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+        public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 
         /// <summary>
         /// For MongoDriver

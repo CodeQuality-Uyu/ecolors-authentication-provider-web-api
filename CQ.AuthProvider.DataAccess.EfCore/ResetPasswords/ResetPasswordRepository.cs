@@ -22,7 +22,7 @@ internal sealed class ResetPasswordRepository(
             .Where(r => r.Id == id)
             .Where(r => r.Account.Email == email)
             .Where(r => r.Code == code)
-            .Where(r => DateTimeOffset.UtcNow <= r.ExpiresAt);
+            .Where(r => DateTime.UtcNow <= r.ExpiresAt);
 
         var resetPassword = await query
             .FirstOrDefaultAsync()

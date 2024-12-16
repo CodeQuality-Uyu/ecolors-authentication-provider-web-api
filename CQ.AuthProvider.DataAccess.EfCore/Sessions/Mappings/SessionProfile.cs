@@ -15,7 +15,7 @@ internal sealed class SessionProfile
             .ConvertUsing((source, destination, options) => new Session
             {
                 Id = source.Id,
-                Token = source.Token,
+                Token = $"Bearer {source.Token}",
                 Account = options.Mapper.Map<Account>(source.Account),
                 App = new App
                 {

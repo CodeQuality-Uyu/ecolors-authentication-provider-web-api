@@ -8,7 +8,7 @@ internal sealed class ResetPasswordMongo()
 
     public string Code { get; init; } = null!;
 
-    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 
     public ResetPasswordMongo(
         string id,

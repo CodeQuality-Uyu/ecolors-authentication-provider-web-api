@@ -18,7 +18,7 @@ internal sealed class SessionProfile
                 source.Account.FirstName,
                 source.Account.LastName,
                 source.Account.FullName,
-                source.Token,
+                $"Bearer {source.Token}",
                 source.Account.Roles.ConvertAll(r => r.Name),
                 source
                 .Account

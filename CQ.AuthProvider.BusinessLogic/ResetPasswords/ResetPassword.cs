@@ -12,9 +12,9 @@ public sealed record class ResetPassword()
 
     public int Code { get; init; } = NewCode();
 
-    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 
-    public DateTimeOffset ExpiresAt { get; init; } = DateTimeOffset.UtcNow.AddMinutes(TOLERANCE_IN_MINUTES);
+    public DateTime ExpiresAt { get; init; } = DateTime.UtcNow.AddMinutes(TOLERANCE_IN_MINUTES);
 
     public static ResetPassword New(Account account) => new()
     {
