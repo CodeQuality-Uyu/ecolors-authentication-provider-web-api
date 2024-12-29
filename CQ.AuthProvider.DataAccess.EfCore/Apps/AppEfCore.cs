@@ -1,5 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.DataAccess.EfCore.Permissions;
+﻿using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
@@ -12,6 +11,8 @@ public sealed record class AppEfCore()
     public string Name { get; init; } = null!;
 
     public bool IsDefault { get; init; }
+
+    public Guid CoverId { get; init; }
 
     public Guid TenantId { get; init; }
 

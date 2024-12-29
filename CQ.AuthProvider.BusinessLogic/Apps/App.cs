@@ -9,6 +9,8 @@ public sealed record class App()
 
     public string Name { get; init; } = null!;
 
+    public Guid CoverId { get; init; }
+
     public Tenant Tenant { get; init; } = null!;
 
     public bool IsDefault { get; init; }

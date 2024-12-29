@@ -12,5 +12,12 @@ internal sealed class AppProfile
         #region GetAll
         this.CreatePaginationMap<App, AppBasicInfoResponse>();
         #endregion
+
+        #region GetById
+        CreateMap<App, AppDetailInfoResponse>();
+            //.ForMember(destination => destination.CoverMultimedia,
+            //options => options.MapFrom);
+
+        #endregion
     }
 }

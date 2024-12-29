@@ -10,7 +10,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
 [ApiController]
 [Route("apps")]
-[BearerAuthentication]
 public sealed class AppController(
     IAppService _appService,
     [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
@@ -42,5 +41,13 @@ public sealed class AppController(
             .ConfigureAwait(false);
 
         return _mapper.Map<Pagination<AppBasicInfoResponse>>(apps);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<AppDetailInfoResponse> GetByIdAsync(Guid id)
+    {
+        var app = _appService.GetByIdAsync(id);
+
+        return _mapper.Map<AppDetailInfoResponse>(app);
     }
 }

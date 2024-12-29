@@ -13,10 +13,11 @@ public interface IAppService
         int page,
         int pageSize,
         AccountLogged accountLogged);
+
+    Task<App> GetByIdAsync(Guid id);
 }
 
 internal interface IAppInternalService
     : IAppService
 {
-    Task<App> GetByIdAsync(Guid id);
 }
