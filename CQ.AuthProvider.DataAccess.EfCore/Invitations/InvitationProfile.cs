@@ -5,7 +5,7 @@ using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
 
-namespace CQ.AuthProvider.DataAccess.EfCore.Invitations.Mappings;
+namespace CQ.AuthProvider.DataAccess.EfCore.Invitations;
 
 internal sealed class InvitationProfile
     : Profile

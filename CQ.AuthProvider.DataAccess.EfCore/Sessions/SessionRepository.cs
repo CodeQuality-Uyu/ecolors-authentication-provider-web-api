@@ -26,9 +26,11 @@ internal sealed class SessionRepository(
             .Include(s => s.Account.Roles)
                     .ThenInclude(r => r.Permissions)
             .Include(a => a.Account.Apps)
-            .AsNoTracking()
+            .Include(a => a.Account.Tenant)
+            .Where(s => s.Token == token)
             .AsSplitQuery()
-            .Where(s => s.Token == token);
+            .AsNoTracking()
+            ;
 
         var session = await query
             .FirstOrDefaultAsync()

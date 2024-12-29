@@ -62,7 +62,9 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     Id = seedTenantId,
                     Name = "Seed Tenant",
-                    OwnerId = seedAccountId
+                    OwnerId = seedAccountId,
+                    MiniLogoId = Guid.Empty,
+                    CoverLogoId = Guid.Empty,
                 });
         });
 

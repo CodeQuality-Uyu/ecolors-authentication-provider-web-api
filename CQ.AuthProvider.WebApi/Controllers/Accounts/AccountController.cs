@@ -6,6 +6,7 @@ using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.AuthProvider.WebApi.Extensions;
+using CQ.AuthProvider.WebApi.Controllers.Sessions;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 
@@ -17,13 +18,13 @@ public sealed class AccountController(
     : ControllerBase
 {
     [HttpPost("credentials")]
-    public async Task<CreateAccountResult> CreateCredentialsAsync(CreateAccountArgs request)
+    public async Task<SessionCreatedResponse> CreateCredentialsAsync(CreateAccountArgs request)
     {
         var account = await _accountService
             .CreateAndSaveAsync(request)
             .ConfigureAwait(false);
 
-        return account;
+        return _mapper.Map<SessionCreatedResponse>(account);
     }
 
     [HttpPost("credentials/for")]

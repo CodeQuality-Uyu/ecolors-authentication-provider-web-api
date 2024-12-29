@@ -12,6 +12,7 @@ using CQ.AuthProvider.WebApi.Controllers.Me;
 using CQ.AuthProvider.WebApi.Controllers.Permissions;
 using CQ.AuthProvider.WebApi.Controllers.Roles;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
+using CQ.AuthProvider.WebApi.Controllers.Tenants;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.Extensions.Environments;
 using CQ.Extensions.ServiceCollection;
@@ -99,6 +100,7 @@ internal static class AuthProviderWebApiConfig
                     config.AddProfile<SessionProfile>();
                     config.AddProfile<AppProfile>();
                     config.AddProfile<AccountProfile>();
+                    config.AddProfile<TenantProfile>();
                 });
 
                 return config.CreateMapper();

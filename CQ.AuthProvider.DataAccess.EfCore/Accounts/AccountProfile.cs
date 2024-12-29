@@ -4,7 +4,7 @@ using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
 
-namespace CQ.AuthProvider.DataAccess.EfCore.Accounts.Mappings;
+namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 internal sealed class AccountProfile
     : Profile
@@ -18,7 +18,7 @@ internal sealed class AccountProfile
                 {
                     Id = source.TenantId,
                 }))
-            
+
             .ForMember(destination => destination.Apps,
             options => options.MapFrom(
                 source => source.Apps.ConvertAll(a => new App

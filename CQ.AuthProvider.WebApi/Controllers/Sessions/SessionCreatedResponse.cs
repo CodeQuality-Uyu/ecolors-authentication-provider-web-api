@@ -1,7 +1,9 @@
-﻿namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
+﻿using CQ.AuthProvider.WebApi.Controllers.Tenants;
+
+namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
 
 public sealed record SessionCreatedResponse(
-    Guid AccountId,
+    Guid Id,
     string? ProfilePictureId,
     string Email,
     string FirstName,
@@ -9,4 +11,5 @@ public sealed record SessionCreatedResponse(
     string FullName,
     string Token,
     List<string> Roles,
-    List<string> Permissions);
+    List<string> Permissions,
+    TenantOfAccountBasicInfoResponse Tenant);

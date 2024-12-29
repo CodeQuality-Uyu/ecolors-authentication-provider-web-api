@@ -4,7 +4,7 @@ using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 
-namespace CQ.AuthProvider.DataAccess.EfCore.Sessions.Mappings;
+namespace CQ.AuthProvider.DataAccess.EfCore.Sessions;
 
 internal sealed class SessionProfile
     : Profile

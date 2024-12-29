@@ -1,4 +1,6 @@
-﻿namespace CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.AuthProvider.BusinessLogic.Tenants;
+
+namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 public sealed record CreateAccountResult(
     Guid Id,
@@ -11,4 +13,5 @@ public sealed record CreateAccountResult(
     string TimeZone,
     string Token,
     List<string> Roles,
-    List<string> Permissions);
+    List<string> Permissions,
+    Tenant Tenant);

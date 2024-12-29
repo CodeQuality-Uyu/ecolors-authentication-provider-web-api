@@ -3,7 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Utils;
 
-namespace CQ.AuthProvider.DataAccess.EfCore.Roles.Mappings;
+namespace CQ.AuthProvider.DataAccess.EfCore.Roles;
 
 internal sealed class RoleProfile
     : Profile

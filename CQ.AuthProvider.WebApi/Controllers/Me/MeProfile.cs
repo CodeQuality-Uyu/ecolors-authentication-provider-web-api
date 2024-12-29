@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
+using CQ.AuthProvider.WebApi.Controllers.Tenants;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
 
@@ -19,7 +20,8 @@ internal sealed class MeProfile
                 source.FullName,
                 $"Bearer {source.Token}",
                 source.Roles.ConvertAll(r => r.Name),
-                source.PermissionsKeys
+                source.PermissionsKeys,
+                options.Mapper.Map<TenantOfAccountBasicInfoResponse>(source.Tenant)
             ));
     }
 }

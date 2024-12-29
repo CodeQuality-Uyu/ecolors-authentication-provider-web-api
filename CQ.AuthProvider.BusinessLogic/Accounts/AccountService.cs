@@ -1,6 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Identities;
-using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.UnitOfWork.Abstractions;
@@ -54,7 +53,8 @@ internal sealed class AccountService(
             account.TimeZone,
             $"Bearer {session.Token}",
             account.Roles.ConvertAll(r => r.Name),
-            account.Roles.SelectMany(r => r.Permissions.ConvertAll(p => p.Key)).ToList());
+            account.Roles.SelectMany(r => r.Permissions.ConvertAll(p => p.Key)).ToList(),
+            account.Tenant);
 
         return result;
     }

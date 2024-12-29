@@ -12,7 +12,7 @@ public sealed record class TenantEfCore()
 
     public Guid CoverLogoId { get; init; }
 
-    public string WebUrl { get; set; } = null!;
+    public string? WebUrl { get; set; }
 
     public Guid OwnerId { get; set; }
 
