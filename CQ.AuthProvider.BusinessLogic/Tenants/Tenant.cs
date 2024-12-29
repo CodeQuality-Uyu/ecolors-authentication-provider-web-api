@@ -8,5 +8,11 @@ public sealed record class Tenant()
 
     public string Name { get; init; } = null!;
 
+    public Guid MiniLogoId { get; init; }
+
+    public Guid CoverLogoId { get;init; }
+
+    public string WebUrl { get; set; } = null!;
+
     public Account Owner { get; init; } = null!;
 }

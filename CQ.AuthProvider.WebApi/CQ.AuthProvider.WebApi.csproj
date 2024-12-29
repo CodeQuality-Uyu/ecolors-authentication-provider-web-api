@@ -28,8 +28,4 @@
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </Content>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Controllers\Tenants\Models\" />
-	</ItemGroup>
 </Project>

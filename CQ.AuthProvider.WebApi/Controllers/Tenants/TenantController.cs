@@ -2,6 +2,7 @@
 using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +14,8 @@ namespace CQ.AuthProvider.WebApi.Controllers.Tenants;
 [BearerAuthentication]
 [SecureAuthorization]
 public sealed class TenantController(
-    ITenantService tenantService,
-    IMapper mapper)
+    ITenantService _tenantService,
+    [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
     : ControllerBase
 {
     [HttpPost]
@@ -22,7 +23,7 @@ public sealed class TenantController(
     {
         var accountLogged = this.GetAccountLogged();
 
-        await tenantService
+        await _tenantService
             .CreateAsync(
             request,
             accountLogged)
@@ -34,13 +35,13 @@ public sealed class TenantController(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
-        var tenants = await tenantService
+        var tenants = await _tenantService
             .GetAllAsync(
             page,
             pageSize)
             .ConfigureAwait(false);
 
-        return mapper.Map<Pagination<TenantBasicInfoResponse>>(tenants);
+        return _mapper.Map<Pagination<TenantBasicInfoResponse>>(tenants);
     }
 
     [HttpGet("{id}")]
@@ -48,12 +49,12 @@ public sealed class TenantController(
     {
         var accountLogged = this.GetAccountLogged();
 
-        var tenant = await tenantService
+        var tenant = await _tenantService
             .GetByIdAsync(
             id,
             accountLogged)
             .ConfigureAwait(false);
 
-        return mapper.Map<TenantDetailInfoResponse>(tenant);
+        return _mapper.Map<TenantDetailInfoResponse>(tenant);
     }
 }

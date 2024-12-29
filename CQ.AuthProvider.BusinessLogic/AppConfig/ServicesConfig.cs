@@ -83,6 +83,7 @@ public static class ServicesConfig
             .AddTransient<IValidator<CreateSessionCredentialsArgs>, CreateSessionCredentialsArgsValidator>()
             .AddTransient<IValidator<AcceptResetPasswordArgs>, AcceptResetPasswordArgsValidator>()
             .AddTransient<IValidator<CreateResetPasswordArgs>, CreateResetPasswordArgsValidator>()
+            .AddTransient<IValidator<CreateTenantArgs>, CreateTenantArgsValidator>()
             ;
 
         return services;

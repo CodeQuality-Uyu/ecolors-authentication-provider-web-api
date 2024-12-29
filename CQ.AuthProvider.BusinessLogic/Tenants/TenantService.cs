@@ -18,12 +18,15 @@ internal sealed class TenantService(
         CreateTenantArgs args,
         AccountLogged accountLogged)
     {
-        await AssertNameAsync(args.Name)
+        await AssertNameNotInUseAsync(args.Name)
             .ConfigureAwait(false);
 
         var tenant = new Tenant
         {
             Name = args.Name,
+            MiniLogoId = args.MiniLogoId,
+            CoverLogoId = args.CoverLogoId,
+            WebUrl = args.WebUrl,
             Owner = accountLogged
         };
 
@@ -38,7 +41,7 @@ internal sealed class TenantService(
             .ConfigureAwait(false);
     }
 
-    private async Task AssertNameAsync(string name)
+    private async Task AssertNameNotInUseAsync(string name)
     {
         var existTenant = await _tenantRepository
                     .ExistByNameAsync(name)
@@ -77,7 +80,7 @@ internal sealed class TenantService(
         Guid id,
         string newName)
     {
-        await AssertNameAsync(newName)
+        await AssertNameNotInUseAsync(newName)
             .ConfigureAwait(false);
 
         await _tenantRepository

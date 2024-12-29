@@ -2,7 +2,7 @@
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 
-namespace CQ.AuthProvider.DataAccess.EfCore.Tenants.Mappings;
+namespace CQ.AuthProvider.DataAccess.EfCore.Tenants;
 
 internal sealed class TenantProfile
     : Profile
@@ -17,5 +17,15 @@ internal sealed class TenantProfile
                 {
                     Id = source.OwnerId,
                 }));
+
+        #region CreateAndSave
+        CreateMap<Tenant, TenantEfCore>()
+            .ForMember(destination => destination.Owner,
+            options => options.Ignore())
+
+            .ForMember(destination => destination.OwnerId,
+            options => options.MapFrom(
+                source => source.Owner.Id));
+        #endregion
     }
 }
