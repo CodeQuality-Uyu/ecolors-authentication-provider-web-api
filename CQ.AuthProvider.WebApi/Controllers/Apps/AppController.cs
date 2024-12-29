@@ -2,7 +2,6 @@
 using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Utils;
-using CQ.AuthProvider.WebApi.Controllers.Apps.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +18,15 @@ public sealed class AppController(
 {
     [HttpPost]
     [BearerAuthentication]
-    public async Task CreateAsync(CreateAppArgs request)
+    public async Task<AppCreatedResponse> CreateAsync(CreateAppArgs request)
     {
         var accountLogged = this.GetAccountLogged();
 
-        await _appService
+        var appCreated = await _appService
             .CreateAsync(request, accountLogged)
             .ConfigureAwait(false);
+
+        return _mapper.Map<AppCreatedResponse>(appCreated);
     }
 
     [HttpGet]

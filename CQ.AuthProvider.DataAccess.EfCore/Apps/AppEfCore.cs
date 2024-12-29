@@ -20,13 +20,4 @@ public sealed record class AppEfCore()
     public List<RoleEfCore> Roles { get; init; } = [];
 
     public List<PermissionEfCore> Permissions { get; init; } = [];
-
-    public AppEfCore(App app)
-        : this()
-    {
-        Id = app.Id;
-        Name = app.Name;
-        IsDefault = app.IsDefault;
-        TenantId = app.Tenant.Id;
-    }
 }

@@ -2,6 +2,7 @@
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Invitations;
+using CQ.AuthProvider.BusinessLogic.Licenses;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
@@ -11,9 +12,9 @@ using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
-using CQ.AuthProvider.DataAccess.EfCore.Apps.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations.Mappings;
+using CQ.AuthProvider.DataAccess.EfCore.Licenses;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions.Mappings;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
@@ -63,6 +64,7 @@ public static class EfCoreRepositoriesConfig
                     config.AddProfile<TenantProfile>();
                     config.AddProfile<ResetPasswordProfile>();
                     config.AddProfile<SessionProfile>();
+                    config.AddProfile<LicenseProfile>();
                 });
 
                 return config.CreateMapper();
@@ -95,6 +97,7 @@ public static class EfCoreRepositoriesConfig
             .AddAbstractionRepository<InvitationEfCore, IInvitationRepository, InvitationRepository>(LifeTime.Scoped)
             .AddAbstractionRepository<AppEfCore, IAppRepository, AppRepository>(LifeTime.Scoped)
             .AddAbstractionRepository<TenantEfCore, ITenantRepository, TenantRepository>(LifeTime.Scoped)
+            .AddAbstractionRepository<LicenseEfCore, ILicenseRepository, LicenseRepository>(LifeTime.Scoped)
             ;
 
         return services;

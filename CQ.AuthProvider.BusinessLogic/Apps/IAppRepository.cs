@@ -12,7 +12,7 @@ public interface IAppRepository
         string name,
         Guid tenantId);
 
-    Task CreateAndSaveAsync(App app);
+    Task CreateAsync(App app);
 
     Task<Pagination<App>> GetAllAsync(
         Guid tenantId,

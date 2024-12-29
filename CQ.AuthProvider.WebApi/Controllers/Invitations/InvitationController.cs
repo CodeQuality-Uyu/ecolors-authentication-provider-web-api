@@ -4,7 +4,6 @@ using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Utils;
-using CQ.AuthProvider.WebApi.Controllers.Invitations.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using Microsoft.AspNetCore.Mvc;

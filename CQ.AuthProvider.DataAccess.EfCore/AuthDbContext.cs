@@ -2,6 +2,7 @@
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;
+using CQ.AuthProvider.DataAccess.EfCore.Licenses;
 using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
@@ -36,6 +37,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     public DbSet<AppEfCore> Apps { get; set; }
 
     public DbSet<InvitationEfCore> Invitations { get; set; }
+
+    public DbSet<LicenseEfCore> Licenses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

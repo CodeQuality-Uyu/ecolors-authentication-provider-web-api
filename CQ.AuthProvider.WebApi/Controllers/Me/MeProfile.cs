@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
+using CQ.AuthProvider.WebApi.Controllers.Sessions;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
 

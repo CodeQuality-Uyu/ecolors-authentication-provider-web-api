@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Extensions;
-using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
 using AutoMapper;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Sessions;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using AutoMapper;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.ApiElements.Filters.Authorizations;

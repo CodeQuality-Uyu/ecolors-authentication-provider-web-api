@@ -14,14 +14,16 @@ internal sealed class AppRepository(
     : AuthDbContextRepository<AppEfCore>(context),
     IAppRepository
 {
-    public async Task CreateAndSaveAsync(App app)
+    public async Task CreateAsync(App app)
     {
-        var appEfCore = new AppEfCore(app);
+        var appEfCore = _mapper.Map<AppEfCore>(app);
 
-        await CreateAndSaveAsync(appEfCore).ConfigureAwait(false);
+        await CreateAsync(appEfCore).ConfigureAwait(false);
     }
 
-    public async Task<bool> ExistsByNameInTenantAsync(string name, Guid tenantId)
+    public async Task<bool> ExistsByNameInTenantAsync(
+        string name,
+        Guid tenantId)
     {
         var query = ConcreteContext
             .Apps

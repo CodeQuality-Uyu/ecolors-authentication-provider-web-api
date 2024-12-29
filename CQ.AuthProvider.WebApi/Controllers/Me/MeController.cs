@@ -4,9 +4,7 @@ using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
-using CQ.AuthProvider.WebApi.Controllers.Accounts.Models;
-using CQ.AuthProvider.WebApi.Controllers.Me.Models;
-using CQ.AuthProvider.WebApi.Controllers.Sessions.Models;
+using CQ.AuthProvider.WebApi.Controllers.Sessions;
 using CQ.AuthProvider.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,14 +56,12 @@ public sealed class MeController(
     [SecureAuthorization]
     public async Task UpdateTenantNameAsync(UpdateTenantNameRequest request)
     {
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
 
         await _tenantService
             .UpdateNameByIdAndSaveAsync(
             accountLogged.Tenant.Id,
-            args)
+            request.NewName)
             .ConfigureAwait(false);
     }
 }

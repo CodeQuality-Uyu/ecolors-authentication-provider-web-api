@@ -1,13 +1,17 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Licenses;
+using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 
 namespace CQ.AuthProvider.BusinessLogic.Apps;
 
 internal sealed class AppService(
-    IAppRepository _appRepository)
+    IAppRepository _appRepository,
+    ILicenseRepository _licenseRepository,
+    IUnitOfWork _unitOfWork)
     : IAppInternalService
 {
-    public async Task CreateAsync(
+    public async Task<AppCreatedResult> CreateAsync(
         CreateAppArgs args,
         AccountLogged accountLogged)
     {
@@ -22,10 +26,20 @@ internal sealed class AppService(
             args.Name,
             args.IsDefault,
             accountLogged.Tenant);
-
         await _appRepository
-            .CreateAndSaveAsync(app)
+            .CreateAsync(app)
             .ConfigureAwait(false);
+
+        var license = new License(app);
+        await _licenseRepository
+            .CreateAsync(license)
+            .ConfigureAwait(false);
+
+        await _unitOfWork
+            .CommitChangesAsync()
+            .ConfigureAwait(false);
+
+        return new AppCreatedResult(license.Token);
     }
 
     public async Task<App> GetByIdAsync(Guid id)

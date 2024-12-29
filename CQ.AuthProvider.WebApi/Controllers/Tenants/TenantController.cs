@@ -2,7 +2,6 @@
 using CQ.ApiElements.Filters.Authentications;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Tenants;
-using CQ.AuthProvider.WebApi.Controllers.Tenants.Models;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +18,13 @@ public sealed class TenantController(
     : ControllerBase
 {
     [HttpPost]
-    public async Task CreateAsync(CreateTenantRequest request)
+    public async Task CreateAsync(CreateTenantArgs request)
     {
-        var args = request.Map();
-
         var accountLogged = this.GetAccountLogged();
 
         await tenantService
             .CreateAsync(
-            args,
+            request,
             accountLogged)
             .ConfigureAwait(false);
     }

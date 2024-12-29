@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CQ.AuthProvider.WebApi.Extensions;
-using CQ.AuthProvider.WebApi.Controllers.Roles.Models;
 using AutoMapper;
-using CQ.AuthProvider.WebApi.Controllers.Permissions.Models;
 using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.UnitOfWork.Abstractions.Repositories;
