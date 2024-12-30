@@ -14,11 +14,11 @@ internal sealed class AppRepository(
     : AuthDbContextRepository<AppEfCore>(context),
     IAppRepository
 {
-    public async Task CreateAsync(App app)
+    public async Task CreateAndSaveAsync(App app)
     {
         var appEfCore = _mapper.Map<AppEfCore>(app);
 
-        await CreateAsync(appEfCore).ConfigureAwait(false);
+        await CreateAndSaveAsync(appEfCore).ConfigureAwait(false);
     }
 
     public async Task<bool> ExistsByNameInTenantAsync(

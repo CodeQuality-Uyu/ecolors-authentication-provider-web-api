@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     /// <inheritdoc />
-    public partial class AddMiniLogoIdAndCoverForTenant : Migration
+    public partial class AddMultimediaToTenantAndApp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,6 +31,20 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                 type: "nvarchar(max)",
                 nullable: true);
 
+            migrationBuilder.AddColumn<Guid>(
+                name: "CoverId",
+                table: "Apps",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.UpdateData(
+                table: "Apps",
+                keyColumn: "Id",
+                keyValue: new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                column: "CoverId",
+                value: new Guid("00000000-0000-0000-0000-000000000000"));
+
             migrationBuilder.UpdateData(
                 table: "Tenants",
                 keyColumn: "Id",
@@ -53,6 +67,10 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
             migrationBuilder.DropColumn(
                 name: "WebUrl",
                 table: "Tenants");
+
+            migrationBuilder.DropColumn(
+                name: "CoverId",
+                table: "Apps");
         }
     }
 }

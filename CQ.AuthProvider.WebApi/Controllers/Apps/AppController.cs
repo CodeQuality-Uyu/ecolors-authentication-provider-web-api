@@ -17,15 +17,13 @@ public sealed class AppController(
 {
     [HttpPost]
     [BearerAuthentication]
-    public async Task<AppCreatedResponse> CreateAsync(CreateAppArgs request)
+    public async Task CreateAsync(CreateAppArgs request)
     {
         var accountLogged = this.GetAccountLogged();
 
-        var appCreated = await _appService
+        await _appService
             .CreateAsync(request, accountLogged)
             .ConfigureAwait(false);
-
-        return _mapper.Map<AppCreatedResponse>(appCreated);
     }
 
     [HttpGet]

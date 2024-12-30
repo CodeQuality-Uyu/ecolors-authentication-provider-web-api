@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20241229202030_AddMiniLogoIdAndCoverForTenant")]
-    partial class AddMiniLogoIdAndCoverForTenant
+    [Migration("20241230232250_AddMultimediaToTenantAndApp")]
+    partial class AddMultimediaToTenantAndApp
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,6 +135,9 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CoverId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
 
@@ -155,6 +158,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         new
                         {
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            CoverId = new Guid("00000000-0000-0000-0000-000000000000"),
                             IsDefault = true,
                             Name = "Auth Provider Web Api",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
@@ -203,31 +207,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Invitations");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Licenses.LicenseEfCore", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AppId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppId");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("Licenses");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>
@@ -758,25 +737,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Navigation("Creator");
 
                     b.Navigation("Role");
-
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Licenses.LicenseEfCore", b =>
-                {
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
-                        .WithMany()
-                        .HasForeignKey("AppId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("App");
 
                     b.Navigation("Tenant");
                 });

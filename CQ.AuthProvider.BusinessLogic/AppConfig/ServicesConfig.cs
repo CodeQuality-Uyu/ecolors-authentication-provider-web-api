@@ -3,6 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Me;
+using CQ.AuthProvider.BusinessLogic.Multimedias;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
@@ -22,6 +23,8 @@ public static class ServicesConfig
             .AddServices()
 
             .AddEmailServices()
+
+            .AddMultimediaService()
 
             .AddValidators();
 
@@ -64,6 +67,14 @@ public static class ServicesConfig
         services
             .AddTransient<IEmailService, EmailService>();
         
+        return services;
+    }
+
+    private static IServiceCollection AddMultimediaService(this IServiceCollection services)
+    {
+        services
+            .AddTransient<IMultimediaService, TestMultimediaService>();
+
         return services;
     }
 
