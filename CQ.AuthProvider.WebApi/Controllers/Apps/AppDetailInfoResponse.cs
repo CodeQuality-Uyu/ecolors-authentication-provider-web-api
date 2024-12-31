@@ -4,9 +4,9 @@ namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
 public readonly struct AppDetailInfoResponse
 {
-    public Guid Id { get; }
-    
-    public string Name { get; }
+    public Guid Id { get; init; }
 
-    public MultimediaResponse CoverMultimedia { get; }
+    public string Name { get; init; }
+
+    public MultimediaResponse CoverMultimedia { get; init; }
 }

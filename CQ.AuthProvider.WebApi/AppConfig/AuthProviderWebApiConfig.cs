@@ -86,10 +86,13 @@ internal static class AuthProviderWebApiConfig
         this IServiceCollection services)
     {
         services
+            .AddAutoMapper(typeof(Program))
             .AddKeyedTransient<IMapper>(MapperKeyedService.Presentation, (provider, _) =>
             {
                 var config = new MapperConfiguration(config =>
                 {
+                    config.ConstructServicesUsing(provider.GetService);
+
                     config.AddProfile<MeProfile>();
                     config.AddProfile<PermissionProfile>();
                     config.AddProfile<RoleProfile>();
