@@ -1,16 +1,24 @@
-﻿namespace CQ.AuthProvider.WebApi.Controllers.Tenants;
+﻿using CQ.AuthProvider.WebApi.Controllers.Models;
+
+namespace CQ.AuthProvider.WebApi.Controllers.Tenants;
 
 public sealed record TenantBasicInfoResponse(
     string Id,
     string Name,
     OwnerTenantBasicInfoResponse Owner);
 
-public sealed record TenantOfAccountBasicInfoResponse(
-    Guid Id,
-    string Name,
-    Guid MiniLogoId,
-    Guid CoverLogoId,
-    string WebUrl);
+public readonly struct TenantOfAccountBasicInfoResponse
+{
+    public Guid Id { get; init; }
+
+    public string Name { get; init; }
+
+    public MultimediaResponse MiniLogo { get; init; }
+
+    public MultimediaResponse CoverLogo { get; init; }
+
+    public string WebUrl { get; init; }
+}
 
 public sealed record OwnerTenantBasicInfoResponse(
     string Id,

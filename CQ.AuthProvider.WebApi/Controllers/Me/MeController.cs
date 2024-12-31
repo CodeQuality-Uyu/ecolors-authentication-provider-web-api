@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
 
 [ApiController]
-[BearerAuthentication]
 [Route("me")]
+[BearerAuthentication]
 public sealed class MeController(
     IAccountService _accountService,
     ITenantService _tenantService,
