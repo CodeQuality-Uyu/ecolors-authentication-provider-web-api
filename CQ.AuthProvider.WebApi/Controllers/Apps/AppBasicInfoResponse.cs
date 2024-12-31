@@ -1,3 +1,6 @@
 ﻿namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
-public sealed record AppBasicInfoResponse(string Id, string Name, bool IsDefault);
+public sealed record AppBasicInfoResponse(
+    Guid Id,
+    string Name,
+    bool IsDefault);

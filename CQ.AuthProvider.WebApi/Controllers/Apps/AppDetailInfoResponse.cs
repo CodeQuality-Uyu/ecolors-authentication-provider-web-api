@@ -2,7 +2,11 @@
 
 namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
-public sealed record AppDetailInfoResponse(
-    Guid Id,
-    string Name,
-    MultimediaResponse CoverMultimedia);
+public readonly struct AppDetailInfoResponse
+{
+    public Guid Id { get; }
+    
+    public string Name { get; }
+
+    public MultimediaResponse CoverMultimedia { get; }
+}

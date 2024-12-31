@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CQ.ApiElements.Filters.Authentications;
+using CQ.ApiElements.Filters.Authorizations;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Extensions;
@@ -17,6 +18,7 @@ public sealed class AppController(
 {
     [HttpPost]
     [BearerAuthentication]
+    [SecureAuthorization]
     public async Task CreateAsync(CreateAppArgs request)
     {
         var accountLogged = this.GetAccountLogged();
@@ -28,6 +30,7 @@ public sealed class AppController(
 
     [HttpGet]
     [BearerAuthentication]
+    [SecureAuthorization]
     public async Task<Pagination<AppBasicInfoResponse>> GetAllAsync(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
@@ -44,7 +47,9 @@ public sealed class AppController(
     [HttpGet("{id}")]
     public async Task<AppDetailInfoResponse> GetByIdAsync(Guid id)
     {
-        var app = _appService.GetByIdAsync(id);
+        var app = await _appService
+            .GetByIdAsync(id)
+            .ConfigureAwait(false);
 
         return _mapper.Map<AppDetailInfoResponse>(app);
     }

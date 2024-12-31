@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+﻿using CQ.ApiElements.AppConfig;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Invitations;
@@ -9,6 +10,8 @@ using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Tokens;
+using CQ.Extensions.ServiceCollection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +28,10 @@ public static class ServicesConfig
             .AddEmailServices()
 
             .AddMultimediaService()
+
+            .AddTokenService<GuidTokenService>(LifeTime.Transient)
+
+            .AddItemLoggedService<SessionService>(LifeTime.Scoped)
 
             .AddValidators();
 

@@ -77,9 +77,6 @@ internal static class AuthProviderWebApiConfig
 
             .AddFakeAuthentication<FakeAccountLogged>(configuration, environment, fakeAuthenticationLifeTime: LifeTime.Transient)
 
-            .AddTokenService<GuidTokenService>(LifeTime.Transient)
-
-            .AddItemLoggedService<SessionService>(LifeTime.Scoped)
             ;
 
         return services;

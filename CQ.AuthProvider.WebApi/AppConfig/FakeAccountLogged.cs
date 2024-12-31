@@ -3,6 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using System.Net;
 
 namespace CQ.AuthProvider.WebApi.AppConfig;
 
@@ -58,13 +59,20 @@ public sealed record class FakeAccountLogged
 
         init
         {
-            var role = Roles[0];
+            var permissions = value.ConvertAll(i => new Permission
+            {
+                Key = i
+            });
+
+            var role = Roles.Count == 0 ? new Role { Name = "Test" } : Roles[0];
+            if (Roles.Count == 0)
+            {
+                Roles.Add(role);
+            }
+            
             role
                 .Permissions
-                .AddRange(value.ConvertAll(i => new Permission
-                {
-                    Key = i
-                }));
+                .AddRange(permissions);
         }
     }
 
