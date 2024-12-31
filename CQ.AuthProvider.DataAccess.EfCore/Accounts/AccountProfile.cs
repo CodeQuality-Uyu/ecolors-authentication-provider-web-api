@@ -24,8 +24,6 @@ internal sealed class AccountProfile
                 source => source.Apps.ConvertAll(a => new App
                 {
                     Id = a.Id,
-
-                    //Needed for getting account on login
                     IsDefault = a.IsDefault,
                 })));
         this.CreateOnlyPaginationMap<AccountEfCore, Account>();
