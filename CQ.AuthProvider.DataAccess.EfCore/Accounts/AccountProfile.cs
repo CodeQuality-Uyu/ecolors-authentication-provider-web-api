@@ -13,11 +13,7 @@ internal sealed class AccountProfile
     {
         CreateMap<AccountEfCore, Account>()
             .ForMember(destination => destination.Tenant,
-            options => options.MapFrom(
-                source => new Tenant
-                {
-                    Id = source.TenantId,
-                }))
+            options => options.MapFrom<TenantValueResolver>())
 
             .ForMember(destination => destination.Apps,
             options => options.MapFrom(
@@ -27,5 +23,22 @@ internal sealed class AccountProfile
                     IsDefault = a.IsDefault,
                 })));
         this.CreateOnlyPaginationMap<AccountEfCore, Account>();
+    }
+}
+
+internal sealed class TenantValueResolver
+    : IValueResolver<AccountEfCore, Account, Tenant>
+{
+    public Tenant Resolve(
+        AccountEfCore source,
+        Account destination,
+        Tenant destMember,
+        ResolutionContext context)
+    {
+        return new Tenant
+        {
+            Id = source.TenantId,
+            Name = source.Tenant?.Name ?? string.Empty,
+        };
     }
 }

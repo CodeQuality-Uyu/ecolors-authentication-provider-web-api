@@ -22,7 +22,7 @@ internal sealed class SessionProfile
                     Id = source.AppId,
                     Tenant = new Tenant
                     {
-                        Id = source.Account.TenantId
+                        Id = source.Account.TenantId,
                     }
                 },
             });
