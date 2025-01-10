@@ -39,7 +39,7 @@ public class SessionController(
 
         if (Guard.IsNullOrEmpty(request.Permission))
         {
-            return NoContent();
+            return Ok(accountLogged);
         }
 
         var hasPermission = accountLogged.IsInRole(request.Permission);
@@ -55,7 +55,7 @@ public class SessionController(
                 StatusCode = (int)HttpStatusCode.Forbidden
             };
         }
-        return NoContent();
+        return Ok(accountLogged);
     }
 
     [HttpDelete]
