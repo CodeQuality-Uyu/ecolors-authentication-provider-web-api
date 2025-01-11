@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Multimedias;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Models;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Tenants;
@@ -17,6 +19,11 @@ internal sealed class TenantProfile
 
             .ForMember(destination => destination.CoverLogo,
             options => options.MapFrom<CoverLogoMultimediaResolver>());
+        #endregion
+
+        #region Get paginated
+        this.CreatePaginationMap<Tenant, TenantBasicInfoResponse>();
+        CreateMap<Account, OwnerTenantBasicInfoResponse>();
         #endregion
     }
 }

@@ -3,7 +3,7 @@
 namespace CQ.AuthProvider.WebApi.Controllers.Tenants;
 
 public sealed record TenantBasicInfoResponse(
-    string Id,
+    Guid Id,
     string Name,
     OwnerTenantBasicInfoResponse Owner);
 
@@ -21,7 +21,7 @@ public readonly struct TenantOfAccountBasicInfoResponse
 }
 
 public sealed record OwnerTenantBasicInfoResponse(
-    string Id,
+    Guid Id,
     string FirstName,
     string LastName,
     string FullName,
