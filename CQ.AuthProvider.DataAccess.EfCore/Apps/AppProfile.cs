@@ -12,6 +12,8 @@ internal sealed class AppProfile
     {
         #region Create
         CreateMap<App, AppEfCore>()
+            .ForMember(destination => destination.Tenant,
+            options => options.Ignore())
             .ForMember(destination => destination.TenantId,
             options => options.MapFrom(
                 source => source.Tenant.Id));
