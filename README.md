@@ -306,7 +306,7 @@ Crear una nueva app
 ```JSON
 {
     "name": "somthing", // Nombre de la nueva app de la empresa
-    "isDefault": false, // Para marcar que esta app es la por defecto en cualquier accion dentro del tenant. Solo puede existir una por defecto, en caso de que otra tenga esta flag activa, se le quitara a // esa otra app
+    "isDefault": false, // Para marcar que esta app es la por defecto en cualquier accion dentro del tenant. Solo puede existir una por defecto, en caso de que otra tenga esta flag activa, se le quitara a esa otra app
     "coverId": "cf4a209a-8dbd-4dac-85d9-ed899424b49e" // Identificador del blob
 }
 ```
@@ -319,7 +319,7 @@ Crear permisos a la nueva app para restringir el acceso a los recursos
 {
     "name": "Test",
     "description": "Test",
-    "key": "getall-test", //Es la propiedad que se va a verificar si el cuenta tiene para poder acceder al recurso. En caso de que el permiso sea para un endpoint en particular, deberia de // seguir el formato accion-controller, donde la accion es el nombre del metodo en el controller todo en minuscula y junto (en caso de que se use la palabra async, se debera de evitar) y el controller el // // nombre del controller. En caso de que se quiera crear un permiso para algun recurso particular independientemente a un endpoint, el formato puede ser libre
+    "key": "getall-test", //Es la propiedad que se va a verificar si el cuenta tiene para poder acceder al recurso. En caso de que el permiso sea para un endpoint en particular, deberia de seguir el formato accion-controller, donde la accion es el nombre del metodo en el controller todo en minuscula y junto (en caso de que se use la palabra async, se debera de evitar) y el controller el nombre del controller. En caso de que se quiera crear un permiso para algun recurso particular independientemente a un endpoint, el formato puede ser libre
     "isPublic": false // Una flag que permite ser visible o no al permiso para aquellos que tengan el permiso de poder ver permisos privados
 }
 ```
