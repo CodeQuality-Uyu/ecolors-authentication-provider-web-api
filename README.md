@@ -11,27 +11,179 @@ Esto es util para un tenant que tiene multiples app que se quiere que utilicen e
 ### Empresa (Tenant)
 Son las empresas registradas en el sistema que quieren usar los servicios de esta webapi para proveer un medio de autenticacion independiente a sus aplicaciones
 
+```C#
+public sealed record class Tenant
+{
+    public Guid Id { get; init; }
+
+    public string Name { get; init; }
+
+    public Guid MiniLogoId { get; init; }
+
+    public Guid CoverLogoId { get;init; }
+
+    public string WebUrl { get; set; }
+
+    public Account Owner { get; init; }
+}
+```
+
 ### Aplicacion (App)
 Son las aplicaciones de los tenant que quieren proveerles un medio de autenticacion y autorizacion, pudiendo desligar este diseño de los diseños de las aplicaciones.
+
+```C#
+public sealed record class App
+{
+    public Guid Id { get; init; }
+
+    public string Name { get; init; }
+
+    public Guid CoverId { get; init; }
+
+    public Tenant Tenant { get; init; }
+
+    public bool IsDefault { get; init; }
+}
+```
 
 ### Roles de las cuentas (Role)
 Los roles son agrupadores de permisos para poder autorizar a una cuenta en si puede o no acceder a un recurso controlado. Los roles no son un medio de verificacion de permisos, los permisos son este medio.
 Los roles son unicos para cada aplicacion, esto quiere decir que si un tenant tiene dos aplicaciones, estos no pueden compartir los mismos roles ya que los permisos en la aplicacion van a ser diferentes.
 
+```C#
+public sealed record class Role
+{
+    public Guid Id { get; init; }
+
+    public string Name { get; init; }
+
+    public string Description { get; init; }
+
+    public bool IsPublic { get; init; }
+
+    public List<Permission> Permissions { get; init; }
+
+    public App App { get; init; }
+
+    public Tenant Tenant { get; init; }
+
+    public bool IsDefault { get; init; }
+}
+```
+
 ### Permisos de las aplicaciones (Permission)
 Los permisos son el medio para verificar si una cuenta puede o no acceder al recurso controlado. Estos son unicos por cada aplicacion, esto implica que un mismo permiso no puede aparecer en aplicaciones diferentes del mismo tenant.
 
+```C#
+public sealed record class Permission
+{
+    public Guid Id { get; init; }
+
+    public string Name { get; init; }
+
+    public string Description { get; init; }
+
+    public bool IsPublic { get; init; }
+
+    public string Key { get; init; }
+
+    public App App { get; init; }
+
+    public Tenant Tenant { get; init; }
+}
+```
 ### Invitaciones a personas (Invitation)
 Las invitaciones son a futuras cuentas con un rol asignado a una app determinada del tenant.
 
+```C#
+public sealed record class Invitation()
+{
+    public const int EXPIRATION_MINUTES
+
+    public Guid Id { get; init; }
+
+    public string Email { get; init; }
+
+    public int Code { get; init; }
+
+    public Account Creator { get; init; }
+
+    public Role Role { get; init; }
+
+    public App App { get; init; }
+
+    public Tenant Tenant { get; init; }
+
+    public DateTime CreatedAt { get; init; }
+
+    public DateTime ExpiresAt { get; init; }
+}
+```
 ### Reseteo de contraseña (ResetPassword)
 Son solicitudes para reiniciar la contraseña de una cuenta que no puede loguearse. Esta solicitud requiere que la persona pueda acceder a su email personal con el cual se registro para poder obtener un codigo unico y asi poder resetear su contraseña sin estar autenticado.
+
+```C#
+public sealed record class ResetPassword
+{
+    public const int TOLERANCE_IN_MINUTES = 15;
+
+    public Guid Id { get; init; }
+
+    public Account Account { get; init; }
+
+    public int Code { get; init; }
+
+    public DateTime CreatedAt { get; init; }
+
+    public DateTime ExpiresAt { get; init; }
+}
+```
 
 ### Cuenta de usuario (Account)
 Los usuarios se pueden registrar en aplicaciones precargadas anteriormente en el sistema de un tenant.
 
+```C#
+public record class Account
+{
+    public Guid Id { get; init; }
+
+    public string Email { get; init; }
+
+    public string FirstName { get; init; }
+
+    public string LastName { get; init; }
+
+    public string FullName { get; init; }
+
+    public string? ProfilePictureId { get; init; }
+
+    public string Locale { get; init; }
+
+    public string TimeZone { get; init; }
+
+    public List<Role> Roles { get; init; }
+
+    public List<App> Apps { get; init; }
+
+    public Tenant Tenant { get; init; }
+}
+```
+
 ### Sesiones (Session)
 Son las sesiones activas de las cuentas. Para que un usuario pueda loguearse a una app, este a parte de enviar sus credenciales debera de proveer el identificador de la app a la cual se quiere loguear y este debera ser de una app en donde la cuenta este registrado. En caso de que no se provea, se utilizara la aplicacion establecida como por defecto en la que pertenezca la cuenta.
+
+```C#
+public sealed record class Session
+{
+    public Guid Id { get; init; }
+
+    public string Token { get; init; }
+
+    public Account Account { get; init; }
+
+    public App App { get; init; }
+}
+```
 
 ## Para ejecutar
 Para correr la web api con docker ejecutar el siguiente comando en la ruta raiz del repo
