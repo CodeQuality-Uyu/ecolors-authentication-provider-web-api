@@ -1,6 +1,6 @@
 # Authentication Provider
 
-El servidor de autenticacion es una Web Api RestFull desarrollada en .NET usando EfCore como ORM para conectarse a dos bases de datos SQL. Una base de datos (AuthProvider) guarda la informacion de las cuentas, tenants, apps, roles, permisos, etc. Luego esta la base de datos (IdentityProvider) que guarda las credenciales de las cuentas de forma independiente a las cuentas. Esta separacion de informacion permite mayor flexibilidad de configuracion para la data sensible de la no sensible.
+El servidor de autenticacion es una Web Api RestFull desarrollada en .NET usando EfCore como ORM para conectarse a dos bases de datos SQL. Una base de datos (`AuthProvider`) guarda la informacion de las cuentas, tenants, apps, roles, permisos, etc. Luego esta la base de datos (`IdentityProvider`) que guarda las credenciales de las cuentas de forma independiente a las cuentas. Esta separacion de informacion permite mayor flexibilidad de configuracion para la data sensible de la no sensible.
 
 Esta web api es multi tenant y multi app, lo que significa que multiples tenant podran gestionar multiples aplicaciones propias dentro del sistema, filtrando la data por tenant y por app.
 
@@ -60,6 +60,9 @@ ConnectionStrings__Auth: "Server=sqlserver,1433; Database=AuthProvider; User ID=
 ConnectionStrings__Identity: "Server=sqlserver,1433; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
 Authentication__Fake__IsActive: false
 ```
+
+## Uso de autenticacion mockeada
+La autenticacion mockeada sirve para agilizar la hora de desarrollo para no tener que depender de cuentas con los roles y permisos que se desean testear. Tambien sirve para evitar pasar por el proceso de autenticacion cada vez que se necesita ya que esta no expira. Para utilizarlo, la flag `Authentication:IsFake` tiene que estar activa, eso hace que se utilice la informacion de la cuenta descripta abajo de la declaracion de esta flag, una vez activa, la request si desea utilizar esta informacion no debera de proveer un `Bearer token` en el header `Authorization` de la request, esta combinacion de condiciones hace que use la info `hardcodeada`. 
 
 ## Definicion de entidades
 
