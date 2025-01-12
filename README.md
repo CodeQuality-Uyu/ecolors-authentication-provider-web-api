@@ -54,7 +54,7 @@ Por ultimo tenemos la seccion `Authentication` que es la secciona para agilizar 
 ### Variables de ambiente
 Las variables de ambiente pueden sustituir los valores del `appsettings` mencionadas anteriormente, solo se tiene que indicar con el formato de usar `__` (doble barra baja), cuando se adentra entre la navegacion. Por ejemplo si se quiere modificar los connection strings, se debe crear las variables de ambiente `ConnectionStrings__Auth` y `ConnectionStrings__IdentityProvider`. A su vez existe la siguiente variable de ambiente `ASPNETCORE_ENVIRONMENT` que indica el ambiente en el cual se esta ejecutando la web api. Los valores pueden ser desde `Local`, `Docker`, `Staging`, `Testing` y `Production`, pero no si existen mas ambientes pueden ser indicados.
 
-```JSON
+```
 ASPNETCORE_ENVIRONMENT: "Docker"
 ConnectionStrings__Auth: "Server=sqlserver,1433; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
 ConnectionStrings__Identity: "Server=sqlserver,1433; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
