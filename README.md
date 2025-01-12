@@ -80,11 +80,11 @@ Es la app que representa el servidor de autenticacion para poder realizar operac
 ### Roles semilla
 Existen 3 roles, estos roles solo pueden ser usados en la app `Auth Provider Web Api`
 
-- Seed (este rol solo sirve para la cuenta semilla, se deberia de eliminar posteriormente haber usado la cuenta semilla)
+- `Seed` (este rol solo sirve para la cuenta semilla, se deberia de eliminar posteriormente haber usado la cuenta semilla)
   
-- Tenant Owner (las cuentas con este rol pueden acceder a recursos para gestionar las aplicaciones dentro del tenant y el tenant usando la app Auth Provider Web Api)
+- `Tenant Owner` (las cuentas con este rol pueden acceder a recursos para gestionar las aplicaciones dentro del tenant y el tenant usando la app Auth Provider Web Api)
   
-- Auth Provider Api Owner (las cuentas con este rol pueden acceder a recursos exclusivos dentro de la app Auth Provider Web Api)
+- `Auth Provider Api Owner` (las cuentas con este rol pueden acceder a recursos exclusivos dentro de la app Auth Provider Web Api)
 
 ### Permisos
 Los permisos son los recursos y opciones a los cuales se les quiere restringir el acceso a las cuentas dentro de una app. Los permisos pertenecen unicamente a una app.
