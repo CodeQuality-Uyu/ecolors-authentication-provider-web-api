@@ -6,6 +6,61 @@ Esta web api es multi tenant y multi app, lo que significa que multiples tenant 
 
 Esto es util para un tenant que tiene multiples app que se quiere que utilicen el mismo mecanismo de autenticacion y poder cruzar las cuentas entre las apps del mismo tenant.
 
+## Configuraciones
+
+### AppSettings
+En el `appsettings.json` se podra ver las variables que se utilizan en la web api.
+
+La seccion de `Logging` es para indicar que logs utilizar para ciertas secciones o tecnologias utilizadas. Luego la seccion `ConnectionStrings` es para indicar los dos connection strings a las dos vaces necesarias, `Auth` para conectarse a la base `AuthProvider`, que es donde se guarda informasion no sensible y luego el connection string `Identity` que es para conectarse a la base `IdentityProvider` que guarda informacion sensible.
+
+Por ultimo tenemos la seccion `Authentication` que es la secciona para agilizar la hora de desarrollo local, esta seccion no tiene que completarse o estar en un ambiente de produccion.
+
+```JSON
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "", // General logging
+      "Microsoft": "", // Microsoft libraries, including EF Core
+      "Microsoft.EntityFrameworkCore": "" // Detailed EF Core logging
+    }
+  },
+  "ConnectionStrings": {
+    "Auth": "Server=localhost,1430; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;",
+    "Identity": "Server=localhost,1430; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;",
+  },
+  "Authentication": {
+    "Fake": {
+      "IsActive": true,
+      "Id": "0ee82ee9-f480-4b13-ad68-579dc83dfa0d",
+      "FirstName": "test",
+      "LastName": "test",
+      "FullName": "test",
+      "Email": "test@gmailcom",
+      "Token": "",
+      "AppLoggedId": "f4ad89eb-6a0b-427a-8aef-b6bc736884dc",
+      "Locale": "America/Uruguay",
+      "TimeZone": "-3",
+      "AppsIds": [ "f4ad89eb-6a0b-427a-8aef-b6bc736884dc" ],
+      "TenantId": "882a262c-e1a7-411d-a26e-40c61f3b810c",
+      "PermissionsKeys": [ "create-app","getall-tenant" ],
+      "RolesIds": [ "77f7ff91-a807-43ac-bc76-1b34c52c5345" ]
+    }
+  },
+  "Cors": {
+    "Origins": ["*"]
+  }
+}
+```
+### Variables de ambiente
+Las variables de ambiente pueden sustituir los valores del `appsettings` mencionadas anteriormente, solo se tiene que indicar con el formato de usar `__` (doble barra baja), cuando se adentra entre la navegacion. Por ejemplo si se quiere modificar los connection strings, se debe crear las variables de ambiente `ConnectionStrings__Auth` y `ConnectionStrings__IdentityProvider`. A su vez existe la siguiente variable de ambiente `ASPNETCORE_ENVIRONMENT` que indica el ambiente en el cual se esta ejecutando la web api. Los valores pueden ser desde `Local`, `Docker`, `Staging`, `Testing` y `Production`, pero no si existen mas ambientes pueden ser indicados.
+
+```JSON
+ASPNETCORE_ENVIRONMENT: "Docker"
+ConnectionStrings__Auth: "Server=sqlserver,1433; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
+ConnectionStrings__Identity: "Server=sqlserver,1433; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
+Authentication__Fake__IsActive: false
+```
+
 ## Definicion de entidades
 
 ### Empresa (Tenant)
