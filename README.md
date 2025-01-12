@@ -246,11 +246,42 @@ Los permisos son los recursos y opciones a los cuales se les quiere restringir e
 ### Paso 1
 Loguearse con la cuenta semilla
 
+- Endpoint: `POST sessions/credentials`
+- Body:
+```json
+{
+    "email": "seed@cq.com",
+    "password": "!12345678"
+}
+```
+
 ### Paso 2
 Crear una cuenta para otra persona con el rol de `Tenant Owner`
 
+- Endpoint: `POST accounts/credentials/for`
+- Body:
+```JSON
+{
+    "roleId": "c1664759-22eb-44be-8faf-88f6042faa92", // Deberia de ser el Tenant Owner o Auth Provider Owner
+    "email": "test@gmail.com",
+    "locale":"uru",
+    "lastname":"test",
+    "firstname":"test",
+    "password":"!12345678",
+    "timezone":"-3"
+}
+```
+
 ### Paso 3
 Migrar el tenant de la cuenta semilla a la nueva cuenta creada
+
+- Endpoint: `PATCH me/tenants/owner`
+- Body:
+```JSON
+{
+    "newOwnerId": "d23a2c050ab140a7b628cf71ad362cc8" // El id de la cuenta creada anteriormente
+}
+```
 
 ### Paso 4
 Borrar la cuenta semilla
@@ -260,14 +291,53 @@ Loguearse con la nueva cuenta con el rol de `Tenant Owner`
 
 ### Paso 6
 Actualizar el nombre del tenant
+- Endpoint: `PATCH me/tenants/name`
+- Body:
+```JSON
+{
+    "newName": "CQ" //Nombre de la nueva empresa que va a gestionar Auth Provider Web Api
+}
+``` 
 
 ### Paso 5
 Crear una nueva app
+- Endpoint: `POST apps`
+- Body:
+```JSON
+{
+    "name": "somthing", // Nombre de la nueva app de la empresa
+    "isDefault": false, // Para marcar que esta app es la por defecto en cualquier accion dentro del tenant. Solo puede existir una por defecto, en caso de que otra tenga esta flag activa, se le quitara a // esa otra app
+    "coverId": "cf4a209a-8dbd-4dac-85d9-ed899424b49e" // Identificador del blob
+}
+```
 
 ### Paso 6
 Crear permisos a la nueva app para restringir el acceso a los recursos
+- Endpoint: `POST permissions`
+- Body:
+```JSON
+{
+    "name": "Test",
+    "description": "Test",
+    "key": "getall-test", //Es la propiedad que se va a verificar si el cuenta tiene para poder acceder al recurso. En caso de que el permiso sea para un endpoint en particular, deberia de // seguir el formato accion-controller, donde la accion es el nombre del metodo en el controller todo en minuscula y junto (en caso de que se use la palabra async, se debera de evitar) y el controller el // // nombre del controller. En caso de que se quiera crear un permiso para algun recurso particular independientemente a un endpoint, el formato puede ser libre
+    "isPublic": false // Una flag que permite ser visible o no al permiso para aquellos que tengan el permiso de poder ver permisos privados
+}
+```
 
 ### Paso 7
 Crear roles a la nueva app usando los permisos de la app
+- Endpoint: `POST roles`
+- Body:
+```JSON
+{
+    "name": "Test",
+    "description": "Test Test",
+    "isDefault": true, //Una flag permite al rol ser usado para la creacion de cuentas dentro de una app en caso de que no se provea un id del rol en la creacion de la cuenta
+    "isPublic": true, // Una flag que permite ser visible o no al rol para aquellos que tengan el permiso de poder ver roles privados
+    "permissionsKeys": [ // Las keys de los permisos que se quiere que el rol agrupe
+        "createcredentialsfor-account" 
+    ]
+}
+```
 
 
