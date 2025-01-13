@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.Postgres.Migrations;
 
-public static class ConfigPostgres
+public static class ConfigPostgresExtensions
 {
     public static IServiceCollection ConfigureAuthProviderPostgres(
         this IServiceCollection services,
