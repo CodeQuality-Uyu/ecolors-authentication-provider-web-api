@@ -23,7 +23,6 @@ using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Composition.Hosting.Core;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 
@@ -75,21 +74,22 @@ public static class EfCoreRepositoriesConfig
 
         var databaseEngine = configuration.GetSection<string>("DatabaseEngine");
 
-        var optionsBuilder = databaseEngine switch
+        Action<DbContextOptionsBuilder> optionsBuilder = databaseEngine switch
         {
             "Sql" => (DbContextOptionsBuilder options) =>
             options
             .UseSqlServer(connectionString),
+
             "Postgres" => (DbContextOptionsBuilder options) =>
             options
-            .Usepos
-
+            .UseNpgsql(connectionString),
+            
             _ => throw new InvalidOperationException("Invalid value of DatabaseEngine")
         };
 
 
         services
-            .AddContext(optionsBuilder, LifeTime.Scoped)
+            .AddContext<AuthDbContext>(optionsBuilder, LifeTime.Scoped)
             .AddUnitOfWork<AuthDbContext>(LifeTime.Scoped)
 
             .AddAbstractionRepository<AccountEfCore, IAccountRepository, AccountRepository>(LifeTime.Scoped)
