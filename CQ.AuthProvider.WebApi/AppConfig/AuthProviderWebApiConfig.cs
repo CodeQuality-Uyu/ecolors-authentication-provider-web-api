@@ -12,10 +12,12 @@ using CQ.AuthProvider.WebApi.Controllers.Roles;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
 using CQ.AuthProvider.WebApi.Controllers.Tenants;
 using CQ.AuthProvider.WebApi.Filters;
+using CQ.Extensions.Configuration;
 using CQ.Extensions.Environments;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.AppConfig;
 using CQ.UnitOfWork.EfCore.Core;
+using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
@@ -69,6 +71,8 @@ internal static class AuthProviderWebApiConfig
 
             .ConfigureServices()
 
+            .ConfigureDbContexts(configuration)
+
             .ConfigureDataAccess(configuration)
 
             .ConfigureIdentityProvider(configuration)
@@ -102,6 +106,39 @@ internal static class AuthProviderWebApiConfig
 
                 return config.CreateMapper();
             });
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureDbContexts(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services
+             .ConfigureAuthDbContext(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureAuthDbContext(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("Auth");
+        Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
+
+        var databaseEngine = configuration.GetSection<string>("DatabaseEngine");
+
+        services = databaseEngine switch
+        {
+            "Sql" => (DbContextOptionsBuilder options) =>
+            options
+            .UseSqlServer(connectionString),
+
+            "Postgres" => services.ConfigureAuthProviderPostgres(),
+
+            _ => throw new InvalidOperationException("Invalid value of DatabaseEngine")
+        };
 
         return services;
     }

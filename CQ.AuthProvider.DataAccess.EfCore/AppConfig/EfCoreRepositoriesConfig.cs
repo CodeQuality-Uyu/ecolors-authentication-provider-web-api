@@ -69,27 +69,7 @@ public static class EfCoreRepositoriesConfig
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Auth");
-        Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
-
-        var databaseEngine = configuration.GetSection<string>("DatabaseEngine");
-
-        Action<DbContextOptionsBuilder> optionsBuilder = databaseEngine switch
-        {
-            "Sql" => (DbContextOptionsBuilder options) =>
-            options
-            .UseSqlServer(connectionString),
-
-            "Postgres" => (DbContextOptionsBuilder options) =>
-            options
-            .UseNpgsql(connectionString),
-            
-            _ => throw new InvalidOperationException("Invalid value of DatabaseEngine")
-        };
-
-
         services
-            .AddContext<AuthDbContext>(optionsBuilder, LifeTime.Scoped)
             .AddUnitOfWork<AuthDbContext>(LifeTime.Scoped)
 
             .AddAbstractionRepository<AccountEfCore, IAccountRepository, AccountRepository>(LifeTime.Scoped)
