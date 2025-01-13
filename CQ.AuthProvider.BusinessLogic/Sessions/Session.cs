@@ -1,6 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
