@@ -3,6 +3,8 @@ using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
+using CQ.AuthProvider.Postgres.Migrations;
+using CQ.AuthProvider.Sql.Migrations;
 using CQ.AuthProvider.WebApi.Controllers.Accounts;
 using CQ.AuthProvider.WebApi.Controllers.Apps;
 using CQ.AuthProvider.WebApi.Controllers.Invitations;
@@ -131,11 +133,9 @@ internal static class AuthProviderWebApiConfig
 
         services = databaseEngine switch
         {
-            "Sql" => (DbContextOptionsBuilder options) =>
-            options
-            .UseSqlServer(connectionString),
+            "Sql" => services.ConfigureAuthProviderSql(connectionString),
 
-            "Postgres" => services.ConfigureAuthProviderPostgres(),
+            "Postgres" => services.ConfigureAuthProviderPostgres(connectionString),
 
             _ => throw new InvalidOperationException("Invalid value of DatabaseEngine")
         };
