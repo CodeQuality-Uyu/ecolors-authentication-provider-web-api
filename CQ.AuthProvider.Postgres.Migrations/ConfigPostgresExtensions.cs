@@ -31,7 +31,7 @@ public static class ConfigPostgresExtensions
     {
         services
             .AddContext<TDbContext>(options =>
-            options.UseNpgsql(connectionString),
+            options.UseNpgsql(connectionString, x => x.MigrationsAssembly("CQ.AuthProvider.Postgres.Migrations")),
             LifeTime.Scoped);
 
         return services;
