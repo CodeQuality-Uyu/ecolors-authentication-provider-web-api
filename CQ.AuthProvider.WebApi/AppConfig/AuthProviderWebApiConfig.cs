@@ -117,7 +117,8 @@ internal static class AuthProviderWebApiConfig
         IConfiguration configuration)
     {
         services
-             .ConfigureAuthDbContext(configuration);
+             .ConfigureAuthDbContext(configuration)
+             .ConfigureIdentityDbContext(configuration);
 
         return services;
     }
@@ -129,7 +130,7 @@ internal static class AuthProviderWebApiConfig
         var connectionString = configuration.GetConnectionString("Auth");
         Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
 
-        var databaseEngine = configuration.GetSection<string>("DatabaseEngine");
+        var databaseEngine = configuration.GetSection<string>("DatabaseEngine:Auth");
 
         services = databaseEngine switch
         {
@@ -137,7 +138,28 @@ internal static class AuthProviderWebApiConfig
 
             "Postgres" => services.ConfigureAuthProviderPostgres(connectionString),
 
-            _ => throw new InvalidOperationException("Invalid value of DatabaseEngine")
+            _ => throw new InvalidOperationException("Invalid value of DatabaseEngine:Auth")
+        };
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureIdentityDbContext(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("Identity");
+        Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Identity");
+
+        var databaseEngine = configuration.GetSection<string>("DatabaseEngine:Identity");
+
+        services = databaseEngine switch
+        {
+            "Sql" => services.ConfigureIdentityProviderSql(connectionString),
+
+            "Postgres" => services.ConfigureIdentityProviderPostgres(connectionString),
+
+            _ => throw new InvalidOperationException("Invalid value of DatabaseEngineIdentity")
         };
 
         return services;

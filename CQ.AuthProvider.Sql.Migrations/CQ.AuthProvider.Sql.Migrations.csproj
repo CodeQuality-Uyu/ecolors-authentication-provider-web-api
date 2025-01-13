@@ -11,6 +11,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CQ.AuthProvider.DataAccess.EfCore\CQ.AuthProvider.DataAccess.EfCore.csproj" />
+		<ProjectReference Include="..\CQ.IdentityProvider.EfCore\CQ.IdentityProvider.EfCore.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -31,7 +31,7 @@ public static class ConfigSqlExtensions
     {
         services
             .AddContext<TDbContext>(options =>
-            options.UseSqlServer(connectionString),
+            options.UseSqlServer(connectionString, x => x.MigrationsAssembly("CQ.AuthProvider.Sql.Migrations")),
             LifeTime.Scoped);
 
         return services;
