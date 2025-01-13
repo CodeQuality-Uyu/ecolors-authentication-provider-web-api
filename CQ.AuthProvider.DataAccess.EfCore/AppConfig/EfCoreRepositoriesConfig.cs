@@ -16,12 +16,14 @@ using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
+using CQ.Extensions.Configuration;
 using CQ.Extensions.ServiceCollection;
 using CQ.UnitOfWork.EfCore.Configuration;
 using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Composition.Hosting.Core;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 
@@ -71,12 +73,23 @@ public static class EfCoreRepositoriesConfig
         var connectionString = configuration.GetConnectionString("Auth");
         Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
 
-        services
-            .AddContext<AuthDbContext>(options =>
+        var databaseEngine = configuration.GetSection<string>("DatabaseEngine");
+
+        var optionsBuilder = databaseEngine switch
+        {
+            "Sql" => (DbContextOptionsBuilder options) =>
             options
             .UseSqlServer(connectionString),
-            LifeTime.Scoped)
+            "Postgres" => (DbContextOptionsBuilder options) =>
+            options
+            .Usepos
 
+            _ => throw new InvalidOperationException("Invalid value of DatabaseEngine")
+        };
+
+
+        services
+            .AddContext(optionsBuilder, LifeTime.Scoped)
             .AddUnitOfWork<AuthDbContext>(LifeTime.Scoped)
 
             .AddAbstractionRepository<AccountEfCore, IAccountRepository, AccountRepository>(LifeTime.Scoped)

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
-using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.AuthProvider.BusinessLogic.Tokens;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.WebApi.Controllers.Accounts;
