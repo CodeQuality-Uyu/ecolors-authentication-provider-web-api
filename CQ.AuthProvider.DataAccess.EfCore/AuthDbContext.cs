@@ -107,7 +107,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 TimeZone = "-3",
                 ProfilePictureId = null,
                 TenantId = seedTenantId,
-                CreatedAt = new DateTime(2024, 1, 1),
+                CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
             });
         });
 

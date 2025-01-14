@@ -2,7 +2,10 @@
 set /p input= Execute ef command: 
 set /p env= Enter environment (default: Local): 
 if "%env%"=="" set env=Local
-cd CQ.IdentityProvider.EfCore
+set /p databaseEngine= Enter Database Engine (default: Sql): 
+if "%databaseEngine%"=="" set databaseEngine=Sql
+cd CQ.AuthProvider.WebApi
 set ASPNETCORE_ENVIRONMENT=%env%
-dotnet ef %input% --verbose --context IdentityDbContext --startup-project ../CQ.AuthProvider.WebApi
+set DatabaseEngine__Identity=%databaseEngine%
+dotnet ef %input% --verbose --context IdentityDbContext -p ../CQ.AuthProvider.%databaseEngine%.Migrations
 pause

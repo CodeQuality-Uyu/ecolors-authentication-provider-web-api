@@ -93,7 +93,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             Id = new Guid("0ee82ee9-f480-4b13-ad68-579dc83dfa0d"),
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "seed@cq.com",
                             FirstName = "Seed",
                             FullName = "Seed Seed",

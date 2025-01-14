@@ -304,7 +304,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "Id", "CreatedAt", "Email", "FirstName", "FullName", "LastName", "Locale", "ProfilePictureId", "TenantId", "TimeZone" },
-                values: new object[] { new Guid("0ee82ee9-f480-4b13-ad68-579dc83dfa0d"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "seed@cq.com", "Seed", "Seed Seed", "Seed", "Uruguay", null, new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c"), "-3" });
+                values: new object[] { new Guid("0ee82ee9-f480-4b13-ad68-579dc83dfa0d"), new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "seed@cq.com", "Seed", "Seed Seed", "Seed", "Uruguay", null, new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c"), "-3" });
 
             migrationBuilder.InsertData(
                 table: "Apps",

@@ -34,7 +34,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountsApps");
+                    b.ToTable("AccountsApps", (string)null);
 
                     b.HasData(
                         new
@@ -87,7 +87,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
 
                     b.HasData(
                         new
@@ -116,7 +116,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountsRoles");
+                    b.ToTable("AccountsRoles", (string)null);
 
                     b.HasData(
                         new
@@ -149,7 +149,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Apps");
+                    b.ToTable("Apps", (string)null);
 
                     b.HasData(
                         new
@@ -203,7 +203,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Invitations");
+                    b.ToTable("Invitations", (string)null);
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>
@@ -239,7 +239,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
 
                     b.HasData(
                         new
@@ -406,7 +406,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("ResetPasswords");
+                    b.ToTable("ResetPasswords", (string)null);
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", b =>
@@ -441,7 +441,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -488,7 +488,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolesPermissions");
+                    b.ToTable("RolesPermissions", (string)null);
 
                     b.HasData(
                         new
@@ -603,7 +603,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AppId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
@@ -630,7 +630,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenants", (string)null);
 
                     b.HasData(
                         new
