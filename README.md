@@ -13,7 +13,9 @@ En el `appsettings.json` se podra ver las variables que se utilizan en la web ap
 
 La seccion de `Logging` es para indicar que logs utilizar para ciertas secciones o tecnologias utilizadas. Luego la seccion `ConnectionStrings` es para indicar los dos connection strings a las dos vaces necesarias, `Auth` para conectarse a la base `AuthProvider`, que es donde se guarda informasion no sensible y luego el connection string `Identity` que es para conectarse a la base `IdentityProvider` que guarda informacion sensible.
 
-Por ultimo tenemos la seccion `Authentication` que es la secciona para agilizar la hora de desarrollo local, esta seccion no tiene que completarse o estar en un ambiente de produccion.
+Luego tenemos la seccion `Authentication` que es la seccion para agilizar la hora de desarrollo local ya que simula un usuario autenticado sin pasar por el proceso de autenticacion y expiracion de la sesion, esta seccion no tiene que completarse o estar en un ambiente de produccion.
+
+Por ultimo se tiene la seccion `DatabaseEngine`, esta seccion permite seleccionar el motor de la base de datos para las bases necesarias mencionadas anteriormente en la seccion `ConnectionStrings`. Con esta flexibilidad se puede tener motores de bases de datos distintos para las dos bases, el mismo motor o unificar las bases en una haciendo que ambos connection strings apunten a la misma base. Los valores permitidos son `Sql` y `Postgres`. Al tener esta configuracion en el archivo, permite la facil adaptacion sin tener que modificar codigo existente.
 
 ```JSON
 {
@@ -46,6 +48,10 @@ Por ultimo tenemos la seccion `Authentication` que es la secciona para agilizar 
       "RolesIds": [ "77f7ff91-a807-43ac-bc76-1b34c52c5345" ]
     }
   },
+  "DatabaseEngine": {
+    "Auth":"Sql",
+    "Identity: "Sql"
+  },
   "Cors": {
     "Origins": ["*"]
   }
@@ -59,6 +65,8 @@ ASPNETCORE_ENVIRONMENT: "Docker"
 ConnectionStrings__Auth: "Server=sqlserver,1433; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
 ConnectionStrings__Identity: "Server=sqlserver,1433; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
 Authentication__Fake__IsActive: false
+DatabaseEngine__Auth: Postgres
+DatabaseEngine__Identity: Postgres
 ```
 
 ## Uso de autenticacion mockeada
