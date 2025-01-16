@@ -18,6 +18,11 @@ public interface IAccountService
         int page,
         int pageSize,
         AccountLogged accountLogged);
+
+    Task UpdateRolesAsync
+        (Guid id,
+        UpdateRolesArgs args,
+        AccountLogged accountLogged);
 }
 
 internal interface IAccountInternalService

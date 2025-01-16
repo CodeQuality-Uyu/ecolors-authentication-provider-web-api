@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
@@ -156,5 +157,18 @@ IAccountRepository
             .ConfigureAwait(false);
 
         return _mapper.Map<Pagination<Account>>(paginated);
+    }
+
+    public async Task AddAppAsync(App app, AccountLogged accountLogged)
+    {
+        var accountApp = new AccountApp
+        {
+            AccountId = accountLogged.Id,
+            AppId = app.Id
+        };
+
+        await BaseContext
+            .AddAsync(accountApp)
+            .ConfigureAwait(false);
     }
 }

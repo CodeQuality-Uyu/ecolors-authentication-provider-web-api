@@ -37,7 +37,6 @@ public sealed class MeController(
             .ConfigureAwait(false);
     }
 
-
     [HttpPatch("tenants/owner")]
     [SecureAuthorization]
     public async Task TransferTenantAsync(TransferTenantRequest request)

@@ -14,13 +14,24 @@ internal sealed class RoleProfile
         CreateMap<RoleEfCore, Role>()
             .ForMember(
             destination => destination.App,
-            options => options.MapFrom(
-                source => new App
-                {
-                    Id = source.AppId
-                }));
+            options => options.MapFrom<RoleAppResolver>());
 
         this.CreateOnlyPaginationMap<RoleEfCore, Role>();
         #endregion
+    }
+}
+
+internal sealed class RoleAppResolver
+    : IValueResolver<RoleEfCore, Role, App>
+{
+    public App Resolve(
+        RoleEfCore source,
+        Role destination,
+        App destMember,
+        ResolutionContext context)
+    {
+        var app = context.Mapper.Map<App>(source.App);
+
+        return app ?? new App { Id = source.AppId };
     }
 }

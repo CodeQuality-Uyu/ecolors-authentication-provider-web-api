@@ -45,6 +45,11 @@ internal sealed class PermissionRepository(
         List<(Guid appId, string key)> keys,
         AccountLogged accountLogged)
     {
+        if (keys.Count == 0)
+        {
+            return [];
+        }
+
         var keyesMapped = JsonConvert.SerializeObject(keys);
 
         // Define raw SQL query

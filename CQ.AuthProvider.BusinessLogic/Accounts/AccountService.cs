@@ -220,4 +220,57 @@ internal sealed class AccountService(
 
         return accounts;
     }
+
+    public async Task UpdateRolesAsync(
+        Guid id,
+        UpdateRolesArgs args,
+        AccountLogged accountLogged)
+    {
+        var account = await _accountRepository
+            .GetByIdAsync(id, accountLogged)
+            .ConfigureAwait(false);
+
+        var rolesToDelete = account
+            .Roles
+            .Where(r => !args.RolesIds.Contains(r.Id))
+            .ToList();
+        if (rolesToDelete.Count != 0)
+        {
+            await _accountRepository
+                .DeleteRolesByIdAsync(rolesToDelete, account)
+                .ConfigureAwait(false);
+        }
+
+        var newRoles = args
+            .RolesIds
+            .Where(ri => !account.Roles.Exists(r => r.Id == ri))
+            .ToList();
+        if (newRoles.Count != 0)
+        {
+            var roles = await _roleRepository
+                .GetAllByIds(newRoles, accountLogged)
+                .ConfigureAwait(false);
+
+            if(roles.Count != newRoles.Count)
+            {
+                throw new InvalidOperationException("Some roles don't belong to tenant");
+            }
+
+            var rolesNotInApps = roles
+                .Where(r => !account.Apps.Exists(a => a.Id == r.AppId))
+                .ToList();
+            if(rolesNotInApps.Count != 0)
+            {
+                throw new InvalidOperationException("Some roles don't belong to apps of account");
+            }
+
+            await _accountRepository
+                .AddRolesByIdAsync(newRoles, account)
+                .ConfigureAwait(false);
+        }
+
+        await _unitOfWork
+            .CommitChangesAsync()
+            .ConfigureAwait(false);
+    }
 }

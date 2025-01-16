@@ -27,9 +27,12 @@ internal sealed class RoleRepository(
         AccountLogged accountLogged)
     {
         var query = Entities
+            .Include(r => r.App)
             .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
-            .Where(r => appId == null || r.AppId == appId);
+            .Where(r => appId == null || r.AppId == appId)
+            .AsNoTracking()
+            .AsSplitQuery();
 
         var roles = await query
             .ToPaginateAsync(page, pageSize)

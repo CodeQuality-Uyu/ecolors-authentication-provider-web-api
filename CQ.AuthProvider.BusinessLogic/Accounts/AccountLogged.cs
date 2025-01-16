@@ -37,6 +37,7 @@ public record class AccountLogged()
         Tenant = account.Tenant;
         Token = token;
         AppLogged = appLogged;
+        Apps = account.Apps;
     }
 
     public bool IsInRole(string role)

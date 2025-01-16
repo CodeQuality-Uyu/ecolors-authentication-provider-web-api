@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.UnitOfWork.Abstractions.Repositories;
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
@@ -32,4 +33,6 @@ public interface IAccountRepository
         Guid tenantId,
         int page,
         int pageSize);
+
+    Task AddAppAsync(App app, AccountLogged accountLogged);
 }

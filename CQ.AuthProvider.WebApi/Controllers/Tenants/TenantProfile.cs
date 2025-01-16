@@ -39,10 +39,12 @@ internal sealed class MiniLogoMultimediaResolver(IMultimediaService _multimediaS
     {
         var (Id, ReadUrl, WriteUrl) = _multimediaService.GetById(source.MiniLogoId);
 
-        return new MultimediaResponse(
-            Id,
-            ReadUrl,
-            WriteUrl);
+        return new MultimediaResponse
+        {
+            Id = Id,
+            ReadUrl = ReadUrl,
+            WriteUrl = WriteUrl,
+        };
     }
 }
 
@@ -57,9 +59,11 @@ internal sealed class CoverLogoMultimediaResolver(IMultimediaService _multimedia
     {
         var (Id, ReadUrl, WriteUrl) = _multimediaService.GetById(source.CoverLogoId);
 
-        return new MultimediaResponse(
-            Id,
-            ReadUrl,
-            WriteUrl);
+        return new MultimediaResponse
+        {
+            Id = Id,
+            ReadUrl = ReadUrl,
+            WriteUrl = WriteUrl,
+        };
     }
 }

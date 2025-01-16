@@ -56,4 +56,21 @@ public sealed class AccountController(
 
         return _mapper.Map<Pagination<AccountBasicInfoResponse>>(accounts);
     }
+
+    [HttpPatch("{id}/roles")]
+    [BearerAuthentication]
+    [SecureAuthorization]
+    public async Task UpdateRolesAsync(
+        Guid id,
+        UpdateRolesArgs request)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        await _accountService
+            .UpdateRolesAsync(
+            id,
+            request,
+            accountLogged)
+            .ConfigureAwait(false);
+    }
 }

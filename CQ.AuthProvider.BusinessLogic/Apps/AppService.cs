@@ -1,11 +1,14 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Apps;
 
 internal sealed class AppService(
-    IAppRepository _appRepository)
+    IAppRepository _appRepository,
+    IAccountRepository _accountRepository,
+    IUnitOfWork _unitOfWork)
     : IAppInternalService
 {
     public async Task CreateAsync(
@@ -39,7 +42,15 @@ internal sealed class AppService(
         }
 
         await _appRepository
-            .CreateAndSaveAsync(app)
+            .CreateAsync(app)
+            .ConfigureAwait(false);
+
+        await _accountRepository
+            .AddAppAsync(app, accountLogged)
+            .ConfigureAwait(false);
+
+        await _unitOfWork
+            .CommitChangesAsync()
             .ConfigureAwait(false);
     }
 
