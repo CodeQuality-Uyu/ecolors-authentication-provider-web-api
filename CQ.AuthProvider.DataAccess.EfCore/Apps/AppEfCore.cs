@@ -10,9 +10,11 @@ public sealed record class AppEfCore()
 
     public string Name { get; init; } = null!;
 
-    public bool IsDefault { get; init; }
+    public bool IsDefault { get; set; }
 
     public Guid CoverId { get; init; }
+
+    public string? BackgroundCoverColorHex { get; init; }
 
     public Guid TenantId { get; init; }
 

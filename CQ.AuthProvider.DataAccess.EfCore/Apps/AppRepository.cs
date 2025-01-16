@@ -67,4 +67,24 @@ internal sealed class AppRepository(
 
         return _mapper.Map<Pagination<App>>(pagination);
     }
+
+    public async Task<App> GetOrDefaultByDefaultAsync(Guid tenantId)
+    {
+        var query = Entities
+            .Where(a => a.IsDefault)
+            .Where(a => a.TenantId == tenantId);
+
+        var app = await query
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        return _mapper.Map<App>(app);
+    }
+
+    public async Task RemoveDefaultByIdAsync(Guid id)
+    {
+        var app = await GetByIdAsync(id).ConfigureAwait(false);
+
+        app.IsDefault = false;
+    }
 }

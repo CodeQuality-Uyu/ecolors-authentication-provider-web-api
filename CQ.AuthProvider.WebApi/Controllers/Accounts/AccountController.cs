@@ -30,13 +30,15 @@ public sealed class AccountController(
     [HttpPost("credentials/for")]
     [BearerAuthentication]
     [SecureAuthorization]
-    public async Task CreateCredentialsForAsync(CreateAccountForArgs request)
+    public async Task<CreateCredentialsForResponse> CreateCredentialsForAsync(CreateAccountForArgs request)
     {
         var accountLogged = this.GetAccountLogged();
 
-        await _accountService
+        var accountCreated = await _accountService
             .CreateAndSaveAsync(request, accountLogged)
             .ConfigureAwait(false);
+
+        return _mapper.Map<CreateCredentialsForResponse>(accountCreated);
     }
 
     [HttpGet]

@@ -27,5 +27,9 @@ internal sealed class AccountProfile
                 source.Permissions,
                 options.Mapper.Map<TenantOfAccountBasicInfoResponse>(source.Tenant)));
         #endregion
+
+        #region Create credentials for
+        CreateMap<CreateAccountResult, CreateCredentialsForResponse>();
+        #endregion
     }
 }

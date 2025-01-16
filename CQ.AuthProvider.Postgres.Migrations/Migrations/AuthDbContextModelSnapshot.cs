@@ -132,6 +132,9 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("BackgroundCoverColorHex")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("CoverId")
                         .HasColumnType("uuid");
 
@@ -264,6 +267,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         },
                         new
                         {
+                            Id = new Guid("e38a9a3a-dea3-46d5-a7a8-d5e9ea882e15"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can create several permissions at once",
+                            IsPublic = true,
+                            Key = "createbulk-permission",
+                            Name = "Create permission in bulk",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
                             Id = new Guid("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9"),
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             Description = "Can create roles",
@@ -280,6 +293,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             IsPublic = true,
                             Key = "getall-role",
                             Name = "Can read roles",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
+                            Id = new Guid("c402e13f-40c4-4b97-b004-d5e616c3f82d"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can add permissions to role",
+                            IsPublic = true,
+                            Key = "addpermission-role",
+                            Name = "Can add permissions to role",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
                         new
@@ -519,12 +542,22 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
+                            PermissionId = new Guid("e38a9a3a-dea3-46d5-a7a8-d5e9ea882e15")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
                             PermissionId = new Guid("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9")
                         },
                         new
                         {
                             RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
                             PermissionId = new Guid("fc598ab0-1f14-4224-a187-4556a9926f6f")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
+                            PermissionId = new Guid("c402e13f-40c4-4b97-b004-d5e616c3f82d")
                         },
                         new
                         {

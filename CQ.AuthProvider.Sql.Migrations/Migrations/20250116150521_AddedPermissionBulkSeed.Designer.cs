@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250116150521_AddedPermissionBulkSeed")]
+    partial class AddedPermissionBulkSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,9 +134,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BackgroundCoverColorHex")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("CoverId")
                         .HasColumnType("uniqueidentifier");
@@ -293,16 +293,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             IsPublic = true,
                             Key = "getall-role",
                             Name = "Can read roles",
-                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
-                        },
-                        new
-                        {
-                            Id = new Guid("c402e13f-40c4-4b97-b004-d5e616c3f82d"),
-                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
-                            Description = "Can add permissions to role",
-                            IsPublic = true,
-                            Key = "addpermission-role",
-                            Name = "Can add permissions to role",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
                         new
@@ -553,11 +543,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         {
                             RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
                             PermissionId = new Guid("fc598ab0-1f14-4224-a187-4556a9926f6f")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
-                            PermissionId = new Guid("c402e13f-40c4-4b97-b004-d5e616c3f82d")
                         },
                         new
                         {

@@ -1,5 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.UnitOfWork.Abstractions.Repositories;
+using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Apps;
 
@@ -21,7 +22,21 @@ internal sealed class AppService(
         var app = new App(
             args.Name,
             args.IsDefault,
+            args.BackgroundCoverColorHex,
             accountLogged.Tenant);
+
+        if (app.IsDefault)
+        {
+            var defaultApp = await _appRepository
+                .GetOrDefaultByDefaultAsync(app.Tenant.Id)
+                .ConfigureAwait(false);
+            if (Guard.IsNotNull(defaultApp))
+            {
+                await _appRepository
+                    .RemoveDefaultByIdAsync(defaultApp.Id)
+                    .ConfigureAwait(false);
+            }
+        }
 
         await _appRepository
             .CreateAndSaveAsync(app)

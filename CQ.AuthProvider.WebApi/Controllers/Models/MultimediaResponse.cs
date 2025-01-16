@@ -1,6 +1,10 @@
 ﻿namespace CQ.AuthProvider.WebApi.Controllers.Models;
 
-public sealed record MultimediaResponse(
-    Guid Id,
-    string ReadUrl,
-    string WriteUrl);
+public record MultimediaResponse
+{
+    public Guid Id { get; init; }
+
+    public string ReadUrl { get; init; } = null!;
+
+    public string WriteUrl { get; init; } = null!;
+}

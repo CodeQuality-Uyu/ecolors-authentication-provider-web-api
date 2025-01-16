@@ -25,19 +25,22 @@ internal sealed class AppProfile
 }
 
 internal sealed class CoverMultimediaResolver(IMultimediaService _multimediaService)
-    : IValueResolver<App, AppDetailInfoResponse, MultimediaResponse>
+    : IValueResolver<App, AppDetailInfoResponse, CoverMultimediaResponse>
 {
-    public MultimediaResponse Resolve(
+    public CoverMultimediaResponse Resolve(
         App source,
         AppDetailInfoResponse destination,
-        MultimediaResponse destMember,
+        CoverMultimediaResponse destMember,
         ResolutionContext context)
     {
         var (Id, ReadUrl, WriteUrl)= _multimediaService.GetById(source.CoverId);
 
-        return new MultimediaResponse(
-            Id,
-            ReadUrl,
-            WriteUrl);
+        return new CoverMultimediaResponse
+        {
+            Id = Id,
+            ReadUrl = ReadUrl,
+            WriteUrl = WriteUrl,
+            BackgroundColorHex = source.BackgroundCoverColorHex
+        };
     }
 }

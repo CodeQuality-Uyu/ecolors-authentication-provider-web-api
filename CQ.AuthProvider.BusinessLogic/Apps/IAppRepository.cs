@@ -6,6 +6,10 @@ public interface IAppRepository
 {
     Task<App> GetByIdAsync(Guid id);
 
+    Task<App> GetOrDefaultByDefaultAsync(Guid tenantId);
+
+    Task RemoveDefaultByIdAsync(Guid id);
+
     Task<List<App>> GetByIdsAsync(List<Guid> ids);
 
     Task<bool> ExistsByNameInTenantAsync(
