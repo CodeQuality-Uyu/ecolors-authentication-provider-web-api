@@ -2,7 +2,6 @@
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Multimedias;
 using CQ.AuthProvider.BusinessLogic.Utils;
-using CQ.AuthProvider.WebApi.Controllers.Models;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
@@ -11,11 +10,11 @@ internal sealed class AppProfile
 {
     public AppProfile()
     {
-        #region GetAll
+        #region Get all
         this.CreatePaginationMap<App, AppBasicInfoResponse>();
         #endregion
 
-        #region GetById
+        #region Get by id
         CreateMap<App, AppDetailInfoResponse>()
             .ForMember(destination => destination.CoverMultimedia,
             options => options.MapFrom<CoverMultimediaResolver>());
