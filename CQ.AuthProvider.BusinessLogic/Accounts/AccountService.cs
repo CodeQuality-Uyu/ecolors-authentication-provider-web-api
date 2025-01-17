@@ -236,8 +236,12 @@ internal sealed class AccountService(
             .ToList();
         if (rolesToDelete.Count != 0)
         {
+            var rolesIdsToDelete = rolesToDelete
+                .Select(r => r.Id)
+                .ToList();
+
             await _accountRepository
-                .DeleteRolesByIdAsync(rolesToDelete, account)
+                .DeleteRolesByIdAsync(rolesIdsToDelete, account)
                 .ConfigureAwait(false);
         }
 
@@ -248,7 +252,7 @@ internal sealed class AccountService(
         if (newRoles.Count != 0)
         {
             var roles = await _roleRepository
-                .GetAllByIds(newRoles, accountLogged)
+                .GetAllByIdsAsync(newRoles, accountLogged)
                 .ConfigureAwait(false);
 
             if(roles.Count != newRoles.Count)

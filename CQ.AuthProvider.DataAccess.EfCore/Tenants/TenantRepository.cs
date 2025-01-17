@@ -15,11 +15,11 @@ internal sealed class TenantRepository
     : AuthDbContextRepository<TenantEfCore>(context),
     ITenantRepository
 {
-    public async Task CreateAndSaveAsync(Tenant tenant)
+    public async Task CreateAsync(Tenant tenant)
     {
         var tenantEfCore = mapper.Map<TenantEfCore>(tenant);
 
-        await CreateAndSaveAsync(tenantEfCore).ConfigureAwait(false);
+        await CreateAsync(tenantEfCore).ConfigureAwait(false);
     }
 
     public async Task<bool> ExistByNameAsync(string name)

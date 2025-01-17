@@ -404,6 +404,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             Key = "createcredentialsfor-account",
                             Name = "Can create accounts",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
+                            Id = new Guid("c0a55e4b-b24d-42a4-90e4-f828e2b8e098"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Update roles of account. Roles of tenant and of apps of user logged",
+                            IsPublic = true,
+                            Key = "updateroles-account",
+                            Name = "Update roles of account",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         });
                 });
 
@@ -598,6 +608,11 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         {
                             RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
                             PermissionId = new Guid("046c65a8-d3c1-41d7-bda2-a96d393cc18e")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
+                            PermissionId = new Guid("c0a55e4b-b24d-42a4-90e4-f828e2b8e098")
                         },
                         new
                         {

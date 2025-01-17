@@ -7,7 +7,7 @@ public interface ITenantRepository
 {
     Task<bool> ExistByNameAsync(string name);
 
-    Task CreateAndSaveAsync(Tenant tenant);
+    Task CreateAsync(Tenant tenant);
 
     Task<Pagination<Tenant>> GetPaginatedAsync(
         int page = 10,

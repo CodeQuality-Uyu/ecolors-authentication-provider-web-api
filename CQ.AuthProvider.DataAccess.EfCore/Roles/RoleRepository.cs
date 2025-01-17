@@ -12,11 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles;
 
 internal sealed class RoleRepository(
-    AuthDbContext context,
-    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper,
-    IRepository<PermissionEfCore> permissionRepository,
-    IRepository<RolePermission> rolePermissionRepository)
-    : EfCoreRepository<RoleEfCore>(context),
+    AuthDbContext _context,
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper _mapper,
+    IRepository<PermissionEfCore> _permissionRepository,
+    IRepository<RolePermission> _rolePermissionRepository)
+    : EfCoreRepository<RoleEfCore>(_context),
     IRoleRepository
 {
     public async Task<Pagination<Role>> GetAllAsync(
@@ -38,7 +38,7 @@ internal sealed class RoleRepository(
             .ToPaginateAsync(page, pageSize)
             .ConfigureAwait(false);
 
-        return mapper.Map<Pagination<Role>>(roles);
+        return _mapper.Map<Pagination<Role>>(roles);
     }
 
     public async Task RemoveDefaultsAndSaveAsync(
@@ -80,7 +80,7 @@ internal sealed class RoleRepository(
 
         AssertNullEntity(role, id, nameof(Role.Id));
 
-        return mapper.Map<Role>(role);
+        return _mapper.Map<Role>(role);
     }
 
     public async Task<Role> GetDefaultByTenantIdAsync(
@@ -98,7 +98,7 @@ internal sealed class RoleRepository(
 
         AssertNullEntity(role, tenantId, nameof(Role.Tenant));
 
-        return mapper.Map<Role>(role);
+        return _mapper.Map<Role>(role);
     }
 
     public async Task CreateBulkAsync(List<Role> roles)
@@ -113,7 +113,7 @@ internal sealed class RoleRepository(
         Guid id,
         List<string> permissionsKeys)
     {
-        var permissions = await permissionRepository
+        var permissions = await _permissionRepository
             .GetAllAsync(p => permissionsKeys.Contains(p.Key))
             .ConfigureAwait(false);
 
@@ -123,7 +123,7 @@ internal sealed class RoleRepository(
             PermissionId = p.Id
         });
 
-        await rolePermissionRepository
+        await _rolePermissionRepository
             .CreateBulkAndSaveAsync(rolePermissions)
             .ConfigureAwait(false);
     }
@@ -142,6 +142,23 @@ internal sealed class RoleRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        return mapper.Map<Role>(entity);
+        return _mapper.Map<Role>(entity);
+    }
+
+    public async Task<List<Role>> GetAllByIdsAsync(
+        List<Guid> ids,
+        AccountLogged accountLogged)
+    {
+        
+        var query = Entities
+            .Where(r => r.TenantId == accountLogged.Tenant.Id)
+            .Where(r => accountLogged.AppsIds.Any(a => a == r.AppId))
+            .Where(r => ids.Any(i => i == r.Id));
+
+        var roles = await query
+            .ToListAsync()
+            .ConfigureAwait(false);
+
+        return _mapper.Map<List<Role>>(roles);
     }
 }

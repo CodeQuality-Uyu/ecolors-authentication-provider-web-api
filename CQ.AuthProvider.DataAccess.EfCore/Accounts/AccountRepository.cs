@@ -107,12 +107,18 @@ IAccountRepository
         return _mapper.Map<Account>(account);
     }
 
-    public async Task UpdateTenantByIdAndSaveAsync(
+    public async Task UpdateTenantByIdAsync(
         Guid id,
         Tenant tenant)
     {
-        await UpdateAndSaveByIdAsync(id.ToString(), new { TenantId = tenant.Id })
+        var queryGetAccount = Entities
+            .Where(a => a.Id == id);
+
+        var account = await queryGetAccount
+            .FirstAsync()
             .ConfigureAwait(false);
+
+        account.TenantId = tenant.Id;
     }
 
     public async Task AddRoleByIdAsync(
@@ -169,6 +175,60 @@ IAccountRepository
 
         await BaseContext
             .AddAsync(accountApp)
+            .ConfigureAwait(false);
+    }
+
+    /*
+     Used in:
+        - To update roles of account
+     */
+    public async Task<Account> GetByIdAsync(
+        Guid id,
+        AccountLogged accountLogged)
+    {
+        var query = Entities
+            .Include(a => a.Apps)
+            .Where(a => a.Id == id)
+            .Where(a => a.TenantId == accountLogged.Tenant.Id)
+            .AsNoTracking()
+            .AsSplitQuery();
+
+        var account = await query
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        AssertNullEntity(account, id, nameof(Account.Id));
+
+        return _mapper.Map<Account>(account);
+    }
+
+    public async Task DeleteRolesByIdAsync(
+        List<Guid> rolesIds,
+        Account account)
+    {
+        var query = ConcreteContext
+            .AccountsRoles
+            .Where(ar => rolesIds.Any(r => r == ar.RoleId) && ar.AccountId == account.Id);
+
+        await query
+            .ExecuteDeleteAsync()
+            .ConfigureAwait(false);
+    }
+
+    public async Task AddRolesByIdAsync(
+        List<Guid> rolesIds,
+        Account account)
+    {
+        var roles = rolesIds
+            .Select(ri => new AccountRole
+            {
+                RoleId = ri,
+                AccountId = account.Id
+            })
+            .ToList();
+
+        await BaseContext
+            .AddRangeAsync(roles)
             .ConfigureAwait(false);
     }
 }

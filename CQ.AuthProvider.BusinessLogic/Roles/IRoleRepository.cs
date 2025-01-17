@@ -31,4 +31,8 @@ public interface IRoleRepository
     Task<Role?> GetDefaultOrDefaultByAppIdAndTenantIdAsync(
         Guid appId,
         Guid tenantId);
+
+    Task<List<Role>> GetAllByIdsAsync(
+        List<Guid> ids,
+        AccountLogged accountLogged);
 }

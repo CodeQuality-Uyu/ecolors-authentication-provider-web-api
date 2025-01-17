@@ -31,13 +31,17 @@ internal sealed class TenantService(
         };
 
         await _tenantRepository
-            .CreateAndSaveAsync(tenant)
+            .CreateAsync(tenant)
             .ConfigureAwait(false);
 
         await _accountRepository
-            .UpdateTenantByIdAndSaveAsync(
+            .UpdateTenantByIdAsync(
             accountLogged.Id,
             tenant)
+            .ConfigureAwait(false);
+
+        await _unitOfWork
+            .CommitChangesAsync()
             .ConfigureAwait(false);
     }
 

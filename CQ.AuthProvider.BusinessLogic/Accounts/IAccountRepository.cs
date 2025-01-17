@@ -15,9 +15,13 @@ public interface IAccountRepository
 
     Task<Account> GetByIdAsync(
         Guid id,
+        AccountLogged accountLogged);
+
+    Task<Account> GetByIdAsync(
+        Guid id,
         params string[] includes);
 
-    Task UpdateTenantByIdAndSaveAsync(
+    Task UpdateTenantByIdAsync(
         Guid id,
         Tenant tenant);
 
@@ -35,4 +39,12 @@ public interface IAccountRepository
         int pageSize);
 
     Task AddAppAsync(App app, AccountLogged accountLogged);
+
+    Task DeleteRolesByIdAsync(
+        List<Guid> rolesIds,
+        Account account);
+
+    Task AddRolesByIdAsync(
+        List<Guid> rolesIds,
+        Account account);
 }

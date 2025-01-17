@@ -226,6 +226,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
         var getAllAccountsPermissionId = Guid.Parse("27c1378d-39df-4a57-b025-fc96963955a6");
         var createCredentialsForPermissionId = Guid.Parse("046c65a8-d3c1-41d7-bda2-a96d393cc18e");
+        var updateRolesOfAccountPermissionId = Guid.Parse("c0a55e4b-b24d-42a4-90e4-f828e2b8e098");
 
         var createAppPermissionId = Guid.Parse("2eab3c3a-792a-444a-97f3-01db00dffcab");
         var getAllAppsPermissionId = Guid.Parse("6323b5da-b78c-4984-a56e-8206775d3e91");
@@ -346,6 +347,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
                     PermissionId = createCredentialsForPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
+                    PermissionId = updateRolesOfAccountPermissionId
                 },
             #endregion Account
 
@@ -537,6 +543,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     IsPublic = true,
                 },
             #endregion App
+
             #region Account
                 new PermissionEfCore
                 {
@@ -554,6 +561,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can create accounts",
                     Description = "Can create accounts",
                     Key = "createcredentialsfor-account",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = updateRolesOfAccountPermissionId,
+                    Name = "Update roles of account",
+                    Description = "Update roles of account. Roles of tenant and of apps of user logged",
+                    Key = "updateroles-account",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = seedTenantId,
                     IsPublic = true,

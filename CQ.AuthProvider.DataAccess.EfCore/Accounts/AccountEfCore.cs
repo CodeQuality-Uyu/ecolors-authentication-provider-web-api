@@ -25,7 +25,7 @@ public sealed record class AccountEfCore()
 
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow.Date;
 
-    public Guid TenantId { get; init; }
+    public Guid TenantId { get; set; }
 
     public TenantEfCore Tenant { get; init; } = null!;
 

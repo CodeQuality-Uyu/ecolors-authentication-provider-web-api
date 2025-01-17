@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250117005623_AddedUpdateRolesOfAccountSeed")]
+    partial class AddedUpdateRolesOfAccountSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -411,7 +414,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             Description = "Update roles of account. Roles of tenant and of apps of user logged",
                             IsPublic = true,
-                            Key = "updateroles-account",
+                            Key = "udpdateroles-account",
                             Name = "Update roles of account",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         });
