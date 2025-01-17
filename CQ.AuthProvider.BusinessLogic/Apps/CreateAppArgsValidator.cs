@@ -9,7 +9,7 @@ internal sealed class CreateAppArgsValidator
     public CreateAppArgsValidator()
     {
         RuleFor(a => a.Name)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.CoverId)
             .ValidId();

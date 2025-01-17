@@ -15,13 +15,13 @@ internal sealed class CreatePermissionArgsValidator
     public CreatePermissionArgsValidator()
     {
         RuleFor(a => a.Name)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.Description)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.Key)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.AppId)
             .ValidId();
@@ -52,16 +52,17 @@ internal sealed class CreatePermissionArgsValidator
 
 internal static class ValidatorExtensions
 {
-    public static IRuleBuilderOptions<T, string> RequiredString<T>(this IRuleBuilder<T, string> validator)
+    public static IRuleBuilderOptions<T, TProp> Required<T, TProp>(this IRuleBuilder<T, TProp> validator)
     {
         var options = validator
-            .Required()
-            .NotEmpty().WithMessage("Can't be empty");
+            .NotNullWithMessage()
+            .NotEmpty()
+            .WithMessage("Can't be empty"); ;
 
         return options;
     }
 
-    public static IRuleBuilderOptions<T, TProp> Required<T, TProp>(this IRuleBuilder<T, TProp> validator)
+    public static IRuleBuilderOptions<T, TProp> NotNullWithMessage<T, TProp>(this IRuleBuilder<T, TProp> validator)
     {
         var options = validator
             .NotNull()
@@ -99,7 +100,7 @@ internal static class ValidatorExtensions
     public static IRuleBuilderOptions<T, string?> RequiredEmail<T>(this IRuleBuilder<T, string?> validator)
     {
         var options = validator
-            .RequiredString()
+            .Required()
             .EmailAddress()
             .WithMessage("Invalid format");
 
@@ -109,7 +110,7 @@ internal static class ValidatorExtensions
     public static IRuleBuilderOptions<T, string?> RequiredPassword<T>(this IRuleBuilder<T, string?> validator)
     {
         var options = validator
-            .RequiredString()
+            .Required()
             .MinimumLength(6)
             .WithMessage("Minimum 6 characters")
             .Must(password =>

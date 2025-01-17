@@ -13,12 +13,9 @@ internal sealed class CreateRoleArgsValidator
     public CreateRoleArgsValidator()
     {
         RuleFor(r => r.Name)
-            .RequiredString();
+            .Required();
 
         RuleFor(r => r.Description)
-            .RequiredString();
-
-        RuleFor(r => r.IsDefault)
             .Required();
 
         RuleFor(r => r.IsPublic)
@@ -28,7 +25,7 @@ internal sealed class CreateRoleArgsValidator
             .ValidId();
 
         RuleFor(r => r.PermissionsKeys)
-            .Required()
+            .NotNullWithMessage()
             .Must(permissionKeys =>
             {
                 if(permissionKeys == null)

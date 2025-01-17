@@ -9,9 +9,7 @@ internal sealed class CreateInvitationArgsValidator
     public CreateInvitationArgsValidator()
     {
         RuleFor(i => i.Email)
-            .RequiredString()
-            .EmailAddress()
-            .WithMessage("Invalid format");
+            .RequiredEmail();
 
         RuleFor(i => i.RoleId)
             .ValidId();

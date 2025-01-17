@@ -9,16 +9,16 @@ internal sealed class CreateAccountArgsValidator
     public CreateAccountArgsValidator()
     {
         RuleFor(a => a.FirstName)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.LastName)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.Locale)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.TimeZone)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.Email)
             .RequiredEmail();
@@ -37,16 +37,16 @@ internal sealed class CreateAccountForArgsValidator
     public CreateAccountForArgsValidator()
     {
         RuleFor(a => a.FirstName)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.LastName)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.Locale)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.TimeZone)
-            .RequiredString();
+            .Required();
 
         RuleFor(a => a.Email)
             .RequiredEmail();
