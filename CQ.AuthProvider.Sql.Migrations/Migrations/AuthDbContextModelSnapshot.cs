@@ -135,6 +135,9 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Property<string>("BackgroundCoverColorHex")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("BackgroundCoverId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("CoverId")
                         .HasColumnType("uniqueidentifier");
 
@@ -158,6 +161,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         new
                         {
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            BackgroundCoverId = new Guid("00000000-0000-0000-0000-000000000000"),
                             CoverId = new Guid("00000000-0000-0000-0000-000000000000"),
                             IsDefault = true,
                             Name = "Auth Provider Web Api",

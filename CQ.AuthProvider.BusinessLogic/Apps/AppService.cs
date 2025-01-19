@@ -26,6 +26,7 @@ internal sealed class AppService(
             args.Name,
             args.IsDefault,
             args.BackgroundCoverColorHex,
+            args.BackgroundCoverId,
             accountLogged.Tenant);
 
         if (app.IsDefault)

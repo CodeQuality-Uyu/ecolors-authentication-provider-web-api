@@ -4,4 +4,5 @@ public sealed record CreateAppArgs(
     string Name,
     bool IsDefault,
     Guid CoverId,
-    string? BackgroundCoverColorHex);
+    string? BackgroundCoverColorHex,
+    Guid? BackgroundCoverId);

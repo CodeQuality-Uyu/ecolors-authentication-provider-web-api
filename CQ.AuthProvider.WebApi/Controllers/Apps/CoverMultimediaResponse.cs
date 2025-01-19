@@ -6,4 +6,6 @@ public sealed record CoverMultimediaResponse
     : MultimediaResponse
 {
     public string? BackgroundColorHex { get; init; }
+
+    public MultimediaResponse? BackgroundCover { get; init; }
 }
