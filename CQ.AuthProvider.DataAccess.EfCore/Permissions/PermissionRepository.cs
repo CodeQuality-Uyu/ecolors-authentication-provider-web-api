@@ -85,6 +85,7 @@ internal sealed class PermissionRepository(
         var permissions = await Entities
             .Where(p => onlyKeyes.Any(k => p.Key == k))
             .Where(p => appsIds.Any(a => p.AppId == a))
+            .Where(p => p.TenantId == accountLogged.Tenant.Id)
             .ToListAsync()
             .ConfigureAwait(false);
 
