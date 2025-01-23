@@ -1,8 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using CQ.Utility;
-using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Permissions;
 
@@ -60,7 +57,7 @@ internal sealed class PermissionService(IPermissionRepository _permissionReposit
             var permissionsSavedKeys = duplicatedPermissions
                 .ConvertAll(p => (p.App.Id, p.Key));
 
-            throw new InvalidOperationException($"Duplicated keys exist ${string.Join(",", permissionsSavedKeys)}");
+            throw new InvalidOperationException($"Duplicated keys exist {string.Join(",", permissionsSavedKeys)}");
         }
 
         var permissions = args

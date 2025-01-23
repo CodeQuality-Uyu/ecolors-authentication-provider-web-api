@@ -21,6 +21,7 @@ internal sealed class MeProfile
                 $"Bearer {source.Token}",
                 source.Roles.ConvertAll(r => r.Name),
                 source.PermissionsKeys,
+                options.Mapper.Map<SessionAppLoggedResponse>(source.AppLogged),
                 options.Mapper.Map<TenantOfAccountBasicInfoResponse>(source.Tenant)
             ));
     }

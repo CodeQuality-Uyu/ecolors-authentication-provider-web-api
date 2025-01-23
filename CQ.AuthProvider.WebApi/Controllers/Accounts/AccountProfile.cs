@@ -15,16 +15,17 @@ internal sealed class AccountProfile
 
         #region Create
         CreateMap<CreateAccountResult, SessionCreatedResponse>()
-            .ConvertUsing((source,destination,options)=>new SessionCreatedResponse(
+            .ConvertUsing((source, destination, options) => new SessionCreatedResponse(
                 source.Id,
                 source.ProfilePictureId,
                 source.Email,
                 source.FirstName,
                 source.LastName,
                 source.FullName,
-                source.Token,
+                $"Bearer {source.Token}",
                 source.Roles,
                 source.Permissions,
+                options.Mapper.Map<SessionAppLoggedResponse>(source.AppLogged),
                 options.Mapper.Map<TenantOfAccountBasicInfoResponse>(source.Tenant)));
         #endregion
 

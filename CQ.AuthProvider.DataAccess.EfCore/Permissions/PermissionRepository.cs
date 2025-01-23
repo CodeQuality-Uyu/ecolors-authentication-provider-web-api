@@ -50,25 +50,41 @@ internal sealed class PermissionRepository(
             return [];
         }
 
-        var keyesMapped = JsonConvert.SerializeObject(keys);
+        //var keyesMapped = JsonConvert.SerializeObject(keys);
 
-        // Define raw SQL query
-        var sql = @"
-        SELECT p.*
-        FROM Permissions AS p
-        INNER JOIN OPENJSON(@keyAppJson) 
-        WITH (
-            Item1 UNIQUEIDENTIFIER,
-            Item2 NVARCHAR(MAX)
-        ) AS j
-        ON [p].[AppId] = [j].[Item1] AND [p].[Key] = [j].[Item2]
-        WHERE p.TenantId = @tenantId AND @keyAppJson IS NOT NULL AND LEN(@keyAppJson) > 2";
+        //// Define raw SQL query
+        //var sql = @"
+        //SELECT p.*
+        //FROM Permissions AS p
+        //INNER JOIN OPENJSON(@keyAppJson) 
+        //WITH (
+        //    Item1 UNIQUEIDENTIFIER,
+        //    Item2 NVARCHAR(MAX)
+        //) AS j
+        //ON [p].[AppId] = [j].[Item1] AND [p].[Key] = [j].[Item2]
+        //WHERE p.TenantId = @tenantId AND @keyAppJson IS NOT NULL AND LEN(@keyAppJson) > 2";
 
-        // Execute the raw query
+        //// Execute the raw query
+        //var permissions = await Entities
+        //    .FromSqlRaw(sql,
+        //        new SqlParameter("@keyAppJson", keyesMapped),
+        //        new SqlParameter("@tenantId", accountLogged.Tenant.Id))
+        //    .ToListAsync()
+        //    .ConfigureAwait(false);
+
+        var onlyKeyes = keys
+            .Select(k => k.key)
+            .Distinct()
+            .ToList();
+
+        var appsIds = keys
+            .Select(k => k.appId)
+            .Distinct()
+            .ToList();
+
         var permissions = await Entities
-            .FromSqlRaw(sql,
-                new SqlParameter("@keyAppJson", keyesMapped),
-                new SqlParameter("@tenantId", accountLogged.Tenant.Id))
+            .Where(p => onlyKeyes.Any(k => p.Key == k))
+            .Where(p => appsIds.Any(a => p.AppId == a))
             .ToListAsync()
             .ConfigureAwait(false);
 

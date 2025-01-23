@@ -6,9 +6,6 @@ using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.Utility;
-using Azure;
-using CQ.ApiElements.Filters.ExceptionFilter;
-using static System.Net.Mime.MediaTypeNames;
 using System.Net;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions;

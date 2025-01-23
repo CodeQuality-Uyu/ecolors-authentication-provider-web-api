@@ -12,4 +12,9 @@ public sealed record SessionCreatedResponse(
     string Token,
     List<string> Roles,
     List<string> Permissions,
+    SessionAppLoggedResponse AppLogged,
     TenantOfAccountBasicInfoResponse Tenant);
+
+public sealed record SessionAppLoggedResponse(
+    Guid Id,
+    string Name);

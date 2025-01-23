@@ -15,11 +15,12 @@ internal sealed class SessionProfile
             .ConvertUsing((source, destination, options) => new Session
             {
                 Id = source.Id,
-                Token = $"Bearer {source.Token}",
+                Token = source.Token,
                 Account = options.Mapper.Map<Account>(source.Account),
                 App = new App
                 {
                     Id = source.AppId,
+                    Name = source.App?.Name ?? string.Empty,
                     Tenant = new Tenant
                     {
                         Id = source.Account.TenantId,

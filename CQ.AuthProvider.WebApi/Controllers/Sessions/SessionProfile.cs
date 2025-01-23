@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.WebApi.Controllers.Tenants;
 
@@ -26,8 +27,11 @@ internal sealed class SessionProfile
                 .SelectMany(r => r.Permissions)
                 .Select(p => p.Key)
                 .ToList(),
+                options.Mapper.Map<SessionAppLoggedResponse>(source.App),
                 options.Mapper.Map<TenantOfAccountBasicInfoResponse>(source.Account.Tenant)
             ));
+
+        CreateMap<App, SessionAppLoggedResponse>();
         #endregion
     }
 }

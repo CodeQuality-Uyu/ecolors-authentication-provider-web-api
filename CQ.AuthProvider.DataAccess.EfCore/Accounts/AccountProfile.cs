@@ -16,12 +16,7 @@ internal sealed class AccountProfile
             options => options.MapFrom<TenantValueResolver>())
 
             .ForMember(destination => destination.Apps,
-            options => options.MapFrom(
-                source => source.Apps.ConvertAll(a => new App
-                {
-                    Id = a.Id,
-                    IsDefault = a.IsDefault,
-                })));
+            options => options.MapFrom<AppsValueResolver>());
         this.CreateOnlyPaginationMap<AccountEfCore, Account>();
     }
 }
@@ -40,5 +35,28 @@ internal sealed class TenantValueResolver
             Id = source.TenantId,
             Name = source.Tenant?.Name ?? string.Empty,
         };
+    }
+}
+
+internal sealed class AppsValueResolver
+    : IValueResolver<AccountEfCore, Account, List<App>>
+{
+    public List<App> Resolve(
+        AccountEfCore source,
+        Account destination,
+        List<App> destMember,
+        ResolutionContext context)
+    {
+        return source
+            .Apps
+            .ConvertAll(a => new App
+            {
+                Id = a.Id,
+                IsDefault = a.IsDefault,
+                Tenant = new Tenant
+                {
+                    Id = source.TenantId
+                }
+            });
     }
 }

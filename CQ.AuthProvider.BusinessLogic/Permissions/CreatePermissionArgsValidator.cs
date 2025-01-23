@@ -36,7 +36,9 @@ internal sealed class CreatePermissionArgsValidator
 
         var args = (CreatePermissionArgs)validationContext.InstanceToValidate;
 
-        if (Guard.IsNull(args.AppId) && accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID)
+        if (Guard.IsNull(args.AppId) &&
+            accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID &&
+            !accountLogged.HasPermission(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID.ToString()))
         {
             validationResult.Errors.Add(new ValidationFailure("AppId", "Can't create to auth api app"));
         }

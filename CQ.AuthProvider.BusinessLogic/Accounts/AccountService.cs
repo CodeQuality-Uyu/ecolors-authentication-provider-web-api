@@ -51,7 +51,8 @@ internal sealed class AccountService(
             account.ProfilePictureId,
             account.Locale,
             account.TimeZone,
-            $"Bearer {session.Token}",
+            account.Apps[0],
+            session.Token,
             account.Roles.ConvertAll(r => r.Name),
             account.Roles.SelectMany(r => r.Permissions.ConvertAll(p => p.Key)).ToList(),
             account.Tenant);
