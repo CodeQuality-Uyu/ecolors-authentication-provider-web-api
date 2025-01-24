@@ -52,6 +52,7 @@ internal sealed class AppsValueResolver
             .ConvertAll(a => new App
             {
                 Id = a.Id,
+                Name = a.Name,
                 IsDefault = a.IsDefault,
                 Tenant = new Tenant
                 {

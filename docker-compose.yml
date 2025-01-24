@@ -19,8 +19,8 @@ services:
       ASPNETCORE_ENVIRONMENT: "Docker"
       ConnectionStrings__Auth: "Server=sqlserver,1433; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
       ConnectionStrings__Identity: "Server=sqlserver,1433; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
-      Authentication__DatabaseEngine__Auth: "Sql"
-      Authentication__DatabaseEngine__Identity: "Sql"
+      DatabaseEngine__Auth: "Sql"
+      DatabaseEngine__Identity: "Sql"
       Authentication__Fake__IsActive: false
       # ASPNETCORE_HTTP_PORTS: 80
       # ASPNETCORE_URLS: http://*:80
