@@ -4,6 +4,7 @@ services:
     image: localstack/localstack:latest
     environment:
       LOCALSTACK_SERVICES: s3
+      LOCALSTACK_PERSISTENCE: 1
       LOCALSTACK_AWS_SECRET_ACCESS_KEY: test
       LOCALSTACK_AWS_ACCESS_KEY_ID: test
       LOCALSTACK_REGION: us-east-1
@@ -47,5 +48,5 @@ services:
       - localstack
       
 volumes:
-  localstack:
-    driver: local
+    localstack:
+        driver: local
