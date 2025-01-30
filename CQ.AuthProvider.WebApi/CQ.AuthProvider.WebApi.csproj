@@ -8,6 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AWSSDK.S3" Version="3.7.412.5" />
 		<PackageReference Include="CQ.ApiElements" Version="3.0.28" />
 	</ItemGroup>
 

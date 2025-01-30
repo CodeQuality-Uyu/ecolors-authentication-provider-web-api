@@ -21,7 +21,8 @@ services
 // Add services to the container.
 services
     .ConfigureAutoValidation()
-    .ConfigureApiServices(configuration, builder.Environment);
+    .ConfigureApiServices(configuration, builder.Environment)
+    .ConfigureBlob(configuration, builder.Environment);
 
 var app = builder.Build();
 

@@ -1,4 +1,18 @@
 services:
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:latest
+    environment:
+      LOCALSTACK_SERVICES: s3
+      LOCALSTACK_AWS_SECRET_ACCESS_KEY: test
+      LOCALSTACK_AWS_ACCESS_KEY_ID: test
+      LOCALSTACK_REGION: us-east-1
+    ports:
+      - "4566:4566"            # LocalStack Gateway
+      - "4510-4559:4510-4559"  # external services port range
+    volumes:
+      - ./aws:/etc/localstack/init/ready.d
+
   sqlserver:
     container_name: sql-server
     image: mcr.microsoft.com/azure-sql-edge:latest
@@ -22,7 +36,16 @@ services:
       DatabaseEngine__Auth: "Sql"
       DatabaseEngine__Identity: "Sql"
       Authentication__Fake__IsActive: false
+      Blob__Fake__IsActive: true
+      Blob__AccessToken: "test"
+      Blob__SecretToken: "test"
+      Blob__Fake__ServiceUrl: "http://localhost:4566"
       # ASPNETCORE_HTTP_PORTS: 80
       # ASPNETCORE_URLS: http://*:80
     depends_on:
       - sqlserver
+      - localstack
+      
+volumes:
+  localstack:
+    driver: local

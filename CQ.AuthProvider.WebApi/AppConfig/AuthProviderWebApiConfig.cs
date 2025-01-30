@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
+using AutoMapper;
 using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Utils;
@@ -185,6 +188,40 @@ internal static class AuthProviderWebApiConfig
         {
             authProviderDbContext.Database.Migrate();
         }
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureBlob(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IWebHostEnvironment environment)
+    {
+        var blobConfiguration = configuration.GetSection<BlobConfiguration>("Blob");
+
+        var credentials = new BasicAWSCredentials(blobConfiguration.AccessToken, blobConfiguration.SecretToken);
+
+        AmazonS3Client client;
+
+        if (blobConfiguration.Fake.IsActive && !environment.IsProd())
+        {
+            var fakeConfig = new AmazonS3Config
+            {
+                ServiceURL = blobConfiguration.Fake.ServiceUrl,
+                ForcePathStyle = true,
+            };
+
+            client = new AmazonS3Client(credentials, fakeConfig);
+        }
+        else
+        {
+            var region = RegionEndpoint.GetBySystemName(blobConfiguration.Region);
+
+            client = new AmazonS3Client(credentials, region);
+        }
+
+        services
+            .AddSingleton<IAmazonS3>(client);
 
         return services;
     }
