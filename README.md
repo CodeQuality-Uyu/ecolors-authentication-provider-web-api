@@ -11,11 +11,20 @@ Esto es util para un tenant que tiene multiples app que se quiere que utilicen e
 ### AppSettings
 En el `appsettings.json` se podra ver las variables que se utilizan en la web api.
 
+#### Logging y ConnectionStrings
 La seccion de `Logging` es para indicar que logs utilizar para ciertas secciones o tecnologias utilizadas. Luego la seccion `ConnectionStrings` es para indicar los dos connection strings a las dos vaces necesarias, `Auth` para conectarse a la base `AuthProvider`, que es donde se guarda informasion no sensible y luego el connection string `Identity` que es para conectarse a la base `IdentityProvider` que guarda informacion sensible.
 
+#### Authentication
 Luego tenemos la seccion `Authentication` que es la seccion para agilizar la hora de desarrollo local ya que simula un usuario autenticado sin pasar por el proceso de autenticacion y expiracion de la sesion, esta seccion no tiene que completarse o estar en un ambiente de produccion.
 
-Por ultimo se tiene la seccion `DatabaseEngine`, esta seccion permite seleccionar el motor de la base de datos para las bases necesarias mencionadas anteriormente en la seccion `ConnectionStrings`. Con esta flexibilidad se puede tener motores de bases de datos distintos para las dos bases, el mismo motor o unificar las bases en una haciendo que ambos connection strings apunten a la misma base. Los valores permitidos son `Sql` y `Postgres`. Al tener esta configuracion en el archivo, permite la facil adaptacion sin tener que modificar codigo existente.
+#### DatabaseEngine
+La seccion `DatabaseEngine`, permite seleccionar el motor de la base de datos para las bases necesarias mencionadas anteriormente en la seccion `ConnectionStrings`. Con esta flexibilidad se puede tener motores de bases de datos distintos para las dos bases, el mismo motor o unificar las bases en una haciendo que ambos connection strings apunten a la misma base. Los valores permitidos son `Sql` y `Postgres`. Al tener esta configuracion en el archivo, permite la facil adaptacion sin tener que modificar codigo existente.
+
+#### Blob
+La seccion `Blob`, permite configurar el servicio de almacenamiento de objetos, esta pensado para que configure el servicio `S3` de `AWS`. En este tambien se puede encontrar una configuracion `Fake` para agilizar el desarrollo y no depender de una instancia real de este servicio. Los campos requeridos son `AccessToken` y `SecretToken`, independientemente si se usa con un servicio real o no por el momento. En caso de querer usar un blob fake, no es necesario poner un valor en `Region` pero si un valor en `ServiceUrl` y viceversa para la situacion que se quiere usar un servicio real.
+
+#### Cors
+La ultima seccion, `Cors`, sirve para configurar los cors de la plataforma sin necesidad de realizar modificaciones de codigo.
 
 ```JSON
 {
@@ -52,11 +61,21 @@ Por ultimo se tiene la seccion `DatabaseEngine`, esta seccion permite selecciona
     "Auth":"Sql",
     "Identity: "Sql"
   },
+  "Blob": {
+    "Fake": {
+      "IsActive": true,
+      "ServiceUrl": "http://localhost:9000"
+    },
+    "AccessToken": "test",
+    "SecretToken": "test",
+    "Region": "us-east-1"
+  },
   "Cors": {
     "Origins": ["*"]
   }
 }
 ```
+
 ### Variables de ambiente
 Las variables de ambiente pueden sustituir los valores del `appsettings` mencionadas anteriormente, solo se tiene que indicar con el formato de usar `__` (doble barra baja), cuando se adentra entre la navegacion. Por ejemplo si se quiere modificar los connection strings, se debe crear las variables de ambiente `ConnectionStrings__Auth` y `ConnectionStrings__IdentityProvider`. A su vez existe la siguiente variable de ambiente `ASPNETCORE_ENVIRONMENT` que indica el ambiente en el cual se esta ejecutando la web api. Los valores pueden ser desde `Local`, `Docker`, `Staging`, `Testing` y `Production`, pero no si existen mas ambientes pueden ser indicados.
 
@@ -65,8 +84,12 @@ ASPNETCORE_ENVIRONMENT: "Docker"
 ConnectionStrings__Auth: "Server=sqlserver,1433; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
 ConnectionStrings__Identity: "Server=sqlserver,1433; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
 Authentication__Fake__IsActive: false
-DatabaseEngine__Auth: Postgres
-DatabaseEngine__Identity: Postgres
+DatabaseEngine__Auth: Sql
+DatabaseEngine__Identity: Sql
+Blob__Fake__IsActive: true
+Blob__Fake__ServiceUrl: "http://localhost:9000"
+Blob__AccessToken: test
+Blob__SecretToken: test
 ```
 
 ## Uso de autenticacion mockeada
