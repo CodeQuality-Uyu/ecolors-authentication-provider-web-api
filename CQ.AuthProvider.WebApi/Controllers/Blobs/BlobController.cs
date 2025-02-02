@@ -15,14 +15,17 @@ public sealed class BlobController(
     : ControllerBase
 {
     [HttpPost]
-    public BlobReadWriteResponse CreateAsync()
+    public async Task<BlobReadWriteResponse> CreateAsync()
     {
         var accountLogged = this.GetAccountLogged();
+
+        var bucketName = accountLogged.Tenant.Name.ToLower().Replace(" ", "-");
+
+        await _client.EnsureBucketExistsAsync(bucketName);
 
         var id = Guid.NewGuid();
         var key = $"${accountLogged.AppLogged.Name}/upload/{id}";
 
-        var bucketName = accountLogged.Tenant.Name.ToLower().Replace(" ", "-");
 
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
         var writeUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.PUT);
