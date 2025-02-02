@@ -11,8 +11,6 @@ services:
     ports:
       - "4566:4566"            # LocalStack Gateway
       - "4510-4559:4510-4559"  # external services port range
-    volumes:
-      - ./aws:/etc/localstack/init/ready.d
 
   sqlserver:
     container_name: sql-server
@@ -46,7 +44,3 @@ services:
     depends_on:
       - sqlserver
       - localstack
-      
-volumes:
-    localstack:
-        driver: local
