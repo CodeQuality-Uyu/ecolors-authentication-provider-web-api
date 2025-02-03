@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.S3.Util;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.WebApi.Controllers.Blobs;
 using CQ.AuthProvider.WebApi.Extensions;
@@ -25,10 +26,10 @@ public sealed class BlobController(
             ? accountLogged.Apps.First(a => a.Id == request.AppId).Name
             : accountLogged.AppLogged.Name;
 
-        await _client.EnsureBucketExistsAsync(bucketName);
+        await EnsureBucketExistsAsync(bucketName, appFolder).ConfigureAwait(false);
 
         var id = Guid.NewGuid();
-        var key = $"${appFolder}/upload/{id}";
+        var key = $"{appFolder}/upload/{id}";
 
 
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
@@ -39,6 +40,43 @@ public sealed class BlobController(
             key,
             readUrl,
             writeUrl);
+    }
+
+    private async Task EnsureBucketExistsAsync(string bucketName, string uploadFolder)
+    {
+        var existBucket = await AmazonS3Util.DoesS3BucketExistV2Async(_client, bucketName).ConfigureAwait(false);
+
+        if (existBucket)
+        {
+            return;
+        }
+
+        var createBucketRequest = new PutBucketRequest
+        {
+            BucketName = bucketName,
+        };
+        await _client.PutBucketAsync(createBucketRequest);
+
+        var policy = $@"{{
+            ""Version"": ""2012-10-17"",
+            ""Statement"": [
+                {{
+                    ""Effect"": ""Allow"",
+                    ""Principal"": ""*"",
+                    ""Action"": [""s3:GetObject"", ""s3:PutObject""],
+                    ""Resource"": ""arn:aws:s3:::{bucketName}/{uploadFolder}/*""
+                }}
+            ]
+        }}";
+
+        var createBucketPolicyRequest = new PutBucketPolicyRequest
+        {
+            BucketName = bucketName,
+            Policy = policy
+        };
+        await _client
+            .PutBucketPolicyAsync(createBucketPolicyRequest)
+            .ConfigureAwait(false);
     }
 
     private string GeneratePresignedUrl(
