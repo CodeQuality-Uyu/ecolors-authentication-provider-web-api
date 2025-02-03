@@ -6,7 +6,7 @@ public interface IAccountService
 {
     Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs args);
     
-    Task<CreateAccountResult> CreateAndSaveAsync(
+    Task<Account> CreateAndSaveAsync(
         CreateAccountForArgs args,
         AccountLogged accountLogged);
 

@@ -30,7 +30,7 @@ internal sealed class AccountProfile
         #endregion
 
         #region Create credentials for
-        CreateMap<CreateAccountResult, CreateCredentialsForResponse>();
+        CreateMap<Account, CreateCredentialsForResponse>();
         #endregion
     }
 }

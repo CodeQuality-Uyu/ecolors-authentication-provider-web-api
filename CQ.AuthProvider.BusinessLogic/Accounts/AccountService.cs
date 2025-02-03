@@ -128,16 +128,16 @@ internal sealed class AccountService(
         }
     }
 
-    public async Task<CreateAccountResult> CreateAndSaveAsync(
+    public async Task<Account> CreateAndSaveAsync(
         CreateAccountForArgs args,
         AccountLogged accountLogged)
     {
         await AssertExistenseOfEmailAsync(args.Email).ConfigureAwait(false);
 
-        List<Guid> appIds = [];
-        if (Guard.IsNullOrEmpty(args.AppIds))
+        List<Guid> appIds = [accountLogged.AppLogged.Id];
+        if (Guard.IsNotNull(args.AppIds) && args.AppIds.Count > 0)
         {
-            appIds.Add(accountLogged.AppLogged.Id);
+            appIds = args.AppIds;
         }
 
         var apps = await _appService
@@ -161,10 +161,32 @@ internal sealed class AccountService(
             apps,
             accountLogged.Tenant);
 
-        return await CreateAccountAsync(
-            account,
-            args.Password)
+        var identity = Identity.NewForAccount(account, args.Password);
+
+        await _identityRepository
+            .CreateAndSaveAsync(identity)
             .ConfigureAwait(false);
+
+        await _accountRepository
+            .CreateAsync(account)
+            .ConfigureAwait(false);
+
+        try
+        {
+            await _unitOfWork
+                .CommitChangesAsync()
+                .ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            await _identityRepository
+                .DeleteByIdAsync(account.Id)
+                .ConfigureAwait(false);
+
+            throw;
+        }
+
+        return account;
     }
 
     private async Task<List<Role>> GetRoleAsync(
