@@ -3,6 +3,7 @@ using Amazon.S3.Model;
 using CQ.ApiElements.Filters.Authentications;
 using CQ.AuthProvider.WebApi.Controllers.Blobs;
 using CQ.AuthProvider.WebApi.Extensions;
+using CQ.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Blobs;
@@ -15,16 +16,19 @@ public sealed class BlobController(
     : ControllerBase
 {
     [HttpPost]
-    public async Task<BlobReadWriteResponse> CreateAsync()
+    public async Task<BlobReadWriteResponse> CreateAsync(CreateBlobRequest request)
     {
         var accountLogged = this.GetAccountLogged();
 
         var bucketName = accountLogged.Tenant.Name.ToLower().Replace(" ", "-");
+        var appFolder = Guard.IsNotNull(request.AppId)
+            ? accountLogged.Apps.First(a => a.Id == request.AppId).Name
+            : accountLogged.AppLogged.Name;
 
         await _client.EnsureBucketExistsAsync(bucketName);
 
         var id = Guid.NewGuid();
-        var key = $"${accountLogged.AppLogged.Name}/upload/{id}";
+        var key = $"${appFolder}/upload/{id}";
 
 
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
