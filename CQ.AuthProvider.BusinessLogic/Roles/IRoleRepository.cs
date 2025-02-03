@@ -32,6 +32,11 @@ public interface IRoleRepository
         Guid appId,
         Guid tenantId);
 
+    Task<List<Role>> GetByIdAsync(
+        List<Guid> ids,
+        List<Guid> appIds,
+        Guid tenantId);
+
     Task<List<Role>> GetAllByIdsAsync(
         List<Guid> ids,
         AccountLogged accountLogged);

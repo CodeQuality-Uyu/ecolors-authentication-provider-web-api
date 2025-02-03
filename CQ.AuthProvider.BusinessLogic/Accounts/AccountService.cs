@@ -4,6 +4,8 @@ using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
+using CQ.Utility;
+using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
@@ -72,40 +74,26 @@ internal sealed class AccountService(
                 .GetDefaultByTenantIdAsync(app.Id, app.Tenant.Id)
                 .ConfigureAwait(false);
 
-        return await CreateAccountAsync(
+        var account = Account.New(
             args.Email,
-            args.Password,
             args.FirstName,
             args.LastName,
             args.ProfilePictureId,
             args.Locale,
             args.TimeZone,
-            app,
-            role)
+            role,
+            app);
+
+        return await CreateAccountAsync(
+            account,
+            args.Password)
             .ConfigureAwait(false);
     }
 
     private async Task<CreateAccountResult> CreateAccountAsync(
-        string email,
-        string password,
-        string firstName,
-        string lastName,
-        string? profilePictureId,
-        string locale,
-        string timeZone,
-        App app,
-        Role role)
+        Account account,
+        string password)
     {
-        var account = Account.New(
-            email,
-            firstName,
-            lastName,
-            profilePictureId,
-            locale,
-            timeZone,
-            role,
-            app);
-
         var result = await CreateIdentityAndSaveAsync(
             account,
             password)
@@ -146,43 +134,46 @@ internal sealed class AccountService(
     {
         await AssertExistenseOfEmailAsync(args.Email).ConfigureAwait(false);
 
-        var app = await _appService
-            .GetByIdAsync(args.AppId ?? accountLogged.AppLogged.Id)
+        List<Guid> appIds = [];
+        if (Guard.IsNullOrEmpty(args.AppIds))
+        {
+            appIds.Add(accountLogged.AppLogged.Id);
+        }
+
+        var apps = await _appService
+            .GetByIdAsync(appIds)
             .ConfigureAwait(false);
 
-        var role = await GetRoleAsync(
-            args.RoleId,
-            app.Id,
+        var roles = await GetRoleAsync(
+            args.RoleIds,
+            appIds,
             accountLogged.Tenant.Id)
             .ConfigureAwait(false);
 
-        return await CreateAccountAsync(
+        var account = Account.New(
             args.Email,
-            args.Password,
             args.FirstName,
             args.LastName,
             args.ProfilePictureId,
             args.Locale,
             args.TimeZone,
-            app,
-            role)
+            roles,
+            apps,
+            accountLogged.Tenant);
+
+        return await CreateAccountAsync(
+            account,
+            args.Password)
             .ConfigureAwait(false);
     }
 
-    private async Task<Role> GetRoleAsync(
-        Guid? roleId,
-        Guid appId,
+    private async Task<List<Role>> GetRoleAsync(
+        List<Guid> roleIds,
+        List<Guid> appIds,
         Guid tenantId)
     {
-        if (roleId == null)
-        {
-            return await _roleRepository
-                .GetDefaultByTenantIdAsync(appId, tenantId)
-                .ConfigureAwait(false);
-        }
-
         return await _roleRepository
-            .GetByIdAsync(roleId.Value)
+            .GetByIdAsync(roleIds, appIds, tenantId)
             .ConfigureAwait(false);
     }
     #endregion
@@ -256,7 +247,7 @@ internal sealed class AccountService(
                 .GetAllByIdsAsync(newRoles, accountLogged)
                 .ConfigureAwait(false);
 
-            if(roles.Count != newRoles.Count)
+            if (roles.Count != newRoles.Count)
             {
                 throw new InvalidOperationException("Some roles don't belong to tenant");
             }
@@ -264,7 +255,7 @@ internal sealed class AccountService(
             var rolesNotInApps = roles
                 .Where(r => !account.Apps.Exists(a => a.Id == r.AppId))
                 .ToList();
-            if(rolesNotInApps.Count != 0)
+            if (rolesNotInApps.Count != 0)
             {
                 throw new InvalidOperationException("Some roles don't belong to apps of account");
             }

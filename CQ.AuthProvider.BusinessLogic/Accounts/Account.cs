@@ -58,6 +58,35 @@ public record class Account()
         };
     }
 
+    public static Account New(
+        string email,
+        string firstName,
+        string lastName,
+        string? profilePictureId,
+        string locale,
+        string timeZone,
+        List<Role> roles,
+        List<App> apps,
+        Tenant tenant)
+    {
+        firstName = Guard.Normalize(firstName);
+        lastName = Guard.Normalize(lastName);
+
+        return new Account
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            FullName = $"{firstName} {lastName}",
+            ProfilePictureId = profilePictureId,
+            Locale = locale,
+            TimeZone = timeZone,
+            Roles = roles,
+            Tenant = tenant,
+            Apps = apps
+        };
+    }
+
     public static Account NewFromInvitation(
         string email,
         string firstName,

@@ -64,6 +64,15 @@ internal sealed class AppService(
         return app;
     }
 
+    public async Task<List<App>> GetByIdAsync(List<Guid> ids)
+    {
+        var apps = await _appRepository
+            .GetByIdAsync(ids)
+            .ConfigureAwait(false);
+
+        return apps;
+    }
+
     public async Task<Pagination<App>> GetAllAsync(
         int page,
         int pageSize,

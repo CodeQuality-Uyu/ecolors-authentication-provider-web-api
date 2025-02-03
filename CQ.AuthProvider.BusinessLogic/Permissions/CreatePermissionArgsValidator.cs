@@ -90,6 +90,40 @@ internal static class ValidatorExtensions
         return options;
     }
 
+    public static IRuleBuilderOptions<T, List<Guid>?> ValidIds<T>(this IRuleBuilder<T, List<Guid>?> validator)
+    {
+        var options = validator
+            .Must((ids) =>
+            {
+                if (Guard.IsNullOrEmpty(ids))
+                {
+                    return true;
+                }
+
+                var notEmptyIds = !ids.Contains(Guid.Empty);
+
+                return notEmptyIds;
+            })
+            .WithMessage("Invalid empty id")
+            .Must((ids) =>
+            {
+                if (Guard.IsNullOrEmpty(ids))
+                {
+                    return true;
+                }
+
+                var notDuplicatedIds = !ids
+                .GroupBy(r => r)
+                .Where(g => g.Count() > 1)
+                .Any();
+
+                return notDuplicatedIds;
+            })
+            .WithMessage("Duplicated ids");
+
+        return options;
+    }
+
     public static IRuleBuilderOptions<T, Guid> ValidId<T>(this IRuleBuilder<T, Guid> validator)
     {
         var options = validator

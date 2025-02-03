@@ -37,7 +37,7 @@ internal sealed class AppRepository(
         return exist;
     }
 
-    public async Task<List<App>> GetByIdsAsync(List<Guid> ids)
+    public async Task<List<App>> GetByIdAsync(List<Guid> ids)
     {
         var apps = await GetAllAsync(a => ids.Contains(a.Id))
             .ConfigureAwait(false);

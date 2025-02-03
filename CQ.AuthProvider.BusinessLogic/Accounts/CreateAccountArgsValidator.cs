@@ -54,10 +54,10 @@ internal sealed class CreateAccountForArgsValidator
         RuleFor(a => a.Password)
             .RequiredPassword();
 
-        RuleFor(a => a.RoleId)
-            .ValidId();
+        RuleFor(a => a.RoleIds)
+            .ValidIds();
 
-        RuleFor(a => a.AppId)
-            .ValidId();
+        RuleFor(a => a.AppIds)
+            .ValidIds();
     }
 }

@@ -149,11 +149,29 @@ internal sealed class RoleRepository(
         List<Guid> ids,
         AccountLogged accountLogged)
     {
-        
+
         var query = Entities
             .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => accountLogged.AppsIds.Any(a => a == r.AppId))
             .Where(r => ids.Any(i => i == r.Id));
+
+        var roles = await query
+            .ToListAsync()
+            .ConfigureAwait(false);
+
+        return _mapper.Map<List<Role>>(roles);
+    }
+
+    public async Task<List<Role>> GetByIdAsync(
+        List<Guid> ids,
+        List<Guid> appIds,
+        Guid tenantId)
+    {
+        var query = Entities
+            .Where(r => ids.Contains(r.Id) || r.IsDefault)
+            .Where(r => appIds.Contains(r.AppId))
+            .Where(r => r.TenantId == tenantId)
+            ;
 
         var roles = await query
             .ToListAsync()
