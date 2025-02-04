@@ -133,7 +133,7 @@ internal sealed class AccountService(
         AccountLogged accountLogged)
     {
         await AssertExistenseOfEmailAsync(args.Email).ConfigureAwait(false);
-
+        
         List<Guid> appIds = [accountLogged.AppLogged.Id];
         if (Guard.IsNotNull(args.AppIds) && args.AppIds.Count > 0)
         {
