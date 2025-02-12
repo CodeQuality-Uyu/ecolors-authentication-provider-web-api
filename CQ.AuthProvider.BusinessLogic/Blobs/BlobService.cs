@@ -75,4 +75,37 @@ internal sealed class BlobService(IAmazonS3 _client)
             key,
             readUrl);
     }
+
+    public async Task MoveAppElementAsync(
+        App app,
+        Guid elementId)
+    {
+        var bucketName = app.Tenant.Name.ToLower().Replace(" ", "-");
+        var appFolder = app.Name.ToLower();
+
+        var oldKey = $"{appFolder}/uploads/{elementId}";
+
+        var newKey = $"{appFolder}/{app.Id}/${elementId}";
+
+        var copyRequest = new CopyObjectRequest
+        {
+            SourceBucket = bucketName,
+            SourceKey = oldKey,
+            DestinationBucket = bucketName,
+            DestinationKey = newKey
+        };
+
+        await _client
+            .CopyObjectAsync(copyRequest)
+            .ConfigureAwait(false);
+
+        var deleteRequest = new DeleteObjectRequest
+        {
+            BucketName = bucketName,
+            Key = oldKey
+        };
+        await _client
+            .DeleteObjectAsync(deleteRequest)
+            .ConfigureAwait(false);
+    }
 }

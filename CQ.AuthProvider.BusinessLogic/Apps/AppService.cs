@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
@@ -8,7 +9,8 @@ namespace CQ.AuthProvider.BusinessLogic.Apps;
 internal sealed class AppService(
     IAppRepository _appRepository,
     IAccountRepository _accountRepository,
-    IUnitOfWork _unitOfWork)
+    IUnitOfWork _unitOfWork,
+    IBlobService _blobService)
     : IAppInternalService
 {
     public async Task CreateAsync(
@@ -49,6 +51,17 @@ internal sealed class AppService(
         await _accountRepository
             .AddAppAsync(app, accountLogged)
             .ConfigureAwait(false);
+
+        await _blobService
+            .MoveAppElementAsync(app, app.CoverId)
+            .ConfigureAwait(false);
+
+        if (args.BackgroundCoverId.HasValue)
+        {
+            await _blobService
+            .MoveAppElementAsync(app, app.BackgroundCoverId.Value)
+            .ConfigureAwait(false);
+        }
 
         await _unitOfWork
             .CommitChangesAsync()

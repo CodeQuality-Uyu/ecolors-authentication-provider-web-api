@@ -18,4 +18,8 @@ public interface IBlobService
     BlobRead GetReadElementInTenant(
         Tenant tenant,
         Guid elementId);
+
+    Task MoveAppElementAsync(
+        App app,
+        Guid elementId);
 }
