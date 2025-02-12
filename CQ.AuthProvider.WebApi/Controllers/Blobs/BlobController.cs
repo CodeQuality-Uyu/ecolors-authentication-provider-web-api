@@ -100,11 +100,16 @@ public sealed class BlobController(
     public BlobReadResponse GetByKey(string key)
     {
         var accountLogged = this.GetAccountLogged();
-        
+
         var bucketName = accountLogged.Tenant.Name.ToLower().Replace(" ", "-");
 
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
 
-        return new BlobReadResponse(key, readUrl);
+        return new BlobReadResponse
+        {
+            Id = Guid.NewGuid(),
+            Key = key,
+            ReadUrl = readUrl
+        };
     }
 }

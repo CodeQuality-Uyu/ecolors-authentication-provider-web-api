@@ -8,5 +8,5 @@ public sealed record AcceptInvitationArgs(
     string LastName,
     string Locale,
     string TimeZone,
-    string? ProfilePictureId,
+    Guid? ProfilePictureId,
     int Code);

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Blobs;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Utils;
+using CQ.AuthProvider.WebApi.Controllers.Blobs;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
-using CQ.AuthProvider.WebApi.Controllers.Tenants;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 
@@ -15,18 +17,14 @@ internal sealed class AccountProfile
 
         #region Create
         CreateMap<CreateAccountResult, SessionCreatedResponse>()
-            .ConvertUsing((source, destination, options) => new SessionCreatedResponse(
-                source.Id,
-                source.ProfilePictureId,
-                source.Email,
-                source.FirstName,
-                source.LastName,
-                source.FullName,
-                $"Bearer {source.Token}",
-                source.Roles,
-                source.Permissions,
-                options.Mapper.Map<SessionAppLoggedResponse>(source.AppLogged),
-                options.Mapper.Map<TenantOfAccountBasicInfoResponse>(source.Tenant)));
+            .ForMember(
+            dest => dest.ProfilePicture,
+            opt => opt.MapFrom<ProfilePictureResolver>())
+            .ForMember(
+            dest => dest.Token,
+            opt => opt.MapFrom(
+                src => $"Bearer {src.Token}"))
+            ;
         #endregion
 
         #region Create credentials for
@@ -34,3 +32,33 @@ internal sealed class AccountProfile
         #endregion
     }
 }
+
+internal sealed class ProfilePictureResolver(IBlobService _blobService)
+    : IValueResolver<CreateAccountResult, SessionCreatedResponse, BlobReadResponse?>
+{
+    public BlobReadResponse? Resolve(
+        CreateAccountResult source,
+        SessionCreatedResponse destination,
+        BlobReadResponse destMember,
+        ResolutionContext context)
+    {
+        if (source.ProfilePictureId == null)
+        {
+            return null;
+        }
+
+        var blob = _blobService.GetReadProfilePicture(
+            source.ProfilePictureId.Value,
+            source.Id,
+            source.AppLogged.Name,
+            source.Tenant.Name);
+
+        return new BlobReadResponse
+        {
+            Id = blob.Id,
+            Key = blob.Key,
+            ReadUrl = blob.ReadUrl,
+        };
+    }
+}
+

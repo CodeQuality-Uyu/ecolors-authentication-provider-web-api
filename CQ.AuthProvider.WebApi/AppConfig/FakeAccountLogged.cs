@@ -3,7 +3,6 @@ using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Tenants;
-using System.Net;
 
 namespace CQ.AuthProvider.WebApi.AppConfig;
 

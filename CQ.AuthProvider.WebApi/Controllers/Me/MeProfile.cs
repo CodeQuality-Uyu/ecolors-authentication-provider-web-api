@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Blobs;
+using CQ.AuthProvider.WebApi.Controllers.Blobs;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
-using CQ.AuthProvider.WebApi.Controllers.Tenants;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Me;
 
@@ -11,18 +12,50 @@ internal sealed class MeProfile
     public MeProfile()
     {
         CreateMap<AccountLogged, SessionCreatedResponse>()
-            .ConvertUsing((source, destination, options) => new SessionCreatedResponse(
-                source.Id,
-                source.ProfilePictureId,
-                source.Email,
-                source.FirstName,
-                source.LastName,
-                source.FullName,
-                $"Bearer {source.Token}",
-                source.Roles.ConvertAll(r => r.Name),
-                source.PermissionsKeys,
-                options.Mapper.Map<SessionAppLoggedResponse>(source.AppLogged),
-                options.Mapper.Map<TenantOfAccountBasicInfoResponse>(source.Tenant)
-            ));
+            .ForMember(
+            dest => dest.ProfilePicture,
+            opt => opt.MapFrom<ProfilePictureResolver>())
+            .ForMember(
+            dest => dest.Token,
+            opt => opt.MapFrom(
+                src => $"Bearer {src.Token}"))
+            .ForMember(
+            dest => dest.Roles,
+            opt => opt.MapFrom(
+                src => src.Roles.ConvertAll(r => r.Name)))
+            .ForMember(
+            dest => dest.Permissions,
+            opt => opt.MapFrom(
+                src => src.Roles.SelectMany(r => r.Permissions).ToList().ConvertAll(p => p.Key)))
+            ;
+    }
+}
+
+internal sealed class ProfilePictureResolver(IBlobService _blobService)
+    : IValueResolver<AccountLogged, SessionCreatedResponse, BlobReadResponse?>
+{
+    public BlobReadResponse? Resolve(
+        AccountLogged source,
+        SessionCreatedResponse destination,
+        BlobReadResponse destMember,
+        ResolutionContext context)
+    {
+        if (source.ProfilePictureId == null)
+        {
+            return null;
+        }
+
+        var blob = _blobService.GetReadProfilePicture(
+            source.ProfilePictureId.Value,
+            source.Id,
+            source.AppLogged.Name,
+            source.Tenant.Name);
+
+        return new BlobReadResponse
+        {
+            Id = blob.Id,
+            Key = blob.Key,
+            ReadUrl = blob.ReadUrl
+        };
     }
 }

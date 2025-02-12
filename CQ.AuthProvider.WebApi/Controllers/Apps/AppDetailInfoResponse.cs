@@ -1,6 +1,4 @@
-﻿using CQ.AuthProvider.WebApi.Controllers.Models;
-
-namespace CQ.AuthProvider.WebApi.Controllers.Apps;
+﻿namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
 public readonly struct AppDetailInfoResponse
 {

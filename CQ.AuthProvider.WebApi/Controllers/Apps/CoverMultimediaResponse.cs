@@ -1,11 +1,11 @@
-﻿using CQ.AuthProvider.WebApi.Controllers.Models;
+﻿using CQ.AuthProvider.WebApi.Controllers.Blobs;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
 public sealed record CoverMultimediaResponse
-    : MultimediaResponse
+    : BlobReadResponse
 {
     public string? BackgroundColorHex { get; init; }
 
-    public MultimediaResponse? BackgroundCover { get; init; }
+    public BlobReadResponse? BackgroundCover { get; init; }
 }

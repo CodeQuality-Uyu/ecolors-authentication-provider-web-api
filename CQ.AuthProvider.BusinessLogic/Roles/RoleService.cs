@@ -1,8 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using CQ.Utility;
-using Newtonsoft.Json;
 using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Roles;

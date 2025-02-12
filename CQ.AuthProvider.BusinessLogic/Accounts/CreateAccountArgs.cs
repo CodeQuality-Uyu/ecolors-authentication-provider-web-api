@@ -7,7 +7,7 @@ public sealed record CreateAccountArgs(
     string LastName,
     string Locale,
     string TimeZone,
-    string? ProfilePictureId,
+    Guid? ProfilePictureId,
     Guid AppId);
 
 public sealed record CreateAccountForArgs(
@@ -17,6 +17,6 @@ public sealed record CreateAccountForArgs(
     string LastName,
     string Locale,
     string TimeZone,
-    string? ProfilePictureId,
+    Guid? ProfilePictureId,
     List<Guid>? AppIds,
     List<Guid>? RoleIds);

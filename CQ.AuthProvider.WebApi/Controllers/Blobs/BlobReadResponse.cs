@@ -1,5 +1,10 @@
 ﻿namespace CQ.AuthProvider.WebApi.Controllers.Blobs;
 
-public sealed record BlobReadResponse(
-    string Key,
-    string ReadUrl);
+public record BlobReadResponse
+{
+    public Guid Id { get; init; }
+
+    public string Key { get; init; } = null!;
+
+    public string ReadUrl { get; init; } = null!;
+}

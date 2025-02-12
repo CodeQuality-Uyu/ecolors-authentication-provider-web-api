@@ -18,7 +18,7 @@ public record class Account()
 
     public string FullName { get; init; } = null!;
 
-    public string? ProfilePictureId { get; init; } = null!;
+    public Guid? ProfilePictureId { get; init; } = null!;
 
     public string Locale { get; init; } = null!;
 
@@ -34,7 +34,7 @@ public record class Account()
         string email,
         string firstName,
         string lastName,
-        string? profilePictureId,
+        Guid? profilePictureId,
         string locale,
         string timeZone,
         Role role,
@@ -62,7 +62,7 @@ public record class Account()
         string email,
         string firstName,
         string lastName,
-        string? profilePictureId,
+        Guid? profilePictureId,
         string locale,
         string timeZone,
         List<Role> roles,
@@ -91,7 +91,7 @@ public record class Account()
         string email,
         string firstName,
         string lastName,
-        string? profilePictureUrl,
+        Guid? profilePictureUrl,
         string locale,
         string timeZone,
         Invitation invitation) => New(email,

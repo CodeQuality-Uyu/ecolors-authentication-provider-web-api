@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.WebApi.Controllers.Models;
+﻿using CQ.AuthProvider.WebApi.Controllers.Blobs;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Tenants;
 
@@ -13,9 +13,9 @@ public readonly struct TenantOfAccountBasicInfoResponse
 
     public string Name { get; init; }
 
-    public MultimediaResponse MiniLogo { get; init; }
+    public BlobReadResponse MiniLogo { get; init; }
 
-    public MultimediaResponse CoverLogo { get; init; }
+    public BlobReadResponse CoverLogo { get; init; }
 
     public string WebUrl { get; init; }
 }

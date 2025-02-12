@@ -73,8 +73,8 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ProfilePictureId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("ProfilePictureId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");

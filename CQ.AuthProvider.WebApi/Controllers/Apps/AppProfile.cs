@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.BusinessLogic.Multimedias;
+using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Utils;
-using CQ.AuthProvider.WebApi.Controllers.Models;
+using CQ.AuthProvider.WebApi.Controllers.Blobs;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Apps;
@@ -25,7 +25,7 @@ internal sealed class AppProfile
     }
 }
 
-internal sealed class CoverMultimediaResolver(IMultimediaService _multimediaService)
+internal sealed class CoverMultimediaResolver(IBlobService _blobService)
     : IValueResolver<App, AppDetailInfoResponse, CoverMultimediaResponse>
 {
     public CoverMultimediaResponse Resolve(
@@ -34,24 +34,24 @@ internal sealed class CoverMultimediaResolver(IMultimediaService _multimediaServ
         CoverMultimediaResponse destMember,
         ResolutionContext context)
     {
-        var (Id, ReadUrl, WriteUrl) = _multimediaService.GetById(source.CoverId);
+        var (Id, Key, ReadUrl) = _blobService.GetReadElementInApp(source, source.CoverId);
 
-        MultimediaResponse? backgroundCover = null;
+        BlobReadResponse? backgroundCover = null;
         if (Guard.IsNull(source.BackgroundCoverId))
         {
-            var (backgroundCoverId, backgroundCoverReadUrl, backgroundCoverWriteUrl) = _multimediaService.GetById(source.BackgroundCoverId.Value);
-            backgroundCover = new MultimediaResponse
+            var (backgroundCoverId, backgroundCoverKey, backgroundCoverReadUrl) = _blobService.GetReadElementInApp(source, source.BackgroundCoverId.Value);
+            backgroundCover = new BlobReadResponse
             {
                 Id = backgroundCoverId,
+                Key = backgroundCoverKey,
                 ReadUrl = backgroundCoverReadUrl,
-                WriteUrl = backgroundCoverWriteUrl
             };
         }
         return new CoverMultimediaResponse
         {
             Id = Id,
+            Key = Key,
             ReadUrl = ReadUrl,
-            WriteUrl = WriteUrl,
             BackgroundColorHex = source.BackgroundCoverColorHex,
             BackgroundCover = backgroundCover
         };

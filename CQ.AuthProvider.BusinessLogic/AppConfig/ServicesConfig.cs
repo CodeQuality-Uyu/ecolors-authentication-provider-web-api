@@ -1,10 +1,10 @@
 ﻿using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Me;
-using CQ.AuthProvider.BusinessLogic.Multimedias;
 using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.BusinessLogic.ResetPasswords;
 using CQ.AuthProvider.BusinessLogic.Roles;
@@ -27,7 +27,7 @@ public static class ServicesConfig
 
             .AddEmailServices()
 
-            .AddMultimediaService()
+            .ConfigBlob()
 
             .AddTokenService<GuidTokenService>(LifeTime.Transient)
 
@@ -77,10 +77,11 @@ public static class ServicesConfig
         return services;
     }
 
-    private static IServiceCollection AddMultimediaService(this IServiceCollection services)
+    private static IServiceCollection ConfigBlob(this IServiceCollection services)
     {
         services
-            .AddTransient<IMultimediaService, TestMultimediaService>();
+            .AddScoped<IBlobService, BlobService>()
+            ;
 
         return services;
     }

@@ -11,7 +11,7 @@ public sealed record class AccountEfCore()
 
     public string Email { get; init; } = null!;
 
-    public string? ProfilePictureId { get; set; } = null!;
+    public Guid? ProfilePictureId { get; set; } = null!;
 
     public string FullName { get; set; } = null!;
 
