@@ -43,7 +43,7 @@ internal sealed class MiniLogoMultimediaResolver(IBlobService _blobService)
         {
             Id = Id,
             Key = Key,
-            ReadUrl = ReadUrl,
+            Url = ReadUrl,
         };
     }
 }
@@ -63,7 +63,7 @@ internal sealed class CoverLogoMultimediaResolver(IBlobService _blobService)
         {
             Id = Id,
             Key = Key,
-            ReadUrl = ReadUrl,
+            Url = ReadUrl,
         };
     }
 }

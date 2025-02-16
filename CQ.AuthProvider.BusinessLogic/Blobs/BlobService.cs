@@ -48,9 +48,8 @@ internal sealed class BlobService(IAmazonS3 _client)
         Guid elementId)
     {
         var bucketName = app.Tenant.Name.ToLower().Replace(" ", "-");
-        var appFolder = app.Name.ToLower();
 
-        var key = $"{appFolder}/{app.Id}/${elementId}";
+        var key = $"{app.Name.ToLower()}/${elementId}";
 
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
 
@@ -83,7 +82,7 @@ internal sealed class BlobService(IAmazonS3 _client)
     {
         var bucketName = newApp.Tenant.Name.ToLower().Replace(" ", "-");
 
-        var oldKey = $"{oldApp.Name.ToLower()}/uploads/{elementId}";
+        var oldKey = $"{oldApp.Name.ToLower()}/upload/{elementId}";
 
         var newKey = $"{newApp.Name.ToLower()}/${elementId}";
 

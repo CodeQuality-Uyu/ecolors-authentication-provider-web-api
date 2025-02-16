@@ -55,7 +55,7 @@ internal sealed class ProfilePictureResolver(IBlobService _blobService)
         {
             Id = blob.Id,
             Key = blob.Key,
-            ReadUrl = blob.ReadUrl
+            Url = blob.ReadUrl
         };
     }
 }

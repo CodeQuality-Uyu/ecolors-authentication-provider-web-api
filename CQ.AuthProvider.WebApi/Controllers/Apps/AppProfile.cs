@@ -26,12 +26,12 @@ internal sealed class AppProfile
 }
 
 internal sealed class CoverMultimediaResolver(IBlobService _blobService)
-    : IValueResolver<App, AppDetailInfoResponse, CoverMultimediaResponse>
+    : IValueResolver<App, AppDetailInfoResponse, CoverBlobResponse>
 {
-    public CoverMultimediaResponse Resolve(
+    public CoverBlobResponse Resolve(
         App source,
         AppDetailInfoResponse destination,
-        CoverMultimediaResponse destMember,
+        CoverBlobResponse destMember,
         ResolutionContext context)
     {
         var (Id, Key, ReadUrl) = _blobService.GetReadElementInApp(source, source.CoverId);
@@ -44,14 +44,14 @@ internal sealed class CoverMultimediaResolver(IBlobService _blobService)
             {
                 Id = backgroundCoverId,
                 Key = backgroundCoverKey,
-                ReadUrl = backgroundCoverReadUrl,
+                Url = backgroundCoverReadUrl,
             };
         }
-        return new CoverMultimediaResponse
+        return new CoverBlobResponse
         {
             Id = Id,
             Key = Key,
-            ReadUrl = ReadUrl,
+            Url = ReadUrl,
             BackgroundColorHex = source.BackgroundCoverColorHex,
             BackgroundCover = backgroundCover
         };

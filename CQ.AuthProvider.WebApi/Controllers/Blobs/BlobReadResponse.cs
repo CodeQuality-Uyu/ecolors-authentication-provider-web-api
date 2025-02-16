@@ -6,5 +6,5 @@ public record BlobReadResponse
 
     public string Key { get; init; } = null!;
 
-    public string ReadUrl { get; init; } = null!;
+    public string Url { get; init; } = null!;
 }

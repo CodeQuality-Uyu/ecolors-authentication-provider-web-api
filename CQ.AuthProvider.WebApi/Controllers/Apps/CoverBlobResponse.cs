@@ -2,7 +2,7 @@
 
 namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
-public sealed record CoverMultimediaResponse
+public sealed record CoverBlobResponse
     : BlobReadResponse
 {
     public string? BackgroundColorHex { get; init; }

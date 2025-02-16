@@ -6,5 +6,5 @@ public readonly struct AppDetailInfoResponse
 
     public string Name { get; init; }
 
-    public CoverMultimediaResponse Cover { get; init; }
+    public CoverBlobResponse Cover { get; init; }
 }

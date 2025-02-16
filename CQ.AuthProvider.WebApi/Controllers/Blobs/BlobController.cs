@@ -109,7 +109,7 @@ public sealed class BlobController(
         {
             Id = Guid.NewGuid(),
             Key = key,
-            ReadUrl = readUrl
+            Url = readUrl
         };
     }
 }
