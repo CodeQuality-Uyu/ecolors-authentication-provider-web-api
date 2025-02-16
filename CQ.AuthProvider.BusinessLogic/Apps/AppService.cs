@@ -53,13 +53,19 @@ internal sealed class AppService(
             .ConfigureAwait(false);
 
         await _blobService
-            .MoveAppElementAsync(app, app.CoverId)
+            .MoveAppElementAsync(
+            accountLogged.AppLogged,
+            app,
+            app.CoverId)
             .ConfigureAwait(false);
 
         if (args.BackgroundCoverId.HasValue)
         {
             await _blobService
-            .MoveAppElementAsync(app, app.BackgroundCoverId.Value)
+            .MoveAppElementAsync(
+                accountLogged.AppLogged,
+                app,
+                app.BackgroundCoverId.Value)
             .ConfigureAwait(false);
         }
 

@@ -77,15 +77,15 @@ internal sealed class BlobService(IAmazonS3 _client)
     }
 
     public async Task MoveAppElementAsync(
-        App app,
+        App oldApp,
+        App newApp,
         Guid elementId)
     {
-        var bucketName = app.Tenant.Name.ToLower().Replace(" ", "-");
-        var appFolder = app.Name.ToLower();
+        var bucketName = newApp.Tenant.Name.ToLower().Replace(" ", "-");
 
-        var oldKey = $"{appFolder}/uploads/{elementId}";
+        var oldKey = $"{oldApp.Name.ToLower()}/uploads/{elementId}";
 
-        var newKey = $"{appFolder}/{app.Id}/${elementId}";
+        var newKey = $"{newApp.Name.ToLower()}/${elementId}";
 
         var copyRequest = new CopyObjectRequest
         {

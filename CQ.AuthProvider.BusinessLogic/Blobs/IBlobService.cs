@@ -20,6 +20,7 @@ public interface IBlobService
         Guid elementId);
 
     Task MoveAppElementAsync(
-        App app,
+        App oldApp,
+        App newApp,
         Guid elementId);
 }

@@ -38,7 +38,7 @@ services:
       Blob__Fake__IsActive: true
       Blob__AccessToken: "test"
       Blob__SecretToken: "test"
-      Blob__Fake__ServiceUrl: "http://localhost:4566"
+      Blob__Fake__ServiceUrl: "http://192.168.0.106:4566"
       # ASPNETCORE_HTTP_PORTS: 80
       # ASPNETCORE_URLS: http://*:80
     depends_on:
