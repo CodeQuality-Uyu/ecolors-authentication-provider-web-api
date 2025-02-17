@@ -47,8 +47,15 @@ internal sealed class AppRepository(
 
     async Task<App> IAppRepository.GetByIdAsync(Guid id)
     {
-        var app = await GetByIdAsync(id)
+        var query = Entities
+            .Include(a => a.Tenant)
+            .Where(a => a.Id == id);
+
+        var app = await query
+            .FirstOrDefaultAsync()
             .ConfigureAwait(false);
+
+        AssertNullEntity(app, id, nameof(App.Id));
 
         return _mapper.Map<App>(app);
     }

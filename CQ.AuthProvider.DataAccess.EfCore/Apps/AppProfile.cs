@@ -23,15 +23,25 @@ internal sealed class AppProfile
         CreateMap<AppEfCore, App>()
             .ForMember(
             destination => destination.Tenant,
-            options => options.MapFrom(
-                source => new Tenant
-                {
-                    Id = source.TenantId
-                }));
+            options => options.MapFrom<TenantResolver>());
         #endregion
 
         #region GetAll
         this.CreateOnlyPaginationMap<AppEfCore, App>();
         #endregion
     }
+}
+
+internal sealed class TenantResolver
+    : IValueResolver<AppEfCore, App, Tenant>
+{
+    public Tenant Resolve(
+        AppEfCore source,
+        App destination,
+        Tenant destMember,
+        ResolutionContext context) => new Tenant
+        {
+            Id = source.TenantId,
+            Name = source.Tenant?.Name
+        };
 }
