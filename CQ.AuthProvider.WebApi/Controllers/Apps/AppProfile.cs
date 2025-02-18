@@ -37,7 +37,7 @@ internal sealed class CoverMultimediaResolver(IBlobService _blobService)
         var (Id, Key, ReadUrl) = _blobService.GetReadElementInApp(source, source.CoverId);
 
         BlobReadResponse? backgroundCover = null;
-        if (Guard.IsNull(source.BackgroundCoverId))
+        if (source.BackgroundCoverId.HasValue)
         {
             var (backgroundCoverId, backgroundCoverKey, backgroundCoverReadUrl) = _blobService.GetReadElementInApp(source, source.BackgroundCoverId.Value);
             backgroundCover = new BlobReadResponse
