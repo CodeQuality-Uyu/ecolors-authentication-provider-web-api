@@ -246,21 +246,21 @@ internal sealed class AccountService(
 
         var rolesToDelete = account
             .Roles
-            .Where(r => !args.RolesIds.Contains(r.Id))
+            .Where(r => !args.RoleIds.Contains(r.Id))
             .ToList();
         if (rolesToDelete.Count != 0)
         {
-            var rolesIdsToDelete = rolesToDelete
+            var roleIdsToDelete = rolesToDelete
                 .Select(r => r.Id)
                 .ToList();
 
             await _accountRepository
-                .DeleteRolesByIdAsync(rolesIdsToDelete, account)
+                .DeleteRolesByIdAsync(roleIdsToDelete, account)
                 .ConfigureAwait(false);
         }
 
         var newRoles = args
-            .RolesIds
+            .RoleIds
             .Where(ri => !account.Roles.Exists(r => r.Id == ri))
             .ToList();
         if (newRoles.Count != 0)

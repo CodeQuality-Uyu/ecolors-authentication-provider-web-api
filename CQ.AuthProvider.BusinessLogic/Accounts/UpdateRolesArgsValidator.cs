@@ -8,7 +8,7 @@ internal sealed class UpdateRolesArgsValidator
 {
     public UpdateRolesArgsValidator()
     {
-        RuleFor(a => a.RolesIds)
+        RuleFor(a => a.RoleIds)
             .Required()
             .Must((ids) =>
             {
