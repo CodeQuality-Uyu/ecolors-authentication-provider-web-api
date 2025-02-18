@@ -135,7 +135,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.Property<string>("BackgroundCoverColorHex")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("BackgroundCoverId")
+                    b.Property<Guid?>("BackgroundCoverId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CoverId")
@@ -161,7 +161,6 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
-                            BackgroundCoverId = new Guid("00000000-0000-0000-0000-000000000000"),
                             CoverId = new Guid("00000000-0000-0000-0000-000000000000"),
                             IsDefault = true,
                             Name = "Auth Provider Web Api",
