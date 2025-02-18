@@ -8,7 +8,7 @@ public sealed record class App()
     public Guid Id { get; init; } = Guid.NewGuid();
 
     public string Name { get; init; } = null!;
-    
+
     public bool IsDefault { get; set; }
 
     public Guid CoverId { get; init; }
@@ -22,6 +22,7 @@ public sealed record class App()
     public App(
         string name,
         bool isDefault,
+        Guid coverId,
         string? backgroundCoverColorHex,
         Guid? backgroundCoverId,
         Tenant tenant)
@@ -30,6 +31,7 @@ public sealed record class App()
         Name = Guard.Normalize(name);
         IsDefault = isDefault;
         Tenant = tenant;
+        CoverId = coverId;
         BackgroundCoverColorHex = backgroundCoverColorHex;
         BackgroundCoverId = backgroundCoverId;
     }

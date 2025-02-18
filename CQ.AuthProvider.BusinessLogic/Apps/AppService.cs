@@ -27,6 +27,7 @@ internal sealed class AppService(
         var app = new App(
             args.Name,
             args.IsDefault,
+            args.CoverId,
             args.BackgroundCoverColorHex,
             args.BackgroundCoverId,
             accountLogged.Tenant);

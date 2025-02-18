@@ -13,5 +13,8 @@ internal sealed class CreateAppArgsValidator
 
         RuleFor(a => a.CoverId)
             .ValidId();
+
+        RuleFor(a => a.BackgroundCoverId)
+            .ValidId();
     }
 }
