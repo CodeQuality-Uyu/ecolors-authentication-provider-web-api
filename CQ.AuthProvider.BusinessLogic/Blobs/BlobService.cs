@@ -15,7 +15,7 @@ internal sealed class BlobService(IAmazonS3 _client)
         string tenantName)
     {
         var bucketName = tenantName.ToLower().Replace(" ", "-");
-        var appFolder = appName.ToLower();
+        var appFolder = appName.ToLower().Replace(" ", "-");
 
         var key = $"{appFolder}/accounts/{accountId}/${profilePictureId}";
 
@@ -49,7 +49,7 @@ internal sealed class BlobService(IAmazonS3 _client)
     {
         var bucketName = app.Tenant.Name.ToLower().Replace(" ", "-");
 
-        var key = $"{app.Name.ToLower()}/{elementId}";
+        var key = $"{app.Name.ToLower().Replace(" ", "-")}/{elementId}";
 
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
 
@@ -82,9 +82,9 @@ internal sealed class BlobService(IAmazonS3 _client)
     {
         var bucketName = newApp.Tenant.Name.ToLower().Replace(" ", "-");
 
-        var oldKey = $"{oldApp.Name.ToLower()}/upload/{elementId}";
+        var oldKey = $"{oldApp.Name.ToLower().Replace(" ", "-")}/upload/{elementId}";
 
-        var newKey = $"{newApp.Name.ToLower()}/${elementId}";
+        var newKey = $"{newApp.Name.ToLower().Replace(" ", "-")}/${elementId}";
 
         var copyRequest = new CopyObjectRequest
         {
@@ -103,6 +103,7 @@ internal sealed class BlobService(IAmazonS3 _client)
             BucketName = bucketName,
             Key = oldKey
         };
+
         await _client
             .DeleteObjectAsync(deleteRequest)
             .ConfigureAwait(false);

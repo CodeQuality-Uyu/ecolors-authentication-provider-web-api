@@ -25,7 +25,8 @@ public sealed class BlobController(
         var appFolder = (Guard.IsNotNull(request.AppId)
             ? accountLogged.Apps.First(a => a.Id == request.AppId).Name
             : accountLogged.AppLogged.Name)
-            .ToLower();
+            .ToLower()
+            .Replace(" ", "-");
 
         await EnsureBucketExistsAsync(bucketName, appFolder).ConfigureAwait(false);
 
