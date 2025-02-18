@@ -54,7 +54,7 @@ internal sealed class BlobService(IAmazonS3 _client)
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
 
         return new BlobRead(
-            app.Id,
+            elementId,
             key,
             readUrl);
     }
