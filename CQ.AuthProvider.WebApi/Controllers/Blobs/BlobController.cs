@@ -22,17 +22,27 @@ public sealed class BlobController(
         var accountLogged = this.GetAccountLogged();
 
         var bucketName = accountLogged.Tenant.Name.ToLower().Replace(" ", "-");
-        var appFolder = (Guard.IsNotNull(request.AppId)
-            ? accountLogged.Apps.First(a => a.Id == request.AppId).Name
-            : accountLogged.AppLogged.Name)
-            .ToLower()
-            .Replace(" ", "-");
 
-        await EnsureBucketExistsAsync(bucketName, appFolder).ConfigureAwait(false);
-
+        var key = request.Key;
         var id = Guid.NewGuid();
-        var key = $"{appFolder}/upload/{id}";
+        if (Guard.IsNullOrEmpty(request.Key))
+        {
+            var appFolder = (Guard.IsNotNull(request.AppId)
+                ? accountLogged.Apps.FirstOrDefault(a => a.Id == request.AppId)?.Name ?? accountLogged.AppLogged.Name
+                : accountLogged.AppLogged.Name)
+                .ToLower()
+                .Replace(" ", "-");
 
+            key = $"{appFolder}/upload/{id}";
+
+            await EnsureBucketExistsAsync(bucketName, appFolder).ConfigureAwait(false);
+        }
+        else
+        {
+            var keySplitted = key.Split("/");
+            var keyId = keySplitted[keySplitted.Length - 1];
+            id = Guid.Parse(keyId);
+        }
 
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
         var writeUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.PUT);
