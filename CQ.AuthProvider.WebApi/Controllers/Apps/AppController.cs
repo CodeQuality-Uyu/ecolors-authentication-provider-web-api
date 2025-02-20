@@ -53,4 +53,21 @@ public sealed class AppController(
 
         return _mapper.Map<AppDetailInfoResponse>(app);
     }
+
+    [HttpPatch("{id}/colors")]
+    [BearerAuthentication]
+    [SecureAuthorization("create-app")]
+    public async Task UpdateColorsAsync(
+        Guid id,
+        CreateAppCoverBackgroundColorArgs request)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        await _appService
+            .UpdateColorsByIdAsync(
+            id,
+            request,
+            accountLogged)
+            .ConfigureAwait(false);
+    }
 }

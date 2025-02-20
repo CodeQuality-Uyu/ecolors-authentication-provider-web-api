@@ -94,4 +94,21 @@ internal sealed class AppRepository(
 
         app.IsDefault = false;
     }
+
+    public async Task UpdateAndSaveColorsByIdAsync(
+        Guid id,
+        CreateAppCoverBackgroundColorArgs updates)
+    {
+        var backgroundColors = new CoverBackgroundColorEfCore
+        {
+            Colors = updates.Colors,
+            Config = updates.Config
+        };
+
+        await Entities
+            .Where(a => a.Id == id)
+            .ExecuteUpdateAsync(setter => setter.SetProperty(a => a.BackgroundColor, backgroundColors))
+            .ConfigureAwait(false)
+            ;
+    }
 }

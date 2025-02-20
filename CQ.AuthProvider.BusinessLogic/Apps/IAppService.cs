@@ -15,6 +15,11 @@ public interface IAppService
         AccountLogged accountLogged);
 
     Task<App> GetByIdAsync(Guid id);
+
+    Task UpdateColorsByIdAsync(
+        Guid id,
+        CreateAppCoverBackgroundColorArgs args,
+        AccountLogged accountLogged);
 }
 
 internal interface IAppInternalService

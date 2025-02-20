@@ -114,4 +114,20 @@ internal sealed class AppService(
 
         return apps;
     }
+
+    public async Task UpdateColorsByIdAsync(
+        Guid id,
+        CreateAppCoverBackgroundColorArgs args,
+        AccountLogged accountLogged)
+    {
+        var appIsNotOfAccount = !accountLogged.AppsIds.Contains(id);
+        if (appIsNotOfAccount)
+        {
+            throw new InvalidOperationException("Account doesn't belong to app");
+        }
+
+        await _appRepository
+            .UpdateAndSaveColorsByIdAsync(id, args)
+            .ConfigureAwait(false);
+    }
 }

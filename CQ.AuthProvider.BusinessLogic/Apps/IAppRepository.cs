@@ -22,4 +22,8 @@ public interface IAppRepository
         Guid tenantId,
         int page,
         int pageSize);
+
+    Task UpdateAndSaveColorsByIdAsync(
+        Guid id,
+        CreateAppCoverBackgroundColorArgs updates);
 }
