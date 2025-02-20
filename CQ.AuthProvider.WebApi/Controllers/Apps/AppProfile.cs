@@ -20,7 +20,7 @@ internal sealed class AppProfile
             .ForMember(destination => destination.Cover,
             options => options.MapFrom<CoverMultimediaResolver>());
 
-        CreateMap<CoverBackgroundColorResponse, CoverBackgroundColor>();
+        CreateMap<CoverBackgroundColor, CoverBackgroundColorResponse>();
         #endregion
     }
 }
