@@ -24,11 +24,21 @@ internal sealed class AppService(
             throw new InvalidOperationException("Name is in used");
         }
 
+        CoverBackgroundColor? backgroundColors = null;
+        if (args.BackgroundColors != null)
+        {
+            backgroundColors = new()
+            {
+                Colors = args.BackgroundColors.Colors,
+                Config = args.BackgroundColors.Config
+            };
+        }
+
         var app = new App(
             args.Name,
             args.IsDefault,
             args.CoverId,
-            args.BackgroundCoverColorHex,
+            backgroundColors,
             args.BackgroundCoverId,
             accountLogged.Tenant);
 

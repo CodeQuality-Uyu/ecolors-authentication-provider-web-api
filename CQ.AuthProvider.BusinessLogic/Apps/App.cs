@@ -13,7 +13,7 @@ public sealed record class App()
 
     public Guid CoverId { get; init; }
 
-    public string? BackgroundCoverColorHex { get; init; }
+    public CoverBackgroundColor? BackgroundColor { get; init; }
 
     public Guid? BackgroundCoverId { get; init; }
 
@@ -23,7 +23,7 @@ public sealed record class App()
         string name,
         bool isDefault,
         Guid coverId,
-        string? backgroundCoverColorHex,
+        CoverBackgroundColor? backgroundColor,
         Guid? backgroundCoverId,
         Tenant tenant)
         : this()
@@ -32,7 +32,7 @@ public sealed record class App()
         IsDefault = isDefault;
         Tenant = tenant;
         CoverId = coverId;
-        BackgroundCoverColorHex = backgroundCoverColorHex;
+        BackgroundColor = backgroundColor;
         BackgroundCoverId = backgroundCoverId;
     }
 }

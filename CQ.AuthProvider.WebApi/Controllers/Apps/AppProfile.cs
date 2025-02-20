@@ -3,7 +3,6 @@ using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Blobs;
-using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
@@ -21,6 +20,7 @@ internal sealed class AppProfile
             .ForMember(destination => destination.Cover,
             options => options.MapFrom<CoverMultimediaResolver>());
 
+        CreateMap<CoverBackgroundColorResponse, CoverBackgroundColor>();
         #endregion
     }
 }
@@ -52,7 +52,7 @@ internal sealed class CoverMultimediaResolver(IBlobService _blobService)
             Id = Id,
             Key = Key,
             Url = ReadUrl,
-            BackgroundColorHex = source.BackgroundCoverColorHex,
+            BackgroundColor = context.Mapper.Map<CoverBackgroundColorResponse>(source.BackgroundColor),
             BackgroundCover = backgroundCover
         };
     }

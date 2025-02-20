@@ -14,7 +14,7 @@ public sealed record class AppEfCore()
 
     public Guid CoverId { get; init; }
 
-    public string? BackgroundCoverColorHex { get; init; }
+    public CoverBackgroundColorEfCore? BackgroundColor { get; init; }
 
     public Guid? BackgroundCoverId { get; init; }
 

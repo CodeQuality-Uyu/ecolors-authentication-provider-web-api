@@ -9,6 +9,8 @@ using CQ.AuthProvider.DataAccess.EfCore.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Text.Json;
 
 namespace CQ.AuthProvider.DataAccess.EfCore;
 
@@ -81,6 +83,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     IsDefault = true,
                     TenantId = seedTenantId,
                 });
+
+            var backgroundColorConverter = new ValueConverter<CoverBackgroundColorEfCore, string>(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                v => JsonSerializer.Deserialize<CoverBackgroundColorEfCore>(v, (JsonSerializerOptions)null));
+
+            entity.Property(a => a.BackgroundColor).HasConversion(backgroundColorConverter);
         });
 
         modelBuilder.Entity<AccountEfCore>(entity =>

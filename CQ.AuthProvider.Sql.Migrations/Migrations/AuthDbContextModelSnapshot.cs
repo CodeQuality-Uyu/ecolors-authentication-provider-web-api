@@ -132,7 +132,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BackgroundCoverColorHex")
+                    b.Property<string>("BackgroundColor")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("BackgroundCoverId")
