@@ -43,6 +43,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     {
         var seedTenantId = Guid.Parse("882a262c-e1a7-411d-a26e-40c61f3b810c");
         var seedRoleId = Guid.Parse("77f7ff91-a807-43ac-bc76-1b34c52c5345");
+        var tenantMiniLogoId = Guid.Parse("0f491b27-2a93-479a-b674-5c49db77f05c");
+        var tenantCoverLogoId = Guid.Parse("d7cb8b70-f3e9-4ffa-a963-c72942a7f65b");
 
         modelBuilder.Entity<TenantEfCore>(entity =>
         {
@@ -61,8 +63,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = seedTenantId,
                     Name = "Seed Tenant",
                     OwnerId = AuthConstants.SEED_ACCOUNT_ID,
-                    MiniLogoId = Guid.Empty,
-                    CoverLogoId = Guid.Empty,
+                    MiniLogoId = tenantMiniLogoId,
+                    CoverLogoId = tenantCoverLogoId,
                 });
         });
 
