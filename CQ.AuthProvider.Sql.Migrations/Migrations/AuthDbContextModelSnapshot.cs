@@ -494,7 +494,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         {
                             Id = new Guid("77f7ff91-a807-43ac-bc76-1b34c52c5345"),
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
-                            Description = "Should be deleted once deployed",
+                            Description = "Should be deleted once used",
                             IsDefault = false,
                             IsPublic = false,
                             Name = "Seed",
@@ -536,11 +536,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         {
                             RoleId = new Guid("77f7ff91-a807-43ac-bc76-1b34c52c5345"),
                             PermissionId = new Guid("fc598ab0-1f14-4224-a187-4556a9926f6f")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("77f7ff91-a807-43ac-bc76-1b34c52c5345"),
-                            PermissionId = new Guid("a43d40d7-7aa6-4abb-a124-890d7218ac86")
                         },
                         new
                         {

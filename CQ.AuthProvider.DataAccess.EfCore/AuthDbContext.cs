@@ -197,7 +197,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     Id = seedRoleId,
                     Name = "Seed",
-                    Description = "Should be deleted once deployed",
+                    Description = "Should be deleted once used",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = false,
                     TenantId = seedTenantId,
@@ -263,11 +263,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     RoleId = seedRoleId,
                     PermissionId = getAllRolesPermissionId,
-                },
-                new RolePermission
-                {
-                    RoleId = seedRoleId,
-                    PermissionId = patchTenantOwnerPermissionId,
                 },
             #endregion Seed
 
