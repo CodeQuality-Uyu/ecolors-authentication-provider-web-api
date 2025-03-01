@@ -47,4 +47,6 @@ public interface IAccountRepository
     Task AddRolesByIdAsync(
         List<Guid> rolesIds,
         Account account);
+
+    Task DeleteAndSaveByIdAsync(Guid id);
 }

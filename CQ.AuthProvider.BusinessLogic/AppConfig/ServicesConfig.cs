@@ -64,6 +64,7 @@ public static class ServicesConfig
             .AddScoped<IMeService, MeService>()
 
             .AddScoped<ITenantService, TenantService>()
+            .AddScoped<ITenantInternalService, TenantService>()
             ;
 
         return services;

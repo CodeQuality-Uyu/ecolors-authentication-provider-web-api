@@ -42,7 +42,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var seedTenantId = Guid.Parse("882a262c-e1a7-411d-a26e-40c61f3b810c");
-        var seedAccountId = Guid.Parse("0ee82ee9-f480-4b13-ad68-579dc83dfa0d");
         var seedRoleId = Guid.Parse("77f7ff91-a807-43ac-bc76-1b34c52c5345");
 
         modelBuilder.Entity<TenantEfCore>(entity =>
@@ -61,7 +60,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     Id = seedTenantId,
                     Name = "Seed Tenant",
-                    OwnerId = seedAccountId,
+                    OwnerId = AuthConstants.SEED_ACCOUNT_ID,
                     MiniLogoId = Guid.Empty,
                     CoverLogoId = Guid.Empty,
                 });
@@ -106,7 +105,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             entity
             .HasData(new AccountEfCore
             {
-                Id = seedAccountId,
+                Id = AuthConstants.SEED_ACCOUNT_ID,
                 FirstName = "Seed",
                 LastName = "Seed",
                 FullName = "Seed Seed",
@@ -137,7 +136,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasData(
                 new AccountRole
                 {
-                    AccountId = seedAccountId,
+                    AccountId = AuthConstants.SEED_ACCOUNT_ID,
                     RoleId = seedRoleId,
                 });
         });
@@ -160,7 +159,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasData(
                 new AccountApp
                 {
-                    AccountId = seedAccountId,
+                    AccountId = AuthConstants.SEED_ACCOUNT_ID,
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                 });
         });

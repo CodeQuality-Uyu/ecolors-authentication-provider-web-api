@@ -40,4 +40,6 @@ public interface IRoleRepository
     Task<List<Role>> GetAllByIdsAsync(
         List<Guid> ids,
         AccountLogged accountLogged);
+
+    Task DeleteAndSaveByIdAsync(Guid id);
 }

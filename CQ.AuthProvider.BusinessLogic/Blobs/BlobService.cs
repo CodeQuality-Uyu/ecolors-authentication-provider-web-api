@@ -65,7 +65,7 @@ internal sealed class BlobService(IAmazonS3 _client)
     {
         var bucketName = tenant.Name.ToLower().Replace(" ", "-");
 
-        var key = $"${elementId}";
+        var key = $"{elementId}";
 
         var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
 

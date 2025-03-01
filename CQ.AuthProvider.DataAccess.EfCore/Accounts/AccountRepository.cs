@@ -231,4 +231,10 @@ IAccountRepository
             .AddRangeAsync(roles)
             .ConfigureAwait(false);
     }
+
+    public async Task DeleteAndSaveByIdAsync(Guid id)
+    {
+        await DeleteAndSaveAsync(a => a.Id == id)
+            .ConfigureAwait(false);
+    }
 }

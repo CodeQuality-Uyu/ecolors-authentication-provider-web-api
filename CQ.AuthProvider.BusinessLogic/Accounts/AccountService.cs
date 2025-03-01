@@ -2,6 +2,8 @@
 using CQ.AuthProvider.BusinessLogic.Identities;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Sessions;
+using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
@@ -15,6 +17,7 @@ internal sealed class AccountService(
     ISessionInternalService _sessionService,
     IRoleRepository _roleRepository,
     IAppInternalService _appService,
+    ITenantInternalService _tenantService,
     IUnitOfWork _unitOfWork)
     : IAccountInternalService
 {
@@ -133,7 +136,7 @@ internal sealed class AccountService(
         AccountLogged accountLogged)
     {
         await AssertExistenseOfEmailAsync(args.Email).ConfigureAwait(false);
-        
+
         List<Guid> appIds = [accountLogged.AppLogged.Id];
         if (Guard.IsNotNull(args.AppIds) && args.AppIds.Count > 0)
         {
@@ -186,7 +189,45 @@ internal sealed class AccountService(
             throw;
         }
 
+        await TransferTenantAndRemoveSeedAccountAsync(
+            account,
+            accountLogged)
+            .ConfigureAwait(false);
+
         return account;
+    }
+
+    private async Task TransferTenantAndRemoveSeedAccountAsync(
+        Account newAccount,
+        AccountLogged accountLogged)
+    {
+        if (accountLogged.Id != AuthConstants.SEED_ACCOUNT_ID)
+        {
+            return;
+        }
+
+        try
+        {
+            await _tenantService
+                .UpdateOwnerAsync(
+                accountLogged.Tenant.Id,
+                newAccount.Id,
+                accountLogged)
+                .ConfigureAwait(false);
+
+            await _identityRepository
+                .DeleteByIdAsync(accountLogged.Id)
+                .ConfigureAwait(false);
+
+            await _roleRepository
+                .DeleteAndSaveByIdAsync(accountLogged.RolesIds.First())
+                .ConfigureAwait(false);
+
+            await _accountRepository
+                .DeleteAndSaveByIdAsync(accountLogged.Id)
+                .ConfigureAwait(false);
+        }
+        catch (Exception) { }
     }
 
     private async Task<List<Role>> GetRoleAsync(

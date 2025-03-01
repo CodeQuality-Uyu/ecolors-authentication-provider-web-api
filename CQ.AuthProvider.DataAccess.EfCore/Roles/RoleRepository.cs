@@ -179,4 +179,10 @@ internal sealed class RoleRepository(
 
         return _mapper.Map<List<Role>>(roles);
     }
+
+    public async Task DeleteAndSaveByIdAsync(Guid id)
+    {
+        await DeleteAndSaveAsync(r => r.Id == id)
+            .ConfigureAwait(false);
+    }
 }
