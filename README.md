@@ -299,7 +299,6 @@ La web Api inicia con una cuenta semilla, un tenant semilla, la app de Auth Prov
 Esta cuenta permite realizar las siguientes operaciones:
 - Obtener los roles creados dentro del tenant (`getall-role`)
 - Crear una cuenta a otra persona en la plataforma dentro del tenant perteneciente a la cuenta semilla (`createcredentialsfor-account`)
-- Transferir el tenant a otra cuenta (`transfertenant-me`)
 
 ### Tenant semilla
 ```json
@@ -321,7 +320,7 @@ Es la app que representa el servidor de autenticacion para poder realizar operac
 ### Roles semilla
 Existen 3 roles, estos roles solo pueden ser usados en la app `Auth Provider Web Api`
 
-- `Seed` (este rol solo sirve para la cuenta semilla, se deberia de eliminar posteriormente haber usado la cuenta semilla)
+- `Seed` (este rol solo sirve para la cuenta semilla, se eliminara automaticamente cuando se cree una cuenta)
   
 - `Tenant Owner` (las cuentas con este rol pueden acceder a recursos para gestionar las aplicaciones dentro del tenant y el tenant usando la app Auth Provider Web Api)
   
@@ -345,13 +344,13 @@ Loguearse con la cuenta semilla
 ```
 
 ### Paso 2
-Crear una cuenta para otra persona con el rol de `Tenant Owner`
+Crear una cuenta para otra persona con el rol de `Auth Provider Web Api`
 
 - Endpoint: `POST accounts/credentials/for`
 - Body:
 ```JSON
 {
-    "roleId": "c1664759-22eb-44be-8faf-88f6042faa92", // Deberia de ser el Tenant Owner o Auth Provider Owner
+    "roleId": "c1664759-22eb-44be-8faf-88f6042faa92", // Deberia de ser el id del rol Auth Provider Web Api
     "email": "test@gmail.com",
     "locale":"uru",
     "lastname":"test",
@@ -360,25 +359,12 @@ Crear una cuenta para otra persona con el rol de `Tenant Owner`
     "timezone":"-3"
 }
 ```
+Una vez ejecutado, la `identificacion`, `cuenta`, `rol` y cualquier otra cosa relacionado a la semilla, se debio haber eliminado automaticamente, dejando esta nueva cuenta como el nuevo owner del `tenant` de la semilla. La nueva cuenta tambien tendra el rol `Tenant Owner` de haber declarado otro.
 
 ### Paso 3
-Migrar el tenant de la cuenta semilla a la nueva cuenta creada
-
-- Endpoint: `PATCH me/tenants/owner`
-- Body:
-```JSON
-{
-    "newOwnerId": "d23a2c050ab140a7b628cf71ad362cc8" // El id de la cuenta creada anteriormente
-}
-```
+Loguearse con la nueva cuenta con el rol de `Auth Provider Web Api` y `Tenant Owner`.
 
 ### Paso 4
-Borrar la cuenta semilla
-
-### Paso 5
-Loguearse con la nueva cuenta con el rol de `Tenant Owner`
-
-### Paso 6
 Actualizar el nombre del tenant
 - Endpoint: `PATCH me/tenants/name`
 - Body:
