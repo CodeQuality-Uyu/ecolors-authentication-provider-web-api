@@ -59,9 +59,9 @@ internal sealed class AppService(
             .CreateAsync(app)
             .ConfigureAwait(false);
 
-        await _accountRepository
-            .AddAppAsync(app, accountLogged)
-            .ConfigureAwait(false);
+        //await _accountRepository
+        //    .AddAppAsync(app, accountLogged)
+        //    .ConfigureAwait(false);
 
         await _blobService
             .MoveAppElementAsync(
