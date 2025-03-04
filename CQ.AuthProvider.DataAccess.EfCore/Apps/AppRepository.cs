@@ -111,4 +111,19 @@ internal sealed class AppRepository(
             .ConfigureAwait(false)
             ;
     }
+
+    public async Task<List<App>> GetByEmailAccountAsync(string email)
+    {
+        var query = ConcreteContext
+            .AccountsApps
+            .Include(a => a.App.Tenant)
+            .Where(a => a.Account.Email == email)
+            .Select(a => a.App);
+
+        var apps = await query
+            .ToListAsync()
+            .ConfigureAwait(false);
+
+        return _mapper.Map<List<App>>(apps);
+    }
 }

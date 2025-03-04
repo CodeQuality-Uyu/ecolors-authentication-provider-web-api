@@ -20,6 +20,8 @@ public interface IAppService
         Guid id,
         CreateAppCoverBackgroundColorArgs args,
         AccountLogged accountLogged);
+
+    Task<List<App>> GetByEmailAccountAsync(string email);
 }
 
 internal interface IAppInternalService

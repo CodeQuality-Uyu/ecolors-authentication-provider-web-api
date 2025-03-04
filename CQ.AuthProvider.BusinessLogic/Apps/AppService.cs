@@ -130,4 +130,13 @@ internal sealed class AppService(
             .UpdateAndSaveColorsByIdAsync(id, args)
             .ConfigureAwait(false);
     }
+
+    public async Task<List<App>> GetByEmailAccountAsync(string email)
+    {
+        var apps = await _appRepository
+            .GetByEmailAccountAsync(email)
+            .ConfigureAwait(false);
+
+        return apps;
+    }
 }

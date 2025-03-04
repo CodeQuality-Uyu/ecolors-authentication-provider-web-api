@@ -7,6 +7,8 @@ using CQ.ApiElements.Filters.Authentications;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.AuthProvider.WebApi.Extensions;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
+using CQ.AuthProvider.WebApi.Controllers.Apps;
+using CQ.AuthProvider.BusinessLogic.Apps;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 
@@ -14,6 +16,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 [Route("accounts")]
 public sealed class AccountController(
     IAccountService _accountService,
+    IAppService _appService,
     [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
     : ControllerBase
 {
@@ -72,5 +75,15 @@ public sealed class AccountController(
             request,
             accountLogged)
             .ConfigureAwait(false);
+    }
+
+    [HttpGet("{email}/apps")]
+    public async Task<List<AppDetailInfoResponse>> GetAppsWhereAccountBelongsAsync(string email)
+    {
+        var accounts = await _appService
+            .GetByEmailAccountAsync(email)
+            .ConfigureAwait(false);
+
+        return _mapper.Map<List<AppDetailInfoResponse>>(accounts);
     }
 }
