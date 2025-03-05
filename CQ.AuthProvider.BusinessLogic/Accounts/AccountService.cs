@@ -147,10 +147,8 @@ internal sealed class AccountService(
             .GetByIdAsync(appIds)
             .ConfigureAwait(false);
 
-        var roles = await GetRoleAsync(
-            args.RoleIds,
-            appIds,
-            accountLogged.Tenant.Id)
+        var roles = await _roleRepository
+            .GetByIdAsync(args.RoleIds, appIds, accountLogged.Tenant.Id)
             .ConfigureAwait(false);
 
         var account = Account.New(
@@ -228,16 +226,6 @@ internal sealed class AccountService(
                 .ConfigureAwait(false);
         }
         catch (Exception) { }
-    }
-
-    private async Task<List<Role>> GetRoleAsync(
-        List<Guid> roleIds,
-        List<Guid> appIds,
-        Guid tenantId)
-    {
-        return await _roleRepository
-            .GetByIdAsync(roleIds, appIds, tenantId)
-            .ConfigureAwait(false);
     }
     #endregion
 

@@ -169,7 +169,7 @@ internal sealed class RoleRepository(
     {
         var query = Entities
             .Where(r => ids.Contains(r.Id))
-            .Where(r => appIds.Contains(r.AppId))
+            //.Where(r => appIds.Contains(r.AppId))
             .Where(r => r.TenantId == tenantId)
             ;
 
