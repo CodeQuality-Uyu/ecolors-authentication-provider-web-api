@@ -13,7 +13,7 @@ internal sealed class AppService(
     IBlobService _blobService)
     : IAppInternalService
 {
-    public async Task CreateAsync(
+    public async Task<App> CreateAsync(
         CreateAppArgs args,
         AccountLogged accountLogged)
     {
@@ -83,6 +83,8 @@ internal sealed class AppService(
         await _unitOfWork
             .CommitChangesAsync()
             .ConfigureAwait(false);
+
+        return app;
     }
 
     public async Task<App> GetByIdAsync(Guid id)

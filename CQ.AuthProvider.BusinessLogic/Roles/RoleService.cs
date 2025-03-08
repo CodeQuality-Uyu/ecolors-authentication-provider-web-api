@@ -1,13 +1,17 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
+using CQ.Utility;
 using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 internal sealed class RoleService(
     IRoleRepository _roleRepository,
-    IPermissionRepository _permissionRepository)
+    IPermissionRepository _permissionRepository,
+    IAppRepository _appRepository)
     : IRoleInternalService
 {
     public async Task<Pagination<Role>> GetAllAsync(
@@ -77,13 +81,34 @@ internal sealed class RoleService(
             throw new InvalidOperationException($"The following permissions do not exist: {string.Join(",", missingPermissions)}");
         }
 
+        List<App> missedApps = [];
+        if (accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID.ToString()) ||
+            accountLogged.IsInRole(AuthConstants.TENANT_OWNER_ROLE_ID.ToString()))
+        {
+            var missedAppsIds = args
+                    .Roles
+                    .Select(r => r.AppId)
+                    .Where(a => a.HasValue && !accountLogged.AppsIds.Contains(a.Value))
+                    .Select(a => a.Value)
+                    .ToList();
+
+            missedApps = await _appRepository
+                .GetByIdAsync(missedAppsIds)
+                .ConfigureAwait(false);
+        }
+
         var roles = args
             .Roles
             .ConvertAll(r =>
             {
                 var app = r.AppId.HasValue
-                ? accountLogged.Apps.First(a => a.Id == r.AppId)
+                ? accountLogged.Apps.FirstOrDefault(a => a.Id == r.AppId)
                 : accountLogged.AppLogged;
+
+                if (Guard.IsNull(app))
+                {
+                    app = missedApps.First(a => a.Id == r.AppId);
+                }
 
                 return new Role
                 {

@@ -32,6 +32,11 @@ public sealed class SessionService(
             .Apps
             .FirstOrDefault(a => (args.AppId == null && a.IsDefault) || a.Id == args.AppId);
 
+        if (account.Apps.Count == 1 && Guard.IsNull(args.AppId))
+        {
+            app = account.Apps.First();
+        }
+
         if (Guard.IsNull(app))
         {
             throw new InvalidOperationException($"Account ({account.Email}) doesn't exist {(args.AppId == null ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app ({args.AppId})")}");

@@ -2,6 +2,7 @@
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Interceptors;
 using System.Data;
@@ -69,8 +70,7 @@ internal sealed class CreateBulkRoleArgsValidator
         return validationResult;
     }
 
-    public IValidationContext? BeforeValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
-    {
-        return null;
-    }
+    public IValidationContext? BeforeValidation(
+        ActionExecutingContext actionExecutingContext,
+        IValidationContext validationContext) => null;
 }

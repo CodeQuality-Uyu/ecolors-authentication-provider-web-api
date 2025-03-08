@@ -22,6 +22,10 @@ internal sealed class AppProfile
 
         CreateMap<CoverBackgroundColor, CoverBackgroundColorResponse>();
         #endregion
+
+        #region Create
+        CreateMap<App, AppCreatedResponse>();
+        #endregion
     }
 }
 

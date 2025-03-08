@@ -9,6 +9,8 @@ public sealed record class Role()
 
     public string Name { get; init; } = null!;
 
+    public string? Key { get; init; }
+
     public string Description { get; init; } = null!;
 
     public bool IsPublic { get; init; }

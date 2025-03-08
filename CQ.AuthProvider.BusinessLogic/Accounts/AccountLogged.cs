@@ -42,7 +42,10 @@ public record class AccountLogged()
 
     public bool IsInRole(string role)
     {
-        var isRole = Roles.Exists(r => r.Name == role);
+        var isRole = Roles.Exists(r =>
+        r.Name == role ||
+        r.Key == role ||
+        r.Id.ToString() == role);
 
         return isRole || HasPermission(role);
     }

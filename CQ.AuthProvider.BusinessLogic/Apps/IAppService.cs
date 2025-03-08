@@ -5,7 +5,7 @@ namespace CQ.AuthProvider.BusinessLogic.Apps;
 
 public interface IAppService
 {
-    Task CreateAsync(
+    Task<App> CreateAsync(
         CreateAppArgs args,
         AccountLogged accountLogged);
 

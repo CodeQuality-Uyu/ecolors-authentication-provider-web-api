@@ -68,8 +68,7 @@ internal sealed class CreateBulkPermissionArgsValidator
         return validationResult;
     }
 
-    public IValidationContext? BeforeValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
-    {
-        return null;
-    }
+    public IValidationContext? BeforeValidation(
+        ActionExecutingContext actionExecutingContext,
+        IValidationContext validationContext) => null;
 }

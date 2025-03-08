@@ -1,14 +1,18 @@
 ﻿using CQ.ApiElements;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Interceptors;
 
 namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 internal sealed class CreateRoleArgsValidator
-    : AbstractValidator<CreateRoleArgs>
+    : AbstractValidator<CreateRoleArgs>,
+    IValidatorInterceptor
 {
     public CreateRoleArgsValidator()
     {
@@ -51,14 +55,26 @@ internal sealed class CreateRoleArgsValidator
 
         var args = (CreateRoleArgs)validationContext.InstanceToValidate;
 
-        var accountLoggedHasApp = accountLogged.AppsIds.Contains(args.AppId.Value);
-        if (args.AppId == null || accountLoggedHasApp)
+        if(args.AppId == null)
         {
             return validationResult;
         }
 
-        validationResult.Errors.Add(new ValidationFailure("AppId", $"Account doen't have this AppId ({args.AppId})"));
+        var accountLoggedHasApp = accountLogged.AppsIds.Contains(args.AppId.Value);
+        if (args.AppId == null || 
+            accountLoggedHasApp ||
+            accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID.ToString()) ||
+            accountLogged.IsInRole(AuthConstants.TENANT_OWNER_ROLE_ID.ToString()))
+        {
+            return validationResult;
+        }
+
+        validationResult.Errors.Add(new ValidationFailure("AppId", $"Account doesn't have this AppId ({args.AppId})"));
 
         return validationResult;
     }
+
+    public IValidationContext? BeforeValidation(
+        ActionExecutingContext actionExecutingContext,
+        IValidationContext validationContext) => null;
 }
