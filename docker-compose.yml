@@ -27,7 +27,7 @@ services:
     build: .
     image: cq-auth-provider-webapi
     ports:
-      - "7190:8080"
+      - "7190:7190" 
     environment:
       ASPNETCORE_ENVIRONMENT: "Docker"
       ConnectionStrings__Auth: "Server=sqlserver,1433; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
@@ -39,7 +39,7 @@ services:
       Blob__AccessToken: "test"
       Blob__SecretToken: "test"
       Blob__Fake__ServiceUrl: "http://192.168.0.106:4566"
-      # ASPNETCORE_HTTP_PORTS: 80
+      ASPNETCORE_HTTP_PORTS: 7190
       # ASPNETCORE_URLS: http://*:80
     depends_on:
       - sqlserver
