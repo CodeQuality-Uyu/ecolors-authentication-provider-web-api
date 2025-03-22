@@ -44,8 +44,15 @@ public sealed class BlobController(
             id = Guid.Parse(keyId);
         }
 
-        var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
-        var writeUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.PUT);
+        var readUrl = GeneratePresignedUrl(
+            key,
+            bucketName,
+            HttpVerb.GET);
+        var writeUrl = GeneratePresignedUrl(
+            key,
+            bucketName,
+            HttpVerb.PUT,
+            request.ContentType);
 
         return new BlobReadWriteResponse(
             id,
@@ -56,7 +63,9 @@ public sealed class BlobController(
 
     private async Task EnsureBucketExistsAsync(string bucketName, string uploadFolder)
     {
-        var existBucket = await AmazonS3Util.DoesS3BucketExistV2Async(_client, bucketName).ConfigureAwait(false);
+        var existBucket = await AmazonS3Util
+            .DoesS3BucketExistV2Async(_client, bucketName)
+            .ConfigureAwait(false);
 
         if (existBucket)
         {
@@ -67,7 +76,24 @@ public sealed class BlobController(
         {
             BucketName = bucketName,
         };
-        await _client.PutBucketAsync(createBucketRequest);
+        await _client
+            .PutBucketAsync(createBucketRequest)
+            .ConfigureAwait(false);
+
+        var publicAccessBlockRequest = new PutPublicAccessBlockRequest
+        {
+            BucketName = bucketName,
+            PublicAccessBlockConfiguration = new PublicAccessBlockConfiguration
+            {
+                BlockPublicAcls = false,
+                IgnorePublicAcls = false,
+                BlockPublicPolicy = false,
+                RestrictPublicBuckets = false
+            }
+        };
+        await _client
+            .PutPublicAccessBlockAsync(publicAccessBlockRequest)
+            .ConfigureAwait(false);
 
         var policy = $@"{{
             ""Version"": ""2012-10-17"",
@@ -84,7 +110,7 @@ public sealed class BlobController(
         var createBucketPolicyRequest = new PutBucketPolicyRequest
         {
             BucketName = bucketName,
-            Policy = policy
+            Policy = policy,
         };
         await _client
             .PutBucketPolicyAsync(createBucketPolicyRequest)
@@ -94,13 +120,15 @@ public sealed class BlobController(
     private string GeneratePresignedUrl(
         string key,
         string bucketName,
-        HttpVerb verb)
+        HttpVerb verb,
+        string? contentType = null)
     {
         var request = new GetPreSignedUrlRequest
         {
             BucketName = bucketName,
             Key = key,
             Verb = verb,
+            ContentType = contentType,
             Expires = DateTime.UtcNow.AddMinutes(15),
         };
 

@@ -51,7 +51,7 @@ internal sealed class CreatePermissionArgsValidator
         IValidationContext validationContext) => null;
 }
 
-internal static class ValidatorExtensions
+public static class ValidatorExtensions
 {
     public static IRuleBuilderOptions<T, TProp> Required<T, TProp>(this IRuleBuilder<T, TProp> validator)
     {

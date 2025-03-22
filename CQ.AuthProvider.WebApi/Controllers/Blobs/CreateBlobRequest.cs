@@ -2,4 +2,5 @@
 
 public sealed record CreateBlobRequest(
     Guid? AppId,
-    string? Key);
+    string? Key,
+    string ContentType);

@@ -10,6 +10,7 @@ using CQ.AuthProvider.Postgres.Migrations;
 using CQ.AuthProvider.Sql.Migrations;
 using CQ.AuthProvider.WebApi.Controllers.Accounts;
 using CQ.AuthProvider.WebApi.Controllers.Apps;
+using CQ.AuthProvider.WebApi.Controllers.Blobs;
 using CQ.AuthProvider.WebApi.Controllers.Invitations;
 using CQ.AuthProvider.WebApi.Controllers.Me;
 using CQ.AuthProvider.WebApi.Controllers.Permissions;
@@ -23,6 +24,7 @@ using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.AppConfig;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
@@ -59,7 +61,9 @@ internal static class AuthProviderWebApiConfig
 
             // Replace the default result factory with a custom implementation.
             configuration.OverrideDefaultResultFactoryWith<CQBadRequestResponseFactory>();
-        });
+        })
+            .AddTransient<IValidator<CreateBlobRequest>, CreateBlobRequestValidator>()
+            ;
 
         return services;
     }
