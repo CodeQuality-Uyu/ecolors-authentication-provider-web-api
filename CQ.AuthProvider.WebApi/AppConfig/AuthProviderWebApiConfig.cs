@@ -80,13 +80,19 @@ internal static class AuthProviderWebApiConfig
 
             .ConfigureServices()
 
-            .ConfigureDbContexts(configuration)
+            .ConfigureDbContext(
+            configuration,
+            "Auth",
+            services.ConfigureAuthProviderSql,
+            services.ConfigureAuthProviderPostgres)
 
             .ConfigureDataAccess(configuration)
 
-            .ConfigureIdentityProvider(configuration)
+            .ConfigureLocalIdentityProvider(configuration)
 
             .AddFakeAuthentication<FakeAccountLogged>(configuration, environment, fakeAuthenticationLifeTime: LifeTime.Transient)
+
+            .Configure<DatabaseEngineSection>(configuration.GetSection(DatabaseEngineSection.SectionName))
             ;
 
         return services;
@@ -119,54 +125,46 @@ internal static class AuthProviderWebApiConfig
         return services;
     }
 
-    private static IServiceCollection ConfigureDbContexts(
+    private static IServiceCollection ConfigureLocalIdentityProvider(
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services
-             .ConfigureAuthDbContext(configuration)
-             .ConfigureIdentityDbContext(configuration);
-
-        return services;
-    }
-
-    private static IServiceCollection ConfigureAuthDbContext(
-        this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        var connectionString = configuration.GetConnectionString("Auth");
-        Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Auth");
-
-        var databaseEngine = configuration.GetSection<string>("DatabaseEngine:Auth");
-
-        services = databaseEngine switch
-        {
-            "Sql" => services.ConfigureAuthProviderSql(connectionString),
-
-            "Postgres" => services.ConfigureAuthProviderPostgres(connectionString),
-
-            _ => throw new InvalidOperationException("Invalid value of DatabaseEngine:Auth")
-        };
-
-        return services;
-    }
-
-    private static IServiceCollection ConfigureIdentityDbContext(
-        this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        var connectionString = configuration.GetConnectionString("Identity");
-        Guard.ThrowIsNullOrEmpty(connectionString, "ConnectionStrings:Identity");
-
         var databaseEngine = configuration.GetSection<string>("DatabaseEngine:Identity");
 
+        if (databaseEngine == DatabaseEngineOption.Sql || databaseEngine == DatabaseEngineOption.Postgres)
+        {
+            services
+                .ConfigureDbContext(
+                configuration,
+                "Identity",
+                services.ConfigureIdentityProviderSql,
+                services.ConfigureIdentityProviderPostgres)
+                .ConfigureIdentityProvider(configuration)
+                ;
+        }
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureDbContext(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        string connectionStringKey,
+        Func<string, IServiceCollection> ConfigureSql,
+        Func<string, IServiceCollection> ConfigurePostgres)
+    {
+        var connectionString = configuration.GetConnectionString(connectionStringKey);
+        Guard.ThrowIsNullOrEmpty(connectionString, $"ConnectionStrings:{connectionStringKey}");
+
+        var databaseEngine = configuration.GetSection<string>($"DatabaseEngine:{connectionStringKey}");
+
         services = databaseEngine switch
         {
-            "Sql" => services.ConfigureIdentityProviderSql(connectionString),
+            DatabaseEngineOption.Sql => ConfigureSql(connectionString),
 
-            "Postgres" => services.ConfigureIdentityProviderPostgres(connectionString),
+            DatabaseEngineOption.Postgres => ConfigurePostgres(connectionString),
 
-            _ => throw new InvalidOperationException("Invalid value of DatabaseEngineIdentity")
+            _ => throw new InvalidOperationException($"Invalid value of DatabaseEngine:{connectionStringKey}")
         };
 
         return services;

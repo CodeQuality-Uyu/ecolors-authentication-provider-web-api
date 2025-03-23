@@ -1,6 +1,7 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.WebApi.AppConfig;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.Extensions.Options;
 using AuthEfCoreDbContext = CQ.AuthProvider.DataAccess.EfCore.AuthDbContext;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Health;
@@ -10,26 +11,27 @@ namespace CQ.AuthProvider.WebApi.Controllers.Health;
 [Route("health", Name = "Health Check")]
 public class HealthController(
     AuthEfCoreDbContext authEfCoreContext,
+    IOptions<DatabaseEngineSection> databaseEngineSectionOptions,
     IIdentityProviderHealthService identityHealthService)
     : ControllerBase
 {
     [HttpGet]
     public object Get()
     {
-        var authDataBase = new
-        {
-            Provider = "EfCore",
-            Alive = authEfCoreContext.Ping()
-        };
+        var databaseEngineSection = databaseEngineSectionOptions.Value;
 
         return new
         {
-            v = "4",
+            v = "5",
             Alive = true,
-            Auth = authDataBase,
+            Auth = new
+            {
+                Provider = databaseEngineSection.Auth,
+                Alive = authEfCoreContext.Ping()
+            },
             Identity = new
             {
-                Server = identityHealthService.GetProvider(),
+                Server = databaseEngineSection.Identity,
                 Alive = identityHealthService.Ping()
             }
         };
