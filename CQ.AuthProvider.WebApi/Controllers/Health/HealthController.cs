@@ -22,7 +22,7 @@ public class HealthController(
 
         return new
         {
-            v = "5",
+            v = "6",
             Alive = true,
             Auth = new
             {
