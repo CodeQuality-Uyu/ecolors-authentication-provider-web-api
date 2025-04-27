@@ -88,7 +88,8 @@ internal sealed class RoleRepository(
         Guid tenantId)
     {
         var query = Entities
-            .Where(r => r.AppId == appId)
+            // TODO check in r.AppId and inheritence app
+            //.Where(r => r.AppId == appId)
             .Where(r => r.TenantId == tenantId)
             .Where(r => r.IsDefault);
 
@@ -169,6 +170,7 @@ internal sealed class RoleRepository(
     {
         var query = Entities
             .Where(r => ids.Contains(r.Id))
+            // TODO check in r.AppId and inheritence app
             //.Where(r => appIds.Contains(r.AppId))
             .Where(r => r.TenantId == tenantId)
             ;
