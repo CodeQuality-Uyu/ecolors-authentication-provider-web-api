@@ -31,6 +31,7 @@ internal sealed class RoleRepository(
             .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
             .Where(r => appId == null || r.AppId == appId)
+            .Where(r => r.Id != AuthConstants.SEED_ROLE_ID)
             .AsNoTracking()
             .AsSplitQuery();
 

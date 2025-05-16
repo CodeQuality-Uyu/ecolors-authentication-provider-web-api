@@ -42,7 +42,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var seedTenantId = Guid.Parse("882a262c-e1a7-411d-a26e-40c61f3b810c");
-        var seedRoleId = Guid.Parse("77f7ff91-a807-43ac-bc76-1b34c52c5345");
         var tenantMiniLogoId = Guid.Parse("0f491b27-2a93-479a-b674-5c49db77f05c");
         var tenantCoverLogoId = Guid.Parse("d7cb8b70-f3e9-4ffa-a963-c72942a7f65b");
 
@@ -139,7 +138,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new AccountRole
                 {
                     AccountId = AuthConstants.SEED_ACCOUNT_ID,
-                    RoleId = seedRoleId,
+                    RoleId = AuthConstants.SEED_ROLE_ID,
                 });
         });
 
@@ -197,7 +196,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 },
                 new RoleEfCore
                 {
-                    Id = seedRoleId,
+                    Id = AuthConstants.SEED_ROLE_ID,
                     Name = "Seed",
                     Description = "Should be deleted once used",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
@@ -258,12 +257,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             #region Seed
                 new RolePermission
                 {
-                    RoleId = seedRoleId,
+                    RoleId = AuthConstants.SEED_ROLE_ID,
                     PermissionId = createCredentialsForPermissionId,
                 },
                 new RolePermission
                 {
-                    RoleId = seedRoleId,
+                    RoleId = AuthConstants.SEED_ROLE_ID,
                     PermissionId = getAllRolesPermissionId,
                 },
             #endregion Seed
