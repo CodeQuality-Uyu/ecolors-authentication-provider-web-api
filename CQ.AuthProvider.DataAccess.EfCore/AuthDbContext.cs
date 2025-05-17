@@ -390,7 +390,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = appOwnerRoleId,
-                    PermissionId = createAppPermissionId
+                    PermissionId = createClientPermissionId
                 },
                 new RolePermission
                 {

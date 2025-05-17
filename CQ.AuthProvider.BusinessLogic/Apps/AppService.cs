@@ -121,7 +121,7 @@ internal sealed class AppService(
         AccountLogged accountLogged)
     {
         var hasListAppsPermission = accountLogged.HasPermission("getall-app");
-        var hasListOwnClientsPermission = accountLogged.HasPermission("getownall-client");
+        var hasListOwnClientsPermission = accountLogged.HasPermission("getall-client");
 
         if (!hasListAppsPermission && hasListOwnClientsPermission)
         {
