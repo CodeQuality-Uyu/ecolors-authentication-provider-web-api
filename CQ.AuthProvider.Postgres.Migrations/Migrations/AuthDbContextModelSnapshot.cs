@@ -141,6 +141,9 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.Property<Guid>("CoverId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("FatherAppId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
 
@@ -152,6 +155,8 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FatherAppId");
 
                     b.HasIndex("TenantId");
 
@@ -390,6 +395,26 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         },
                         new
                         {
+                            Id = new Guid("43da8440-39be-46cc-b8fe-da34961d2486"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can read clients of tenant",
+                            IsPublic = true,
+                            Key = "getall-client",
+                            Name = "Can read clients",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
+                            Id = new Guid("87013d07-c8ba-48f1-bb8c-510b7836fe1f"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can create clients of tenant",
+                            IsPublic = true,
+                            Key = "create-client",
+                            Name = "Can create clients",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
                             Id = new Guid("27c1378d-39df-4a57-b025-fc96963955a6"),
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             Description = "Can read all accounts",
@@ -509,6 +534,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             IsPublic = true,
                             Name = "Auth Provider Web Api Owner",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
+                            Id = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "App owner",
+                            IsDefault = false,
+                            IsPublic = true,
+                            Name = "App owner",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         });
                 });
 
@@ -621,6 +656,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         {
                             RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
                             PermissionId = new Guid("6323b5da-b78c-4984-a56e-8206775d3e91")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("2eab3c3a-792a-444a-97f3-01db00dffcab")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("43da8440-39be-46cc-b8fe-da34961d2486")
                         });
                 });
 
@@ -682,8 +727,8 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             Id = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c"),
-                            CoverLogoId = new Guid("00000000-0000-0000-0000-000000000000"),
-                            MiniLogoId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CoverLogoId = new Guid("d7cb8b70-f3e9-4ffa-a963-c72942a7f65b"),
+                            MiniLogoId = new Guid("0f491b27-2a93-479a-b674-5c49db77f05c"),
                             Name = "Seed Tenant",
                             OwnerId = new Guid("0ee82ee9-f480-4b13-ad68-579dc83dfa0d")
                         });
@@ -740,11 +785,17 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", b =>
                 {
+                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "FatherApp")
+                        .WithMany()
+                        .HasForeignKey("FatherAppId");
+
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("FatherApp");
 
                     b.Navigation("Tenant");
                 });
