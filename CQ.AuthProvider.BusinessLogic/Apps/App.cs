@@ -19,13 +19,16 @@ public sealed record class App()
 
     public Tenant Tenant { get; init; } = null!;
 
+    public App? FatherApp { get; init; } = null!;
+
     public App(
         string name,
         bool isDefault,
         Guid coverId,
         CoverBackgroundColor? backgroundColor,
         Guid? backgroundCoverId,
-        Tenant tenant)
+        Tenant tenant,
+        App? fatherApp)
         : this()
     {
         Name = Guard.Normalize(name);
@@ -34,5 +37,6 @@ public sealed record class App()
         CoverId = coverId;
         BackgroundColor = backgroundColor;
         BackgroundCoverId = backgroundCoverId;
+        FatherApp = fatherApp;
     }
 }

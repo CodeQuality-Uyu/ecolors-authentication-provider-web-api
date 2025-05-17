@@ -16,7 +16,12 @@ internal sealed class AppProfile
             options => options.Ignore())
             .ForMember(destination => destination.TenantId,
             options => options.MapFrom(
-                source => source.Tenant.Id));
+                source => source.Tenant.Id))
+            .ForMember(destination => destination.FatherApp,
+            options => options.Ignore())
+            .ForMember(destination => destination.FatherAppId,
+            options => options.MapFrom(
+                source => source.FatherApp != null ? source.FatherApp.Id : (Guid?)null));
         #endregion
 
         #region GetById
@@ -41,7 +46,7 @@ internal sealed class TenantResolver
         AppEfCore source,
         App destination,
         Tenant destMember,
-        ResolutionContext context) => new ()
+        ResolutionContext context) => new()
         {
             Id = source.TenantId,
             Name = source.Tenant?.Name

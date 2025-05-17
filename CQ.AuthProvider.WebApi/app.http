@@ -1,0 +1,11 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@server=https://localhost:7161
+
+POST {{server}}/apps
+Content-Type: application/json
+{
+  "name":"test",
+  "isDefault":false,
+  "coverId":"688dd06c-41d0-4c3d-9374-4ff106c5eeca",
+  "backgroundCoverId":"688dd06c-41d0-4c3d-9374-4ff106c5eeca"
+}

@@ -18,7 +18,7 @@ public sealed class AppController(
 {
     [HttpPost]
     [BearerAuthentication]
-    [SecureAuthorization]
+    [SecureAuthorization("create-app", "create-client")]
     public async Task<AppCreatedResponse> CreateAsync(CreateAppArgs request)
     {
         var accountLogged = this.GetAccountLogged();
@@ -32,7 +32,7 @@ public sealed class AppController(
 
     [HttpGet]
     [BearerAuthentication]
-    [SecureAuthorization]
+    [SecureAuthorization("getall-app", "getall-client")]
     public async Task<Pagination<AppBasicInfoResponse>> GetAllAsync(
         [FromQuery] Guid? fatherAppId = null,
         [FromQuery] int page = 1,

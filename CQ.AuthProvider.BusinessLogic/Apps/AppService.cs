@@ -34,13 +34,21 @@ internal sealed class AppService(
             };
         }
 
+        var canCreateClientPermission = accountLogged.HasPermission("create-client");
+        App? fatherApp = null;
+        if(canCreateClientPermission)
+        {
+            fatherApp = accountLogged.AppLogged;
+        }
+
         var app = new App(
             args.Name,
             args.IsDefault,
             args.CoverId,
             backgroundColors,
             args.BackgroundCoverId,
-            accountLogged.Tenant);
+            accountLogged.Tenant,
+            fatherApp);
 
         if (app.IsDefault)
         {
@@ -59,6 +67,7 @@ internal sealed class AppService(
             .CreateAsync(app)
             .ConfigureAwait(false);
 
+        //Agrega la app a la cuenta logueada
         //await _accountRepository
         //    .AddAppAsync(app, accountLogged)
         //    .ConfigureAwait(false);
@@ -111,6 +120,14 @@ internal sealed class AppService(
         int pageSize,
         AccountLogged accountLogged)
     {
+        var hasListAppsPermission = accountLogged.HasPermission("getall-app");
+        var hasListOwnClientsPermission = accountLogged.HasPermission("getownall-client");
+
+        if (!hasListAppsPermission && hasListOwnClientsPermission)
+        {
+            fatherAppId = accountLogged.AppLogged.Id;
+        }
+
         var apps = await _appRepository
             .GetPaginationAsync(
             accountLogged.Tenant.Id,

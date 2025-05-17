@@ -24,7 +24,7 @@ public sealed record class AppEfCore()
 
     public Guid? FatherAppId { get; init; }
 
-    public AppEfCore FatherApp { get; init; } = null!;
+    public AppEfCore? FatherApp { get; init; }
 
     public List<RoleEfCore> Roles { get; init; } = [];
 
