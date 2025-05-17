@@ -18,8 +18,9 @@ public interface IAppRepository
 
     Task CreateAsync(App app);
 
-    Task<Pagination<App>> GetAllAsync(
+    Task<Pagination<App>> GetPaginationAsync(
         Guid tenantId,
+        Guid? fatherAppId,
         int page,
         int pageSize);
 

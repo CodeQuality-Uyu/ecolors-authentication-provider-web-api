@@ -9,7 +9,8 @@ public interface IAppService
         CreateAppArgs args,
         AccountLogged accountLogged);
 
-    Task<Pagination<App>> GetAllAsync(
+    Task<Pagination<App>> GetPaginationAsync(
+        Guid? fatherAppId,
         int page,
         int pageSize,
         AccountLogged accountLogged);

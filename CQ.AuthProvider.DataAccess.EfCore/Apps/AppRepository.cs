@@ -60,16 +60,18 @@ internal sealed class AppRepository(
         return _mapper.Map<App>(app);
     }
 
-    public async Task<Pagination<App>> GetAllAsync(
+    public async Task<Pagination<App>> GetPaginationAsync(
         Guid tenantId,
+        Guid? fatherAppId,
         int page,
         int pageSize)
     {
-        var pagination = await Entities
-            .ToPaginateAsync(
-            a => a.TenantId == tenantId,
-            page,
-            pageSize)
+        var query = Entities
+            .Where(a => a.TenantId == tenantId)
+            .Where(a => fatherAppId == null || fatherAppId == Guid.Empty || a.FatherAppId == fatherAppId);
+
+        var pagination = await query
+            .ToPaginateAsync(page, pageSize)
             .ConfigureAwait(false);
 
         return _mapper.Map<Pagination<App>>(pagination);

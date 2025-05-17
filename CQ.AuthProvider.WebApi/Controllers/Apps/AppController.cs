@@ -34,13 +34,18 @@ public sealed class AppController(
     [BearerAuthentication]
     [SecureAuthorization]
     public async Task<Pagination<AppBasicInfoResponse>> GetAllAsync(
+        [FromQuery] Guid? fatherAppId = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
         var accountLogged = this.GetAccountLogged();
 
         var apps = await _appService
-            .GetAllAsync(page, pageSize, accountLogged)
+            .GetPaginationAsync(
+            fatherAppId,
+            page,
+            pageSize,
+            accountLogged)
             .ConfigureAwait(false);
 
         return _mapper.Map<Pagination<AppBasicInfoResponse>>(apps);

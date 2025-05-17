@@ -22,6 +22,10 @@ public sealed record class AppEfCore()
 
     public TenantEfCore Tenant { get; init; } = null!;
 
+    public Guid? FatherAppId { get; init; }
+
+    public AppEfCore FatherApp { get; init; } = null!;
+
     public List<RoleEfCore> Roles { get; init; } = [];
 
     public List<PermissionEfCore> Permissions { get; init; } = [];

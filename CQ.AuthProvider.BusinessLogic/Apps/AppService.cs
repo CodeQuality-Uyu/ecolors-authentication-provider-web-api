@@ -105,13 +105,18 @@ internal sealed class AppService(
         return apps;
     }
 
-    public async Task<Pagination<App>> GetAllAsync(
+    public async Task<Pagination<App>> GetPaginationAsync(
+        Guid? fatherAppId,
         int page,
         int pageSize,
         AccountLogged accountLogged)
     {
         var apps = await _appRepository
-            .GetAllAsync(accountLogged.Tenant.Id, page, pageSize)
+            .GetPaginationAsync(
+            accountLogged.Tenant.Id,
+            fatherAppId,
+            page,
+            pageSize)
             .ConfigureAwait(false);
 
         return apps;
