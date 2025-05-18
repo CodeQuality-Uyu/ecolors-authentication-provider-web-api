@@ -396,8 +396,18 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     RoleId = appOwnerRoleId,
                     PermissionId = getAllClientsPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = appOwnerRoleId,
+                    PermissionId = createRolePermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = appOwnerRoleId,
+                    PermissionId = getAllRolesPermissionId
                 }
-            #endregion App Owner
+                #endregion App Owner
             );
         });
 

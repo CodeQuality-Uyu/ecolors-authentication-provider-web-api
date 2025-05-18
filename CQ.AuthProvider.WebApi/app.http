@@ -12,7 +12,12 @@ Authorization: {{token}}
   "backgroundCoverId":"688dd06c-41d0-4c3d-9374-4ff106c5eeca"
 }
 
-####
+###
 
 GET {{server}}/apps?page=1&pageSize=10
+Authorization:{{token}}
+
+###
+
+GET {{server}}/roles
 Authorization:{{token}}

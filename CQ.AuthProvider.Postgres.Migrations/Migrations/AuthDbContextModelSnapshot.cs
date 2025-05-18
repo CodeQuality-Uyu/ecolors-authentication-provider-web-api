@@ -666,6 +666,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         {
                             RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
                             PermissionId = new Guid("43da8440-39be-46cc-b8fe-da34961d2486")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("fc598ab0-1f14-4224-a187-4556a9926f6f")
                         });
                 });
 
