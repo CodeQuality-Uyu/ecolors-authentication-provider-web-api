@@ -21,3 +21,7 @@ Authorization:{{token}}
 
 GET {{server}}/roles
 Authorization:{{token}}
+
+###
+GET {{server}}/me
+Authorization:{{token}}
