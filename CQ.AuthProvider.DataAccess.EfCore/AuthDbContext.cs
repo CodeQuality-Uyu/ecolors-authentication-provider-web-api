@@ -400,6 +400,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = appOwnerRoleId,
+                    PermissionId = createCredentialsForPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = appOwnerRoleId,
                     PermissionId = createRolePermissionId
                 },
                 new RolePermission

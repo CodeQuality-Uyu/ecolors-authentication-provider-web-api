@@ -670,6 +670,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         new
                         {
                             RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("046c65a8-d3c1-41d7-bda2-a96d393cc18e")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
                             PermissionId = new Guid("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9")
                         },
                         new
