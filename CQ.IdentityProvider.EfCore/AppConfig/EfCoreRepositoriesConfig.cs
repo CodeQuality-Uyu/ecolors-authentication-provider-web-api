@@ -2,6 +2,7 @@
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.Identities;
 using CQ.UnitOfWork.EfCore.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +16,7 @@ public static class EfCoreRepositoriesConfig
     {
         services
             .AddScoped<IIdentityProviderHealthService, IdentityDbContext>()
-
+            .AddScoped<PasswordHasher<string>>()
             .AddAbstractionRepository<Identity, IIdentityRepository, IdentityRepository>(LifeTime.Scoped)
             ;
 
