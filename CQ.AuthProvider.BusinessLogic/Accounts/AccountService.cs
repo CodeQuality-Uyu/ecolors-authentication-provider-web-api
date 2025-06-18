@@ -236,6 +236,7 @@ internal sealed class AccountService(
         await _identityRepository
             .UpdatePasswordByIdAsync(
             accountLogged.Id,
+            args.OldPassword,
             args.NewPassword)
             .ConfigureAwait(false);
     }

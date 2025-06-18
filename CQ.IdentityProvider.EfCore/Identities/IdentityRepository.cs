@@ -2,6 +2,7 @@
 using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace CQ.IdentityProvider.EfCore.Identities;
 
@@ -22,7 +23,7 @@ public sealed class IdentityRepository(
     {
         var identity = await GetAsync(i => i.Email == email).ConfigureAwait(false);
 
-        var result = passwordHasher.VerifyHashedPassword(email, identity.Password, password);
+        var result = passwordHasher.VerifyHashedPassword(identity.Id.ToString(), identity.Password, password);
         if (result == PasswordVerificationResult.Failed)
         {
             throw new SpecificResourceNotFoundException<Identity>("condition", string.Empty);
@@ -33,8 +34,17 @@ public sealed class IdentityRepository(
 
     public async Task UpdatePasswordByIdAsync(
         Guid id,
+        string oldPassword,
         string newPassword)
     {
+        var identity = await GetByIdAsync(id).ConfigureAwait(false);
+
+        var result = passwordHasher.VerifyHashedPassword(identity.Id.ToString(), identity.Password, oldPassword);
+        if (result == PasswordVerificationResult.Failed)
+        {
+            throw new SpecificResourceNotFoundException<Identity>("id", string.Empty);
+        }
+
         var passwordHashed = passwordHasher.HashPassword(id.ToString(), newPassword);
 
         await UpdateAndSaveByIdAsync(id, new { Password = passwordHashed }).ConfigureAwait(false);

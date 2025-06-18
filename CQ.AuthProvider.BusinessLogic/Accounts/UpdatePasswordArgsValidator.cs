@@ -9,5 +9,8 @@ internal sealed class UpdatePasswordArgsValidator
     {
         RuleFor(a => a.NewPassword)
             .RequiredPassword();
+
+        RuleFor(a => a.OldPassword)
+            .RequiredPassword();
     }
 }
