@@ -6,6 +6,7 @@ using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
+using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,17 +21,18 @@ internal sealed class RoleRepository(
     IRoleRepository
 {
     public async Task<Pagination<Role>> GetAllAsync(
-        Guid? appId,
+        Guid appId,
         bool? isPrivate,
         int page,
         int pageSize,
         AccountLogged accountLogged)
     {
+
         var query = Entities
             .Include(r => r.App)
             .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
-            .Where(r => appId == null || r.AppId == accountLogged.AppLogged.Id)
+            .Where(r => r.AppId == appId)
             .AsNoTracking()
             .AsSplitQuery();
 
