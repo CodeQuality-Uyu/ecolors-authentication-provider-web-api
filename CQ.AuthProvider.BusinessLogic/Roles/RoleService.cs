@@ -21,9 +21,15 @@ internal sealed class RoleService(
         int pageSize,
         AccountLogged accountLogged)
     {
+        var accountNotInApp = !accountLogged.AppsIds.Contains(appId ?? Guid.Empty);
+        if (accountNotInApp)
+        {
+            appId = accountLogged.AppLogged.Id;
+        }
+
         var roles = await _roleRepository
             .GetAllAsync(
-            appId,
+            appId!.Value,
             isPrivate,
             page,
             pageSize,

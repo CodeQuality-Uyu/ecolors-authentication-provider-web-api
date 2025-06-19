@@ -6,7 +6,7 @@ namespace CQ.AuthProvider.BusinessLogic.Roles;
 public interface IRoleRepository
 {
     Task<Pagination<Role>> GetAllAsync(
-        Guid? appId,
+        Guid appId,
         bool? isPrivate,
         int page,
         int pageSize,
