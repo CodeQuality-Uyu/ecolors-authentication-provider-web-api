@@ -101,11 +101,11 @@ internal sealed class AppRepository(
         Guid id,
         CreateAppCoverBackgroundColorArgs updates)
     {
-        var backgroundColors = new CoverBackgroundColorEfCore
+        var backgroundColors = updates.Colors.Count != 0 ? new CoverBackgroundColorEfCore
         {
             Colors = updates.Colors,
             Config = updates.Config
-        };
+        } : null;
 
         await Entities
             .Where(a => a.Id == id)

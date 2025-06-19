@@ -7,17 +7,16 @@ using CQ.Utility;
 namespace CQ.AuthProvider.BusinessLogic.Apps;
 
 internal sealed class AppService(
-    IAppRepository _appRepository,
-    IAccountRepository _accountRepository,
-    IUnitOfWork _unitOfWork,
-    IBlobService _blobService)
+    IAppRepository appRepository,
+    IUnitOfWork unitOfWork,
+    IBlobService blobService)
     : IAppInternalService
 {
     public async Task<App> CreateAsync(
         CreateAppArgs args,
         AccountLogged accountLogged)
     {
-        var existAppWithName = await _appRepository
+        var existAppWithName = await appRepository
             .ExistsByNameInTenantAsync(args.Name, accountLogged.Tenant.Id);
         if (existAppWithName)
         {
@@ -52,18 +51,18 @@ internal sealed class AppService(
 
         if (app.IsDefault)
         {
-            var defaultApp = await _appRepository
+            var defaultApp = await appRepository
                 .GetOrDefaultByDefaultAsync(app.Tenant.Id)
                 .ConfigureAwait(false);
             if (Guard.IsNotNull(defaultApp))
             {
-                await _appRepository
+                await appRepository
                     .RemoveDefaultByIdAsync(defaultApp.Id)
                     .ConfigureAwait(false);
             }
         }
 
-        await _appRepository
+        await appRepository
             .CreateAsync(app)
             .ConfigureAwait(false);
 
@@ -72,16 +71,16 @@ internal sealed class AppService(
         //    .AddAppAsync(app, accountLogged)
         //    .ConfigureAwait(false);
 
-        await _blobService
+        await blobService
             .MoveAppElementAsync(
             accountLogged.AppLogged,
             app,
             app.CoverId)
             .ConfigureAwait(false);
 
-        if (args.BackgroundCoverId.HasValue)
+        if (app.BackgroundCoverId.HasValue)
         {
-            await _blobService
+            await blobService
             .MoveAppElementAsync(
                 accountLogged.AppLogged,
                 app,
@@ -89,7 +88,7 @@ internal sealed class AppService(
             .ConfigureAwait(false);
         }
 
-        await _unitOfWork
+        await unitOfWork
             .CommitChangesAsync()
             .ConfigureAwait(false);
 
@@ -98,7 +97,7 @@ internal sealed class AppService(
 
     public async Task<App> GetByIdAsync(Guid id)
     {
-        var app = await _appRepository
+        var app = await appRepository
             .GetByIdAsync(id)
             .ConfigureAwait(false);
 
@@ -107,7 +106,7 @@ internal sealed class AppService(
 
     public async Task<List<App>> GetByIdAsync(List<Guid> ids)
     {
-        var apps = await _appRepository
+        var apps = await appRepository
             .GetByIdAsync(ids)
             .ConfigureAwait(false);
 
@@ -128,7 +127,7 @@ internal sealed class AppService(
             fatherAppId = accountLogged.AppLogged.Id;
         }
 
-        var apps = await _appRepository
+        var apps = await appRepository
             .GetPaginationAsync(
             accountLogged.Tenant.Id,
             fatherAppId,
@@ -150,14 +149,14 @@ internal sealed class AppService(
             throw new InvalidOperationException("Account doesn't belong to app");
         }
 
-        await _appRepository
+        await appRepository
             .UpdateAndSaveColorsByIdAsync(id, args)
             .ConfigureAwait(false);
     }
 
     public async Task<List<App>> GetByEmailAccountAsync(string email)
     {
-        var apps = await _appRepository
+        var apps = await appRepository
             .GetByEmailAccountAsync(email)
             .ConfigureAwait(false);
 

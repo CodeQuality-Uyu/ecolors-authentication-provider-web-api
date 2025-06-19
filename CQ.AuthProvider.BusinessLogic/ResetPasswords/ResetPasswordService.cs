@@ -69,6 +69,7 @@ internal sealed class ResetPasswordService(
         await _identityRepository
             .UpdatePasswordByIdAsync(
             resetPasswordOldApplication.Account.Id,
+            string.Empty,
             args.NewPassword)
             .ConfigureAwait(false);
 

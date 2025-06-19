@@ -2,7 +2,6 @@
 using CQ.Exceptions;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace CQ.IdentityProvider.EfCore.Identities;
 

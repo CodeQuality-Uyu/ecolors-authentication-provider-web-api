@@ -34,7 +34,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountsApps", (string)null);
+                    b.ToTable("AccountsApps");
 
                     b.HasData(
                         new
@@ -87,7 +87,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
 
                     b.HasData(
                         new
@@ -116,7 +116,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountsRoles", (string)null);
+                    b.ToTable("AccountsRoles");
 
                     b.HasData(
                         new
@@ -160,7 +160,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Apps", (string)null);
+                    b.ToTable("Apps");
 
                     b.HasData(
                         new
@@ -214,7 +214,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Invitations", (string)null);
+                    b.ToTable("Invitations");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>
@@ -250,7 +250,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
 
                     b.HasData(
                         new
@@ -395,6 +395,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         },
                         new
                         {
+                            Id = new Guid("cfd3f238-a446-4f4f-81f0-f770974f0cc3"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can update colors of app in tenant",
+                            IsPublic = true,
+                            Key = "updatecolors-app",
+                            Name = "Can update colors of app",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
                             Id = new Guid("43da8440-39be-46cc-b8fe-da34961d2486"),
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             Description = "Can read clients of tenant",
@@ -467,7 +477,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("ResetPasswords", (string)null);
+                    b.ToTable("ResetPasswords");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", b =>
@@ -502,7 +512,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -544,6 +554,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             IsPublic = true,
                             Name = "App owner",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
+                            Id = new Guid("01e55142-6b8c-4e7e-9d71-1e459d07796d"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Owner of an app that is client of other App",
+                            IsDefault = false,
+                            IsPublic = true,
+                            Name = "Client owner",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         });
                 });
 
@@ -559,7 +579,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolesPermissions", (string)null);
+                    b.ToTable("RolesPermissions");
 
                     b.HasData(
                         new
@@ -660,6 +680,21 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("cfd3f238-a446-4f4f-81f0-f770974f0cc3")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("fc598ab0-1f14-4224-a187-4556a9926f6f")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
                             PermissionId = new Guid("87013d07-c8ba-48f1-bb8c-510b7836fe1f")
                         },
                         new
@@ -674,13 +709,23 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         },
                         new
                         {
-                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            RoleId = new Guid("01e55142-6b8c-4e7e-9d71-1e459d07796d"),
+                            PermissionId = new Guid("cfd3f238-a446-4f4f-81f0-f770974f0cc3")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("01e55142-6b8c-4e7e-9d71-1e459d07796d"),
                             PermissionId = new Guid("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9")
                         },
                         new
                         {
-                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            RoleId = new Guid("01e55142-6b8c-4e7e-9d71-1e459d07796d"),
                             PermissionId = new Guid("fc598ab0-1f14-4224-a187-4556a9926f6f")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("01e55142-6b8c-4e7e-9d71-1e459d07796d"),
+                            PermissionId = new Guid("046c65a8-d3c1-41d7-bda2-a96d393cc18e")
                         });
                 });
 
@@ -709,7 +754,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("AppId");
 
-                    b.ToTable("Sessions", (string)null);
+                    b.ToTable("Sessions");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
@@ -736,7 +781,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants", (string)null);
+                    b.ToTable("Tenants");
 
                     b.HasData(
                         new

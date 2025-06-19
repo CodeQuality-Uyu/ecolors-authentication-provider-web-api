@@ -63,7 +63,7 @@ public sealed class AppController(
 
     [HttpPatch("{id}/colors")]
     [BearerAuthentication]
-    [SecureAuthorization("create-app")]
+    [SecureAuthorization]
     public async Task UpdateColorsAsync(
         Guid id,
         CreateAppCoverBackgroundColorArgs request)
