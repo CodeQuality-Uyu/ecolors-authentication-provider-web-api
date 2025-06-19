@@ -26,18 +26,11 @@ internal sealed class RoleRepository(
         int pageSize,
         AccountLogged accountLogged)
     {
-        var hasGetAllClientPermission = accountLogged.HasPermission("getall-client");
-        if (hasGetAllClientPermission)
-        {
-            appId ??= accountLogged.AppLogged.Id;
-        }
-
         var query = Entities
             .Include(r => r.App)
             .Where(r => r.TenantId == accountLogged.Tenant.Id)
             .Where(r => isPrivate == null || r.IsPublic == !isPrivate)
-            .Where(r => appId == null || r.AppId == appId || r.App.FatherAppId == appId)
-            .Where(r => r.Id != AuthConstants.SEED_ROLE_ID)
+            .Where(r => appId == null || r.AppId == accountLogged.AppLogged.Id)
             .AsNoTracking()
             .AsSplitQuery();
 

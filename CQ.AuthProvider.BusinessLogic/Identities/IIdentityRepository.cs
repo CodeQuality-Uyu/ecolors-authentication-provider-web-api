@@ -5,7 +5,8 @@ public interface IIdentityRepository
     Task CreateAndSaveAsync(Identity identity);
 
     Task UpdatePasswordByIdAsync(
-        Guid identityId,
+        Guid id,
+        string oldPassword,
         string newPassword);
 
     Task DeleteByIdAsync(Guid id);

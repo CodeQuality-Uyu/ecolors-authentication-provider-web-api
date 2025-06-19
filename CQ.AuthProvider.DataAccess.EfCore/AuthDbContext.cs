@@ -42,9 +42,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var seedTenantId = Guid.Parse("882a262c-e1a7-411d-a26e-40c61f3b810c");
-        var tenantMiniLogoId = Guid.Parse("0f491b27-2a93-479a-b674-5c49db77f05c");
-        var tenantCoverLogoId = Guid.Parse("d7cb8b70-f3e9-4ffa-a963-c72942a7f65b");
         var appOwnerRoleId = Guid.Parse("4579a206-b6c7-4d58-9d36-c3e0923041b5");
+        var clientOwnerRoleId = Guid.Parse("01e55142-6b8c-4e7e-9d71-1e459d07796d");
 
         modelBuilder.Entity<TenantEfCore>(entity =>
         {
@@ -63,8 +62,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = seedTenantId,
                     Name = "Seed Tenant",
                     OwnerId = AuthConstants.SEED_ACCOUNT_ID,
-                    MiniLogoId = tenantMiniLogoId,
-                    CoverLogoId = tenantCoverLogoId,
+                    MiniLogoId = Guid.Parse("0f491b27-2a93-479a-b674-5c49db77f05c"),
+                    CoverLogoId = Guid.Parse("d7cb8b70-f3e9-4ffa-a963-c72942a7f65b"),
                 });
         });
 
@@ -224,6 +223,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     IsPublic = true,
                     TenantId = seedTenantId,
                     IsDefault = false,
+                },
+                new RoleEfCore
+                {
+                    Id = clientOwnerRoleId,
+                    Name = "Client owner",
+                    Description = "Owner of an app that is client of other App",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    IsPublic = true,
+                    TenantId = seedTenantId,
+                    IsDefault = false,
                 });
         });
 
@@ -249,6 +258,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
         var createAppPermissionId = Guid.Parse("2eab3c3a-792a-444a-97f3-01db00dffcab");
         var getAllAppsPermissionId = Guid.Parse("6323b5da-b78c-4984-a56e-8206775d3e91");
+        var updateColorsOfAppPermissionId = Guid.Parse("cfd3f238-a446-4f4f-81f0-f770974f0cc3");
 
         var createClientPermissionId = Guid.Parse("87013d07-c8ba-48f1-bb8c-510b7836fe1f");
         var getAllClientsPermissionId = Guid.Parse("43da8440-39be-46cc-b8fe-da34961d2486");
@@ -390,6 +400,21 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = appOwnerRoleId,
+                    PermissionId = updateColorsOfAppPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = appOwnerRoleId,
+                    PermissionId = createRolePermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = appOwnerRoleId,
+                    PermissionId = getAllRolesPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = appOwnerRoleId,
                     PermissionId = createClientPermissionId
                 },
                 new RolePermission
@@ -402,17 +427,30 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     RoleId = appOwnerRoleId,
                     PermissionId = createCredentialsForPermissionId
                 },
+                #endregion App Owner
+
+                #region Client Owner
                 new RolePermission
                 {
-                    RoleId = appOwnerRoleId,
+                    RoleId = clientOwnerRoleId,
+                    PermissionId = updateColorsOfAppPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = clientOwnerRoleId,
                     PermissionId = createRolePermissionId
                 },
                 new RolePermission
                 {
-                    RoleId = appOwnerRoleId,
+                    RoleId = clientOwnerRoleId,
                     PermissionId = getAllRolesPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = clientOwnerRoleId,
+                    PermissionId = createCredentialsForPermissionId
                 }
-                #endregion App Owner
+                #endregion Client Owner
             );
         });
 
@@ -584,6 +622,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can read apps",
                     Description = "Can read apps of tenant",
                     Key = "getall-app",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = seedTenantId,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = updateColorsOfAppPermissionId,
+                    Name = "Can update colors of app",
+                    Description = "Can update colors of app in tenant",
+                    Key = "updatecolors-app",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = seedTenantId,
                     IsPublic = true,

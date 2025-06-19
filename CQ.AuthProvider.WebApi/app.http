@@ -2,6 +2,28 @@
 @server=https://localhost:7161
 @token=Bearer dc78981390ab44f8a1bd254f6605ad6c
 
+POST {{server}}/sessions/credentials
+Content-Type: application/json
+{
+  "email":"test@hash.com",
+  "password":"!12345679"
+}
+###
+
+POST {{server}}/accounts/credentials
+Content-Type: application/json
+{
+  "appId": "289926a3-8265-4f6e-9bf5-d896c7064711",
+  "email": "test@hash.com",
+  "password": "!12345678",
+  "firstName": "prueba",
+  "lastName": "prueba",
+  "locale": "Uruguay",
+  "timeZone": "-3",
+  "profilePictureId": null
+}
+###
+
 POST {{server}}/apps
 Content-Type: application/json
 Authorization: {{token}}
