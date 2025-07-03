@@ -27,7 +27,7 @@ public sealed class MeController(
         return _mapper.Map<SessionCreatedResponse>(accountLogged);
     }
 
-    [HttpPatch("me/password")]
+    [HttpPatch("credentials/password")]
     public async Task UpdatePasswordAsync(UpdatePasswordArgs request)
     {
         var accountLogged = this.GetAccountLogged();
