@@ -46,7 +46,9 @@ public sealed class IdentityRepository(
 
         var passwordHashed = passwordHasher.HashPassword(id.ToString(), newPassword);
 
-        await UpdateAndSaveByIdAsync(id, new { Password = passwordHashed }).ConfigureAwait(false);
+        identity.Password = passwordHashed;
+
+        await BaseContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
     async Task IIdentityRepository.CreateAndSaveAsync(Identity identity)

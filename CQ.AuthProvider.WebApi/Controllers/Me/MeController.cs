@@ -27,7 +27,7 @@ public sealed class MeController(
         return _mapper.Map<SessionCreatedResponse>(accountLogged);
     }
 
-    [HttpPatch("credentials/password")]
+    [HttpPatch("credentials-password")]
     public async Task UpdatePasswordAsync(UpdatePasswordArgs request)
     {
         var accountLogged = this.GetAccountLogged();
@@ -37,7 +37,7 @@ public sealed class MeController(
             .ConfigureAwait(false);
     }
 
-    [HttpPatch("tenants/owner")]
+    [HttpPatch("tenants-owner")]
     [SecureAuthorization]
     public async Task TransferTenantAsync(TransferTenantRequest request)
     {
@@ -51,7 +51,7 @@ public sealed class MeController(
             .ConfigureAwait(false);
     }
 
-    [HttpPatch("tenants/name")]
+    [HttpPatch("tenants-name")]
     [SecureAuthorization]
     public async Task UpdateTenantNameAsync(UpdateTenantNameRequest request)
     {

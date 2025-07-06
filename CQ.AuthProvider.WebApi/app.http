@@ -2,11 +2,12 @@
 @server=https://localhost:7161
 @token=Bearer dc78981390ab44f8a1bd254f6605ad6c
 
+# @name login
 POST {{server}}/sessions/credentials
 Content-Type: application/json
 {
-  "email":"test@hash.com",
-  "password":"!12345679"
+  "email":"seller@admin.com",
+  "password":"!123456789"
 }
 ###
 
@@ -46,4 +47,13 @@ Authorization:{{token}}
 
 ###
 GET {{server}}/me
-Authorization:{{token}}
+Authorization: {{login.response.body.$.token}}
+
+###
+PATCH {{server}}/me/credentials-password
+Authorization: {{login.response.body.$.token}}
+Content-Type: application/json
+{
+  "oldPassword":"!123456789",
+  "newPassword":"!12345678"
+}
