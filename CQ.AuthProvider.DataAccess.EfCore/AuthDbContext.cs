@@ -84,11 +84,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     TenantId = seedTenantId,
                 });
 
-            var backgroundColorConverter = new ValueConverter<CoverBackgroundColorEfCore, string>(
-                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
-                v => JsonSerializer.Deserialize<CoverBackgroundColorEfCore>(v, (JsonSerializerOptions)null));
-
-            entity.Property(a => a.BackgroundColor).HasConversion(backgroundColorConverter);
+            entity
+            .Property(a => a.BackgroundColor)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                v => JsonSerializer.Deserialize<CoverBackgroundColorEfCore>(v, JsonSerializerOptions.Default));
         });
 
         modelBuilder.Entity<AccountEfCore>(entity =>

@@ -51,9 +51,11 @@ public sealed class IdentityRepository(
         await BaseContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
-    async Task IIdentityRepository.CreateAndSaveAsync(Identity identity)
+    async Task IIdentityRepository.CreateAndSaveAsync(Identity identity, bool passwordIsHash)
     {
-        identity.Password = passwordHasher.HashPassword(identity.Id.ToString(), identity.Password);
+        identity.Password = passwordIsHash
+            ? identity.Password
+            : passwordHasher.HashPassword(identity.Id.ToString(), identity.Password);
 
         await CreateAndSaveAsync(identity).ConfigureAwait(false);
     }

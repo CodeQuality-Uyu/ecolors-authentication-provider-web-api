@@ -8,7 +8,8 @@ public sealed record CreateAccountArgs(
     string Locale,
     string TimeZone,
     Guid? ProfilePictureId,
-    Guid AppId);
+    Guid AppId,
+    bool PasswordIsHash = false);
 
 public sealed record CreateAccountForArgs(
     string Email,

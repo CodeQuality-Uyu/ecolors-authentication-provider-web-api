@@ -45,7 +45,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations.IdentityDb
                         {
                             Id = new Guid("0ee82ee9-f480-4b13-ad68-579dc83dfa0d"),
                             Email = "seed@cq.com",
-                            Password = "!12345678"
+                            Password = "AQAAAAEAACcQAAAAEPsvS9UPGBepUkrx3vhkeyoOBVrQFUURtbldx6xuqpW79GVKXbChBf37/GRGw3N+0w=="
                         });
                 });
 #pragma warning restore 612, 618
