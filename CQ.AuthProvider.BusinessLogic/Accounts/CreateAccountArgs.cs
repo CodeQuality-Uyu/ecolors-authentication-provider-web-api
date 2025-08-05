@@ -9,7 +9,7 @@ public sealed record CreateAccountArgs(
     string TimeZone,
     Guid? ProfilePictureId,
     Guid AppId,
-    bool PasswordIsHash = false);
+    bool IsPasswordHashed = false);
 
 public sealed record CreateAccountForArgs(
     string Email,

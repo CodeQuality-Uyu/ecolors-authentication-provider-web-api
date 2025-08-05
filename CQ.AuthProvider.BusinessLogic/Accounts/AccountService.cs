@@ -91,7 +91,7 @@ internal sealed class AccountService(
         return await CreateAccountAsync(
             account,
             args.Password,
-            args.PasswordIsHash)
+            args.IsPasswordHashed)
             .ConfigureAwait(false);
     }
 
