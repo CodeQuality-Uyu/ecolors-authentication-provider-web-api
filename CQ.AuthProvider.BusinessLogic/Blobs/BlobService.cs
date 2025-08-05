@@ -5,7 +5,7 @@ using CQ.AuthProvider.BusinessLogic.Tenants;
 
 namespace CQ.AuthProvider.BusinessLogic.Blobs;
 
-internal sealed class BlobService(IAmazonS3 _client)
+public sealed class BlobService(IAmazonS3 _client)
     : IBlobService
 {
     public BlobRead GetReadProfilePicture(

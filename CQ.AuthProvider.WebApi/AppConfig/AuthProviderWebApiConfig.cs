@@ -4,6 +4,7 @@ using Amazon.S3;
 using AutoMapper;
 using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
+using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.Postgres.Migrations;
@@ -160,9 +161,9 @@ internal static class AuthProviderWebApiConfig
 
         services = databaseEngine switch
         {
-            DatabaseEngineOption.Sql => ConfigureSql(connectionString),
+            DatabaseEngineOption.Sql => ConfigureSql(connectionString!),
 
-            DatabaseEngineOption.Postgres => ConfigurePostgres(connectionString),
+            DatabaseEngineOption.Postgres => ConfigurePostgres(connectionString!),
 
             _ => throw new InvalidOperationException($"Invalid value of DatabaseEngine:{connectionStringKey}")
         };
@@ -199,31 +200,38 @@ internal static class AuthProviderWebApiConfig
         IConfiguration configuration,
         IWebHostEnvironment environment)
     {
-        var blobConfiguration = configuration.GetSection<BlobConfiguration>("Blob");
+        var blobConfiguration = configuration.GetSection<BlobSection>("Blob");
 
-        var credentials = new BasicAWSCredentials(blobConfiguration.AccessToken, blobConfiguration.SecretToken);
-
-        AmazonS3Client client;
-
-        if (blobConfiguration.Fake.IsActive && !environment.IsProd())
+        if(blobConfiguration.Type == BlobType.Mock)
         {
-            var fakeConfig = new AmazonS3Config
-            {
-                ServiceURL = blobConfiguration.Fake.ServiceUrl,
-                ForcePathStyle = true,
-            };
-
-            client = new AmazonS3Client(credentials, fakeConfig);
+            services.AddTransient<IBlobService, FakeBlobService>();
         }
         else
         {
-            var region = RegionEndpoint.GetBySystemName(blobConfiguration.Region);
+            var credentials = new BasicAWSCredentials(blobConfiguration.Config.AccessToken, blobConfiguration.Config.SecretToken);
+            AmazonS3Client client;
 
-            client = new AmazonS3Client(credentials, region);
+            if (blobConfiguration.Type == BlobType.Aws)
+            {
+                var region = RegionEndpoint.GetBySystemName(blobConfiguration.Config.Region);
+
+                client = new AmazonS3Client(credentials, region);
+            }
+            else
+            {
+                var fakeConfig = new AmazonS3Config
+                {
+                    ServiceURL = blobConfiguration.Config.ServiceUrl,
+                    ForcePathStyle = true,
+                };
+
+                client = new AmazonS3Client(credentials, fakeConfig);
+            }
+
+            services
+                .AddTransient<IBlobService, BlobService>()
+                .AddService<IAmazonS3>(client, LifeTime.Transient);
         }
-
-        services
-            .AddSingleton<IAmazonS3>(client);
 
         return services;
     }
