@@ -1,4 +1,5 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Identities;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,9 +19,9 @@ public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> option
             .HasData(
                 new Identity
                 {
-                    Id = Guid.Parse("0EE82EE9-F480-4B13-AD68-579DC83DFA0D"),
+                    Id = AuthConstants.SEED_ACCOUNT_ID,
                     Email = "seed@cq.com",
-                    Password = "!12345678"
+                    Password = "AQAAAAEAACcQAAAAEPsvS9UPGBepUkrx3vhkeyoOBVrQFUURtbldx6xuqpW79GVKXbChBf37/GRGw3N+0w=="
                 });
         });
     }

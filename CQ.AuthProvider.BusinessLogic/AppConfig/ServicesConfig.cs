@@ -27,8 +27,6 @@ public static class ServicesConfig
 
             .AddEmailServices()
 
-            .ConfigBlob()
-
             .AddTokenService<GuidTokenService>(LifeTime.Transient)
 
             .AddItemLoggedService<SessionService>(LifeTime.Scoped)
@@ -75,15 +73,6 @@ public static class ServicesConfig
         services
             .AddTransient<IEmailService, EmailService>();
         
-        return services;
-    }
-
-    private static IServiceCollection ConfigBlob(this IServiceCollection services)
-    {
-        services
-            .AddScoped<IBlobService, BlobService>()
-            ;
-
         return services;
     }
 

@@ -24,7 +24,8 @@ internal sealed class AccountService(
     #region Create
     public async Task<CreateAccountResult> CreateIdentityAndSaveAsync(
         Account account,
-        string password)
+        string password,
+        bool passwordIsHash = false)
     {
         var identity = new Identity
         {
@@ -34,7 +35,7 @@ internal sealed class AccountService(
         };
 
         await _identityRepository
-            .CreateAndSaveAsync(identity)
+            .CreateAndSaveAsync(identity, passwordIsHash)
             .ConfigureAwait(false);
 
         await _accountRepository
@@ -89,17 +90,20 @@ internal sealed class AccountService(
 
         return await CreateAccountAsync(
             account,
-            args.Password)
+            args.Password,
+            args.IsPasswordHashed)
             .ConfigureAwait(false);
     }
 
     private async Task<CreateAccountResult> CreateAccountAsync(
         Account account,
-        string password)
+        string password,
+        bool passwordIsHash)
     {
         var result = await CreateIdentityAndSaveAsync(
             account,
-            password)
+            password,
+            passwordIsHash)
             .ConfigureAwait(false);
 
         try

@@ -2,7 +2,7 @@
 
 public interface IIdentityRepository
 {
-    Task CreateAndSaveAsync(Identity identity);
+    Task CreateAndSaveAsync(Identity identity, bool passwordIsHash = false);
 
     Task UpdatePasswordByIdAsync(
         Guid id,

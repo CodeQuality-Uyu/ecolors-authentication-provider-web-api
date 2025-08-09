@@ -30,7 +30,8 @@ internal interface IAccountInternalService
 {
     Task<CreateAccountResult> CreateIdentityAndSaveAsync(
         Account account,
-        string password);
+        string password,
+        bool passwordIsHash = false);
 
     Task AssertByEmailAsync(string email);
 }

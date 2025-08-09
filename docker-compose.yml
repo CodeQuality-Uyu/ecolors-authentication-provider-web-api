@@ -34,11 +34,10 @@ services:
       ConnectionStrings__Identity: "Server=sqlserver,1433; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
       DatabaseEngine__Auth: "Sql"
       DatabaseEngine__Identity: "Sql"
-      Authentication__Fake__IsActive: false
-      Blob__Fake__IsActive: true
-      Blob__AccessToken: "test"
-      Blob__SecretToken: "test"
-      Blob__Fake__ServiceUrl: "http://192.168.0.106:4566"
+      Authentication__Type: "LocalStack"
+      Blob__Config__AccessToken: "test"
+      Blob__Config__SecretToken: "test"
+      Blob__Config__ServiceUrl: "http://192.168.0.106:4566"
       ASPNETCORE_HTTP_PORTS: 7190
       # ASPNETCORE_URLS: http://*:80
     depends_on:
