@@ -30,14 +30,14 @@ services:
       - "5002:8080" 
     environment:
       ASPNETCORE_ENVIRONMENT: "Docker"
-      ConnectionStrings__Auth: "Server=sql-server,5001; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
-      ConnectionStrings__Identity: "Server=sql-server,5001; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
+      ConnectionStrings__Auth: "Server=sql-server,1433; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
+      ConnectionStrings__Identity: "Server=sql-server,1433; Database=IdentityProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
       DatabaseEngine__Auth: "Sql"
       DatabaseEngine__Identity: "Sql"
       Blob__Type: "localstack"
       Blob__Config__AccessToken: "test"
       Blob__Config__SecretToken: "test"
-      Blob__Config__ServiceUrl: "http://192.168.0.106:5000"
+      Blob__Config__ServiceUrl: "http://localhost:5000"
       ASPNETCORE_HTTP_PORTS: 8080
       # ASPNETCORE_URLS: http://*:80
     depends_on:
