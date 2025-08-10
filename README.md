@@ -62,13 +62,13 @@ La ultima seccion, `Cors`, sirve para configurar los cors de la plataforma sin n
     "Identity: "Sql"
   },
   "Blob": {
-    "Fake": {
-      "IsActive": true,
+    "Type": "mock", //"mock", "localstack", "aws"
+    "Config": {
       "ServiceUrl": "http://localhost:9000"
+      "AccessToken": "test",
+      "SecretToken": "test",
+      "Region": "us-east-1"
     },
-    "AccessToken": "test",
-    "SecretToken": "test",
-    "Region": "us-east-1"
   },
   "Cors": {
     "Origins": ["*"]
@@ -86,10 +86,10 @@ ConnectionStrings__Identity: "Server=sqlserver,1433; Database=IdentityProvider; 
 Authentication__Fake__IsActive: false
 DatabaseEngine__Auth: Sql
 DatabaseEngine__Identity: Sql
-Blob__Fake__IsActive: true
-Blob__Fake__ServiceUrl: "http://localhost:9000"
-Blob__AccessToken: test
-Blob__SecretToken: test
+Blob__Type: "mock"
+Blob__Config__ServiceUrl: "http://localhost:9000"
+Blob__Config__AccessToken: test
+Blob__Config__SecretToken: test
 ```
 
 ## Uso de autenticacion mockeada
