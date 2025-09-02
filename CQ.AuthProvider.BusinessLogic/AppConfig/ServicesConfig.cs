@@ -1,7 +1,6 @@
 ﻿using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Me;
@@ -94,6 +93,7 @@ public static class ServicesConfig
             .AddTransient<IValidator<CreateResetPasswordArgs>, CreateResetPasswordArgsValidator>()
             .AddTransient<IValidator<CreateTenantArgs>, CreateTenantArgsValidator>()
             .AddTransient<IValidator<UpdateRolesArgs>, UpdateRolesArgsValidator>()
+            .AddTransient<IValidator<UpdateDefaultCoinArgs>, UpdateDefaultCoinArgsValidator>()
             ;
 
         return services;

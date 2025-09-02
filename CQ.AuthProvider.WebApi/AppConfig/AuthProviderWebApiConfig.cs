@@ -52,7 +52,7 @@ internal static class AuthProviderWebApiConfig
             configuration.EnableFormBindingSourceAutomaticValidation = true;
 
             // Enable validation for parameters bound from `BindingSource.Query` binding sources.
-            //configuration.EnableQueryBindingSourceAutomaticValidation = true;
+            configuration.EnableQueryBindingSourceAutomaticValidation = true;
 
             // Enable validation for parameters bound from `BindingSource.Path` binding sources.
             configuration.EnablePathBindingSourceAutomaticValidation = true;

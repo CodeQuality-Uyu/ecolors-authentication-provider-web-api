@@ -114,6 +114,17 @@ internal sealed class AppRepository(
             ;
     }
 
+    public async Task UpdateAndSaveDefaultCoinByIdAsync(
+        Guid id,
+        Coin defaultCoin)
+    {
+        await Entities
+            .Where(a => a.Id == id)
+            .ExecuteUpdateAsync(setter => setter.SetProperty(a => a.DefaultCoin, defaultCoin))
+            .ConfigureAwait(false)
+            ;
+    }
+
     public async Task<List<App>> GetByEmailAccountAsync(string email)
     {
         var query = ConcreteContext

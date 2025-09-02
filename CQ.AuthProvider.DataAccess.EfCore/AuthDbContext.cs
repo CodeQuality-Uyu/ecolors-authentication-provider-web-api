@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Utils;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;
@@ -9,7 +10,6 @@ using CQ.AuthProvider.DataAccess.EfCore.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Text.Json;
 
 namespace CQ.AuthProvider.DataAccess.EfCore;
@@ -82,7 +82,17 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Auth Provider Web Api",
                     IsDefault = true,
                     TenantId = seedTenantId,
+                    DefaultCoin = Coin.UYU,
+                    BackgroundColor = new CoverBackgroundColorEfCore
+                    {
+                        Colors = [ "#FFFFFF" ],
+                        Config = "linear-gradient(310g, {{colors}})"
+                    },
                 });
+
+            entity
+            .Property(e => e.DefaultCoin)
+            .HasDefaultValue(Coin.UYU);
 
             entity
             .Property(a => a.BackgroundColor)

@@ -28,5 +28,9 @@ public interface IAppRepository
         Guid id,
         CreateAppCoverBackgroundColorArgs updates);
 
+    Task UpdateAndSaveDefaultCoinByIdAsync(
+        Guid id,
+        Coin defaultCoin);
+
     Task<List<App>> GetByEmailAccountAsync(string email);
 }

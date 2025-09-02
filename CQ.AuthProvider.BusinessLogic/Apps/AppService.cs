@@ -9,7 +9,8 @@ namespace CQ.AuthProvider.BusinessLogic.Apps;
 internal sealed class AppService(
     IAppRepository appRepository,
     IUnitOfWork unitOfWork,
-    IBlobService blobService)
+    IBlobService blobService,
+    IAccountRepository accountRepository)
     : IAppInternalService
 {
     public async Task<App> CreateAsync(
@@ -35,7 +36,7 @@ internal sealed class AppService(
 
         var canCreateClientPermission = accountLogged.HasPermission("create-client");
         App? fatherApp = null;
-        if(canCreateClientPermission)
+        if (canCreateClientPermission)
         {
             fatherApp = accountLogged.AppLogged;
         }
@@ -47,7 +48,8 @@ internal sealed class AppService(
             backgroundColors,
             args.BackgroundCoverId,
             accountLogged.Tenant,
-            fatherApp);
+            fatherApp,
+            args.DefaultCoin);
 
         if (app.IsDefault)
         {
@@ -66,10 +68,12 @@ internal sealed class AppService(
             .CreateAsync(app)
             .ConfigureAwait(false);
 
-        //Agrega la app a la cuenta logueada
-        //await _accountRepository
-        //    .AddAppAsync(app, accountLogged)
-        //    .ConfigureAwait(false);
+        if (args.AddToApp)
+        {
+            await accountRepository
+            .AddAppAsync(app, accountLogged)
+            .ConfigureAwait(false);
+        }
 
         await blobService
             .MoveAppElementAsync(
@@ -151,6 +155,23 @@ internal sealed class AppService(
 
         await appRepository
             .UpdateAndSaveColorsByIdAsync(id, args)
+            .ConfigureAwait(false);
+    }
+
+    public async Task UpdateDefaultCoinByIdAsync(
+        Guid id,
+        UpdateDefaultCoinArgs args,
+        AccountLogged accountLogged)
+    {
+        var appIsNotOfAccount = !accountLogged.AppsIds.Contains(id);
+        
+        if (appIsNotOfAccount)
+        {
+            throw new InvalidOperationException("Account doesn't belong to app");
+        }
+        
+        await appRepository
+            .UpdateAndSaveDefaultCoinByIdAsync(id, args.DefaultCoin)
             .ConfigureAwait(false);
     }
 

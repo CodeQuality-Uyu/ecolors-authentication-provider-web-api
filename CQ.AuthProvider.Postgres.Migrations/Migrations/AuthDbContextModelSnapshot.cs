@@ -141,6 +141,11 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.Property<Guid>("CoverId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("DefaultCoin")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
                     b.Property<Guid?>("FatherAppId")
                         .HasColumnType("uuid");
 
@@ -166,7 +171,9 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            BackgroundColor = "{\"Colors\":[\"#FFFFFF\"],\"Config\":\"linear-gradient(310g, {{colors}})\"}",
                             CoverId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            DefaultCoin = 0,
                             IsDefault = true,
                             Name = "Auth Provider Web Api",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")

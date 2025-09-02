@@ -5,8 +5,12 @@ public sealed record CreateAppArgs(
     bool IsDefault,
     Guid CoverId,
     CreateAppCoverBackgroundColorArgs? BackgroundColors,
-    Guid? BackgroundCoverId);
+    Guid? BackgroundCoverId,
+    Coin DefaultCoin,
+    bool AddToApp);
 
 public sealed record CreateAppCoverBackgroundColorArgs(
     List<string> Colors,
     string Config);
+
+public sealed record UpdateDefaultCoinArgs(Coin DefaultCoin);

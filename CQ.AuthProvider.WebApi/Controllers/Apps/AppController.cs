@@ -77,4 +77,21 @@ public sealed class AppController(
             accountLogged)
             .ConfigureAwait(false);
     }
+
+    [HttpPatch("{id}/default-coin")]
+    [BearerAuthentication]
+    [SecureAuthorization]
+    public async Task UpdateDefaultCoinAsync(
+        Guid id,
+        UpdateDefaultCoinArgs request)
+    {
+        var accountLogged = this.GetAccountLogged();
+     
+        await _appService
+            .UpdateDefaultCoinByIdAsync(
+            id,
+            request,
+            accountLogged)
+            .ConfigureAwait(false);
+    }
 }

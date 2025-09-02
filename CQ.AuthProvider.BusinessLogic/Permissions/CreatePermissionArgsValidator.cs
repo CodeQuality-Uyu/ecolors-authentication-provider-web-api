@@ -58,7 +58,7 @@ public static class ValidatorExtensions
         var options = validator
             .NotNullWithMessage()
             .NotEmpty()
-            .WithMessage("Can't be empty"); ;
+            .WithMessage("Can't be empty");
 
         return options;
     }

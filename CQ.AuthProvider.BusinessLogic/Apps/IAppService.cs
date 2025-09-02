@@ -23,6 +23,11 @@ public interface IAppService
         AccountLogged accountLogged);
 
     Task<List<App>> GetByEmailAccountAsync(string email);
+
+    Task UpdateDefaultCoinByIdAsync(
+        Guid id,
+        UpdateDefaultCoinArgs args,
+        AccountLogged accountLogged);
 }
 
 internal interface IAppInternalService
