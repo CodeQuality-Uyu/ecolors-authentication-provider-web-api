@@ -21,6 +21,8 @@ public sealed record class App()
 
     public App? FatherApp { get; init; } = null!;
 
+    public Guid DefaultCoingId { get; init; }
+    
     public Coin DefaultCoin { get; init; }
 
     public App(
@@ -31,7 +33,7 @@ public sealed record class App()
         Guid? backgroundCoverId,
         Tenant tenant,
         App? fatherApp,
-        Coin defaultCoin)
+        Guid defaultCoinId)
         : this()
     {
         Name = Guard.Normalize(name);
@@ -41,6 +43,6 @@ public sealed record class App()
         BackgroundColor = backgroundColor;
         BackgroundCoverId = backgroundCoverId;
         FatherApp = fatherApp;
-        DefaultCoin = defaultCoin;
+        DefaultCoinId = defaultCoinId;
     }
 }
