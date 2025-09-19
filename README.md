@@ -76,6 +76,8 @@ La ultima seccion, `Cors`, sirve para configurar los cors de la plataforma sin n
 }
 ```
 
+---
+
 ### Variables de ambiente
 Las variables de ambiente pueden sustituir los valores del `appsettings` mencionadas anteriormente, solo se tiene que indicar con el formato de usar `__` (doble barra baja), cuando se adentra entre la navegacion. Por ejemplo si se quiere modificar los connection strings, se debe crear las variables de ambiente `ConnectionStrings__Auth` y `ConnectionStrings__IdentityProvider`. A su vez existe la siguiente variable de ambiente `ASPNETCORE_ENVIRONMENT` que indica el ambiente en el cual se esta ejecutando la web api. Los valores pueden ser desde `Local`, `Docker`, `Staging`, `Testing` y `Production`, pero no si existen mas ambientes pueden ser indicados.
 
