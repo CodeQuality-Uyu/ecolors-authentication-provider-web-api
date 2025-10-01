@@ -1,0 +1,66 @@
+name: Publish image to ECR on tag
+
+on:
+  push:
+    tags:
+      - 'v*'          # triggers on tags like v1.0.0, v2.3.4
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write     # for AWS OIDC
+      contents: read
+
+    env:
+      AWS_REGION: us-east-2                    # <-- set your region
+      ECR_REPOSITORY: auth-provider-web-api    # <-- repo name created by Terraform
+      IMAGE_TAG: ${{ github.ref_name }}        # e.g. v1.2.3
+      PUSH_LATEST: 'false'                     # set 'true' if you also want :latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Assume an AWS role via OIDC (recommended)
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/<GitHubOIDCDeployRole>
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Resolve ECR registry
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Ensure the ECR repository exists (safe to run every time)
+      - name: Ensure ECR repository exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! aws ecr describe-repositories --repository-names "${ECR_REPOSITORY}" >/dev/null 2>&1; then
+            aws ecr create-repository --repository-name "${ECR_REPOSITORY}" >/dev/null
+            echo "Created ECR repository: ${ECR_REPOSITORY}"
+          else
+            echo "ECR repository exists: ${ECR_REPOSITORY}"
+          fi
+
+      - name: Build image
+        run: |
+          docker build -t "${ECR_REPOSITORY}:${IMAGE_TAG}" .
+
+      - name: Tag + push image
+        run: |
+          REGISTRY="${{ steps.ecr.outputs.registry }}"
+          docker tag "${ECR_REPOSITORY}:${IMAGE_TAG}" "${REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+          docker push "${REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+
+          if [ "${PUSH_LATEST}" = "true" ]; then
+            docker tag "${REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}" "${REGISTRY}/${ECR_REPOSITORY}:latest"
+            docker push "${REGISTRY}/${ECR_REPOSITORY}:latest"
+          fi
+
+      - name: Output image URI
+        run: echo "Pushed: ${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
