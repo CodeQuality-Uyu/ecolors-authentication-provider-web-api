@@ -17,6 +17,8 @@ jobs:
       ECR_REPOSITORY: auth-provider-web-api    # <-- repo name created by Terraform
       IMAGE_TAG: ${{ github.ref_name }}        # e.g. v1.2.3
       PUSH_LATEST: 'false'                     # set 'true' if you also want :latest
+      ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+      AWS_ROLE: ${{ secrets.AWS_ROLE }}
 
     steps:
       - name: Checkout
@@ -28,7 +30,7 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/<GitHubOIDCDeployRole>
+          role-to-assume: arn:aws:iam::$ACCOUNT_ID:role/$AWS_ROLE
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Resolve ECR registry
