@@ -1,0 +1,81 @@
+name: Terraform apply after publish
+
+on:
+  workflow_run:
+    workflows: ["Publish image to ECR on tag"]  # exact name of your publish workflow
+    types: [completed]
+
+jobs:
+  tfc-apply:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      TFC_TOKEN: ${{ secrets.TFC_TOKEN }}
+      TFC_ORG: ${{ secrets.TFC_ORG || 'ColorLabs' }}
+      TFC_WORKSPACE: ${{ secrets.TFC_WORKSPACE || 'dev-authentication-provider-service' }}
+      TFC_HOST: ${{ secrets.TFC_HOST || 'app.terraform.io' }}
+
+    steps:
+      - name: Checkout (full history + tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Determine tag from the completed run
+        id: tag
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          git fetch --force --tags --prune
+          TAG=$(git tag --points-at "${HEAD_SHA}" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1 || true)
+          [[ -n "$TAG" ]] || TAG=$(git describe --tags --match 'v*' --abbrev=0)
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Using tag: $TAG"
+
+      - name: Update Terraform Cloud var and auto-apply
+        shell: bash
+        env:
+          IMAGE_TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          api="https://${TFC_HOST}/api/v2"
+          auth() { curl -sS -H "Authorization: Bearer ${TFC_TOKEN}" -H "Content-Type: application/vnd.api+json"; }
+
+          ws=$(auth GET "${api}/organizations/${TFC_ORG}/workspaces/${TFC_WORKSPACE}")
+          ws_id=$(echo "$ws" | jq -r '.data.id')
+
+          vars=$(auth GET "${api}/workspaces/${ws_id}/vars")
+          var_id=$(echo "$vars" | jq -r '.data[] | select(.attributes.key=="image_tag") | .id' || true)
+
+          if [[ -n "${var_id}" && "${var_id}" != "null" ]]; then
+            auth PATCH "${api}/vars/${var_id}" \
+              --data @- <<<"$(jq -n --arg id "$var_id" --arg v "$IMAGE_TAG" '{data:{id:$id,type:"vars",attributes:{value:$v}}}')"
+          else
+            auth POST "${api}/workspaces/${ws_id}/vars" \
+              --data @- <<<"$(jq -n --arg v "$IMAGE_TAG" '{data:{type:"vars",attributes:{key:"image_tag",value:$v,category:"terraform",hcl:false,sensitive:false}}}')"
+          fi
+
+          run_create=$(auth POST "${api}/runs" \
+            --data @- <<<"$(jq -n --arg ws "$ws_id" --arg t "$IMAGE_TAG" \
+              '{data:{type:"runs",attributes:{message:("CI: image_tag -> "+$t),"auto-apply":true},relationships:{workspace:{data:{type:"workspaces",id:$ws}}}}}')")
+          run_id=$(echo "$run_create" | jq -r '.data.id')
+
+          echo "Waiting for apply… (run: $run_id)"
+          while : ; do
+            sleep 10
+            status=$(auth GET "${api}/runs/${run_id}" | jq -r '.data.attributes.status')
+            echo "status: $status"
+            case "$status" in
+              applied|planned_and_finished) break ;;
+              policy_soft_failed|policy_hard_failed|errored|canceled|force_canceled)
+                echo "Run failed: $status"; exit 1 ;;
+            esac
+          done
+
+          echo "✓ Terraform applied with image_tag=${IMAGE_TAG}"
