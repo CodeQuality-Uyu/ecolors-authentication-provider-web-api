@@ -63,4 +63,5 @@ jobs:
           fi
 
       - name: Output image URI
-        run: echo "Pushed: ${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
+        run: |
+          echo "Pushed:${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
