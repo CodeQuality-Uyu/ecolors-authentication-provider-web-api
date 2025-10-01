@@ -38,44 +38,69 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "Using tag: $TAG"
 
-      - name: Update Terraform Cloud var and auto-apply
-        shell: bash
-        env:
-          IMAGE_TAG: ${{ steps.tag.outputs.tag }}
-        run: |
-          set -euo pipefail
-          api="https://${TFC_HOST}/api/v2"
-          auth() { curl -sS -H "Authorization: Bearer ${TFC_TOKEN}" -H "Content-Type: application/vnd.api+json"; }
+      - name: Update Terraform Cloud var and apply
+  shell: bash
+  env:
+    TFC_TOKEN: ${{ secrets.TFC_TOKEN }}
+    TFC_ORG: ${{ vars.TFC_ORG }}
+    TFC_WORKSPACE: ${{ vars.TFC_WORKSPACE }}
+    TFC_HOST: ${{ vars.TFC_HOST || 'app.terraform.io' }}
+    IMAGE_TAG: ${{ needs.publish.outputs.image_tag || steps.tag.outputs.tag }}
+  run: |
+    set -euo pipefail
 
-          ws=$(auth GET "${api}/organizations/${TFC_ORG}/workspaces/${TFC_WORKSPACE}")
-          ws_id=$(echo "$ws" | jq -r '.data.id')
+    # --- helpers ---
+    api="https://${TFC_HOST}/api/v2"
+    auth() {
+      curl --fail-with-body -sS \
+        -H "Authorization: Bearer ${TFC_TOKEN}" \
+        -H "Content-Type: application/vnd.api+json" \
+        "$@"
+    }
 
-          vars=$(auth GET "${api}/workspaces/${ws_id}/vars")
-          var_id=$(echo "$vars" | jq -r '.data[] | select(.attributes.key=="image_tag") | .id' || true)
+    # sanity
+    : "${TFC_TOKEN:?missing TFC_TOKEN}"
+    : "${TFC_ORG:?missing TFC_ORG}"
+    : "${TFC_WORKSPACE:?missing TFC_WORKSPACE}"
+    : "${IMAGE_TAG:?missing IMAGE_TAG}"
 
-          if [[ -n "${var_id}" && "${var_id}" != "null" ]]; then
-            auth PATCH "${api}/vars/${var_id}" \
-              --data @- <<<"$(jq -n --arg id "$var_id" --arg v "$IMAGE_TAG" '{data:{id:$id,type:"vars",attributes:{value:$v}}}')"
-          else
-            auth POST "${api}/workspaces/${ws_id}/vars" \
-              --data @- <<<"$(jq -n --arg v "$IMAGE_TAG" '{data:{type:"vars",attributes:{key:"image_tag",value:$v,category:"terraform",hcl:false,sensitive:false}}}')"
-          fi
+    echo "→ Resolve workspace id: ${TFC_ORG}/${TFC_WORKSPACE}"
+    ws=$(auth -X GET "${api}/organizations/${TFC_ORG}/workspaces/${TFC_WORKSPACE}")
+    ws_id=$(echo "$ws" | jq -r '.data.id')
+    test -n "$ws_id"
 
-          run_create=$(auth POST "${api}/runs" \
-            --data @- <<<"$(jq -n --arg ws "$ws_id" --arg t "$IMAGE_TAG" \
-              '{data:{type:"runs",attributes:{message:("CI: image_tag -> "+$t),"auto-apply":true},relationships:{workspace:{data:{type:"workspaces",id:$ws}}}}}')")
-          run_id=$(echo "$run_create" | jq -r '.data.id')
+    echo "→ Upsert variable image_tag=${IMAGE_TAG}"
+    vars=$(auth -X GET "${api}/workspaces/${ws_id}/vars")
+    var_id=$(echo "$vars" | jq -r '.data[] | select(.attributes.key=="image_tag") | .id' || true)
 
-          echo "Waiting for apply… (run: $run_id)"
-          while : ; do
-            sleep 10
-            status=$(auth GET "${api}/runs/${run_id}" | jq -r '.data.attributes.status')
-            echo "status: $status"
-            case "$status" in
-              applied|planned_and_finished) break ;;
-              policy_soft_failed|policy_hard_failed|errored|canceled|force_canceled)
-                echo "Run failed: $status"; exit 1 ;;
-            esac
-          done
+    if [[ -n "${var_id}" && "${var_id}" != "null" ]]; then
+      auth -X PATCH "${api}/vars/${var_id}" \
+        --data @- <<<"$(jq -n --arg id "$var_id" --arg v "$IMAGE_TAG" \
+          '{data:{id:$id,type:"vars",attributes:{value:$v}}}')"
+    else
+      auth -X POST "${api}/workspaces/${ws_id}/vars" \
+        --data @- <<<"$(jq -n --arg v "$IMAGE_TAG" \
+          '{data:{type:"vars",attributes:{key:"image_tag",value:$v,category:"terraform",hcl:false,sensitive:false}}}')"
+    fi
 
-          echo "✓ Terraform applied with image_tag=${IMAGE_TAG}"
+    echo "→ Create run (auto-apply)"
+    run_create=$(auth -X POST "${api}/runs" \
+      --data @- <<<"$(jq -n --arg ws "$ws_id" --arg t "$IMAGE_TAG" \
+        '{data:{type:"runs",attributes:{message:("CI: image_tag -> "+$t),"auto-apply":true},relationships:{workspace:{data:{type:"workspaces",id:$ws}}}}}')")
+    run_id=$(echo "$run_create" | jq -r '.data.id')
+    echo "Run: $run_id"
+
+    echo "→ Wait for completion"
+    while : ; do
+      sleep 10
+      status=$(auth -X GET "${api}/runs/${run_id}" | jq -r '.data.attributes.status')
+      echo "   status: $status"
+      case "$status" in
+        applied|planned_and_finished) break ;;
+        policy_soft_failed|policy_hard_failed|errored|canceled|force_canceled)
+          echo "Run failed: $status"; exit 1 ;;
+      esac
+    done
+
+    echo "✓ Terraform applied with image_tag=${IMAGE_TAG}"
+
