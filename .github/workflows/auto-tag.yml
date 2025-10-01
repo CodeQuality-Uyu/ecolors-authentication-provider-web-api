@@ -3,6 +3,9 @@ name: Auto Tag on main
 on:
   push:
     branches: [ main ]
+    paths:
+    - '**.cs'
+    - '**.csproj'
 
 jobs:
   Tag:
