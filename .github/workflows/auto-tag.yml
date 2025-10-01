@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  tag:
+  Tag:
     runs-on: ubuntu-latest
     permissions:
       contents: write   # needed to push the tag with GITHUB_TOKEN
