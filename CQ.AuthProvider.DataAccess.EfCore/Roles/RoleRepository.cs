@@ -170,11 +170,13 @@ internal sealed class RoleRepository(
         List<Guid> appIds,
         Guid tenantId)
     {
+        List<Guid> authRoles = [AuthConstants.CLIENT_OWNER_ROLE_ID, AuthConstants.APP_OWNER_ROLE_ID, AuthConstants.TENANT_OWNER_ROLE_ID];
+
         var query = Entities
             .Where(r => ids.Contains(r.Id))
             // TODO check in r.AppId and inheritence app
             //.Where(r => appIds.Contains(r.AppId))
-            .Where(r => r.TenantId == tenantId)
+            .Where(r => ids.Intersect(authRoles).Any() || r.TenantId == tenantId)
             ;
 
         var roles = await query

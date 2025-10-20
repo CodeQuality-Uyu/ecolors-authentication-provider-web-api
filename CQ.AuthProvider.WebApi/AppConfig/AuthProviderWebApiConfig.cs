@@ -114,10 +114,10 @@ internal static class AuthProviderWebApiConfig
                     config.AddProfile<PermissionProfile>();
                     config.AddProfile<RoleProfile>();
                     config.AddProfile<InvitationProfile>();
-                    config.AddProfile<SessionProfile>();
+                    config.AddProfile<SessionMapping>();
                     config.AddProfile<AppProfile>();
                     config.AddProfile<AccountProfile>();
-                    config.AddProfile<TenantProfile>();
+                    config.AddProfile<TenantMapping>();
                 });
 
                 return config.CreateMapper();

@@ -11,7 +11,7 @@ public sealed class SessionService(
     ISessionRepository _sessionRepository,
     IIdentityRepository _identityRepository,
     IAccountRepository _accountRepository,
-    ITokenService _tokenService,
+    ITokenService tokenService,
     IUnitOfWork _unitOfWork)
     : ISessionInternalService,
     IItemLoggedService
@@ -55,7 +55,7 @@ public sealed class SessionService(
         Account account,
         App app)
     {
-        var token = await _tokenService
+        var token = await tokenService
             .CreateAsync(account)
             .ConfigureAwait(false);
 

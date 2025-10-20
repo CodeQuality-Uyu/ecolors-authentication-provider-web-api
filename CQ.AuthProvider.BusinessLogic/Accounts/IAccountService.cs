@@ -5,10 +5,12 @@ namespace CQ.AuthProvider.BusinessLogic.Accounts;
 public interface IAccountService
 {
     Task<CreateAccountResult> CreateAndSaveAsync(CreateAccountArgs args);
-    
+
     Task<Account> CreateAndSaveAsync(
         CreateAccountForArgs args,
         AccountLogged accountLogged);
+        
+    Task<CreateAccountResult> CreateAndSaveWithTenantAsync(CreateAccountWithTenantArgs args);
 
     Task UpdatePasswordAsync(
         UpdatePasswordArgs args,

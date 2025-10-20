@@ -12,12 +12,12 @@ using System.Data;
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
 
 internal sealed class AccountService(
-    IAccountRepository _accountRepository,
-    IIdentityRepository _identityRepository,
+    IAccountRepository accountRepository,
+    IIdentityRepository identityRepository,
     ISessionInternalService _sessionService,
     IRoleRepository _roleRepository,
     IAppInternalService _appService,
-    ITenantInternalService _tenantService,
+    ITenantRepository tenantRepository,
     IUnitOfWork _unitOfWork)
     : IAccountInternalService
 {
@@ -34,11 +34,11 @@ internal sealed class AccountService(
             Password = password
         };
 
-        await _identityRepository
+        await identityRepository
             .CreateAndSaveAsync(identity, passwordIsHash)
             .ConfigureAwait(false);
 
-        await _accountRepository
+        await accountRepository
             .CreateAsync(account)
             .ConfigureAwait(false);
 
@@ -114,7 +114,7 @@ internal sealed class AccountService(
         }
         catch (Exception)
         {
-            await _identityRepository
+            await identityRepository
                 .DeleteByIdAsync(account.Id)
                 .ConfigureAwait(false);
 
@@ -126,7 +126,7 @@ internal sealed class AccountService(
 
     private async Task AssertExistenseOfEmailAsync(string email)
     {
-        var existAuth = await _accountRepository
+        var existAuth = await accountRepository
             .ExistByEmailAsync(email)
             .ConfigureAwait(false);
         if (existAuth)
@@ -168,11 +168,11 @@ internal sealed class AccountService(
 
         var identity = Identity.NewForAccount(account, args.Password);
 
-        await _identityRepository
+        await identityRepository
             .CreateAndSaveAsync(identity)
             .ConfigureAwait(false);
 
-        await _accountRepository
+        await accountRepository
             .CreateAsync(account)
             .ConfigureAwait(false);
 
@@ -184,7 +184,7 @@ internal sealed class AccountService(
         }
         catch (Exception)
         {
-            await _identityRepository
+            await identityRepository
                 .DeleteByIdAsync(account.Id)
                 .ConfigureAwait(false);
 
@@ -208,28 +208,75 @@ internal sealed class AccountService(
             return;
         }
 
-        try
+        if (!newAccount.HasPermission(AuthConstants.TENANT_OWNER_ROLE_ID))
         {
-            await _tenantService
-                .UpdateOwnerAsync(
-                accountLogged.Tenant.Id,
-                newAccount.Id,
-                accountLogged)
-                .ConfigureAwait(false);
-
-            await _identityRepository
-                .DeleteByIdAsync(accountLogged.Id)
-                .ConfigureAwait(false);
-
-            await _roleRepository
-                .DeleteAndSaveByIdAsync(accountLogged.RolesIds.First())
-                .ConfigureAwait(false);
-
-            await _accountRepository
-                .DeleteAndSaveByIdAsync(accountLogged.Id)
+            await accountRepository
+                .AddRoleByIdAsync(newAccount.Id, AuthConstants.TENANT_OWNER_ROLE_ID)
                 .ConfigureAwait(false);
         }
-        catch (Exception) { }
+
+        await accountRepository
+            .RemoveRoleByIdAsync
+            (AuthConstants.SEED_ACCOUNT_ID,
+            AuthConstants.TENANT_OWNER_ROLE_ID)
+            .ConfigureAwait(false);
+
+        await identityRepository
+            .DeleteByIdAsync(AuthConstants.SEED_ACCOUNT_ID)
+            .ConfigureAwait(false);
+
+        await _roleRepository
+            .DeleteAndSaveByIdAsync(AuthConstants.SEED_ROLE_ID)
+            .ConfigureAwait(false);
+
+        await accountRepository
+            .DeleteAndSaveByIdAsync(AuthConstants.SEED_ACCOUNT_ID)
+            .ConfigureAwait(false);
+    }
+
+    public async Task<CreateAccountResult> CreateAndSaveWithTenantAsync(CreateAccountWithTenantArgs args)
+    {
+        await AssertExistenseOfEmailAsync(args.Email).ConfigureAwait(false);
+
+        var tenant = new Tenant
+        {
+            Name = args.TenantName
+        };
+
+        await tenantRepository
+        .CreateAsync(tenant)
+        .ConfigureAwait(false);
+
+        var account = Account.NewWithTenant(
+            args.Email,
+            args.FirstName,
+            args.LastName,
+            args.ProfilePictureId,
+            args.Locale,
+            args.TimeZone,
+            tenant);
+
+        try
+        {
+            var result = await CreateIdentityAndSaveAsync(
+                account,
+                args.Password)
+                .ConfigureAwait(false);
+
+            await _unitOfWork
+                .CommitChangesAsync()
+                .ConfigureAwait(false);
+
+            return result;
+        }
+        catch (Exception)
+        {
+            await identityRepository
+                .DeleteByIdAsync(account.Id)
+                .ConfigureAwait(false);
+
+            throw;
+        }
     }
     #endregion
 
@@ -237,7 +284,7 @@ internal sealed class AccountService(
         UpdatePasswordArgs args,
         AccountLogged accountLogged)
     {
-        await _identityRepository
+        await identityRepository
             .UpdatePasswordByIdAsync(
             accountLogged.Id,
             args.OldPassword,
@@ -247,7 +294,7 @@ internal sealed class AccountService(
 
     public async Task AssertByEmailAsync(string email)
     {
-        var existAccount = await _accountRepository
+        var existAccount = await accountRepository
             .ExistByEmailAsync(email)
             .ConfigureAwait(false);
 
@@ -262,7 +309,7 @@ internal sealed class AccountService(
         int pageSize,
         AccountLogged accountLogged)
     {
-        var accounts = await _accountRepository
+        var accounts = await accountRepository
             .GetAllAsync(accountLogged.Tenant.Id, page, pageSize)
             .ConfigureAwait(false);
 
@@ -274,7 +321,7 @@ internal sealed class AccountService(
         UpdateRolesArgs args,
         AccountLogged accountLogged)
     {
-        var account = await _accountRepository
+        var account = await accountRepository
             .GetByIdAsync(id, accountLogged)
             .ConfigureAwait(false);
 
@@ -288,7 +335,7 @@ internal sealed class AccountService(
                 .Select(r => r.Id)
                 .ToList();
 
-            await _accountRepository
+            await accountRepository
                 .DeleteRolesByIdAsync(roleIdsToDelete, account)
                 .ConfigureAwait(false);
         }
@@ -316,7 +363,7 @@ internal sealed class AccountService(
                 throw new InvalidOperationException("Some roles don't belong to apps of account");
             }
 
-            await _accountRepository
+            await accountRepository
                 .AddRolesByIdAsync(newRoles, account)
                 .ConfigureAwait(false);
         }

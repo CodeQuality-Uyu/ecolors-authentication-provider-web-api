@@ -2,6 +2,7 @@
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.Utility;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
@@ -103,11 +104,55 @@ public record class Account()
             invitation.Role,
             invitation.App);
 
+    public static Account NewWithTenant(
+        string email,
+        string firstName,
+        string lastName,
+        Guid? profilePictureId,
+        string locale,
+        string timeZone,
+        Tenant tenant)
+    {
+        firstName = Guard.Normalize(firstName);
+        lastName = Guard.Normalize(lastName);
+
+        return new Account
+        {
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            FullName = $"{firstName} {lastName}",
+            ProfilePictureId = profilePictureId,
+            Locale = locale,
+            TimeZone = timeZone,
+            Roles = [
+                new Role
+                {
+                    Id = AuthConstants.APP_OWNER_ROLE_ID,
+                },
+                new Role
+                {
+                    Id = AuthConstants.TENANT_OWNER_ROLE_ID,
+                }
+            ],
+            Tenant = tenant,
+            Apps = [
+                new App
+                {
+                    Id = AuthConstants.AUTH_WEB_API_APP_ID,
+                }
+            ]
+        };
+    }
+
     public bool HasPermission(string permissionKey)
     {
-        var hasRole = Roles.Exists(r => r.Id.ToString() == permissionKey);
+        return CheckPermission(permissionKey);
+    }
 
-        return hasRole || CheckPermission(permissionKey);
+    public bool HasPermission(Guid permissionId)
+    {
+        return Roles.Exists(r => r.Id == permissionId);
     }
 
     private bool CheckPermission(string permissionKey)

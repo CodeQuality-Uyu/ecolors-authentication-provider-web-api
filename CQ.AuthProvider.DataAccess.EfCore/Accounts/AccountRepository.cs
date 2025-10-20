@@ -12,7 +12,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 internal sealed class AccountRepository(
 AuthDbContext _context,
-[FromKeyedServices(MapperKeyedService.DataAccess)] IMapper _mapper
+[FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper
 )
 : AuthDbContextRepository<AccountEfCore>(_context),
 IAccountRepository
@@ -61,7 +61,7 @@ IAccountRepository
         var account = await GetAsync(a => a.Email == email)
             .ConfigureAwait(false);
 
-        return _mapper.Map<Account>(account);
+        return mapper.Map<Account>(account);
     }
 
     async Task<Account> IAccountRepository.GetByIdAsync(Guid id)
@@ -82,7 +82,7 @@ IAccountRepository
 
         AssertNullEntity(account, id, nameof(Account.Id));
 
-        return _mapper.Map<Account>(account);
+        return mapper.Map<Account>(account);
     }
 
     public async Task<Account> GetByIdAsync(
@@ -104,7 +104,7 @@ IAccountRepository
 
         AssertNullEntity(account, id.ToString(), nameof(Account.Id));
 
-        return _mapper.Map<Account>(account);
+        return mapper.Map<Account>(account);
     }
 
     public async Task UpdateTenantByIdAsync(
@@ -162,7 +162,7 @@ IAccountRepository
             .ToPaginateAsync(page, pageSize)
             .ConfigureAwait(false);
 
-        return _mapper.Map<Pagination<Account>>(paginated);
+        return mapper.Map<Pagination<Account>>(paginated);
     }
 
     public async Task AddAppAsync(App app, AccountLogged accountLogged)
@@ -199,7 +199,7 @@ IAccountRepository
 
         AssertNullEntity(account, id, nameof(Account.Id));
 
-        return _mapper.Map<Account>(account);
+        return mapper.Map<Account>(account);
     }
 
     public async Task DeleteRolesByIdAsync(

@@ -5,6 +5,13 @@ public sealed record CreateAppArgs(
     bool IsDefault,
     Guid CoverId,
     CreateAppCoverBackgroundColorArgs? BackgroundColors,
+    Guid? BackgroundCoverId,
+    bool RegisterToIt = false);
+
+public sealed record CreateClientAppArgs(
+    string Name,
+    Guid? CoverId,
+    CreateAppCoverBackgroundColorArgs? BackgroundColors,
     Guid? BackgroundCoverId);
 
 public sealed record CreateAppCoverBackgroundColorArgs(

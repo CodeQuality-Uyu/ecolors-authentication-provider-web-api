@@ -3,6 +3,7 @@ using System;
 using CQ.AuthProvider.DataAccess.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251017205538_UpdateGetAllTenantPermission")]
+    partial class UpdateGetAllTenantPermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,7 +372,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             Description = "Can read all tenants",
                             IsPublic = true,
-                            Key = "getall-tenant",
+                            Key = "getall-tenants",
                             Name = "Can read all tenants",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
@@ -763,15 +766,18 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CoverLogoId")
+                    b.Property<Guid>("CoverLogoId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("MiniLogoId")
+                    b.Property<Guid>("MiniLogoId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("WebUrl")
                         .HasColumnType("text");
@@ -784,7 +790,10 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             Id = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c"),
-                            Name = "Seed Tenant"
+                            CoverLogoId = new Guid("d7cb8b70-f3e9-4ffa-a963-c72942a7f65b"),
+                            MiniLogoId = new Guid("0f491b27-2a93-479a-b674-5c49db77f05c"),
+                            Name = "Seed Tenant",
+                            OwnerId = new Guid("0ee82ee9-f480-4b13-ad68-579dc83dfa0d")
                         });
                 });
 

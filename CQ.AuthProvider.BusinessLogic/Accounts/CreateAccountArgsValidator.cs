@@ -61,3 +61,31 @@ internal sealed class CreateAccountForArgsValidator
             .ValidIds();
     }
 }
+
+internal sealed class CreateAccountWithTenantArgsValidator
+    : AbstractValidator<CreateAccountWithTenantArgs>
+{
+    public CreateAccountWithTenantArgsValidator()
+    {
+        RuleFor(a => a.FirstName)
+            .Required();
+
+        RuleFor(a => a.LastName)
+            .Required();
+
+        RuleFor(a => a.Locale)
+            .Required();
+
+        RuleFor(a => a.TimeZone)
+            .Required();
+
+        RuleFor(a => a.Email)
+            .RequiredEmail();
+
+        RuleFor(a => a.Password)
+            .RequiredPassword();
+
+        RuleFor(a => a.TenantName)
+            .Required();
+    }
+}

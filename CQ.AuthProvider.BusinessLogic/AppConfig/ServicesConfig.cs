@@ -1,7 +1,6 @@
 ﻿using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Emails;
 using CQ.AuthProvider.BusinessLogic.Invitations;
 using CQ.AuthProvider.BusinessLogic.Me;
@@ -81,12 +80,14 @@ public static class ServicesConfig
     {
         services
             .AddTransient<IValidator<CreateAppArgs>, CreateAppArgsValidator>()
+            .AddTransient<IValidator<CreateClientAppArgs>, CreateClientAppArgsValidator>()
             .AddTransient<IValidator<CreatePermissionArgs>, CreatePermissionArgsValidator>()
             .AddTransient<IValidator<CreateBulkPermissionArgs>, CreateBulkPermissionArgsValidator>()
             .AddTransient<IValidator<CreateRoleArgs>, CreateRoleArgsValidator>()
             .AddTransient<IValidator<CreateBulkRoleArgs>, CreateBulkRoleArgsValidator>()
             .AddTransient<IValidator<CreateAccountArgs>, CreateAccountArgsValidator>()
             .AddTransient<IValidator<CreateAccountForArgs>, CreateAccountForArgsValidator>()
+            .AddTransient<IValidator<CreateAccountWithTenantArgs>, CreateAccountWithTenantArgsValidator>()
             .AddTransient<IValidator<CreateInvitationArgs>, CreateInvitationArgsValidator>()
             .AddTransient<IValidator<UpdatePasswordArgs>, UpdatePasswordArgsValidator>()
             .AddTransient<IValidator<CreateSessionCredentialsArgs>, CreateSessionCredentialsArgsValidator>()

@@ -13,11 +13,11 @@ public readonly struct TenantOfAccountBasicInfoResponse
 
     public string Name { get; init; }
 
-    public BlobReadResponse MiniLogo { get; init; }
+    public BlobReadResponse? MiniLogo { get; init; }
 
-    public BlobReadResponse CoverLogo { get; init; }
+    public BlobReadResponse? CoverLogo { get; init; }
 
-    public string WebUrl { get; init; }
+    public string? WebUrl { get; init; }
 }
 
 public sealed record OwnerTenantBasicInfoResponse(

@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Tenants;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Tenants;
@@ -45,15 +43,6 @@ internal sealed class TenantRepository
         var tenant = await GetByIdAsync(id).ConfigureAwait(false);
 
         return mapper.Map<Tenant>(tenant);
-    }
-
-    public async Task UpdateOwnerByIdAsync(
-        Guid id,
-        Account newOwner)
-    {
-        var tenant = await GetByIdAsync(id).ConfigureAwait(false);
-
-        tenant.OwnerId = newOwner.Id;
     }
 
     public async Task UpdateNameByIdAndSaveAsync(
