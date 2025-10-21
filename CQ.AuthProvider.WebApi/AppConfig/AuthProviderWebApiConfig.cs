@@ -108,7 +108,7 @@ internal static class AuthProviderWebApiConfig
             {
                 var config = new MapperConfiguration(config =>
                 {
-                    config.ConstructServicesUsing(provider.GetService);
+                    config.ConstructServicesUsing(provider.GetRequiredService);
 
                     config.AddProfile<MeProfile>();
                     config.AddProfile<PermissionProfile>();
