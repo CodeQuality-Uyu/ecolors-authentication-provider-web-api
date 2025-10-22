@@ -44,9 +44,13 @@ public record class AccountLogged()
     {
         var isRole = Roles.Exists(r =>
         r.Name == role ||
-        r.Key == role ||
-        r.Id.ToString() == role);
+        r.Key == role);
 
         return isRole || HasPermission(role);
+    }
+
+    public bool IsInRole(Guid permissionKey)
+    {
+        return Roles.Exists(r => r.Id == permissionKey) || HasPermission(permissionKey);
     }
 }

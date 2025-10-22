@@ -9,8 +9,8 @@ using System.Data;
 namespace CQ.AuthProvider.BusinessLogic.Roles;
 
 internal sealed class RoleService(
-    IRoleRepository _roleRepository,
-    IPermissionRepository _permissionRepository,
+    IRoleRepository roleRepository,
+    IPermissionRepository permissionRepository,
     IAppRepository _appRepository)
     : IRoleInternalService
 {
@@ -27,7 +27,7 @@ internal sealed class RoleService(
             appId = accountLogged.AppLogged.Id;
         }
 
-        var roles = await _roleRepository
+        var roles = await roleRepository
             .GetAllAsync(
             appId!.Value,
             isPrivate,
@@ -61,7 +61,7 @@ internal sealed class RoleService(
 
         if (defaultRoles.Count != 0)
         {
-            await _roleRepository
+            await roleRepository
                 .RemoveDefaultsAndSaveAsync(
                 defaultRoles,
                 accountLogged)
@@ -70,10 +70,10 @@ internal sealed class RoleService(
 
         var allPermissionsKeyes = args
             .Roles
-            .SelectMany(r => r.PermissionsKeys.ConvertAll(p => (r.AppId, p)).Distinct())
+            .SelectMany(r => r.PermissionKeys.ConvertAll(p => (r.AppId, p)).Distinct())
             .ToList();
 
-        var permissions = await _permissionRepository
+        var permissions = await permissionRepository
             .GetAllByKeysAsync(
             allPermissionsKeyes,
             accountLogged)
@@ -87,20 +87,20 @@ internal sealed class RoleService(
             throw new InvalidOperationException($"The following permissions do not exist: {string.Join(",", missingPermissions)}");
         }
 
-        List<App> missedApps = [];
-        if (accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID.ToString()) ||
-            accountLogged.IsInRole(AuthConstants.TENANT_OWNER_ROLE_ID.ToString()))
-        {
-            var missedAppsIds = args
-                    .Roles
-                    .Select(r => r.AppId)
-                    .Where(a => !accountLogged.AppsIds.Contains(a))
-                    .ToList();
+        // List<App> missedApps = [];
+        // if (accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID) ||
+        //     accountLogged.IsInRole(AuthConstants.TENANT_OWNER_ROLE_ID))
+        // {
+        //     var missedAppsIds = args
+        //             .Roles
+        //             .Select(r => r.AppId)
+        //             .Where(a => !accountLogged.AppsIds.Contains(a))
+        //             .ToList();
 
-            missedApps = await _appRepository
-                .GetByIdAsync(missedAppsIds)
-                .ConfigureAwait(false);
-        }
+        //     missedApps = await _appRepository
+        //         .GetByIdAsync(missedAppsIds)
+        //         .ConfigureAwait(false);
+        // }
 
         var roles = args
             .Roles
@@ -108,10 +108,10 @@ internal sealed class RoleService(
             {
                 var app = accountLogged.Apps.FirstOrDefault(a => a.Id == r.AppId);
 
-                if (Guard.IsNull(app))
-                {
-                    app = missedApps.First(a => a.Id == r.AppId);
-                }
+                // if (Guard.IsNull(app))
+                // {
+                //     app = missedApps.First(a => a.Id == r.AppId);
+                // }
 
                 return new Role
                 {
@@ -125,7 +125,7 @@ internal sealed class RoleService(
                 };
             });
 
-        await _roleRepository
+        await roleRepository
             .CreateBulkAsync(roles)
             .ConfigureAwait(false);
     }
@@ -134,7 +134,7 @@ internal sealed class RoleService(
         Guid id,
         AddPermissionArgs args)
     {
-        var role = await _roleRepository
+        var role = await roleRepository
             .GetByIdAsync(id)
             .ConfigureAwait(false);
 
@@ -148,7 +148,7 @@ internal sealed class RoleService(
             throw new InvalidOperationException($"The following permissions are duplicated in the role: {string.Join(",", duplicatedPermissions)}");
         }
 
-        await _roleRepository
+        await roleRepository
             .AddPermissionsAsync(
             id,
             args.PermissionsKeys)

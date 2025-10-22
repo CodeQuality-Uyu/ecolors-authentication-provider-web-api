@@ -13,7 +13,7 @@ public sealed record CreateRoleArgs
 
     public Guid AppId { get; init; }
 
-    public List<string> PermissionsKeys { get; init; } = [];
+    public List<string> PermissionKeys { get; init; } = [];
 }
 
 public sealed record CreateBulkRoleArgs(List<CreateRoleArgs> Roles);
