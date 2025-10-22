@@ -5,6 +5,6 @@ public sealed record CreatePermissionArgs(
     string Description,
     string Key,
     bool IsPublic,
-    Guid? AppId);
+    Guid AppId);
 
 public sealed record CreateBulkPermissionArgs(List<CreatePermissionArgs> Permissions);

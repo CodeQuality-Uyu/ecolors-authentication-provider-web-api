@@ -24,7 +24,8 @@ internal sealed class CreateAccountArgsValidator
             .RequiredEmail();
 
         RuleFor(a => a.Password)
-            .RequiredPassword();
+            .RequiredPassword()
+            .When(a => !a.IsPasswordHashed);
 
         RuleFor(a => a.AppId)
             .ValidId();

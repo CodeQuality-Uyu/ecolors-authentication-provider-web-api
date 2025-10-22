@@ -57,7 +57,7 @@ internal sealed class RoleService(
             .Roles
             .Where(r => r.IsDefault)
             .ToList()
-            .ConvertAll(r => r.AppId ?? accountLogged.AppLogged.Id);
+            .ConvertAll(r => r.AppId);
 
         if (defaultRoles.Count != 0)
         {
@@ -70,7 +70,7 @@ internal sealed class RoleService(
 
         var allPermissionsKeyes = args
             .Roles
-            .SelectMany(r => r.PermissionsKeys.ConvertAll(p => (r.AppId ?? accountLogged.AppLogged.Id, p)).Distinct())
+            .SelectMany(r => r.PermissionsKeys.ConvertAll(p => (r.AppId, p)).Distinct())
             .ToList();
 
         var permissions = await _permissionRepository
@@ -94,8 +94,7 @@ internal sealed class RoleService(
             var missedAppsIds = args
                     .Roles
                     .Select(r => r.AppId)
-                    .Where(a => a.HasValue && !accountLogged.AppsIds.Contains(a.Value))
-                    .Select(a => a.Value)
+                    .Where(a => !accountLogged.AppsIds.Contains(a))
                     .ToList();
 
             missedApps = await _appRepository
@@ -107,9 +106,7 @@ internal sealed class RoleService(
             .Roles
             .ConvertAll(r =>
             {
-                var app = r.AppId.HasValue
-                ? accountLogged.Apps.FirstOrDefault(a => a.Id == r.AppId)
-                : accountLogged.AppLogged;
+                var app = accountLogged.Apps.FirstOrDefault(a => a.Id == r.AppId);
 
                 if (Guard.IsNull(app))
                 {

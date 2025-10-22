@@ -43,7 +43,7 @@ internal sealed class PermissionService(IPermissionRepository _permissionReposit
     {
         var allPermissionsKeys = args
             .Permissions
-            .ConvertAll(a => (a.AppId ?? accountLogged.AppLogged.Id, a.Key))
+            .ConvertAll(a => (a.AppId, a.Key))
             .Distinct()
             .ToList();
 
@@ -64,9 +64,7 @@ internal sealed class PermissionService(IPermissionRepository _permissionReposit
             .Permissions
             .ConvertAll(p =>
         {
-            var app = p.AppId.HasValue
-            ? accountLogged.Apps.First(a => a.Id == p.AppId)
-            : accountLogged.AppLogged;
+            var app = accountLogged.Apps.First(a => a.Id == p.AppId);
 
             return new Permission(
             p.Name,

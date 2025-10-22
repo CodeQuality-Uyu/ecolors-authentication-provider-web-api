@@ -60,7 +60,7 @@ internal sealed class CreateRoleArgsValidator
             return validationResult;
         }
 
-        var accountLoggedHasApp = accountLogged.AppsIds.Contains(args.AppId.Value);
+        var accountLoggedHasApp = accountLogged.AppsIds.Contains(args.AppId);
         if (args.AppId == null || 
             accountLoggedHasApp ||
             accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID.ToString()) ||

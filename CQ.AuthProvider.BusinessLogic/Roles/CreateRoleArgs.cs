@@ -11,7 +11,7 @@ public sealed record CreateRoleArgs
 
     public bool IsDefault { get; init; }
 
-    public Guid? AppId { get; init; }
+    public Guid AppId { get; init; }
 
     public List<string> PermissionsKeys { get; init; } = [];
 }

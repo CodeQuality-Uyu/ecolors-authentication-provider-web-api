@@ -42,11 +42,11 @@ internal sealed class CreateBulkRoleArgsValidator
 
         var appsIds = roles
             .GroupBy(a => a.AppId)
-            .Where(g => g.Key.HasValue)
             .Select(g => g.Key)
             .ToList();
+
         var invalidAppsIds = appsIds
-            .Where(a => !accountLogged.AppsIds.Contains(a.Value))
+            .Where(a => !accountLogged.AppsIds.Contains(a))
             .ToList();
         if (invalidAppsIds.Count != 0)
         {
