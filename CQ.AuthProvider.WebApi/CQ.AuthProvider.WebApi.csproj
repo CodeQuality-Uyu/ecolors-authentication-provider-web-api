@@ -8,15 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AWSSDK.S3" Version="3.7.412.5" />
-		<PackageReference Include="CQ.ApiElements" Version="3.0.31" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="1.4.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />
 		<ProjectReference Include="..\CQ.AuthProvider.DataAccess.EfCore\CQ.AuthProvider.DataAccess.EfCore.csproj" />
 		<ProjectReference Include="..\CQ.AuthProvider.Postgres.Migrations\CQ.AuthProvider.Postgres.Migrations.csproj" />

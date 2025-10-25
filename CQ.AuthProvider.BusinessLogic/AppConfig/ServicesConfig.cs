@@ -28,8 +28,6 @@ public static class ServicesConfig
 
             .AddTokenService<GuidTokenService>(LifeTime.Transient)
 
-            .AddItemLoggedService<SessionService>(LifeTime.Scoped)
-
             .AddValidators();
 
         return services;

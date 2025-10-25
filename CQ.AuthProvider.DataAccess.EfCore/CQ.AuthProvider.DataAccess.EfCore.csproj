@@ -6,17 +6,6 @@
 		<Nullable>enable</Nullable>
 		<Version>1.0.3</Version>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="CQ.UnitOfWork.EfCore" Version="3.0.20" />
-		<PackageReference Include="CQ.Extensions.Configuration" Version="2.0.0" />
-		<PackageReference Include="CQ.Extensions.ServiceCollection" Version="2.0.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-
-
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\CQ.AuthProvider.BusinessLogic\CQ.AuthProvider.BusinessLogic.csproj" />

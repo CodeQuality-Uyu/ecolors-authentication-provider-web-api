@@ -1,11 +1,45 @@
 <Project>
 	<ItemGroup>
 		<PackageReference Include="CQ.Utility" Version="1.1.16" />
+		<!-- <PackageReference Include="CQ.ApiElements" Version="3.0.31" /> -->
+		<PackageReference Include="CQ.UnitOfWork.EfCore" Version="3.0.20" />
+		<PackageReference Include="CQ.Extensions.Configuration" Version="2.0.0" />
+		<PackageReference Include="CQ.Extensions.ServiceCollection" Version="2.0.3" />
+		<PackageReference Include="CQ.Extensions.Environments" Version="2.0.2" />
+		<PackageReference Include="CQ.UnitOfWork.Abstractions" Version="3.0.12" />
+		<PackageReference Include="CQ.Exceptions" Version="3.0.0" />
 
+		<PackageReference Include="AWSSDK.S3" Version="3.7.412.5" />
+		<PackageReference Include="FluentValidation" Version="11.10.0" />
+		<PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="1.4.0" />
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6" />
 		
 		<!-- <PackageReference
 		Include="StyleCop.Analyzers"
 		Version="1.1.118" /> -->
+	</ItemGroup>
+
+	
+	<ItemGroup>
+		<!-- <Reference Include="CQ.AuthProvider.SDK">
+			<HintPath>..\..\..\..\CodeQuality\authentication-provider-sdk\src\CQ.AuthProvider.SDK\bin\Debug\net8.0\CQ.AuthProvider.SDK.dll</HintPath>
+		</Reference> -->
+		<Reference Include="CQ.ApiElements">
+			<HintPath>..\..\web-api-elements\CQ.ApiElements\bin\Debug\net8.0\CQ.ApiElements.dll</HintPath>
+		</Reference>
+		<!-- <Reference Include="CQ.Extensions.Environments">
+			<HintPath>..\..\extensions\CQ.Extensions.Environments\bin\Debug\net8.0\CQ.Extensions.Environments.dll</HintPath>
+		</Reference> -->
+		<!-- <Reference Include="CQ.Extensions.Configuration">
+			<HintPath>..\..\..\..\CodeQuality\extensions\CQ.Extensions.Configuration\bin\Debug\net8.0\CQ.Extensions.Configuration.dll</HintPath>
+		</Reference>
+		<Reference Include="CQ.Extensions.ServiceCollection">
+			<HintPath>..\..\..\..\CodeQuality\extensions\CQ.Extensions.ServiceCollection\bin\Debug\net8.0\CQ.Extensions.ServiceCollection.dll</HintPath>
+		</Reference>
+		
+		<Reference Include="CQ.Exceptions">
+			<HintPath>..\..\..\..\CodeQuality\web-api-elements\CQ.Exceptions\bin\Debug\net8.0\CQ.Exceptions.dll</HintPath>
+		</Reference> -->
 	</ItemGroup>
 </Project>
