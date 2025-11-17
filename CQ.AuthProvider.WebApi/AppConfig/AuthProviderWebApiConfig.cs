@@ -6,6 +6,7 @@ using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Utils;
+using CQ.AuthProvider.DataAccess.EfCore;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.Postgres.Migrations;
 using CQ.AuthProvider.Sql.Migrations;
@@ -21,6 +22,7 @@ using CQ.AuthProvider.WebApi.Controllers.Tenants;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.Extensions.Configuration;
 using CQ.Extensions.ServiceCollection;
+using CQ.IdentityProvider.EfCore;
 using CQ.IdentityProvider.EfCore.AppConfig;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;
@@ -201,7 +203,7 @@ internal static class AuthProviderWebApiConfig
     {
         var blobConfiguration = configuration.GetSection<BlobSection>("Blob");
 
-        if(blobConfiguration.Type == BlobType.Mock)
+        if (blobConfiguration.Type == BlobType.Mock)
         {
             services.AddTransient<IBlobService, FakeBlobService>();
         }
@@ -233,5 +235,34 @@ internal static class AuthProviderWebApiConfig
         }
 
         return services;
+    }
+
+    public static IServiceCollection ConfigHealthChecks(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var authConnectionString = configuration.GetConnectionString("Auth");
+        AssertConnectionString(authConnectionString);
+
+        var identityConnectionString = configuration.GetConnectionString("Identity");
+        AssertConnectionString(identityConnectionString);
+
+        services
+        .AddHealthChecks()
+        .AddNpgSql(authConnectionString!, name: "AuthPostgreSQL", tags: ["db", "auth", "postgresql"])
+        .AddNpgSql(identityConnectionString!, name: "IdentityPostgreSQL", tags: ["db", "identity", "postgresql"])
+        .AddDbContextCheck<AuthDbContext>("AuthDatabase", tags: ["db", "efcore"])
+        .AddDbContextCheck<IdentityDbContext>("IdentityDatabase", tags: ["db", "efcore"]);
+
+        return services;
+    }
+
+    private static void AssertConnectionString(string? connectionString)
+    {
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                "The connection string 'DefaultConnection' is not configured.");
+        }
     }
 }

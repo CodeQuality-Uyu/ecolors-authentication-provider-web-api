@@ -15,7 +15,6 @@ public static class EfCoreRepositoriesConfig
         IConfiguration configuration)
     {
         services
-            .AddScoped<IIdentityProviderHealthService, IdentityDbContext>()
             .AddScoped<PasswordHasher<string>>()
             .AddAbstractionRepository<Identity, IIdentityRepository, IdentityRepository>(LifeTime.Scoped)
             ;

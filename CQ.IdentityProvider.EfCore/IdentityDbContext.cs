@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CQ.IdentityProvider.EfCore;
 
 public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> options)
-    : EfCoreContext(options),
-    IIdentityProviderHealthService
+    : EfCoreContext(options)
 {
     public DbSet<Identity> Identities { get; set; }
 
@@ -24,15 +23,5 @@ public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> option
                     Password = "AQAAAAEAACcQAAAAEPsvS9UPGBepUkrx3vhkeyoOBVrQFUURtbldx6xuqpW79GVKXbChBf37/GRGw3N+0w=="
                 });
         });
-    }
-
-    public string GetProvider()
-    {
-        return "EfCore";
-    }
-
-    public bool Ping()
-    {
-        return base.Ping();
     }
 }
