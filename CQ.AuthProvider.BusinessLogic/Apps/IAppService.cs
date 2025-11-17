@@ -9,6 +9,10 @@ public interface IAppService
         CreateAppArgs args,
         AccountLogged accountLogged);
 
+    Task<App> CreateClientAsync(
+        CreateClientAppArgs args,
+        AccountLogged accountLogged);
+
     Task<Pagination<App>> GetPaginationAsync(
         Guid? fatherAppId,
         int page,

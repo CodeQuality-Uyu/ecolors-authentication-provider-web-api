@@ -20,7 +20,6 @@ using CQ.AuthProvider.WebApi.Controllers.Sessions;
 using CQ.AuthProvider.WebApi.Controllers.Tenants;
 using CQ.AuthProvider.WebApi.Filters;
 using CQ.Extensions.Configuration;
-using CQ.Extensions.Environments;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore.AppConfig;
 using CQ.UnitOfWork.EfCore.Core;
@@ -108,16 +107,16 @@ internal static class AuthProviderWebApiConfig
             {
                 var config = new MapperConfiguration(config =>
                 {
-                    config.ConstructServicesUsing(provider.GetService);
+                    config.ConstructServicesUsing(provider.GetRequiredService);
 
                     config.AddProfile<MeProfile>();
                     config.AddProfile<PermissionProfile>();
                     config.AddProfile<RoleProfile>();
                     config.AddProfile<InvitationProfile>();
-                    config.AddProfile<SessionProfile>();
+                    config.AddProfile<SessionMapping>();
                     config.AddProfile<AppProfile>();
                     config.AddProfile<AccountProfile>();
-                    config.AddProfile<TenantProfile>();
+                    config.AddProfile<TenantMapping>();
                 });
 
                 return config.CreateMapper();
@@ -176,7 +175,7 @@ internal static class AuthProviderWebApiConfig
         IWebHostEnvironment environment)
         where TContext : EfCoreContext
     {
-        if (environment.IsProd())
+        if (environment.IsProduction())
         {
             return services;
         }

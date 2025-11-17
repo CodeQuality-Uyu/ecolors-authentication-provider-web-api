@@ -1,6 +1,4 @@
-﻿using CQ.AuthProvider.BusinessLogic.Accounts;
-
-namespace CQ.AuthProvider.BusinessLogic.Tenants;
+﻿namespace CQ.AuthProvider.BusinessLogic.Tenants;
 
 public sealed record class Tenant()
 {
@@ -8,11 +6,9 @@ public sealed record class Tenant()
 
     public string Name { get; init; } = null!;
 
-    public Guid MiniLogoId { get; init; }
+    public Guid? MiniLogoId { get; init; }
 
-    public Guid CoverLogoId { get;init; }
+    public Guid? CoverLogoId { get;init; }
 
-    public string WebUrl { get; set; } = null!;
-
-    public Account Owner { get; init; } = null!;
+    public string? WebUrl { get; set; }
 }

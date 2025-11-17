@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.Abstractions;
+﻿using CQ.ApiElements;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Identities;
@@ -8,16 +8,13 @@ using CQ.Utility;
 namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 public sealed class SessionService(
-    ISessionRepository _sessionRepository,
+    ISessionRepository sessionRepository,
     IIdentityRepository _identityRepository,
     IAccountRepository _accountRepository,
-    ITokenService _tokenService,
+    ITokenService tokenService,
     IUnitOfWork _unitOfWork)
-    : ISessionInternalService,
-    IItemLoggedService
+    : ISessionInternalService
 {
-    public string AuthorizationTypeHandled => "Bearer";
-
     public async Task<Session> CreateAndSaveAsync(CreateSessionCredentialsArgs args)
     {
         var identity = await _identityRepository
@@ -55,7 +52,7 @@ public sealed class SessionService(
         Account account,
         App app)
     {
-        var token = await _tokenService
+        var token = await tokenService
             .CreateAsync(account)
             .ConfigureAwait(false);
 
@@ -64,7 +61,7 @@ public sealed class SessionService(
             app,
             token);
 
-        await _sessionRepository
+        await sessionRepository
             .CreateAsync(session)
             .ConfigureAwait(false);
 
@@ -73,14 +70,14 @@ public sealed class SessionService(
 
     public async Task DeleteAsync(AccountLogged accountLogged)
     {
-        await _sessionRepository
+        await sessionRepository
             .DeleteByTokenAsync(accountLogged.Token)
             .ConfigureAwait(false);
     }
 
     public async Task<object> GetByHeaderAsync(string value)
     {
-        var session = await _sessionRepository
+        var session = await sessionRepository
             .GetByTokenAsync(value)
             .ConfigureAwait(false);
 

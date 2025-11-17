@@ -12,8 +12,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Blobs;
 [ApiController]
 [Route("blobs")]
 [BearerAuthentication]
-public sealed class BlobController(
-    IAmazonS3 _client)
+internal sealed class BlobController(
+    IAmazonS3 client)
     : ControllerBase
 {
     [HttpPost]
@@ -64,7 +64,7 @@ public sealed class BlobController(
     private async Task EnsureBucketExistsAsync(string bucketName, string uploadFolder)
     {
         var existBucket = await AmazonS3Util
-            .DoesS3BucketExistV2Async(_client, bucketName)
+            .DoesS3BucketExistV2Async(client, bucketName)
             .ConfigureAwait(false);
 
         if (existBucket)
@@ -76,7 +76,7 @@ public sealed class BlobController(
         {
             BucketName = bucketName,
         };
-        await _client
+        await client
             .PutBucketAsync(createBucketRequest)
             .ConfigureAwait(false);
 
@@ -91,7 +91,7 @@ public sealed class BlobController(
                 RestrictPublicBuckets = false
             }
         };
-        await _client
+        await client
             .PutPublicAccessBlockAsync(publicAccessBlockRequest)
             .ConfigureAwait(false);
 
@@ -112,7 +112,7 @@ public sealed class BlobController(
             BucketName = bucketName,
             Policy = policy,
         };
-        await _client
+        await client
             .PutBucketPolicyAsync(createBucketPolicyRequest)
             .ConfigureAwait(false);
     }
@@ -132,7 +132,7 @@ public sealed class BlobController(
             Expires = DateTime.UtcNow.AddMinutes(15),
         };
 
-        return _client.GetPreSignedURL(request);
+        return client.GetPreSignedURL(request);
     }
 
     [HttpGet("{key}")]

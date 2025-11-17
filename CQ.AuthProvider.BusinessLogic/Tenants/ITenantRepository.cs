@@ -15,10 +15,6 @@ public interface ITenantRepository
 
     Task<Tenant> GetByIdAsync(Guid id);
 
-    Task UpdateOwnerByIdAsync(
-        Guid id,
-        Account newOwner);
-
     Task UpdateNameByIdAndSaveAsync(
         Guid id,
         string newName);

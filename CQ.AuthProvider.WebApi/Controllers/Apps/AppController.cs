@@ -18,13 +18,27 @@ public sealed class AppController(
 {
     [HttpPost]
     [BearerAuthentication]
-    [SecureAuthorization("create-app", "create-client")]
+    [SecureAuthorization]
     public async Task<AppCreatedResponse> CreateAsync(CreateAppArgs request)
     {
         var accountLogged = this.GetAccountLogged();
 
         var appCreated = await _appService
             .CreateAsync(request, accountLogged)
+            .ConfigureAwait(false);
+
+        return _mapper.Map<AppCreatedResponse>(appCreated);
+    }
+
+    [HttpPost("client")]
+    [BearerAuthentication]
+    [SecureAuthorization("create-client")]
+    public async Task<AppCreatedResponse> CreateClientAsync(CreateClientAppArgs request)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        var appCreated = await _appService
+            .CreateClientAsync(request, accountLogged)
             .ConfigureAwait(false);
 
         return _mapper.Map<AppCreatedResponse>(appCreated);

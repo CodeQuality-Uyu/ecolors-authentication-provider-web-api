@@ -31,25 +31,45 @@ internal sealed class CreatePermissionArgsValidator
         ActionExecutingContext actionExecutingContext,
         IValidationContext validationContext)
     {
-        var validationResult = new ValidationResult();
-        var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItem.AccountLogged];
-
+        var httpCtx = actionExecutingContext.HttpContext;
+        
+        var accountLogged = (AccountLogged)httpCtx.Items[ContextItem.AccountLogged];
         var args = (CreatePermissionArgs)validationContext.InstanceToValidate;
 
-        if (Guard.IsNull(args.AppId) &&
-            accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID &&
-            !accountLogged.HasPermission(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID.ToString()))
+        if (Guard.IsNull(args.AppId))
         {
-            validationResult.Errors.Add(new ValidationFailure("AppId", "Can't create to auth api app"));
+            return null;
         }
 
-        return validationResult;
+        var hasApp = accountLogged.AppsIds.Contains(args.AppId);
+
+        var authorized = hasApp;
+        if (!authorized)
+        {
+            actionExecutingContext.ModelState.AddModelError(
+                nameof(args.AppId),
+                $"Account doesn't have this AppId ({args.AppId})");
+        }
+
+        var appIsAuth = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
+        var isWebApiOwner = accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID);
+        var authorizedToAuth = appIsAuth && isWebApiOwner;
+
+        if (!authorizedToAuth)
+        {
+            actionExecutingContext.ModelState.AddModelError(
+                nameof(args.AppId),
+                $"Can't create to auth api app");
+        }
+
+        return null;
     }
 
     public IValidationContext? BeforeValidation(
         ActionExecutingContext actionExecutingContext,
         IValidationContext validationContext) => null;
 }
+
 
 public static class ValidatorExtensions
 {

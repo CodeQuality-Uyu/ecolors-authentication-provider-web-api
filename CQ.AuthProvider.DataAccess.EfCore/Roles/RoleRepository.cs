@@ -13,11 +13,11 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CQ.AuthProvider.DataAccess.EfCore.Roles;
 
 internal sealed class RoleRepository(
-    AuthDbContext _context,
-    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper _mapper,
-    IRepository<PermissionEfCore> _permissionRepository,
-    IRepository<RolePermission> _rolePermissionRepository)
-    : EfCoreRepository<RoleEfCore>(_context),
+    AuthDbContext context,
+    [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper,
+    IRepository<PermissionEfCore> permissionRepository,
+    IRepository<RolePermission> rolePermissionRepository)
+    : EfCoreRepository<RoleEfCore>(context),
     IRoleRepository
 {
     public async Task<Pagination<Role>> GetAllAsync(
@@ -40,7 +40,7 @@ internal sealed class RoleRepository(
             .ToPaginateAsync(page, pageSize)
             .ConfigureAwait(false);
 
-        return _mapper.Map<Pagination<Role>>(roles);
+        return mapper.Map<Pagination<Role>>(roles);
     }
 
     public async Task RemoveDefaultsAndSaveAsync(
@@ -82,7 +82,7 @@ internal sealed class RoleRepository(
 
         AssertNullEntity(role, id, nameof(Role.Id));
 
-        return _mapper.Map<Role>(role);
+        return mapper.Map<Role>(role);
     }
 
     public async Task<Role> GetDefaultByTenantIdAsync(
@@ -101,11 +101,22 @@ internal sealed class RoleRepository(
 
         AssertNullEntity(role, tenantId, nameof(Role.Tenant));
 
-        return _mapper.Map<Role>(role);
+        return mapper.Map<Role>(role);
     }
 
     public async Task CreateBulkAsync(List<Role> roles)
     {
+        var permissions = roles
+        .SelectMany(r => r.Permissions.ConvertAll(p => new RolePermission
+        {
+            RoleId = r.Id,
+            PermissionId = p.Id
+        }));
+
+        await BaseContext
+        .AddRangeAsync(permissions)
+        .ConfigureAwait(false);
+
         var rolesEfCore = roles.ConvertAll(r => new RoleEfCore(r));
 
         await CreateBulkAndSaveAsync(rolesEfCore)
@@ -116,7 +127,7 @@ internal sealed class RoleRepository(
         Guid id,
         List<string> permissionsKeys)
     {
-        var permissions = await _permissionRepository
+        var permissions = await permissionRepository
             .GetAllAsync(p => permissionsKeys.Contains(p.Key))
             .ConfigureAwait(false);
 
@@ -126,7 +137,7 @@ internal sealed class RoleRepository(
             PermissionId = p.Id
         });
 
-        await _rolePermissionRepository
+        await rolePermissionRepository
             .CreateBulkAndSaveAsync(rolePermissions)
             .ConfigureAwait(false);
     }
@@ -145,7 +156,7 @@ internal sealed class RoleRepository(
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
 
-        return _mapper.Map<Role>(entity);
+        return mapper.Map<Role>(entity);
     }
 
     public async Task<List<Role>> GetAllByIdsAsync(
@@ -162,7 +173,7 @@ internal sealed class RoleRepository(
             .ToListAsync()
             .ConfigureAwait(false);
 
-        return _mapper.Map<List<Role>>(roles);
+        return mapper.Map<List<Role>>(roles);
     }
 
     public async Task<List<Role>> GetByIdAsync(
@@ -170,18 +181,20 @@ internal sealed class RoleRepository(
         List<Guid> appIds,
         Guid tenantId)
     {
+        List<Guid> authRoles = [AuthConstants.CLIENT_OWNER_ROLE_ID, AuthConstants.APP_OWNER_ROLE_ID, AuthConstants.TENANT_OWNER_ROLE_ID];
+
         var query = Entities
             .Where(r => ids.Contains(r.Id))
             // TODO check in r.AppId and inheritence app
             //.Where(r => appIds.Contains(r.AppId))
-            .Where(r => r.TenantId == tenantId)
+            .Where(r => ids.Intersect(authRoles).Any() || r.TenantId == tenantId)
             ;
 
         var roles = await query
             .ToListAsync()
             .ConfigureAwait(false);
 
-        return _mapper.Map<List<Role>>(roles);
+        return mapper.Map<List<Role>>(roles);
     }
 
     public async Task DeleteAndSaveByIdAsync(Guid id)

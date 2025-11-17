@@ -27,7 +27,6 @@ internal sealed class TenantService(
             MiniLogoId = args.MiniLogoId,
             CoverLogoId = args.CoverLogoId,
             WebUrl = args.WebUrl,
-            Owner = accountLogged
         };
 
         await _tenantRepository
@@ -110,16 +109,11 @@ internal sealed class TenantService(
             throw new InvalidOperationException("New owner is not in tenant");
         }
 
-        var isTenantOwner = newOwner.HasPermission(AuthConstants.TENANT_OWNER_ROLE_ID.ToString());
+        var isTenantOwner = newOwner.HasPermission(AuthConstants.TENANT_OWNER_ROLE_ID);
         if (isTenantOwner)
         {
             return;
         }
-
-        await _tenantRepository
-            .UpdateOwnerByIdAsync(
-            id,
-            newOwner);
 
         await _accountRepository
             .AddRoleByIdAsync(newOwnerId, AuthConstants.TENANT_OWNER_ROLE_ID)

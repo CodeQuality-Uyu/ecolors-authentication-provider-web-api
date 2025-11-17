@@ -8,12 +8,85 @@ namespace CQ.AuthProvider.BusinessLogic.Apps;
 
 internal sealed class AppService(
     IAppRepository appRepository,
+    IAccountRepository accountRepository,
     IUnitOfWork unitOfWork,
     IBlobService blobService)
     : IAppInternalService
 {
     public async Task<App> CreateAsync(
         CreateAppArgs args,
+        AccountLogged accountLogged)
+    {
+        var existAppWithName = await appRepository
+            .ExistsByNameInTenantAsync(args.Name, accountLogged.Tenant.Id);
+        if (existAppWithName)
+        {
+            throw new InvalidOperationException("Name is in used");
+        }
+
+        var app = new App(
+            args.Name,
+            args.IsDefault,
+            args.CoverId,
+            args.BackgroundColors != null ? new()
+            {
+                Colors = args.BackgroundColors.Colors,
+                Config = args.BackgroundColors.Config
+            } : null,
+            args.BackgroundCoverId,
+            accountLogged.Tenant,
+            null);
+
+        if (app.IsDefault)
+        {
+            var defaultApp = await appRepository
+                .GetOrDefaultByDefaultAsync(app.Tenant.Id)
+                .ConfigureAwait(false);
+            if (Guard.IsNotNull(defaultApp))
+            {
+                await appRepository
+                    .RemoveDefaultByIdAsync(defaultApp.Id)
+                    .ConfigureAwait(false);
+            }
+        }
+
+        await appRepository
+            .CreateAsync(app)
+            .ConfigureAwait(false);
+
+        if (args.RegisterToIt)
+        {
+            await accountRepository
+               .AddAppAsync(app, accountLogged)
+               .ConfigureAwait(false);
+        }
+
+        await blobService
+            .MoveAppElementAsync(
+            accountLogged.AppLogged,
+            app,
+            app.CoverId)
+            .ConfigureAwait(false);
+
+        if (app.BackgroundCoverId.HasValue)
+        {
+            await blobService
+            .MoveAppElementAsync(
+                accountLogged.AppLogged,
+                app,
+                app.BackgroundCoverId.Value)
+            .ConfigureAwait(false);
+        }
+
+        await unitOfWork
+            .CommitChangesAsync()
+            .ConfigureAwait(false);
+
+        return app;
+    }
+
+    public async Task<App> CreateClientAsync(
+        CreateClientAppArgs args,
         AccountLogged accountLogged)
     {
         var existAppWithName = await appRepository
@@ -33,50 +106,28 @@ internal sealed class AppService(
             };
         }
 
-        var canCreateClientPermission = accountLogged.HasPermission("create-client");
-        App? fatherApp = null;
-        if(canCreateClientPermission)
-        {
-            fatherApp = accountLogged.AppLogged;
-        }
-
         var app = new App(
             args.Name,
-            args.IsDefault,
-            args.CoverId,
-            backgroundColors,
-            args.BackgroundCoverId,
+            false,
+            args.CoverId ?? accountLogged.AppLogged.CoverId,
+            backgroundColors ?? accountLogged.AppLogged.BackgroundColor,
+            args.BackgroundCoverId ?? accountLogged.AppLogged.BackgroundCoverId,
             accountLogged.Tenant,
-            fatherApp);
-
-        if (app.IsDefault)
-        {
-            var defaultApp = await appRepository
-                .GetOrDefaultByDefaultAsync(app.Tenant.Id)
-                .ConfigureAwait(false);
-            if (Guard.IsNotNull(defaultApp))
-            {
-                await appRepository
-                    .RemoveDefaultByIdAsync(defaultApp.Id)
-                    .ConfigureAwait(false);
-            }
-        }
+            accountLogged.AppLogged);
 
         await appRepository
             .CreateAsync(app)
             .ConfigureAwait(false);
 
-        //Agrega la app a la cuenta logueada
-        //await _accountRepository
-        //    .AddAppAsync(app, accountLogged)
-        //    .ConfigureAwait(false);
-
-        await blobService
-            .MoveAppElementAsync(
-            accountLogged.AppLogged,
-            app,
-            app.CoverId)
-            .ConfigureAwait(false);
+        if (args.CoverId.HasValue)
+        {
+            await blobService
+                .MoveAppElementAsync(
+                accountLogged.AppLogged,
+                app,
+                app.CoverId)
+                .ConfigureAwait(false);
+        }
 
         if (app.BackgroundCoverId.HasValue)
         {

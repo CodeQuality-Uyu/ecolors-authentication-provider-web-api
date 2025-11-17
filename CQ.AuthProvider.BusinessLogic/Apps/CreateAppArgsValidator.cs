@@ -18,3 +18,19 @@ internal sealed class CreateAppArgsValidator
             .ValidId();
     }
 }
+
+internal sealed class CreateClientAppArgsValidator
+    : AbstractValidator<CreateClientAppArgs>
+{
+    public CreateClientAppArgsValidator()
+    {
+        RuleFor(a => a.Name)
+            .Required();
+
+        RuleFor(a => a.CoverId)
+            .ValidId();
+
+        RuleFor(a => a.BackgroundCoverId)
+            .ValidId();
+    }
+}

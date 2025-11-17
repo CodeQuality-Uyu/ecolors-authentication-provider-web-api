@@ -21,3 +21,13 @@ public sealed record CreateAccountForArgs(
     Guid? ProfilePictureId,
     List<Guid>? AppIds,
     List<Guid>? RoleIds);
+
+public sealed record CreateAccountWithTenantArgs(
+string Email,
+string Password,
+string FirstName,
+string LastName,
+string Locale,
+string TimeZone,
+Guid? ProfilePictureId,
+string TenantName);

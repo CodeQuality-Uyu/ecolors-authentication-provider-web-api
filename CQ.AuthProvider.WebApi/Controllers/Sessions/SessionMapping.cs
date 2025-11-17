@@ -6,10 +6,10 @@ using CQ.AuthProvider.WebApi.Controllers.Blobs;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
 
-internal sealed class SessionProfile
+internal sealed class SessionMapping
     : Profile
 {
-    public SessionProfile()
+    public SessionMapping()
     {
         #region Create
         CreateMap<Session, SessionCreatedResponse>()
@@ -69,7 +69,7 @@ internal sealed class ProfilePictureResolver(IBlobService _blobService)
     public BlobReadResponse? Resolve(
         Session source,
         SessionCreatedResponse destination,
-        BlobReadResponse destMember,
+        BlobReadResponse? destMember,
         ResolutionContext context)
     {
         if (source.Account.ProfilePictureId == null)

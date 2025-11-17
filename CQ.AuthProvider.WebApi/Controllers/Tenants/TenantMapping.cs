@@ -7,10 +7,10 @@ using CQ.AuthProvider.WebApi.Controllers.Blobs;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Tenants;
 
-internal sealed class TenantProfile
+internal sealed class TenantMapping
     : Profile
 {
-    public TenantProfile()
+    public TenantMapping()
     {
         #region Create session
         CreateMap<Tenant, TenantOfAccountBasicInfoResponse>()
@@ -28,16 +28,21 @@ internal sealed class TenantProfile
     }
 }
 
-internal sealed class MiniLogoMultimediaResolver(IBlobService _blobService)
-    : IValueResolver<Tenant, TenantOfAccountBasicInfoResponse, BlobReadResponse>
+internal sealed class MiniLogoMultimediaResolver(IBlobService blobService)
+    : IValueResolver<Tenant, TenantOfAccountBasicInfoResponse, BlobReadResponse?>
 {
-    public BlobReadResponse Resolve(
+    public BlobReadResponse? Resolve(
         Tenant source,
         TenantOfAccountBasicInfoResponse destination,
-        BlobReadResponse destMember,
+        BlobReadResponse? destMember,
         ResolutionContext context)
     {
-        var (Id, Key, ReadUrl) = _blobService.GetReadElementInTenant(source, source.MiniLogoId);
+        if (source.MiniLogoId == null)
+        {
+            return null;
+        }
+
+        var (Id, Key, ReadUrl) = blobService.GetReadElementInTenant(source, source.MiniLogoId.Value);
 
         return new BlobReadResponse
         {
@@ -48,16 +53,21 @@ internal sealed class MiniLogoMultimediaResolver(IBlobService _blobService)
     }
 }
 
-internal sealed class CoverLogoMultimediaResolver(IBlobService _blobService)
-    : IValueResolver<Tenant, TenantOfAccountBasicInfoResponse, BlobReadResponse>
+internal sealed class CoverLogoMultimediaResolver(IBlobService blobService)
+    : IValueResolver<Tenant, TenantOfAccountBasicInfoResponse, BlobReadResponse?>
 {
-    public BlobReadResponse Resolve(
+    public BlobReadResponse? Resolve(
         Tenant source,
         TenantOfAccountBasicInfoResponse destination,
-        BlobReadResponse destMember,
+        BlobReadResponse? destMember,
         ResolutionContext context)
     {
-        var (Id, Key, ReadUrl) = _blobService.GetReadElementInTenant(source, source.CoverLogoId);
+        if (source.CoverLogoId == null)
+        {
+            return null;
+        }
+
+        var (Id, Key, ReadUrl) = blobService.GetReadElementInTenant(source, source.CoverLogoId.Value);
 
         return new BlobReadResponse
         {

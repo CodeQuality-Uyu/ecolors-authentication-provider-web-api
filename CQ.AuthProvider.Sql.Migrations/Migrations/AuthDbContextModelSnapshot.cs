@@ -34,7 +34,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountsApps");
+                    b.ToTable("AccountsApps", (string)null);
 
                     b.HasData(
                         new
@@ -87,7 +87,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
 
                     b.HasData(
                         new
@@ -116,7 +116,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountsRoles");
+                    b.ToTable("AccountsRoles", (string)null);
 
                     b.HasData(
                         new
@@ -160,7 +160,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Apps");
+                    b.ToTable("Apps", (string)null);
 
                     b.HasData(
                         new
@@ -214,7 +214,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Invitations");
+                    b.ToTable("Invitations", (string)null);
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", b =>
@@ -250,7 +250,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
 
                     b.HasData(
                         new
@@ -369,7 +369,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             Description = "Can read all tenants",
                             IsPublic = true,
-                            Key = "getall-tenants",
+                            Key = "getall-tenant",
                             Name = "Can read all tenants",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
@@ -477,7 +477,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("ResetPasswords");
+                    b.ToTable("ResetPasswords", (string)null);
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Roles.RoleEfCore", b =>
@@ -512,7 +512,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -579,7 +579,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolesPermissions");
+                    b.ToTable("RolesPermissions", (string)null);
 
                     b.HasData(
                         new
@@ -754,7 +754,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AppId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
@@ -763,34 +763,28 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CoverLogoId")
+                    b.Property<Guid?>("CoverLogoId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("MiniLogoId")
+                    b.Property<Guid?>("MiniLogoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("WebUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenants", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c"),
-                            CoverLogoId = new Guid("d7cb8b70-f3e9-4ffa-a963-c72942a7f65b"),
-                            MiniLogoId = new Guid("0f491b27-2a93-479a-b674-5c49db77f05c"),
-                            Name = "Seed Tenant",
-                            OwnerId = new Guid("0ee82ee9-f480-4b13-ad68-579dc83dfa0d")
+                            Name = "Seed Tenant"
                         });
                 });
 

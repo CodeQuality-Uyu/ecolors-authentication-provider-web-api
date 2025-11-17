@@ -44,7 +44,6 @@ internal sealed class CreateBulkPermissionArgsValidator
 
         var appsIds = permissions
                     .GroupBy(a => a.AppId)
-                    .Where(a => a.Key.HasValue)
                     .Select(g => g.Key!)
                     .ToList();
 
@@ -53,7 +52,7 @@ internal sealed class CreateBulkPermissionArgsValidator
             var validAppsIds = accountLogged.AppsIds;
 
             var invalidAppsIds = appsIds
-                .Where(id => !validAppsIds.Contains(id.Value))
+                .Where(id => !validAppsIds.Contains(id))
                 .ToList();
 
             validationResult.Errors.Add(new ValidationFailure("AppId",$"Invalid apps ids {string.Join(",", invalidAppsIds)}"));
