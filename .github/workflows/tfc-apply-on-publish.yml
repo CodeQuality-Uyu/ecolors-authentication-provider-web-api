@@ -26,7 +26,7 @@ jobs:
     env:
       # Prefer repo/org VARIABLES for these (not secrets)
       TFC_ORG: ${{ vars.TFC_ORG || 'ColorLabs' }}
-      TFC_WORKSPACE: ${{ vars.TFC_WORKSPACE || 'ecolors-web-api-dev' }}
+      TFC_WORKSPACE: ${{ vars.TFC_WORKSPACE || 'authentication-provider-web-api-dev' }}
       TFC_HOST: ${{ vars.TFC_HOST || 'app.terraform.io' }}
       # Token must be a SECRET
       TFC_TOKEN: ${{ secrets.TFC_TOKEN }}
