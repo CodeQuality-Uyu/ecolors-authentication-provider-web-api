@@ -31,7 +31,7 @@ jobs:
 
     env:
       AWS_REGION: us-east-2
-      ECR_REPOSITORY: ecolors-web-api
+      ECR_REPOSITORY: auth-provider-web-api
       PUSH_LATEST: 'false'
       AWS_ACCOUNT_ID: 273733837144
       AWS_ROLE: GitHubDeploymentRole-ecolors-nonprod
