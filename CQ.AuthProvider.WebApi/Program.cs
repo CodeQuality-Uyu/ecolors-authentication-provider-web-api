@@ -3,6 +3,8 @@ using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.DataAccess.EfCore;
 using CQ.IdentityProvider.EfCore;
 using CQ.Extensions.Configuration;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,8 @@ services
 services
     .ConfigureAutoValidation()
     .ConfigureApiServices(configuration, builder.Environment)
-    .ConfigureBlob(configuration, builder.Environment);
+    .ConfigureBlob(configuration, builder.Environment)
+    .ConfigHealthChecks(configuration);
 
 var app = builder.Build();
 
@@ -34,14 +37,18 @@ app
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 
+var allowedOrigins = app.Configuration.GetSection<List<string>>("Cors:Origins") ?? [];
+if (allowedOrigins.Count == 0 && !app.Environment.IsProduction())
+{
+    allowedOrigins.AddRange(["http://localhost:3000", "https://localhost:3000"]);
+}
 
-var origins = app.Configuration.GetSection<string[]>("Cors:Origins");
-
-app.UseCors(policy =>
-policy
-.WithOrigins(origins ?? ["*"])
-.AllowAnyHeader()
-.AllowAnyMethod());
+app.UseCors(policy => policy.WithOrigins(allowedOrigins.ToArray()).AllowAnyHeader().AllowAnyMethod());
+app.MapHealthChecks(
+    "health", new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
 
 app.MapControllers();
 
