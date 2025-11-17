@@ -1,7 +1,7 @@
 <Project>
 	<ItemGroup>
 		<PackageReference Include="CQ.Utility" Version="1.1.16" />
-		<!-- <PackageReference Include="CQ.ApiElements" Version="3.0.31" /> -->
+		<PackageReference Include="CQ.ApiElements" Version="3.0.32" />
 		<PackageReference Include="CQ.UnitOfWork.EfCore" Version="3.0.20" />
 		<PackageReference Include="CQ.Extensions.Configuration" Version="2.0.0" />
 		<PackageReference Include="CQ.Extensions.ServiceCollection" Version="2.0.3" />
@@ -25,9 +25,9 @@
 		<!-- <Reference Include="CQ.AuthProvider.SDK">
 			<HintPath>..\..\..\..\CodeQuality\authentication-provider-sdk\src\CQ.AuthProvider.SDK\bin\Debug\net8.0\CQ.AuthProvider.SDK.dll</HintPath>
 		</Reference> -->
-		<Reference Include="CQ.ApiElements">
+		<!-- <Reference Include="CQ.ApiElements">
 			<HintPath>..\..\web-api-elements\CQ.ApiElements\bin\Debug\net8.0\CQ.ApiElements.dll</HintPath>
-		</Reference>
+		</Reference> -->
 		<!-- <Reference Include="CQ.Extensions.Environments">
 			<HintPath>..\..\extensions\CQ.Extensions.Environments\bin\Debug\net8.0\CQ.Extensions.Environments.dll</HintPath>
 		</Reference> -->
