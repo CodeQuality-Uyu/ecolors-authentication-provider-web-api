@@ -18,7 +18,7 @@ internal sealed class AccountService(
     IRoleRepository _roleRepository,
     IAppInternalService _appService,
     ITenantRepository tenantRepository,
-    IUnitOfWork _unitOfWork)
+    IUnitOfWork unitOfWork)
     : IAccountInternalService
 {
     #region Create
@@ -108,7 +108,7 @@ internal sealed class AccountService(
 
         try
         {
-            await _unitOfWork
+            await unitOfWork
                 .CommitChangesAsync()
                 .ConfigureAwait(false);
         }
@@ -178,7 +178,7 @@ internal sealed class AccountService(
 
         try
         {
-            await _unitOfWork
+            await unitOfWork
                 .CommitChangesAsync()
                 .ConfigureAwait(false);
         }
@@ -263,7 +263,7 @@ internal sealed class AccountService(
                 args.Password)
                 .ConfigureAwait(false);
 
-            await _unitOfWork
+            await unitOfWork
                 .CommitChangesAsync()
                 .ConfigureAwait(false);
 
@@ -368,7 +368,7 @@ internal sealed class AccountService(
                 .ConfigureAwait(false);
         }
 
-        await _unitOfWork
+        await unitOfWork
             .CommitChangesAsync()
             .ConfigureAwait(false);
     }
