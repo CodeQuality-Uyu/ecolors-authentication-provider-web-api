@@ -14,6 +14,9 @@ public sealed record CreateClientAppArgs(
     CreateAppCoverBackgroundColorArgs? BackgroundColors,
     Guid? BackgroundCoverId);
 
-public sealed record CreateAppCoverBackgroundColorArgs(
-    List<string> Colors,
-    string Config);
+public sealed record CreateAppCoverBackgroundColorArgs
+{
+    public List<string> Colors { get; init; } = [];
+
+    public string Config { get; init; } = null!;
+}

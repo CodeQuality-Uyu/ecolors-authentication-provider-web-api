@@ -17,8 +17,8 @@ public sealed class AppController(
     : ControllerBase
 {
     [HttpPost]
-    [BearerAuthentication]
-    [SecureAuthorization]
+    //[BearerAuthentication]
+    //[SecureAuthorization]
     public async Task<AppCreatedResponse> CreateAsync(CreateAppArgs request)
     {
         var accountLogged = this.GetAccountLogged();
