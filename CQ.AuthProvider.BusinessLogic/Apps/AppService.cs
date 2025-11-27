@@ -17,12 +17,7 @@ internal sealed class AppService(
         CreateAppArgs args,
         AccountLogged accountLogged)
     {
-        var existAppWithName = await appRepository
-            .ExistsByNameInTenantAsync(args.Name, accountLogged.Tenant.Id);
-        if (existAppWithName)
-        {
-            throw new InvalidOperationException("Name is in used");
-        }
+        await AssertAsync(appRepository, args, accountLogged).ConfigureAwait(false);
 
         var app = new App(
             args.Name,
@@ -83,6 +78,16 @@ internal sealed class AppService(
             .ConfigureAwait(false);
 
         return app;
+
+        static async Task AssertAsync(IAppRepository appRepository, CreateAppArgs args, AccountLogged accountLogged)
+        {
+            var existAppWithName = await appRepository
+                        .ExistsByNameInTenantAsync(args.Name, accountLogged.Tenant.Id);
+            if (existAppWithName)
+            {
+                throw new InvalidOperationException("Name is in used");
+            }
+        }
     }
 
     public async Task<App> CreateClientAsync(

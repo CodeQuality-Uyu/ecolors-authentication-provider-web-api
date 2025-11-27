@@ -68,7 +68,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new AppEfCore
                 {
                     Id = AuthConstants.AUTH_WEB_API_APP_ID,
-                    Name = "Auth Provider Web Api",
+                    Name = AuthConstants.AUTH_WEB_API_APP_NAME,
                     IsDefault = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
                 });
@@ -176,8 +176,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RoleEfCore
                 {
                     Id = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    Name = "Tenant Owner",
-                    Description = "Tenant Owner",
+                    Name = AuthConstants.TENANT_OWNER_ROLE_NAME,
+                    Description = AuthConstants.TENANT_OWNER_ROLE_NAME,
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
@@ -206,8 +206,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RoleEfCore
                 {
                     Id = AuthConstants.APP_OWNER_ROLE_ID,
-                    Name = "App owner",
-                    Description = "App owner",
+                    Name = AuthConstants.APP_OWNER_ROLE_NAME,
+                    Description = AuthConstants.APP_OWNER_ROLE_NAME,
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
