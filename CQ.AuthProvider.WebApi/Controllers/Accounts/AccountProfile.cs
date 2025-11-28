@@ -2,7 +2,6 @@
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Utils;
-using CQ.AuthProvider.WebApi.Controllers.Blobs;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
@@ -32,32 +31,23 @@ internal sealed class AccountProfile
     }
 }
 
-internal sealed class ProfilePictureResolver(IBlobService _blobService)
+internal sealed class ProfilePictureResolver(IBlobService blobService)
     : IValueResolver<CreateAccountResult, SessionCreatedResponse, BlobReadResponse?>
 {
     public BlobReadResponse? Resolve(
         CreateAccountResult source,
         SessionCreatedResponse destination,
-        BlobReadResponse destMember,
+        BlobReadResponse? destMember,
         ResolutionContext context)
     {
-        if (source.ProfilePictureId == null)
+        if (source.ProfilePictureKey == null)
         {
             return null;
         }
 
-        var blob = _blobService.GetReadProfilePicture(
-            source.ProfilePictureId.Value,
-            source.Id,
-            source.AppLogged.Name,
-            source.Tenant.Name);
+        var blob = blobService.GetByKey(source.ProfilePictureKey);
 
-        return new BlobReadResponse
-        {
-            Id = blob.Id,
-            Key = blob.Key,
-            Url = blob.ReadUrl,
-        };
+        return blob;
     }
 }
 

@@ -37,19 +37,12 @@ internal sealed class MiniLogoMultimediaResolver(IBlobService blobService)
         BlobReadResponse? destMember,
         ResolutionContext context)
     {
-        if (source.MiniLogoId == null)
+        if (source.MiniLogoKey == null)
         {
             return null;
         }
 
-        var (Id, Key, ReadUrl) = blobService.GetReadElementInTenant(source, source.MiniLogoId.Value);
-
-        return new BlobReadResponse
-        {
-            Id = Id,
-            Key = Key,
-            Url = ReadUrl,
-        };
+        return blobService.GetByKey(source.MiniLogoKey);
     }
 }
 
@@ -62,18 +55,11 @@ internal sealed class CoverLogoMultimediaResolver(IBlobService blobService)
         BlobReadResponse? destMember,
         ResolutionContext context)
     {
-        if (source.CoverLogoId == null)
+        if (source.CoverLogoKey == null)
         {
             return null;
         }
 
-        var (Id, Key, ReadUrl) = blobService.GetReadElementInTenant(source, source.CoverLogoId.Value);
-
-        return new BlobReadResponse
-        {
-            Id = Id,
-            Key = Key,
-            Url = ReadUrl,
-        };
+        return blobService.GetByKey(source.CoverLogoKey);
     }
 }

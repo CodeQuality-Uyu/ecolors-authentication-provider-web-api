@@ -11,11 +11,8 @@ internal sealed class CreateAppArgsValidator
         RuleFor(a => a.Name)
             .Required();
 
-        RuleFor(a => a.CoverId)
-            .ValidId();
-
-        RuleFor(a => a.BackgroundCoverId)
-            .ValidId();
+        RuleFor(a => a.CoverKey)
+            .Required();
     }
 }
 
@@ -27,10 +24,7 @@ internal sealed class CreateClientAppArgsValidator
         RuleFor(a => a.Name)
             .Required();
 
-        RuleFor(a => a.CoverId)
-            .ValidId();
-
-        RuleFor(a => a.BackgroundCoverId)
-            .ValidId();
+        RuleFor(a => a.CoverKey)
+            .Required();
     }
 }

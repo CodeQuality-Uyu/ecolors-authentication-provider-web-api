@@ -9,7 +9,7 @@ public sealed record CreateAccountResult(
     string FullName,
     string FirstName,
     string LastName,
-    Guid? ProfilePictureId,
+    string? ProfilePictureKey,
     string Locale,
     string TimeZone,
     App AppLogged,

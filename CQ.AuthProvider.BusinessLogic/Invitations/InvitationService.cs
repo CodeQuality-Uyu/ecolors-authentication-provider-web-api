@@ -113,7 +113,7 @@ internal sealed class InvitationService(
             args.Email,
             firstName,
             lastName,
-            args.ProfilePictureId,
+            args.ProfilePictureKey,
             args.Locale,
             args.TimeZone,
             invitation);

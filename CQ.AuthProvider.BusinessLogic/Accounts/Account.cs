@@ -19,7 +19,7 @@ public record class Account()
 
     public string FullName { get; init; } = null!;
 
-    public Guid? ProfilePictureId { get; init; } = null!;
+    public string? ProfilePictureKey { get; init; } = null!;
 
     public string Locale { get; init; } = null!;
 
@@ -35,7 +35,7 @@ public record class Account()
         string email,
         string firstName,
         string lastName,
-        Guid? profilePictureId,
+        string? profilePictureKey,
         string locale,
         string timeZone,
         Role role,
@@ -50,7 +50,7 @@ public record class Account()
             FirstName = firstName,
             LastName = lastName,
             FullName = $"{firstName} {lastName}",
-            ProfilePictureId = profilePictureId,
+            ProfilePictureKey = profilePictureKey,
             Locale = locale,
             TimeZone = timeZone,
             Roles = [role],
@@ -63,7 +63,7 @@ public record class Account()
         string email,
         string firstName,
         string lastName,
-        Guid? profilePictureId,
+        string? profilePictureKey,
         string locale,
         string timeZone,
         List<Role> roles,
@@ -79,7 +79,7 @@ public record class Account()
             FirstName = firstName,
             LastName = lastName,
             FullName = $"{firstName} {lastName}",
-            ProfilePictureId = profilePictureId,
+            ProfilePictureKey = profilePictureKey,
             Locale = locale,
             TimeZone = timeZone,
             Roles = roles,
@@ -92,13 +92,13 @@ public record class Account()
         string email,
         string firstName,
         string lastName,
-        Guid? profilePictureUrl,
+        string? profilePictureKey,
         string locale,
         string timeZone,
         Invitation invitation) => New(email,
             firstName,
             lastName,
-            profilePictureUrl,
+            profilePictureKey,
             locale,
             timeZone,
             invitation.Role,
@@ -108,7 +108,7 @@ public record class Account()
         string email,
         string firstName,
         string lastName,
-        Guid? profilePictureId,
+        string? profilePictureKey,
         string locale,
         string timeZone,
         Tenant tenant)
@@ -122,7 +122,7 @@ public record class Account()
             FirstName = firstName,
             LastName = lastName,
             FullName = $"{firstName} {lastName}",
-            ProfilePictureId = profilePictureId,
+            ProfilePictureKey = profilePictureKey,
             Locale = locale,
             TimeZone = timeZone,
             Roles = [

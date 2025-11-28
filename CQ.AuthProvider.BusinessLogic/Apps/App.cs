@@ -11,11 +11,11 @@ public sealed record class App()
 
     public bool IsDefault { get; set; }
 
-    public Guid CoverId { get; init; }
+    public string CoverKey { get; init; } = null!;
 
     public CoverBackgroundColor? BackgroundColor { get; init; }
 
-    public Guid? BackgroundCoverId { get; init; }
+    public string? BackgroundCoverKey { get; init; }
 
     public Tenant Tenant { get; init; } = null!;
 
@@ -24,9 +24,9 @@ public sealed record class App()
     public App(
         string name,
         bool isDefault,
-        Guid coverId,
+        string coverKey,
         CoverBackgroundColor? backgroundColor,
-        Guid? backgroundCoverId,
+        string? backgroundCoverKey,
         Tenant tenant,
         App? fatherApp)
         : this()
@@ -34,9 +34,9 @@ public sealed record class App()
         Name = Guard.Normalize(name);
         IsDefault = isDefault;
         Tenant = tenant;
-        CoverId = coverId;
+        CoverKey = coverKey;
         BackgroundColor = backgroundColor;
-        BackgroundCoverId = backgroundCoverId;
+        BackgroundCoverKey = backgroundCoverKey;
         FatherApp = fatherApp;
     }
 }

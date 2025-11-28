@@ -196,46 +196,77 @@ internal static class AuthProviderWebApiConfig
         return services;
     }
 
+#region Blob Configuration Section
     public static IServiceCollection ConfigureBlob(
         this IServiceCollection services,
         IConfiguration configuration,
         IWebHostEnvironment environment)
     {
         var blobConfiguration = configuration.GetSection<BlobSection>("Blob");
-
-        if (blobConfiguration.Type == BlobType.Mock)
+        switch (blobConfiguration.Type)
         {
-            services.AddTransient<IBlobService, FakeBlobService>();
-        }
-        else
-        {
-            var credentials = new BasicAWSCredentials(blobConfiguration.Config.AccessToken, blobConfiguration.Config.SecretToken);
-            AmazonS3Client client;
-
-            if (blobConfiguration.Type == BlobType.Aws)
-            {
-                var region = RegionEndpoint.GetBySystemName(blobConfiguration.Config.Region);
-
-                client = new AmazonS3Client(credentials, region);
-            }
-            else
-            {
-                var fakeConfig = new AmazonS3Config
+            case BlobType.Mock:
                 {
-                    ServiceURL = blobConfiguration.Config.ServiceUrl,
-                    ForcePathStyle = true,
-                };
-
-                client = new AmazonS3Client(credentials, fakeConfig);
-            }
-
-            services
-                .AddTransient<IBlobService, BlobService>()
-                .AddService<IAmazonS3>(client, LifeTime.Singleton);
+                    ConfigureMockBlob(services);
+                    break;
+                }
+            case BlobType.Aws:
+                {
+                    ConfigureAwsBlob(services, configuration);
+                    break;
+                }
+            case BlobType.LocalStack:
+                {
+                    ConfigureLocalStackBlob(services, blobConfiguration);
+                    break;
+                }
+            default:
+                throw new InvalidOperationException($"Invalid blob type: {blobConfiguration.Type}");
         }
 
         return services;
     }
+
+    private static IServiceCollection ConfigureMockBlob(
+        IServiceCollection services)
+    {
+        services.AddTransient<IBlobService, FakeBlobService>();
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureAwsBlob(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services
+            .AddDefaultAWSOptions(configuration.GetAWSOptions("AWS"))
+            .AddAWSService<AmazonS3Client>()
+            .AddTransient<IBlobService, AWSBlobService>();
+            
+        return services;
+    }
+
+    private static IServiceCollection ConfigureLocalStackBlob(
+        IServiceCollection services,
+        BlobSection blobSection)
+    {
+        var credentials = new BasicAWSCredentials(blobSection.Config.AccessToken, blobSection.Config.SecretToken);
+        var config = new AmazonS3Config
+        {
+            ServiceURL = blobSection.Config.ServiceUrl,
+            ForcePathStyle = true,
+        };
+
+        var client = new AmazonS3Client(credentials, config);
+
+        services
+            .AddTransient<IBlobService, AWSBlobService>()
+            .AddService(client, LifeTime.Singleton);
+
+        return services;
+    }
+#endregion Blob Configuration Section
 
     public static IServiceCollection ConfigHealthChecks(
         this IServiceCollection services,

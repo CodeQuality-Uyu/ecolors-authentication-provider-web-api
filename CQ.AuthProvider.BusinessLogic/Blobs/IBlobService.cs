@@ -1,26 +1,18 @@
-﻿using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.BusinessLogic.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 
 namespace CQ.AuthProvider.BusinessLogic.Blobs;
 
 public interface IBlobService
 {
-    BlobRead GetReadProfilePicture(
-        Guid profilePictureId,
-        Guid accountId,
-        string appName,
-        string tenantName);
+    Task<BlobReadWriteResponse> CreateAsync(
+        CreateBlobRequest request,
+        AccountLogged accountLogged);
 
-    BlobRead GetReadElementInApp(
-        App app,
-        Guid elementId);
+    BlobReadResponse GetByKey(
+        string key,
+        string bucketName = "blobs");
 
-    BlobRead GetReadElementInTenant(
-        Tenant tenant,
-        Guid elementId);
-
-    Task MoveAppElementAsync(
-        App oldApp,
-        App newApp,
-        Guid elementId);
+    Task MoveObjectAsync(
+        string oldKey,
+        string newKey);
 }

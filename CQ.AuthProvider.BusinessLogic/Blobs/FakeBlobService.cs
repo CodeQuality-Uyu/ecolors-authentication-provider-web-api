@@ -1,26 +1,29 @@
-﻿using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.BusinessLogic.Tenants;
+﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 
 namespace CQ.AuthProvider.BusinessLogic.Blobs;
 public sealed class FakeBlobService
     : IBlobService
 {
-    public BlobRead GetReadElementInApp(App app, Guid elementId)
+    public Task<BlobReadWriteResponse> CreateAsync(CreateBlobRequest request, AccountLogged accountLogged)
     {
-        return new BlobRead(elementId, "fake key", "fake url");
+        return Task.FromResult(
+            new BlobReadWriteResponse(
+                Guid.NewGuid(),
+                "fake-key",
+                "https://fake-read-url",
+                "https://fake-write-url"));
     }
 
-    public BlobRead GetReadElementInTenant(Tenant tenant, Guid elementId)
+    public BlobReadResponse GetByKey(string key, string bucketName = "blobs")
     {
-        return new BlobRead(elementId, "fake key", "fake url");
+        return new BlobReadResponse
+        {
+            Key = key,
+            Url = "https://fake-read-url"
+        };
     }
 
-    public BlobRead GetReadProfilePicture(Guid profilePictureId, Guid accountId, string appName, string tenantName)
-    {
-        return new BlobRead(profilePictureId, "fake key", "fake url");
-    }
-
-    public Task MoveAppElementAsync(App oldApp, App newApp, Guid elementId)
+    public Task MoveObjectAsync(string oldKey, string newKey)
     {
         return Task.CompletedTask;
     }

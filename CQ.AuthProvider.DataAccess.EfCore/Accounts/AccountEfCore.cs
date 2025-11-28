@@ -11,7 +11,7 @@ public sealed record class AccountEfCore()
 
     public string Email { get; init; } = null!;
 
-    public Guid? ProfilePictureId { get; set; } = null!;
+    public string? ProfilePictureKey { get; set; } = null!;
 
     public string FullName { get; set; } = null!;
 
@@ -42,7 +42,7 @@ public sealed record class AccountEfCore()
         LastName = account.LastName,
         Locale = account.Locale,
         TimeZone = account.TimeZone,
-        ProfilePictureId = account.ProfilePictureId,
+        ProfilePictureKey = account.ProfilePictureKey,
         TenantId = account.Tenant.Id,
     };
 }
