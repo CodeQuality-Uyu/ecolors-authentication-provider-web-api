@@ -1,4 +1,4 @@
-﻿namespace CQ.AuthProvider.WebApi.Controllers.Blobs;
+﻿namespace CQ.AuthProvider.BusinessLogic.Blobs;
 
 public sealed record BlobReadWriteResponse(
     Guid Id,

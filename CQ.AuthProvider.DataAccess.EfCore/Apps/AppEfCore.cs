@@ -12,11 +12,11 @@ public sealed record class AppEfCore()
 
     public bool IsDefault { get; set; }
 
-    public Guid CoverId { get; init; }
+    public string CoverKey { get; init; } = null!;
 
     public CoverBackgroundColorEfCore? BackgroundColor { get; init; }
 
-    public Guid? BackgroundCoverId { get; init; }
+    public string? BackgroundCoverKey { get; init; }
 
     public Guid TenantId { get; init; }
 

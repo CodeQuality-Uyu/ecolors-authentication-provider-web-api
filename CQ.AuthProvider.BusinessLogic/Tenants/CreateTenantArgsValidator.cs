@@ -9,11 +9,5 @@ internal sealed class CreateTenantArgsValidator
     {
         RuleFor(c => c.Name)
             .Required();
-
-        RuleFor(c => c.MiniLogoId)
-            .ValidId();
-
-        RuleFor(c => c.CoverLogoId)
-            .ValidId();
     }
 }

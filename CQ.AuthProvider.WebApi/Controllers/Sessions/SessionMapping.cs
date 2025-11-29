@@ -63,7 +63,7 @@ internal sealed class SessionMapping
     }
 }
 
-internal sealed class ProfilePictureResolver(IBlobService _blobService)
+internal sealed class ProfilePictureResolver(IBlobService blobService)
     : IValueResolver<Session, SessionCreatedResponse, BlobReadResponse?>
 {
     public BlobReadResponse? Resolve(
@@ -72,22 +72,11 @@ internal sealed class ProfilePictureResolver(IBlobService _blobService)
         BlobReadResponse? destMember,
         ResolutionContext context)
     {
-        if (source.Account.ProfilePictureId == null)
+        if (source.Account.ProfilePictureKey == null)
         {
             return null;
         }
 
-        var blob = _blobService.GetReadProfilePicture(
-            source.Account.ProfilePictureId.Value,
-            source.Account.Id,
-            source.App.Name,
-            source.Account.Tenant.Name);
-
-        return new BlobReadResponse
-        {
-            Id = blob.Id,
-            Key = blob.Key,
-            Url = blob.ReadUrl
-        };
+        return blobService.GetByKey(source.Account.ProfilePictureKey);
     }
 }
