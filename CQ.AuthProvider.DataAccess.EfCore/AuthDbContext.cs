@@ -102,7 +102,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 Email = "seed@cq.com",
                 Locale = "Uruguay",
                 TimeZone = "-3",
-                ProfilePictureId = null,
+                ProfilePictureKey = null,
                 TenantId = AuthConstants.SEED_TENANT_ID,
                 CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
             });

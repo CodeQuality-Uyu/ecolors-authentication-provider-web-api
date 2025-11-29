@@ -7,7 +7,7 @@ public sealed record CreateAccountArgs(
     string LastName,
     string Locale,
     string TimeZone,
-    Guid? ProfilePictureId,
+    string? ProfilePictureKey,
     Guid AppId,
     bool IsPasswordHashed = false);
 
@@ -18,7 +18,7 @@ public sealed record CreateAccountForArgs(
     string LastName,
     string Locale,
     string TimeZone,
-    Guid? ProfilePictureId,
+    string? ProfilePictureKey,
     List<Guid>? AppIds,
     List<Guid>? RoleIds);
 
@@ -29,5 +29,5 @@ string FirstName,
 string LastName,
 string Locale,
 string TimeZone,
-Guid? ProfilePictureId,
+string? ProfilePictureKey,
 string TenantName);

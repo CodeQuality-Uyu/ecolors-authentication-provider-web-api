@@ -3,16 +3,16 @@
 public sealed record CreateAppArgs(
     string Name,
     bool IsDefault,
-    Guid CoverId,
+    string CoverKey,
     CreateAppCoverBackgroundColorArgs? BackgroundColors,
-    Guid? BackgroundCoverId,
+    string? BackgroundCoverKey,
     bool RegisterToIt = false);
 
 public sealed record CreateClientAppArgs(
     string Name,
-    Guid? CoverId,
+    string? CoverKey,
     CreateAppCoverBackgroundColorArgs? BackgroundColors,
-    Guid? BackgroundCoverId);
+    string? BackgroundCoverKey);
 
 public sealed record CreateAppCoverBackgroundColorArgs
 {

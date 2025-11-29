@@ -30,7 +30,7 @@ public record class AccountLogged()
         FirstName = account.FirstName;
         LastName = account.LastName;
         FullName = account.FullName;
-        ProfilePictureId = account.ProfilePictureId;
+        ProfilePictureKey = account.ProfilePictureKey;
         Locale = account.Locale;
         TimeZone = account.TimeZone;
         Roles = account.Roles;

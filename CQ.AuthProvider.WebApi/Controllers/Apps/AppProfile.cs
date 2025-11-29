@@ -3,6 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Blobs;
+using CQ.Utility;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
@@ -29,7 +30,7 @@ internal sealed class AppProfile
     }
 }
 
-internal sealed class CoverMultimediaResolver(IBlobService _blobService)
+internal sealed class CoverMultimediaResolver(IBlobService blobService)
     : IValueResolver<App, AppDetailInfoResponse, CoverBlobResponse>
 {
     public CoverBlobResponse Resolve(
@@ -38,24 +39,17 @@ internal sealed class CoverMultimediaResolver(IBlobService _blobService)
         CoverBlobResponse destMember,
         ResolutionContext context)
     {
-        var (Id, Key, ReadUrl) = _blobService.GetReadElementInApp(source, source.CoverId);
+        var blobCover = blobService.GetByKey(source.CoverKey);
 
         BlobReadResponse? backgroundCover = null;
-        if (source.BackgroundCoverId.HasValue)
+        if (Guard.IsNotNullOrEmpty(source.BackgroundCoverKey))
         {
-            var (backgroundCoverId, backgroundCoverKey, backgroundCoverReadUrl) = _blobService.GetReadElementInApp(source, source.BackgroundCoverId.Value);
-            backgroundCover = new BlobReadResponse
-            {
-                Id = backgroundCoverId,
-                Key = backgroundCoverKey,
-                Url = backgroundCoverReadUrl,
-            };
+            backgroundCover = blobService.GetByKey(source.BackgroundCoverKey!);
         }
         return new CoverBlobResponse
         {
-            Id = Id,
-            Key = Key,
-            Url = ReadUrl,
+            Key = blobCover.Key,
+            Url = blobCover.Url,
             BackgroundColor = context.Mapper.Map<CoverBackgroundColorResponse>(source.BackgroundColor),
             BackgroundCover = backgroundCover
         };

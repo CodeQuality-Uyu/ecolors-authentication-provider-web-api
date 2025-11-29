@@ -22,13 +22,13 @@ internal sealed class AppService(
         var app = new App(
             args.Name,
             args.IsDefault,
-            args.CoverId,
+            args.CoverKey,
             args.BackgroundColors != null ? new()
             {
                 Colors = args.BackgroundColors.Colors,
                 Config = args.BackgroundColors.Config
             } : null,
-            args.BackgroundCoverId,
+            args.BackgroundCoverKey,
             accountLogged.Tenant,
             null);
 
@@ -57,19 +57,17 @@ internal sealed class AppService(
         }
 
         await blobService
-            .MoveAppElementAsync(
-            accountLogged.AppLogged,
-            app,
-            app.CoverId)
+            .MoveObjectAsync(
+                app.CoverKey,
+                app.Name)
             .ConfigureAwait(false);
 
-        if (app.BackgroundCoverId.HasValue)
+        if (Guard.IsNotNullOrEmpty(app.BackgroundCoverKey))
         {
             await blobService
-            .MoveAppElementAsync(
-                accountLogged.AppLogged,
-                app,
-                app.BackgroundCoverId.Value)
+            .MoveObjectAsync(
+                app.BackgroundCoverKey!,
+                app.Name)
             .ConfigureAwait(false);
         }
 
@@ -114,9 +112,9 @@ internal sealed class AppService(
         var app = new App(
             args.Name,
             false,
-            args.CoverId ?? accountLogged.AppLogged.CoverId,
+            args.CoverKey ?? accountLogged.AppLogged.CoverKey,
             backgroundColors ?? accountLogged.AppLogged.BackgroundColor,
-            args.BackgroundCoverId ?? accountLogged.AppLogged.BackgroundCoverId,
+            args.BackgroundCoverKey ?? accountLogged.AppLogged.BackgroundCoverKey,
             accountLogged.Tenant,
             accountLogged.AppLogged);
 
@@ -124,23 +122,21 @@ internal sealed class AppService(
             .CreateAsync(app)
             .ConfigureAwait(false);
 
-        if (args.CoverId.HasValue)
+        if (Guard.IsNotNullOrEmpty(args.CoverKey))
         {
             await blobService
-                .MoveAppElementAsync(
-                accountLogged.AppLogged,
-                app,
-                app.CoverId)
+                .MoveObjectAsync(
+                app.CoverKey,
+                app.Name)
                 .ConfigureAwait(false);
         }
 
-        if (app.BackgroundCoverId.HasValue)
+        if (Guard.IsNotNullOrEmpty(app.BackgroundCoverKey))
         {
             await blobService
-            .MoveAppElementAsync(
-                accountLogged.AppLogged,
-                app,
-                app.BackgroundCoverId.Value)
+            .MoveObjectAsync(
+                app.BackgroundCoverKey!,
+                app.Name)
             .ConfigureAwait(false);
         }
 

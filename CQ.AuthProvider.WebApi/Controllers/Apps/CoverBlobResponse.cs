@@ -1,4 +1,4 @@
-﻿using CQ.AuthProvider.WebApi.Controllers.Blobs;
+﻿using CQ.AuthProvider.BusinessLogic.Blobs;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 
