@@ -17,7 +17,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -73,8 +73,8 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("ProfilePictureId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("ProfilePictureKey")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
@@ -135,11 +135,12 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.Property<string>("BackgroundColor")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("BackgroundCoverId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("BackgroundCoverKey")
+                        .HasColumnType("text");
 
-                    b.Property<Guid>("CoverId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("CoverKey")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("FatherAppId")
                         .HasColumnType("uuid");
@@ -166,7 +167,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
-                            CoverId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CoverKey = "auth-web-api-cover.png",
                             IsDefault = true,
                             Name = "Auth Provider Web Api",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")

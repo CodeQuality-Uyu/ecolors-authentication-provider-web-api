@@ -71,6 +71,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = AuthConstants.AUTH_WEB_API_APP_NAME,
                     IsDefault = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
+                    CoverKey = "auth-web-api-cover.png",
                 });
 
             entity
