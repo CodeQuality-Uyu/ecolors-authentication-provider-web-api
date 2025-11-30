@@ -242,6 +242,7 @@ internal static class AuthProviderWebApiConfig
         services
             .AddDefaultAWSOptions(configuration.GetAWSOptions("AWS"))
             .AddAWSService<AmazonS3Client>()
+            .AddSingleton<IAmazonS3>(sp => sp.GetRequiredService<AmazonS3Client>())
             .AddTransient<IBlobService, AWSBlobService>();
             
         return services;
