@@ -14,6 +14,8 @@ public sealed class AWSBlobService(
 {
     private readonly BlobSection blobOptions = options.Value;
     
+    private const int PresignedUrlExpirationMinutes = 15;
+    
     public async Task<BlobReadWriteResponse> CreateAsync(
         CreateBlobRequest request,
         AccountLogged accountLogged)
@@ -30,7 +32,7 @@ public sealed class AWSBlobService(
         if (Guard.IsNullOrEmpty(request.Key))
         {
             var appName = accountLogged.AppLogged.Name;
-            if(Guard.IsNotNull(request.AppId))
+            if (Guard.IsNotNull(request.AppId))
             {
                 var appExists = accountLogged
                 .Apps
@@ -51,9 +53,8 @@ public sealed class AWSBlobService(
         var readUrl = GeneratePresignedUrl(
             key,
             HttpVerb.GET);
-        var writeUrl = GeneratePresignedUrl(
+        var writeUrl = GenerateUploadPresignedUrl(
             key,
-            HttpVerb.PUT,
             request.ContentType);
 
         return new BlobReadWriteResponse(
@@ -63,23 +64,35 @@ public sealed class AWSBlobService(
             writeUrl);
     }
 
-
-    private string GeneratePresignedUrl(
-        string key,
-        HttpVerb verb,
-        string? contentType = null)
+private string GeneratePresignedUrl(
+    string key,
+    HttpVerb verb,
+    string? contentType = null,
+    bool useServerSideEncryption = false)
+{
+    var request = new GetPreSignedUrlRequest
     {
-        var request = new GetPreSignedUrlRequest
-        {
-            BucketName = blobOptions.BucketName,
-            Key = key,
-            Verb = verb,
-            ContentType = contentType,
-            Expires = DateTime.UtcNow.AddMinutes(15),
-        };
+        BucketName  = blobOptions.BucketName,
+        Key         = key,
+        Verb        = verb,
+        ContentType = contentType,
+        Expires     = DateTime.UtcNow.AddMinutes(PresignedUrlExpirationMinutes),
+    };
 
-        return client.GetPreSignedURL(request);
+    if (useServerSideEncryption)
+    {
+        request.ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256;
     }
+
+    return client.GetPreSignedURL(request);
+}
+
+private string GenerateUploadPresignedUrl(string key, string contentType)
+    => GeneratePresignedUrl(
+        key: key,
+        verb: HttpVerb.PUT,
+        contentType: contentType,
+        useServerSideEncryption: true);
 
     public BlobReadResponse GetByKey(
         string key)
