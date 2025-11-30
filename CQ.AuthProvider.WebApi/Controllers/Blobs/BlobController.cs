@@ -8,7 +8,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Blobs;
 [ApiController]
 [Route("blobs")]
 [BearerAuthentication]
-internal sealed class BlobController(
+public sealed class BlobController(
     IBlobService blobService)
     : ControllerBase
 {
