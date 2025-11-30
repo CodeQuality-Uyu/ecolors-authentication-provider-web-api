@@ -224,6 +224,8 @@ internal static class AuthProviderWebApiConfig
                 throw new InvalidOperationException($"Invalid blob type: {blobConfiguration.Type}");
         }
 
+        services.Configure<BlobSection>(configuration.GetSection("Blob"));
+
         return services;
     }
 
