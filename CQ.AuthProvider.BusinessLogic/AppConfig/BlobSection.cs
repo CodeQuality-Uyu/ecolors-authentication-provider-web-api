@@ -1,10 +1,14 @@
-﻿namespace CQ.AuthProvider.WebApi.AppConfig;
+﻿namespace CQ.AuthProvider.BusinessLogic.AppConfig;
 
 public sealed record BlobSection
 {
     public BlobType Type { get; init; }
 
-    public required BlobConfig Config { get; init; }
+    public BlobConfig Config { get; init; } = null!;
+
+    public string BucketName { get; init; } = null!;
+
+    public string TemporaryObject { get; init; } = null!;
 }
 
 public enum BlobType

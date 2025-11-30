@@ -14,7 +14,7 @@ public sealed class FakeBlobService
                 "https://fake-write-url"));
     }
 
-    public BlobReadResponse GetByKey(string key, string bucketName = "blobs")
+    public BlobReadResponse GetByKey(string key)
     {
         return new BlobReadResponse
         {

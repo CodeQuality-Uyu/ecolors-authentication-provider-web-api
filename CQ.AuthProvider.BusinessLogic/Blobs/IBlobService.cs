@@ -8,9 +8,7 @@ public interface IBlobService
         CreateBlobRequest request,
         AccountLogged accountLogged);
 
-    BlobReadResponse GetByKey(
-        string key,
-        string bucketName = "blobs");
+    BlobReadResponse GetByKey(string key);
 
     Task MoveObjectAsync(
         string oldKey,
