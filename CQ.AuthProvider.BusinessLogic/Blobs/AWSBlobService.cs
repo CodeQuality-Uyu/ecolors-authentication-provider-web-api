@@ -1,15 +1,19 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Apps;
-using CQ.AuthProvider.BusinessLogic.Tenants;
+using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.Utility;
+using Microsoft.Extensions.Options;
 
 namespace CQ.AuthProvider.BusinessLogic.Blobs;
 
-public sealed class AWSBlobService(IAmazonS3 client)
+public sealed class AWSBlobService(
+    IAmazonS3 client,
+    IOptions<BlobSection> options)
     : IBlobService
 {
+    private readonly BlobSection blobOptions = options.Value;
+    
     public async Task<BlobReadWriteResponse> CreateAsync(
         CreateBlobRequest request,
         AccountLogged accountLogged)
@@ -46,11 +50,9 @@ public sealed class AWSBlobService(IAmazonS3 client)
 
         var readUrl = GeneratePresignedUrl(
             key,
-            "blobs",
             HttpVerb.GET);
         var writeUrl = GeneratePresignedUrl(
             key,
-            "blobs",
             HttpVerb.PUT,
             request.ContentType);
 
@@ -64,13 +66,12 @@ public sealed class AWSBlobService(IAmazonS3 client)
 
     private string GeneratePresignedUrl(
         string key,
-        string bucketName,
         HttpVerb verb,
         string? contentType = null)
     {
         var request = new GetPreSignedUrlRequest
         {
-            BucketName = bucketName,
+            BucketName = blobOptions.BucketName,
             Key = key,
             Verb = verb,
             ContentType = contentType,
@@ -81,10 +82,9 @@ public sealed class AWSBlobService(IAmazonS3 client)
     }
 
     public BlobReadResponse GetByKey(
-        string key,
-        string bucketName = "blobs")
+        string key)
     {
-        var readUrl = GeneratePresignedUrl(key, bucketName, HttpVerb.GET);
+        var readUrl = GeneratePresignedUrl(key, HttpVerb.GET);
 
         return new BlobReadResponse
         {
@@ -97,13 +97,13 @@ public sealed class AWSBlobService(IAmazonS3 client)
         string oldKey,
         string newKey)
     {
-        newKey = oldKey.Replace("temporary", newKey.ToLower().Trim().Replace(" ", "-"));
+        newKey = oldKey.Replace(blobOptions.TemporaryObject, newKey.ToLower().Trim().Replace(" ", "-"));
 
         var copyRequest = new CopyObjectRequest
         {
-            SourceBucket = "blobs",
+            SourceBucket = blobOptions.BucketName,
             SourceKey = oldKey,
-            DestinationBucket = "blobs",
+            DestinationBucket = blobOptions.BucketName,
             DestinationKey = newKey
         };
 
@@ -113,7 +113,7 @@ public sealed class AWSBlobService(IAmazonS3 client)
 
         var deleteRequest = new DeleteObjectRequest
         {
-            BucketName = "blobs",
+            BucketName = blobOptions.BucketName,
             Key = oldKey
         };
 
