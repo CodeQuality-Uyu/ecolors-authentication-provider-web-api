@@ -41,7 +41,7 @@ public sealed class AWSBlobService(
             }
             appName = appName.ToLower().Trim().Replace(" ", "-");
 
-            key = $"{tenantName}/{appName}/temporary/{id}.{request.ContentType}";
+            key = $"{blobOptions.TemporaryObject}/{tenantName}/{appName}/{id}.{request.ContentType}";
         }
         else
         {
@@ -97,7 +97,7 @@ public sealed class AWSBlobService(
         string oldKey,
         string newKey)
     {
-        newKey = oldKey.Replace(blobOptions.TemporaryObject, newKey.ToLower().Trim().Replace(" ", "-"));
+        newKey = oldKey.Replace($"{blobOptions.TemporaryObject}/", string.Empty);
 
         var copyRequest = new CopyObjectRequest
         {
