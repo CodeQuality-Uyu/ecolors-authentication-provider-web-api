@@ -46,7 +46,7 @@ public sealed class AWSBlobService(
         }
         
         var contentType = request.ContentType.Split("/")[1];
-        key = "${key}/{Guid.NewGuid()}.{contentType}";
+        key = $"{key}/{Guid.NewGuid()}.{contentType}";
 
         var readUrl = GeneratePresignedUrl(
             key,
@@ -56,7 +56,6 @@ public sealed class AWSBlobService(
             request.ContentType);
 
         return new BlobReadWriteResponse(
-            id,
             key,
             readUrl,
             writeUrl);

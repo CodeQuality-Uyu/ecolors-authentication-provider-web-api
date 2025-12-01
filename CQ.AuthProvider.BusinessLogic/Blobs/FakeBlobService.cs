@@ -8,7 +8,6 @@ public sealed class FakeBlobService
     {
         return Task.FromResult(
             new BlobReadWriteResponse(
-                Guid.NewGuid(),
                 "fake-key",
                 "https://fake-read-url",
                 "https://fake-write-url"));
