@@ -22,7 +22,10 @@ public sealed class FakeBlobService
         };
     }
 
-    public Task MoveObjectAsync(string oldKey, string newKey)
+    public Task MoveObjectAsync(
+        string key,
+        string oldApp,
+        string newApp)
     {
         return Task.CompletedTask;
     }
