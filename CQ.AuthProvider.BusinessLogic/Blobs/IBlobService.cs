@@ -11,6 +11,7 @@ public interface IBlobService
     BlobReadResponse GetByKey(string key);
 
     Task MoveObjectAsync(
-        string oldKey,
-        string newKey);
+        string key,
+        string oldApp,
+        string newApp);
 }
