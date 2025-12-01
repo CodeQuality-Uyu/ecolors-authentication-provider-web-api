@@ -28,7 +28,6 @@ public sealed class AWSBlobService(
         .Replace(" ", "-");
 
         var key = request.Key;
-        var id = Guid.NewGuid();
         if (Guard.IsNullOrEmpty(request.Key))
         {
             var appName = accountLogged.AppLogged.Name;
@@ -43,12 +42,11 @@ public sealed class AWSBlobService(
             }
             appName = appName.ToLower().Trim().Replace(" ", "-");
 
-            key = $"{blobOptions.TemporaryObject}/{tenantName}/{appName}/{id}.{request.ContentType}";
+            key = $"{blobOptions.TemporaryObject}/{tenantName}/{appName}";
         }
-        else
-        {
-            key = $"{key}/{Guid.NewGuid()}.{request.ContentType}";
-        }
+        
+        var contentType = request.ContentType.Split("/")[1];
+        key = "${key}/{Guid.NewGuid()}.{contentType}";
 
         var readUrl = GeneratePresignedUrl(
             key,
