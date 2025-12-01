@@ -6,7 +6,6 @@ using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
-using CQ.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -43,7 +42,7 @@ internal sealed class RoleRepository(
         return mapper.Map<Pagination<Role>>(roles);
     }
 
-    public async Task RemoveDefaultsAndSaveAsync(
+    public async Task RemoveDefaultsAsync(
         List<Guid> appsIds,
         AccountLogged accountLogged)
     {
@@ -62,9 +61,6 @@ internal sealed class RoleRepository(
         });
 
         Entities.UpdateRange(roles);
-        await BaseContext
-            .SaveChangesAsync()
-            .ConfigureAwait(false);
     }
 
     /*
@@ -119,8 +115,7 @@ internal sealed class RoleRepository(
 
         var rolesEfCore = roles.ConvertAll(r => new RoleEfCore(r));
 
-        await CreateBulkAndSaveAsync(rolesEfCore)
-            .ConfigureAwait(false);
+        await Entities.AddRangeAsync(rolesEfCore).ConfigureAwait(false);
     }
 
     public async Task AddPermissionsAsync(
@@ -202,4 +197,30 @@ internal sealed class RoleRepository(
         await DeleteAndSaveAsync(r => r.Id == id)
             .ConfigureAwait(false);
     }
+
+    public async Task<List<(Guid AppId, string RoleName)>> GetAllByAppAndNamesAsync(
+    List<(Guid AppId, string RoleName)> roles)
+    {
+        var appIds = roles
+            .Select(r => r.AppId)
+            .Distinct()
+            .ToList();
+
+        var entities = await Entities
+            .AsNoTracking()
+            .Where(r => appIds.Contains(r.AppId))
+            .Select(r => new { r.AppId, RoleName = r.Name })
+            .ToListAsync()
+            .ConfigureAwait(false);
+
+        var lookup = new HashSet<(Guid AppId, string RoleName)>(roles);
+
+        var result = entities
+            .Select(r => (r.AppId, r.RoleName))
+            .Where(lookup.Contains)
+            .ToList();
+
+        return result;
+    }
+
 }

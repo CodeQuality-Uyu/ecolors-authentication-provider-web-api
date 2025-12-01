@@ -36,10 +36,9 @@ internal sealed class CreateBulkPermissionArgsValidator
         ActionExecutingContext actionExecutingContext,
         IValidationContext validationContext)
     {
-        var validationResult = new ValidationResult();
         var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItem.AccountLogged];
-
         var args = (CreateBulkPermissionArgs)validationContext.InstanceToValidate;
+
         var permissions = args.Permissions;
 
         var appsIds = permissions
@@ -47,24 +46,29 @@ internal sealed class CreateBulkPermissionArgsValidator
                     .Select(g => g.Key!)
                     .ToList();
 
-        if (appsIds.Count != 0)
+        var invalidAppsIds = appsIds
+                        .Where(id => !accountLogged.AppsIds.Contains(id))
+                        .ToList();
+        if (invalidAppsIds.Count != 0)
         {
-            var validAppsIds = accountLogged.AppsIds;
-
-            var invalidAppsIds = appsIds
-                .Where(id => !validAppsIds.Contains(id))
-                .ToList();
-
-            validationResult.Errors.Add(new ValidationFailure("AppId",$"Invalid apps ids {string.Join(",", invalidAppsIds)}"));
+            actionExecutingContext.ModelState.AddModelError(
+                "AppId",
+                $"Account doen't have this AppsIds ({string.Join(",", invalidAppsIds)})");
         }
 
-        var existPermissionsWithoutAppId = permissions.Exists(p => Guard.IsNull(p.AppId));
-        if (existPermissionsWithoutAppId && accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID)
+        var appIsAuth = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
+        var isWebApiOwner = accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID);
+        var permissionToAuthApp = permissions.Exists(p => p.AppId == AuthConstants.AUTH_WEB_API_APP_ID || p.AppId == Guid.Empty);
+        var authorizedToAuth = appIsAuth && isWebApiOwner;
+
+        if (!authorizedToAuth && permissionToAuthApp)
         {
-            validationResult.Errors.Add(new ValidationFailure("AppId", "Can't create to auth api app"));
+            actionExecutingContext.ModelState.AddModelError(
+                "AppId",
+                $"Can't create to auth api app");
         }
 
-        return validationResult;
+        return null;
     }
 
     public IValidationContext? BeforeValidation(

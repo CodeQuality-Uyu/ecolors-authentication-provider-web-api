@@ -296,6 +296,16 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         },
                         new
                         {
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can create several roles",
+                            IsPublic = true,
+                            Key = "createbulk-role",
+                            Name = "Can create several roles",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
                             Id = new Guid("fc598ab0-1f14-4224-a187-4556a9926f6f"),
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             Description = "Can read roles",
@@ -622,6 +632,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         {
                             RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
                             PermissionId = new Guid("c402e13f-40c4-4b97-b004-d5e616c3f82d")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000001")
                         },
                         new
                         {

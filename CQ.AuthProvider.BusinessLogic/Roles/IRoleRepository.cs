@@ -12,7 +12,7 @@ public interface IRoleRepository
         int pageSize,
         AccountLogged accountLogged);
 
-    Task RemoveDefaultsAndSaveAsync(
+    Task RemoveDefaultsAsync(
         List<Guid> appsIds,
         AccountLogged accountLogged);
 
@@ -42,4 +42,6 @@ public interface IRoleRepository
         AccountLogged accountLogged);
 
     Task DeleteAndSaveByIdAsync(Guid id);
+
+    Task<List<(Guid AppId, string RoleName)>> GetAllByAppAndNamesAsync(List<(Guid AppId, string RoleName)> roles);
 }

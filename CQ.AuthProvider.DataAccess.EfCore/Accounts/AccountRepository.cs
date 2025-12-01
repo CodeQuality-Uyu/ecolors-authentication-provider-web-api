@@ -12,8 +12,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 
 internal sealed class AccountRepository(
 AuthDbContext _context,
-[FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper
-)
+[FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper)
 : AuthDbContextRepository<AccountEfCore>(_context),
 IAccountRepository
 {
@@ -204,11 +203,11 @@ IAccountRepository
 
     public async Task DeleteRolesByIdAsync(
         List<Guid> rolesIds,
-        Account account)
+        AccountLogged accountLogged)
     {
         var query = ConcreteContext
             .AccountsRoles
-            .Where(ar => rolesIds.Any(r => r == ar.RoleId) && ar.AccountId == account.Id);
+            .Where(ar => rolesIds.Any(r => r == ar.RoleId) && ar.AccountId == accountLogged.Id);
 
         await query
             .ExecuteDeleteAsync()
@@ -217,13 +216,13 @@ IAccountRepository
 
     public async Task AddRolesByIdAsync(
         List<Guid> rolesIds,
-        Account account)
+        AccountLogged accountLogged)
     {
         var roles = rolesIds
             .Select(ri => new AccountRole
             {
                 RoleId = ri,
-                AccountId = account.Id
+                AccountId = accountLogged.Id
             })
             .ToList();
 

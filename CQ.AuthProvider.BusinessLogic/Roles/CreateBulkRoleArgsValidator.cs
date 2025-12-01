@@ -1,8 +1,8 @@
 ﻿using CQ.ApiElements;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Interceptors;
 using System.Data;
@@ -34,10 +34,9 @@ internal sealed class CreateBulkRoleArgsValidator
 
     public ValidationResult? AfterValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
     {
-        var validationResult = new ValidationResult();
         var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItem.AccountLogged];
-
         var args = (CreateBulkRoleArgs)validationContext.InstanceToValidate;
+
         var roles = args.Roles;
 
         var appsIds = roles
@@ -50,7 +49,9 @@ internal sealed class CreateBulkRoleArgsValidator
             .ToList();
         if (invalidAppsIds.Count != 0)
         {
-            validationResult.Errors.Add(new ValidationFailure("AppId", $"Account doen't have this AppsIds ({string.Join(",", invalidAppsIds)})"));
+            actionExecutingContext.ModelState.AddModelError(
+                "AppId",
+                $"Account doen't have this AppsIds ({string.Join(",", invalidAppsIds)})");
         }
 
         var defaultRoles = args
@@ -64,10 +65,24 @@ internal sealed class CreateBulkRoleArgsValidator
             .ToList();
         if (duplicatedDefaultRolesInApp.Count > 1)
         {
-            validationResult.Errors.Add(new ValidationFailure("IsDefault", "Only one role can be default in an app"));
+            actionExecutingContext.ModelState.AddModelError(
+                "IsDefault",
+                $"Only one role can be default in an app");
         }
 
-        return validationResult;
+        var appIsAuth = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
+        var isWebApiOwner = accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID);
+        var permissionToAuthApp = roles.Exists(r => r.AppId == AuthConstants.AUTH_WEB_API_APP_ID || r.AppId == Guid.Empty);
+        var authorizedToAuth = appIsAuth && isWebApiOwner;
+
+        if (!authorizedToAuth && permissionToAuthApp)
+        {
+            actionExecutingContext.ModelState.AddModelError(
+                "AppId",
+                $"Can't create to auth api app");
+        }
+
+        return null;
     }
 
     public IValidationContext? BeforeValidation(
