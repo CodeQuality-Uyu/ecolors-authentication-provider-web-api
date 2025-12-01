@@ -116,21 +116,12 @@ private string GenerateUploadPresignedUrl(string key, string contentType)
             SourceBucket = blobOptions.BucketName,
             SourceKey = key,
             DestinationBucket = blobOptions.BucketName,
-            DestinationKey = newKey
+            DestinationKey = newKey,
+            ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256,
         };
 
         await client
             .CopyObjectAsync(copyRequest)
-            .ConfigureAwait(false);
-
-        var deleteRequest = new DeleteObjectRequest
-        {
-            BucketName = blobOptions.BucketName,
-            Key = key
-        };
-
-        await client
-            .DeleteObjectAsync(deleteRequest)
             .ConfigureAwait(false);
     }
 }
