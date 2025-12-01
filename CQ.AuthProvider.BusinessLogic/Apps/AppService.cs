@@ -64,6 +64,7 @@ internal sealed class AppService(
         await blobService
             .MoveObjectAsync(
                 app.CoverKey,
+                accountLogged.AppLogged.Name,
                 app.Name)
             .ConfigureAwait(false);
 
@@ -72,6 +73,7 @@ internal sealed class AppService(
             await blobService
             .MoveObjectAsync(
                 app.BackgroundCoverKey!,
+                accountLogged.AppLogged.Name,
                 app.Name)
             .ConfigureAwait(false);
         }
@@ -122,6 +124,7 @@ internal sealed class AppService(
             await blobService
                 .MoveObjectAsync(
                 app.CoverKey,
+                accountLogged.AppLogged.Name,
                 app.Name)
                 .ConfigureAwait(false);
         }
@@ -131,6 +134,7 @@ internal sealed class AppService(
             await blobService
             .MoveObjectAsync(
                 app.BackgroundCoverKey!,
+                accountLogged.AppLogged.Name,
                 app.Name)
             .ConfigureAwait(false);
         }

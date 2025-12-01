@@ -104,15 +104,17 @@ private string GenerateUploadPresignedUrl(string key, string contentType)
     }
 
     public async Task MoveObjectAsync(
-        string oldKey,
-        string newKey)
+        string key,
+        string oldApp,
+        string newApp)
     {
-        newKey = oldKey.Replace($"{blobOptions.TemporaryObject}/", string.Empty);
+        var newKey = key.Replace($"{blobOptions.TemporaryObject}/", string.Empty);
+        newKey = newKey.Replace(oldApp.ToLower().Trim().Replace(" ", "-"), newApp.ToLower().Trim().Replace(" ", "-"));
 
         var copyRequest = new CopyObjectRequest
         {
             SourceBucket = blobOptions.BucketName,
-            SourceKey = oldKey,
+            SourceKey = key,
             DestinationBucket = blobOptions.BucketName,
             DestinationKey = newKey
         };
@@ -124,7 +126,7 @@ private string GenerateUploadPresignedUrl(string key, string contentType)
         var deleteRequest = new DeleteObjectRequest
         {
             BucketName = blobOptions.BucketName,
-            Key = oldKey
+            Key = key
         };
 
         await client
