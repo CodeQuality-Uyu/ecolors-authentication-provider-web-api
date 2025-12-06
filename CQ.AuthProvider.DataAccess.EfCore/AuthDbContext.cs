@@ -69,7 +69,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new AppEfCore
                 {
                     Id = AuthConstants.AUTH_WEB_API_APP_ID,
-                    Name = "Auth Provider Web Api",
+                    Name = AuthConstants.AUTH_WEB_API_APP_NAME,
                     IsDefault = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
                     Logo = new Logo
@@ -209,7 +209,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RoleEfCore
                 {
                     Id = AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID,
-                    Name = "Auth Provider Web Api Owner",
+                    Name = AuthConstants.AUTH_WEB_API_OWNER_ROLE_NAME,
                     Description = "Permissions over Auth Provider Web Api app",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
@@ -219,7 +219,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RoleEfCore
                 {
                     Id = AuthConstants.APP_OWNER_ROLE_ID,
-                    Name = "App owner",
+                    Name = AuthConstants.APP_OWNER_ROLE_NAME,
                     Description = "App owner",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
@@ -229,7 +229,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RoleEfCore
                 {
                     Id = AuthConstants.CLIENT_OWNER_ROLE_ID,
-                    Name = "Client owner",
+                    Name = AuthConstants.CLIENT_OWNER_ROLE_NAME,
                     Description = "Owner of an app that is client of other App",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,

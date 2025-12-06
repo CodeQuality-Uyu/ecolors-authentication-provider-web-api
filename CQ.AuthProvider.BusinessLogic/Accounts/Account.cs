@@ -129,10 +129,12 @@ public record class Account()
                 new Role
                 {
                     Id = AuthConstants.APP_OWNER_ROLE_ID,
+                    Name = AuthConstants.APP_OWNER_ROLE_NAME,
                 },
                 new Role
                 {
                     Id = AuthConstants.TENANT_OWNER_ROLE_ID,
+                    Name = AuthConstants.TENANT_OWNER_ROLE_NAME,
                 }
             ],
             Tenant = tenant,
@@ -140,6 +142,7 @@ public record class Account()
                 new App
                 {
                     Id = AuthConstants.AUTH_WEB_API_APP_ID,
+                    Name = AuthConstants.AUTH_WEB_API_APP_NAME,
                 }
             ]
         };
