@@ -12,7 +12,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Apps;
 [ApiController]
 [Route("apps")]
 public sealed class AppController(
-    IAppService _appService,
+    IAppService appService,
     [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
     : ControllerBase
 {
@@ -23,7 +23,7 @@ public sealed class AppController(
     {
         var accountLogged = this.GetAccountLogged();
 
-        var appCreated = await _appService
+        var appCreated = await appService
             .CreateAsync(request, accountLogged)
             .ConfigureAwait(false);
 
@@ -37,7 +37,7 @@ public sealed class AppController(
     {
         var accountLogged = this.GetAccountLogged();
 
-        var appCreated = await _appService
+        var appCreated = await appService
             .CreateClientAsync(request, accountLogged)
             .ConfigureAwait(false);
 
@@ -54,7 +54,7 @@ public sealed class AppController(
     {
         var accountLogged = this.GetAccountLogged();
 
-        var apps = await _appService
+        var apps = await appService
             .GetPaginationAsync(
             fatherAppId,
             page,
@@ -68,7 +68,7 @@ public sealed class AppController(
     [HttpGet("{id}")]
     public async Task<AppDetailInfoResponse> GetByIdAsync(Guid id)
     {
-        var app = await _appService
+        var app = await appService
             .GetByIdAsync(id)
             .ConfigureAwait(false);
 
@@ -80,11 +80,11 @@ public sealed class AppController(
     [SecureAuthorization]
     public async Task UpdateColorsAsync(
         Guid id,
-        CreateAppCoverBackgroundColorArgs request)
+        Background request)
     {
         var accountLogged = this.GetAccountLogged();
 
-        await _appService
+        await appService
             .UpdateColorsByIdAsync(
             id,
             request,

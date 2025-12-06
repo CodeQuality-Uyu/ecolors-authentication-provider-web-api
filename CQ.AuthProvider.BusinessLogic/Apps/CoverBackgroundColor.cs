@@ -4,5 +4,7 @@ public sealed record CoverBackgroundColor()
 {
     public List<string> Colors { get; init; } = [];
 
-    public string Config { get; init; } = null!;
+    public string? Config { get; init; } = null!;
+
+    public string? BackgroundKey { get; init; } = null!;
 }

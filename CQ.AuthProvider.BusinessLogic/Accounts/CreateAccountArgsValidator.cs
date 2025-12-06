@@ -52,9 +52,6 @@ internal sealed class CreateAccountForArgsValidator
         RuleFor(a => a.Email)
             .RequiredEmail();
 
-        RuleFor(a => a.Password)
-            .RequiredPassword();
-
         RuleFor(a => a.RoleIds)
             .ValidIds();
 

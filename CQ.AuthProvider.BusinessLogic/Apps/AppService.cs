@@ -23,17 +23,43 @@ internal sealed class AppService(
         {
             throw new InvalidOperationException("Name is in used");
         }
+        
+        args.Logo.ColorKey = await blobService
+            .MoveObjectAsync(
+                args.Logo.ColorKey,
+                accountLogged.AppLogged.Name,
+                args.Name)
+            .ConfigureAwait(false);
+
+        args.Logo.LightKey = await blobService
+            .MoveObjectAsync(
+                args.Logo.LightKey,
+                accountLogged.AppLogged.Name,
+                args.Name)
+            .ConfigureAwait(false);
+
+        args.Logo.DarkKey = await blobService
+            .MoveObjectAsync(
+                args.Logo.DarkKey,
+                accountLogged.AppLogged.Name,
+                args.Name)
+            .ConfigureAwait(false);
+
+        if(Guard.IsNotNullOrEmpty(args.Background?.BackgroundKey))
+        {
+            args.Background.BackgroundKey = await blobService
+            .MoveObjectAsync(
+                args.Background.BackgroundKey!,
+                accountLogged.AppLogged.Name,
+                args.Name)
+            .ConfigureAwait(false);
+        }
 
         var app = new App(
             args.Name,
             args.IsDefault,
-            args.CoverKey,
-            args.BackgroundColors != null ? new()
-            {
-                Colors = args.BackgroundColors.Colors,
-                Config = args.BackgroundColors.Config
-            } : null,
-            args.BackgroundCoverKey,
+            args.Logo,
+            args.Background,
             accountLogged.Tenant,
             null);
 
@@ -61,23 +87,6 @@ internal sealed class AppService(
                .ConfigureAwait(false);
         }
 
-        await blobService
-            .MoveObjectAsync(
-                app.CoverKey,
-                accountLogged.AppLogged.Name,
-                app.Name)
-            .ConfigureAwait(false);
-
-        if (Guard.IsNotNullOrEmpty(app.BackgroundCoverKey))
-        {
-            await blobService
-            .MoveObjectAsync(
-                app.BackgroundCoverKey!,
-                accountLogged.AppLogged.Name,
-                app.Name)
-            .ConfigureAwait(false);
-        }
-
         await unitOfWork
             .CommitChangesAsync()
             .ConfigureAwait(false);
@@ -96,48 +105,51 @@ internal sealed class AppService(
             throw new InvalidOperationException("Name is in used");
         }
 
-        CoverBackgroundColor? backgroundColors = null;
-        if (args.BackgroundColors != null)
+        if (Guard.IsNotNull(args.Logo))
         {
-            backgroundColors = new()
-            {
-                Colors = args.BackgroundColors.Colors,
-                Config = args.BackgroundColors.Config
-            };
+            args.Logo.ColorKey = await blobService
+                .MoveObjectAsync(
+                args.Logo.ColorKey,
+                accountLogged.AppLogged.Name,
+                args.Name)
+                .ConfigureAwait(false);
+
+            args.Logo.LightKey = await blobService
+                .MoveObjectAsync(
+                args.Logo.LightKey,
+                accountLogged.AppLogged.Name,
+                args.Name)
+                .ConfigureAwait(false);
+
+            args.Logo.DarkKey = await blobService
+                .MoveObjectAsync(
+                args.Logo.DarkKey,
+                accountLogged.AppLogged.Name,
+                args.Name)
+                .ConfigureAwait(false);
+        }
+
+        if (Guard.IsNotNullOrEmpty(args.Background?.BackgroundKey))
+        {
+            args.Background.BackgroundKey = await blobService
+            .MoveObjectAsync(
+                args.Background.BackgroundKey!,
+                accountLogged.AppLogged.Name,
+                args.Name)
+            .ConfigureAwait(false);
         }
 
         var app = new App(
             args.Name,
             false,
-            args.CoverKey ?? accountLogged.AppLogged.CoverKey,
-            backgroundColors ?? accountLogged.AppLogged.BackgroundColor,
-            args.BackgroundCoverKey ?? accountLogged.AppLogged.BackgroundCoverKey,
+            args.Logo ?? accountLogged.AppLogged.Logo,
+            args.Background,
             accountLogged.Tenant,
             accountLogged.AppLogged);
 
         await appRepository
             .CreateAsync(app)
             .ConfigureAwait(false);
-
-        if (Guard.IsNotNullOrEmpty(args.CoverKey))
-        {
-            await blobService
-                .MoveObjectAsync(
-                app.CoverKey,
-                accountLogged.AppLogged.Name,
-                app.Name)
-                .ConfigureAwait(false);
-        }
-
-        if (Guard.IsNotNullOrEmpty(app.BackgroundCoverKey))
-        {
-            await blobService
-            .MoveObjectAsync(
-                app.BackgroundCoverKey!,
-                accountLogged.AppLogged.Name,
-                app.Name)
-            .ConfigureAwait(false);
-        }
 
         await unitOfWork
             .CommitChangesAsync()
@@ -191,7 +203,7 @@ internal sealed class AppService(
 
     public async Task UpdateColorsByIdAsync(
         Guid id,
-        CreateAppCoverBackgroundColorArgs args,
+        Background args,
         AccountLogged accountLogged)
     {
         var appIsNotOfAccount = !accountLogged.AppsIds.Contains(id);

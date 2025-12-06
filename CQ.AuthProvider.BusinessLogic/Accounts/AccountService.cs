@@ -21,6 +21,8 @@ internal sealed class AccountService(
     IUnitOfWork unitOfWork)
     : IAccountInternalService
 {
+    private  const string DefaultPassword = "!12345678";
+
     #region Create
     public async Task<CreateAccountResult> CreateIdentityAndSaveAsync(
         Account account,
@@ -166,7 +168,7 @@ internal sealed class AccountService(
             apps,
             accountLogged.Tenant);
 
-        var identity = Identity.NewForAccount(account, args.Password);
+        var identity = Identity.NewForAccount(account, DefaultPassword);
 
         await identityRepository
             .CreateAndSaveAsync(identity)

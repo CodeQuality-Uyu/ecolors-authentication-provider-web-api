@@ -103,7 +103,7 @@ private string GenerateUploadPresignedUrl(string key, string contentType)
         };
     }
 
-    public async Task MoveObjectAsync(
+    public async Task<string> MoveObjectAsync(
         string key,
         string oldApp,
         string newApp)
@@ -123,5 +123,7 @@ private string GenerateUploadPresignedUrl(string key, string contentType)
         await client
             .CopyObjectAsync(copyRequest)
             .ConfigureAwait(false);
+
+        return newKey;
     }
 }

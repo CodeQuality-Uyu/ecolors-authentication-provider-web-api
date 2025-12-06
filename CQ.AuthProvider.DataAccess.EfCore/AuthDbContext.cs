@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Utils;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;
@@ -71,14 +72,25 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Auth Provider Web Api",
                     IsDefault = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
-                    CoverKey = "auth-web-api-cover.png",
+                    Logo = new Logo
+                    {
+                        ColorKey = "auth-web-api-logo-color.png",
+                        LightKey = "auth-web-api-logo-light.png",
+                        DarkKey = "auth-web-api-logo-dark.png",
+                    }
                 });
 
             entity
-            .Property(a => a.BackgroundColor)
+            .Property(a => a.Background)
             .HasConversion(
                 v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
-                v => JsonSerializer.Deserialize<CoverBackgroundColorEfCore>(v, JsonSerializerOptions.Default));
+                v => JsonSerializer.Deserialize<Background>(v, JsonSerializerOptions.Default));
+
+            entity
+            .Property(a => a.Logo)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                v => JsonSerializer.Deserialize<Logo>(v, JsonSerializerOptions.Default));
         });
 
         modelBuilder.Entity<AccountEfCore>(entity =>

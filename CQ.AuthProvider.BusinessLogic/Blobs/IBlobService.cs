@@ -10,7 +10,7 @@ public interface IBlobService
 
     BlobReadResponse GetByKey(string key);
 
-    Task MoveObjectAsync(
+    Task<string> MoveObjectAsync(
         string key,
         string oldApp,
         string newApp);
