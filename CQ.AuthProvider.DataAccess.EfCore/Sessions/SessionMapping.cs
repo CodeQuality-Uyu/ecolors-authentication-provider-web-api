@@ -6,10 +6,10 @@ using CQ.AuthProvider.BusinessLogic.Tenants;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Sessions;
 
-internal sealed class SessionProfile
+internal sealed class SessionMapping
     : Profile
 {
-    public SessionProfile()
+    public SessionMapping()
     {
         CreateMap<SessionEfCore, Session>()
             .ConvertUsing((source, destination, options) => new Session
@@ -21,6 +21,7 @@ internal sealed class SessionProfile
                 {
                     Id = source.AppId,
                     Name = source.App?.Name ?? string.Empty,
+                    Logo = source.App?.Logo ?? default,
                     Tenant = new Tenant
                     {
                         Id = source.Account.TenantId,
