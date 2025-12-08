@@ -80,7 +80,7 @@ public sealed class AppController(
     [SecureAuthorization]
     public async Task UpdateColorsAsync(
         Guid id,
-        CreateAppCoverBackgroundColorArgs request)
+        Background request)
     {
         var accountLogged = this.GetAccountLogged();
 

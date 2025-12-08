@@ -42,11 +42,11 @@ public interface IAccountRepository
 
     Task DeleteRolesByIdAsync(
         List<Guid> rolesIds,
-        Account account);
+        AccountLogged accountLogged);
 
     Task AddRolesByIdAsync(
         List<Guid> rolesIds,
-        Account account);
+        AccountLogged account);
 
     Task DeleteAndSaveByIdAsync(Guid id);
 }

@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251201170052_AddCreateBulkRoleSeed")]
+    partial class AddCreateBulkRoleSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,7 +135,14 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Background")
+                    b.Property<string>("BackgroundColor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BackgroundCoverKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoverKey")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("FatherAppId")
@@ -140,10 +150,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Logo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -164,8 +170,8 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         new
                         {
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            CoverKey = "auth-web-api-cover.png",
                             IsDefault = true,
-                            Logo = "{\"ColorKey\":\"auth-web-api-logo-color.png\",\"LightKey\":\"auth-web-api-logo-light.png\",\"DarkKey\":\"auth-web-api-logo-dark.png\"}",
                             Name = "Auth Provider Web Api",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         });

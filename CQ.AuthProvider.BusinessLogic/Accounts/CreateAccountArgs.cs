@@ -13,14 +13,13 @@ public sealed record CreateAccountArgs(
 
 public sealed record CreateAccountForArgs(
     string Email,
-    string Password,
     string FirstName,
     string LastName,
     string Locale,
     string TimeZone,
     string? ProfilePictureKey,
     List<Guid>? AppIds,
-    List<Guid>? RoleIds);
+    List<Guid> RoleIds);
 
 public sealed record CreateAccountWithTenantArgs(
 string Email,

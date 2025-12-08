@@ -3,7 +3,7 @@ using CQ.UnitOfWork.Abstractions.Repositories;
 
 namespace CQ.AuthProvider.BusinessLogic.Permissions;
 
-internal sealed class PermissionService(IPermissionRepository _permissionRepository)
+internal sealed class PermissionService(IPermissionRepository permissionRepository)
     : IPermissionInternalService
 {
     public async Task<Pagination<Permission>> GetAllAsync(
@@ -14,7 +14,7 @@ internal sealed class PermissionService(IPermissionRepository _permissionReposit
         int pageSize,
         AccountLogged accountLogged)
     {
-        var permissions = await _permissionRepository
+        var permissions = await permissionRepository
             .GetAllAsync(
             appId,
             isPrivate,
@@ -47,7 +47,7 @@ internal sealed class PermissionService(IPermissionRepository _permissionReposit
             .Distinct()
             .ToList();
 
-        var duplicatedPermissions = await _permissionRepository
+        var duplicatedPermissions = await permissionRepository
             .GetAllByKeysAsync(
             allPermissionsKeys,
             accountLogged)
@@ -74,7 +74,7 @@ internal sealed class PermissionService(IPermissionRepository _permissionReposit
             app);
         });
 
-        await _permissionRepository
+        await permissionRepository
             .CreateBulkAndSaveAsync(permissions)
             .ConfigureAwait(false);
     }

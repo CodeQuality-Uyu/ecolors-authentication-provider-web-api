@@ -53,7 +53,7 @@ public static class EfCoreRepositoriesConfig
                     config.AddProfile<AccountProfile>();
                     config.AddProfile<TenantProfile>();
                     config.AddProfile<ResetPasswordProfile>();
-                    config.AddProfile<SessionProfile>();
+                    config.AddProfile<SessionMapping>();
                 });
 
                 return config.CreateMapper();

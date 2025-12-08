@@ -1,4 +1,5 @@
-﻿using CQ.AuthProvider.BusinessLogic.Utils;
+﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.DataAccess.EfCore.Accounts;
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 using CQ.AuthProvider.DataAccess.EfCore.Invitations;
@@ -71,14 +72,25 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = AuthConstants.AUTH_WEB_API_APP_NAME,
                     IsDefault = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
-                    CoverKey = "auth-web-api-cover.png",
+                    Logo = new Logo
+                    {
+                        ColorKey = "auth-web-api-logo-color.png",
+                        LightKey = "auth-web-api-logo-light.png",
+                        DarkKey = "auth-web-api-logo-dark.png",
+                    }
                 });
 
             entity
-            .Property(a => a.BackgroundColor)
+            .Property(a => a.Background)
             .HasConversion(
                 v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
-                v => JsonSerializer.Deserialize<CoverBackgroundColorEfCore>(v, JsonSerializerOptions.Default));
+                v => JsonSerializer.Deserialize<Background>(v, JsonSerializerOptions.Default));
+
+            entity
+            .Property(a => a.Logo)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                v => JsonSerializer.Deserialize<Logo>(v, JsonSerializerOptions.Default));
         });
 
         modelBuilder.Entity<AccountEfCore>(entity =>
@@ -197,7 +209,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RoleEfCore
                 {
                     Id = AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID,
-                    Name = "Auth Provider Web Api Owner",
+                    Name = AuthConstants.AUTH_WEB_API_OWNER_ROLE_NAME,
                     Description = "Permissions over Auth Provider Web Api app",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
@@ -217,7 +229,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RoleEfCore
                 {
                     Id = AuthConstants.CLIENT_OWNER_ROLE_ID,
-                    Name = "Client owner",
+                    Name = AuthConstants.CLIENT_OWNER_ROLE_NAME,
                     Description = "Owner of an app that is client of other App",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
@@ -233,6 +245,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         var createRolePermissionId = Guid.Parse("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9");
         var getAllRolesPermissionId = Guid.Parse("fc598ab0-1f14-4224-a187-4556a9926f6f");
         var addPermissionsPermissionId = Guid.Parse("c402e13f-40c4-4b97-b004-d5e616c3f82d");
+        var createRoleBulkPermissionId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
         var createInvitationPermissionId = Guid.Parse("0b2f5e97-42f9-4e56-9ee2-40b033cff9e8");
         var getAllInvitationsPermissionId = Guid.Parse("40bc0960-8c55-488e-a014-f5b52db3d306");
@@ -315,6 +328,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
                     PermissionId = addPermissionsPermissionId,
+                },
+                new RolePermission
+                {
+                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
+                    PermissionId = createRoleBulkPermissionId,
                 },
             #endregion Role
 
@@ -502,6 +520,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can create role",
                     Description = "Can create roles",
                     Key = "create-role",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = AuthConstants.SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = createRoleBulkPermissionId,
+                    Name = "Can create several roles",
+                    Description = "Can create several roles",
+                    Key = "createbulk-role",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = AuthConstants.SEED_TENANT_ID,
                     IsPublic = true,

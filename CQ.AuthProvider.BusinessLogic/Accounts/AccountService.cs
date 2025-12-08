@@ -15,12 +15,14 @@ internal sealed class AccountService(
     IAccountRepository accountRepository,
     IIdentityRepository identityRepository,
     ISessionInternalService _sessionService,
-    IRoleRepository _roleRepository,
+    IRoleRepository roleRepository,
     IAppInternalService _appService,
     ITenantRepository tenantRepository,
     IUnitOfWork unitOfWork)
     : IAccountInternalService
 {
+    private  const string DefaultPassword = "!12345678";
+
     #region Create
     public async Task<CreateAccountResult> CreateIdentityAndSaveAsync(
         Account account,
@@ -74,7 +76,7 @@ internal sealed class AccountService(
             .GetByIdAsync(args.AppId)
             .ConfigureAwait(false);
 
-        var role = await _roleRepository
+        var role = await roleRepository
                 .GetDefaultByTenantIdAsync(app.Id, app.Tenant.Id)
                 .ConfigureAwait(false);
 
@@ -151,7 +153,7 @@ internal sealed class AccountService(
             .GetByIdAsync(appIds)
             .ConfigureAwait(false);
 
-        var roles = await _roleRepository
+        var roles = await roleRepository
             .GetByIdAsync(args.RoleIds, appIds, accountLogged.Tenant.Id)
             .ConfigureAwait(false);
 
@@ -166,7 +168,7 @@ internal sealed class AccountService(
             apps,
             accountLogged.Tenant);
 
-        var identity = Identity.NewForAccount(account, args.Password);
+        var identity = Identity.NewForAccount(account, DefaultPassword);
 
         await identityRepository
             .CreateAndSaveAsync(identity)
@@ -225,7 +227,7 @@ internal sealed class AccountService(
             .DeleteByIdAsync(AuthConstants.SEED_ACCOUNT_ID)
             .ConfigureAwait(false);
 
-        await _roleRepository
+        await roleRepository
             .DeleteAndSaveByIdAsync(AuthConstants.SEED_ROLE_ID)
             .ConfigureAwait(false);
 
@@ -321,32 +323,24 @@ internal sealed class AccountService(
         UpdateRolesArgs args,
         AccountLogged accountLogged)
     {
-        var account = await accountRepository
-            .GetByIdAsync(id, accountLogged)
-            .ConfigureAwait(false);
-
-        var rolesToDelete = account
-            .Roles
-            .Where(r => !args.RoleIds.Contains(r.Id))
+        var rolesToDelete = accountLogged
+            .RolesIds
+            .Where(r => !args.RoleIds.Contains(r))
             .ToList();
         if (rolesToDelete.Count != 0)
         {
-            var roleIdsToDelete = rolesToDelete
-                .Select(r => r.Id)
-                .ToList();
-
             await accountRepository
-                .DeleteRolesByIdAsync(roleIdsToDelete, account)
+                .DeleteRolesByIdAsync(rolesToDelete, accountLogged)
                 .ConfigureAwait(false);
         }
 
         var newRoles = args
             .RoleIds
-            .Where(ri => !account.Roles.Exists(r => r.Id == ri))
+            .Where(ri => !accountLogged.RolesIds.Contains(ri))
             .ToList();
         if (newRoles.Count != 0)
         {
-            var roles = await _roleRepository
+            var roles = await roleRepository
                 .GetAllByIdsAsync(newRoles, accountLogged)
                 .ConfigureAwait(false);
 
@@ -356,7 +350,7 @@ internal sealed class AccountService(
             }
 
             var rolesNotInApps = roles
-                .Where(r => !account.Apps.Exists(a => a.Id == r.AppId))
+                .Where(r => !accountLogged.AppsIds.Exists(a => a == r.AppId))
                 .ToList();
             if (rolesNotInApps.Count != 0)
             {
@@ -364,12 +358,15 @@ internal sealed class AccountService(
             }
 
             await accountRepository
-                .AddRolesByIdAsync(newRoles, account)
+                .AddRolesByIdAsync(newRoles, accountLogged)
                 .ConfigureAwait(false);
         }
 
-        await unitOfWork
-            .CommitChangesAsync()
-            .ConfigureAwait(false);
+        if (rolesToDelete.Count != 0 || newRoles.Count != 0)
+        {
+            await unitOfWork
+                .CommitChangesAsync()
+                .ConfigureAwait(false);
+        }
     }
 }

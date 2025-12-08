@@ -1,9 +1,8 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Permissions;
-using CQ.AuthProvider.BusinessLogic.Utils;
+using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
-using CQ.Utility;
 using System.Data;
 
 namespace CQ.AuthProvider.BusinessLogic.Roles;
@@ -11,7 +10,8 @@ namespace CQ.AuthProvider.BusinessLogic.Roles;
 internal sealed class RoleService(
     IRoleRepository roleRepository,
     IPermissionRepository permissionRepository,
-    IAppRepository _appRepository)
+    IAppRepository appRepository,
+    IUnitOfWork unitOfWork)
     : IRoleInternalService
 {
     public async Task<Pagination<Role>> GetAllAsync(
@@ -53,6 +53,9 @@ internal sealed class RoleService(
         CreateBulkRoleArgs args,
         AccountLogged accountLogged)
     {
+        await AssertAsync(args)
+            .ConfigureAwait(false);
+            
         var defaultRoles = args
             .Roles
             .Where(r => r.IsDefault)
@@ -62,7 +65,7 @@ internal sealed class RoleService(
         if (defaultRoles.Count != 0)
         {
             await roleRepository
-                .RemoveDefaultsAndSaveAsync(
+                .RemoveDefaultsAsync(
                 defaultRoles,
                 accountLogged)
                 .ConfigureAwait(false);
@@ -87,31 +90,11 @@ internal sealed class RoleService(
             throw new InvalidOperationException($"The following permissions do not exist: {string.Join(",", missingPermissions)}");
         }
 
-        // List<App> missedApps = [];
-        // if (accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID) ||
-        //     accountLogged.IsInRole(AuthConstants.TENANT_OWNER_ROLE_ID))
-        // {
-        //     var missedAppsIds = args
-        //             .Roles
-        //             .Select(r => r.AppId)
-        //             .Where(a => !accountLogged.AppsIds.Contains(a))
-        //             .ToList();
-
-        //     missedApps = await _appRepository
-        //         .GetByIdAsync(missedAppsIds)
-        //         .ConfigureAwait(false);
-        // }
-
         var roles = args
             .Roles
             .ConvertAll(r =>
             {
                 var app = accountLogged.Apps.FirstOrDefault(a => a.Id == r.AppId);
-
-                // if (Guard.IsNull(app))
-                // {
-                //     app = missedApps.First(a => a.Id == r.AppId);
-                // }
 
                 return new Role
                 {
@@ -128,6 +111,28 @@ internal sealed class RoleService(
         await roleRepository
             .CreateBulkAsync(roles)
             .ConfigureAwait(false);
+
+        await unitOfWork
+            .CommitChangesAsync()
+            .ConfigureAwait(false);
+    }
+
+    private async Task AssertAsync(
+        CreateBulkRoleArgs args)
+    {
+        var roles = args
+        .Roles
+        .Select(r => (r.AppId, r.Name))
+        .ToList();
+
+        var rolesCreated = await roleRepository
+            .GetAllByAppAndNamesAsync(roles)
+            .ConfigureAwait(false);
+
+        if (rolesCreated.Count != 0)
+        {
+            throw new InvalidOperationException($"The following roles already exist: {string.Join(",", rolesCreated)}");
+        }
     }
 
     public async Task AddPermissionByIdAsync(

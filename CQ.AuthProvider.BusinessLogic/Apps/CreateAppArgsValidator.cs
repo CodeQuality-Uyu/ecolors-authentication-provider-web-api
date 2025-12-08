@@ -10,9 +10,6 @@ internal sealed class CreateAppArgsValidator
     {
         RuleFor(a => a.Name)
             .Required();
-
-        RuleFor(a => a.CoverKey)
-            .Required();
     }
 }
 
@@ -23,8 +20,21 @@ internal sealed class CreateClientAppArgsValidator
     {
         RuleFor(a => a.Name)
             .Required();
+    }
+}
 
-        RuleFor(a => a.CoverKey)
+internal sealed class LogoValidator
+    : AbstractValidator<Logo>
+{
+    public LogoValidator()
+    {
+        RuleFor(a => a.ColorKey)
+            .Required();
+
+        RuleFor(a => a.LightKey)
+            .Required();
+
+        RuleFor(a => a.DarkKey)
             .Required();
     }
 }

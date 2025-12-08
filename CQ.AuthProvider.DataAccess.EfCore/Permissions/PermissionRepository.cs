@@ -5,10 +5,8 @@ using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.UnitOfWork.EfCore.Core;
 using CQ.UnitOfWork.EfCore.Extensions;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace CQ.AuthProvider.DataAccess.EfCore.Permissions;
 

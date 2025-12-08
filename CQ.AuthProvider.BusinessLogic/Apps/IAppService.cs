@@ -23,7 +23,7 @@ public interface IAppService
 
     Task UpdateColorsByIdAsync(
         Guid id,
-        CreateAppCoverBackgroundColorArgs args,
+        Background args,
         AccountLogged accountLogged);
 
     Task<List<App>> GetByEmailAccountAsync(string email);

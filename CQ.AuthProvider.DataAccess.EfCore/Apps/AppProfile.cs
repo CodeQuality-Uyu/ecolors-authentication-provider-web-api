@@ -29,8 +29,6 @@ internal sealed class AppProfile
             .ForMember(
             destination => destination.Tenant,
             options => options.MapFrom<TenantResolver>());
-
-        CreateMap<CoverBackgroundColorEfCore, CoverBackgroundColor>();
         #endregion
 
         #region GetAll

@@ -132,14 +132,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("BackgroundColor")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BackgroundCoverKey")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CoverKey")
-                        .IsRequired()
+                    b.Property<string>("Background")
                         .HasColumnType("text");
 
                     b.Property<Guid?>("FatherAppId")
@@ -147,6 +140,10 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Logo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -167,8 +164,8 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         new
                         {
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
-                            CoverKey = "auth-web-api-cover.png",
                             IsDefault = true,
+                            Logo = "{\"ColorKey\":\"auth-web-api-logo-color.png\",\"LightKey\":\"auth-web-api-logo-light.png\",\"DarkKey\":\"auth-web-api-logo-dark.png\"}",
                             Name = "Auth Provider Web Api",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         });
@@ -292,6 +289,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             IsPublic = true,
                             Key = "create-role",
                             Name = "Can create role",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can create several roles",
+                            IsPublic = true,
+                            Key = "createbulk-role",
+                            Name = "Can create several roles",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
                         new
@@ -622,6 +629,11 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         {
                             RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
                             PermissionId = new Guid("c402e13f-40c4-4b97-b004-d5e616c3f82d")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000001")
                         },
                         new
                         {

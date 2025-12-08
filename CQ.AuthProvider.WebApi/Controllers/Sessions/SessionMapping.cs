@@ -2,7 +2,6 @@
 using CQ.AuthProvider.BusinessLogic.Apps;
 using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.BusinessLogic.Sessions;
-using CQ.AuthProvider.WebApi.Controllers.Blobs;
 
 namespace CQ.AuthProvider.WebApi.Controllers.Sessions;
 

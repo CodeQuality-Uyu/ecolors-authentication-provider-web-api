@@ -26,7 +26,7 @@ public interface IAppRepository
 
     Task UpdateAndSaveColorsByIdAsync(
         Guid id,
-        CreateAppCoverBackgroundColorArgs updates);
+        Background updates);
 
     Task<List<App>> GetByEmailAccountAsync(string email);
 }

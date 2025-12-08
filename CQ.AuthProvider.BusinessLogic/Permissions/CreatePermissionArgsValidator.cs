@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Interceptors;
 
 namespace CQ.AuthProvider.BusinessLogic.Permissions;
+
 internal sealed class CreatePermissionArgsValidator
     : AbstractValidator<CreatePermissionArgs>,
     IValidatorInterceptor
@@ -32,7 +33,7 @@ internal sealed class CreatePermissionArgsValidator
         IValidationContext validationContext)
     {
         var httpCtx = actionExecutingContext.HttpContext;
-        
+
         var accountLogged = (AccountLogged)httpCtx.Items[ContextItem.AccountLogged];
         var args = (CreatePermissionArgs)validationContext.InstanceToValidate;
 
@@ -53,9 +54,11 @@ internal sealed class CreatePermissionArgsValidator
 
         var appIsAuth = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
         var isWebApiOwner = accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID);
+        var permissionToAuthApp = args.AppId == AuthConstants.AUTH_WEB_API_APP_ID || args.AppId == Guid.Empty;
+
         var authorizedToAuth = appIsAuth && isWebApiOwner;
 
-        if (!authorizedToAuth)
+        if (!authorizedToAuth && permissionToAuthApp)
         {
             actionExecutingContext.ModelState.AddModelError(
                 nameof(args.AppId),
