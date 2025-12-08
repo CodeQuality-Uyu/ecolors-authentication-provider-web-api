@@ -189,8 +189,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RoleEfCore
                 {
                     Id = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    Name = "Tenant Owner",
-                    Description = "Tenant Owner",
+                    Name = AuthConstants.TENANT_OWNER_ROLE_NAME,
+                    Description = AuthConstants.TENANT_OWNER_ROLE_NAME,
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
@@ -220,7 +220,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     Id = AuthConstants.APP_OWNER_ROLE_ID,
                     Name = AuthConstants.APP_OWNER_ROLE_NAME,
-                    Description = "App owner",
+                    Description = AuthConstants.APP_OWNER_ROLE_NAME,
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     IsPublic = true,
                     TenantId = AuthConstants.SEED_TENANT_ID,
