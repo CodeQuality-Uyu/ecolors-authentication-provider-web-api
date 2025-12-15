@@ -78,7 +78,7 @@ internal sealed class BackgroundMultimediaResolver(IBlobService blobService)
 
         return new BackgroundResponse
         {
-            BackgroundKey = background,
+            Image = background,
             Colors = source.Background.Colors ?? [],
             Config = source.Background.Config,
         };
