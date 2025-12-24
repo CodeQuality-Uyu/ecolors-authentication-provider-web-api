@@ -24,7 +24,7 @@ public readonly struct LogoResponse
 
 public readonly struct BackgroundResponse()
 {
-    public BlobReadResponse? BackgroundKey { get; init; }
+    public BlobReadResponse? Image { get; init; }
 
     public IList<string> Colors { get; init; } = [];
 
