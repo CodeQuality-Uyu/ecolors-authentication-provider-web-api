@@ -216,7 +216,7 @@ internal static class AuthProviderWebApiConfig
                 }
             case BlobType.LocalStack:
                 {
-                    ConfigureLocalStackBlob(services, blobConfiguration);
+                    ConfigureLocalStackBlob(services, configuration);
                     break;
                 }
             default:
@@ -251,12 +251,13 @@ internal static class AuthProviderWebApiConfig
 
     private static IServiceCollection ConfigureLocalStackBlob(
         IServiceCollection services,
-        BlobSection blobSection)
+        IConfiguration configuration)
     {
-        var credentials = new BasicAWSCredentials(blobSection.Config.AccessToken, blobSection.Config.SecretToken);
+        var localStack = configuration.GetSection<LocalStackSection>("LocalStack");
+        var credentials = new BasicAWSCredentials(localStack.AccessToken, localStack.SecretToken);
         var config = new AmazonS3Config
         {
-            ServiceURL = blobSection.Config.ServiceUrl,
+            ServiceURL = localStack.ServiceUrl,
             ForcePathStyle = true,
         };
 
