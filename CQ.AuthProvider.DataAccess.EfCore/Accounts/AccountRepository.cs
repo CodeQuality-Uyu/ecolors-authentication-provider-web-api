@@ -13,8 +13,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Accounts;
 internal sealed class AccountRepository(
 AuthDbContext _context,
 [FromKeyedServices(MapperKeyedService.DataAccess)] IMapper mapper)
-: AuthDbContextRepository<AccountEfCore>(_context),
-IAccountRepository
+: AuthDbContextRepository<AccountEfCore>(_context), IAccountRepository
 {
     public async Task CreateAsync(Account account)
     {
@@ -63,12 +62,14 @@ IAccountRepository
         return mapper.Map<Account>(account);
     }
 
-    async Task<Account> IAccountRepository.GetByIdAsync(Guid id)
+    public async Task<Account> GetByIdAsync(
+        Guid id,
+        Guid? appId)
     {
         var query =
             Entities
-            .Include(a => a.Roles)
-                .ThenInclude(r => r.Permissions)
+            .Include(a => a.Roles.Where(r => r.AppId == appId))
+                .ThenInclude(r => r.Permissions.Where(p => p.AppId == appId))
             .Include(a => a.Tenant)
             .Include(a => a.Apps)
             .Where(a => a.Id == id)

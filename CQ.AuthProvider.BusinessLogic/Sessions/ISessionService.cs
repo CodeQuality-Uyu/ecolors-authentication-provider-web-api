@@ -5,7 +5,7 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 public interface ISessionService
 {
-    Task<Session> CreateAndSaveAsync(CreateSessionCredentialsArgs args);
+    Task<Session> CreateAsync(CreateSessionCredentialsArgs args);
 
     Task DeleteAsync(AccountLogged accountLogged);
 }

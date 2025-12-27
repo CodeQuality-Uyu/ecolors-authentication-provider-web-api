@@ -21,7 +21,7 @@ public class SessionController(
     public async Task<SessionCreatedResponse> CreateAsync(CreateSessionCredentialsArgs request)
     {
         var session = await sessionService
-            .CreateAndSaveAsync(request)
+            .CreateAsync(request)
             .ConfigureAwait(false);
 
         return mapper.Map<SessionCreatedResponse>(session);
