@@ -13,7 +13,7 @@ public interface IAccountRepository
 
     Task<Account> GetByIdAsync(
         Guid id,
-        Guid? appId);
+        Guid appId);
 
     Task<Account> GetByIdAsync(
         Guid id,

@@ -64,7 +64,7 @@ AuthDbContext _context,
 
     public async Task<Account> GetByIdAsync(
         Guid id,
-        Guid? appId)
+        Guid appId)
     {
         var query =
             Entities

@@ -27,16 +27,11 @@ public sealed class SessionService(
 
         var app = account
             .Apps
-            .FirstOrDefault(a => a.Id == args.AppId || a.IsDefault);
-
-        if (account.Apps.Count == 1 && Guard.IsNull(args.AppId))
-        {
-            app = account.Apps.First();
-        }
+            .FirstOrDefault(a => a.Id == args.AppId);
 
         if (Guard.IsNull(app))
         {
-            throw new InvalidOperationException($"Account ({account.Email}) doesn't exist {(args.AppId == null ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app ({args.AppId})")}");
+            throw new InvalidOperationException($"Account ({account.Email}) doesn't exist in app ({args.AppId})");
         }
 
         var session = await CreateAsync(account, app).ConfigureAwait(false);
