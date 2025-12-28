@@ -11,7 +11,9 @@ public interface IAccountRepository
 
     Task<Account> GetByEmailAsync(string email);
 
-    Task<Account> GetByIdAsync(Guid id);
+    Task<Account> GetByIdAsync(
+        Guid id,
+        Guid appId);
 
     Task<Account> GetByIdAsync(
         Guid id,
@@ -38,7 +40,9 @@ public interface IAccountRepository
         int page,
         int pageSize);
 
-    Task AddAppAsync(App app, AccountLogged accountLogged);
+    Task AddAppAsync(
+        App app,
+        AccountLogged accountLogged);
 
     Task DeleteRolesByIdAsync(
         List<Guid> rolesIds,

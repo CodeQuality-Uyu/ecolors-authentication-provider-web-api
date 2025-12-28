@@ -95,13 +95,16 @@ internal sealed class RoleService(
             .ConvertAll(r =>
             {
                 var app = accountLogged.Apps.FirstOrDefault(a => a.Id == r.AppId);
+                var permissionsOfRole = permissions
+                    .Where(p => p.App.Id == r.AppId && r.PermissionKeys.Contains(p.Key))
+                    .ToList();
 
                 return new Role
                 {
                     Name = r.Name,
                     Description = r.Description,
                     IsPublic = r.IsPublic,
-                    Permissions = permissions,
+                    Permissions = permissionsOfRole,
                     IsDefault = r.IsDefault,
                     App = app,
                     Tenant = accountLogged.Tenant

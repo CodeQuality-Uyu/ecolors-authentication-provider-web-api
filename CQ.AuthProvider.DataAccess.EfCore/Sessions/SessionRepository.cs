@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Utils;
+using CQ.AuthProvider.DataAccess.EfCore.Accounts;
+using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,20 +24,41 @@ internal sealed class SessionRepository(
 
     public async Task<Session> GetByTokenAsync(string token)
     {
-        var query = Entities
-            .Include(s => s.Account.Roles)
-                    .ThenInclude(r => r.Permissions)
-            .Include(s => s.Account.Apps)
-            .Include(s => s.Account.Tenant)
-            .Include(s => s.App)
+        var session = await Entities
             .Where(s => s.Token == token)
+            .Select(s => new SessionEfCore
+            {
+                Id = s.Id,
+                Token = s.Token,
+                AppId = s.AppId,
+                App = s.App,               // or specific fields
+                Account = new AccountEfCore
+                {
+                    Id = s.Account.Id,
+                    FirstName = s.Account.FirstName,
+                    LastName = s.Account.LastName,
+                    FullName = s.Account.FullName,
+                    Email = s.Account.Email,
+                    Tenant = s.Account.Tenant,
+                    Apps = s.Account.Apps.ToList(),
+                    Roles = s.Account.Roles
+                        .Where(r => r.AppId == s.AppId)
+                        .Select(r => new RoleEfCore
+                        {
+                            Id = r.Id,
+                            Name = r.Name,
+                            AppId = r.AppId,
+                            Permissions = r.Permissions
+                                .Where(p => p.AppId == r.AppId)
+                                .ToList()
+                        })
+                        .ToList()
+                }
+            })
             .AsSplitQuery()
-            .AsNoTracking()
-            ;
-
-        var session = await query
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
+
 
         AssertNullEntity(session, token, nameof(Session.Token));
 

@@ -9,7 +9,7 @@ services:
       LOCALSTACK_AWS_ACCESS_KEY_ID: test
       LOCALSTACK_REGION: us-east-1
     ports:
-      - "5000:4566"            # LocalStack Gateway
+      - "6000:4566"            # LocalStack Gateway
       # - "4510-4559:4510-4559"  # external services port range
 
   sql-server:
@@ -20,14 +20,14 @@ services:
       MSSQL_USER: "sa"
       ACCEPT_EULA: "Y"
     ports:
-      - "5001:1433"
+      - "6001:1433"
 
-  web-api:
-    container_name: web-api
+  auth-provider-web-api:
+    container_name: auth-provider-web-api
     build: .
     image: cq-auth-provider-webapi
     ports:
-      - "5002:8080" 
+      - "6002:8080" 
     environment:
       ASPNETCORE_ENVIRONMENT: "Docker"
       ConnectionStrings__Auth: "Server=sql-server,1433; Database=AuthProvider; User ID=sa; Password=MySuperStrongPassword1(!); TrustServerCertificate=true;"
@@ -35,9 +35,7 @@ services:
       DatabaseEngine__Auth: "Sql"
       DatabaseEngine__Identity: "Sql"
       Blob__Type: "localstack"
-      Blob__Config__AccessToken: "test"
-      Blob__Config__SecretToken: "test"
-      Blob__Config__ServiceUrl: "http://localhost:5000"
+      LocalStack__ServiceUrl: "http://localhost:5000"
       ASPNETCORE_HTTP_PORTS: 8080
       # ASPNETCORE_URLS: http://*:80
     depends_on:

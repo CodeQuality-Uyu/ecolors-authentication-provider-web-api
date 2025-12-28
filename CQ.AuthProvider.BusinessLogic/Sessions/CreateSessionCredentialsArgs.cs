@@ -3,4 +3,4 @@
 public sealed record CreateSessionCredentialsArgs(
     string Email,
     string Password,
-    Guid? AppId);
+    Guid AppId);
