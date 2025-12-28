@@ -9,34 +9,29 @@ namespace CQ.AuthProvider.BusinessLogic.Sessions;
 
 public sealed class SessionService(
     ISessionRepository sessionRepository,
-    IIdentityRepository _identityRepository,
-    IAccountRepository _accountRepository,
+    IIdentityRepository identityRepository,
+    IAccountRepository accountRepository,
     ITokenService tokenService,
     IUnitOfWork _unitOfWork)
     : ISessionInternalService
 {
-    public async Task<Session> CreateAndSaveAsync(CreateSessionCredentialsArgs args)
+    public async Task<Session> CreateAsync(CreateSessionCredentialsArgs args)
     {
-        var identity = await _identityRepository
+        var identity = await identityRepository
             .GetByCredentialsAsync(args.Email, args.Password)
             .ConfigureAwait(false);
 
-        var account = await _accountRepository
-            .GetByIdAsync(identity.Id)
+        var account = await accountRepository
+            .GetByIdAsync(identity.Id, args.AppId)
             .ConfigureAwait(true);
 
         var app = account
             .Apps
-            .FirstOrDefault(a => (args.AppId == null && a.IsDefault) || a.Id == args.AppId);
-
-        if (account.Apps.Count == 1 && Guard.IsNull(args.AppId))
-        {
-            app = account.Apps.First();
-        }
+            .FirstOrDefault(a => a.Id == args.AppId);
 
         if (Guard.IsNull(app))
         {
-            throw new InvalidOperationException($"Account ({account.Email}) doesn't exist {(args.AppId == null ? $"in defualt app of tenant {account.Tenant.Name}" : $"in app ({args.AppId})")}");
+            throw new InvalidOperationException($"Account ({account.Email}) doesn't exist in app ({args.AppId})");
         }
 
         var session = await CreateAsync(account, app).ConfigureAwait(false);

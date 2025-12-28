@@ -216,7 +216,7 @@ internal static class AuthProviderWebApiConfig
                 }
             case BlobType.LocalStack:
                 {
-                    ConfigureLocalStackBlob(services, blobConfiguration);
+                    ConfigureLocalStackBlob(services, configuration);
                     break;
                 }
             default:
@@ -251,12 +251,13 @@ internal static class AuthProviderWebApiConfig
 
     private static IServiceCollection ConfigureLocalStackBlob(
         IServiceCollection services,
-        BlobSection blobSection)
+        IConfiguration configuration)
     {
-        var credentials = new BasicAWSCredentials(blobSection.Config.AccessToken, blobSection.Config.SecretToken);
+        var localStack = configuration.GetSection<LocalStackSection>("LocalStack");
+        var credentials = new BasicAWSCredentials(localStack.AccessToken, localStack.SecretToken);
         var config = new AmazonS3Config
         {
-            ServiceURL = blobSection.Config.ServiceUrl,
+            ServiceURL = localStack.ServiceUrl,
             ForcePathStyle = true,
         };
 
@@ -280,10 +281,48 @@ internal static class AuthProviderWebApiConfig
         var identityConnectionString = configuration.GetConnectionString("Identity");
         AssertConnectionString(identityConnectionString);
 
+        var databaseEngineAuth = configuration.GetSection<string>($"DatabaseEngine:Auth");
+        var databaseEngineIdentity = configuration.GetSection<string>($"DatabaseEngine:Identity");
+
+        var healthCheck = services
+            .AddHealthChecks();
+        
+        if (databaseEngineAuth == DatabaseEngineOption.Sql)
+        {
+            healthCheck = healthCheck
+                .AddSqlServer(
+                    authConnectionString!,
+                    name: "AuthSQLServer",
+                    tags: ["db", "auth", "sqlserver"]);
+        }
+        else if (databaseEngineAuth == DatabaseEngineOption.Postgres)
+        {
+            healthCheck = healthCheck
+                .AddNpgSql(
+                    authConnectionString!,
+                    name: "AuthPostgreSQL",
+                    tags: ["db", "auth", "postgresql"]);
+        }
+
+        if (databaseEngineIdentity == DatabaseEngineOption.Sql)
+        {
+            healthCheck = healthCheck
+                .AddSqlServer(
+                    identityConnectionString!,
+                    name: "IdentitySQLServer",
+                    tags: ["db", "identity", "sqlserver"]);
+        }
+        else if (databaseEngineIdentity == DatabaseEngineOption.Postgres)
+        {
+            healthCheck = healthCheck
+                .AddNpgSql(
+                    identityConnectionString!,
+                    name: "IdentityPostgreSQL",
+                    tags: ["db", "identity", "postgresql"]);
+        }
+
         services
         .AddHealthChecks()
-        .AddNpgSql(authConnectionString!, name: "AuthPostgreSQL", tags: ["db", "auth", "postgresql"])
-        .AddNpgSql(identityConnectionString!, name: "IdentityPostgreSQL", tags: ["db", "identity", "postgresql"])
         .AddDbContextCheck<AuthDbContext>("AuthDatabase", tags: ["db", "efcore"])
         .AddDbContextCheck<IdentityDbContext>("IdentityDatabase", tags: ["db", "efcore"]);
 
