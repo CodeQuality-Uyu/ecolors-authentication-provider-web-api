@@ -22,7 +22,7 @@ public interface IRoleRepository
 
     Task AddPermissionsAsync(
         Guid id,
-        List<string> permissionsKeys);
+        List<Guid> permissionIds);
 
     Task RemovePermissionByIdAsync(
         Guid id,
