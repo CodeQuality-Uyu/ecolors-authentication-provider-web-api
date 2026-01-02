@@ -31,7 +31,7 @@ internal sealed class SessionRepository(
                 Id = s.Id,
                 Token = s.Token,
                 AppId = s.AppId,
-                App = s.App,               // or specific fields
+                App = s.App,
                 Account = new AccountEfCore
                 {
                     Id = s.Account.Id,
@@ -43,15 +43,13 @@ internal sealed class SessionRepository(
                     Tenant = s.Account.Tenant,
                     Apps = s.Account.Apps.ToList(),
                     Roles = s.Account.Roles
-                        .Where(r => r.AppId == s.AppId)
+                        .Where(r => r.AppId == s.AppId || r.AppId == s.App.FatherAppId)
                         .Select(r => new RoleEfCore
                         {
                             Id = r.Id,
                             Name = r.Name,
                             AppId = r.AppId,
                             Permissions = r.Permissions
-                                .Where(p => p.AppId == r.AppId)
-                                .ToList()
                         })
                         .ToList()
                 }

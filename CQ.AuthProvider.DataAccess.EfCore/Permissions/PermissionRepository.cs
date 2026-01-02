@@ -16,6 +16,16 @@ internal sealed class PermissionRepository(
     : EfCoreRepository<PermissionEfCore>(context),
     IPermissionRepository
 {
+    public async Task<IList<Permission>> GetAllAsync(IList<Guid> ids)
+    {
+        var permissions = await Entities
+            .Where(p => ids.Contains(p.Id))
+            .AsNoTracking()
+            .ToListAsync()
+            .ConfigureAwait(false);
+
+        return mapper.Map<IList<Permission>>(permissions);
+    }
     public async Task<Pagination<Permission>> GetAllAsync(
         Guid? appId,
         bool? isPrivate,
