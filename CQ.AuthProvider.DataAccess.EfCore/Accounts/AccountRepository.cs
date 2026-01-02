@@ -66,10 +66,17 @@ AuthDbContext _context,
         Guid id,
         Guid appId)
     {
+        var parentAppId = await _context
+            .Apps
+            .Where(a => a.Id == appId)
+            .Select(a => a.FatherAppId)
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
         var query =
             Entities
-            .Include(a => a.Roles.Where(r => r.AppId == appId))
-                .ThenInclude(r => r.Permissions.Where(p => p.AppId == appId))
+            .Include(a => a.Roles.Where(r => r.AppId == appId || r.AppId == parentAppId))
+                .ThenInclude(r => r.Permissions.Where(p => p.AppId == appId || p.AppId == parentAppId))
             .Include(a => a.Tenant)
             .Include(a => a.Apps)
             .Where(a => a.Id == id)
