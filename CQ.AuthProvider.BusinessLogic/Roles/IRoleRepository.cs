@@ -24,6 +24,10 @@ public interface IRoleRepository
         Guid id,
         List<string> permissionsKeys);
 
+    Task RemovePermissionByIdAsync(
+        Guid id,
+        Guid permissionId);
+
     Task<Role> GetDefaultByTenantIdAsync(
         Guid appId,
         Guid tenantId);

@@ -53,6 +53,16 @@ public class RoleController(
             .ConfigureAwait(false);
     }
 
+    [HttpDelete("{id}/permissions/{permissionId}")]
+    public async Task RemovePermissionAsync(Guid id, Guid permissionId)
+    {
+        await roleService
+            .RemovePermissionByIdAsync(
+            id,
+            permissionId)
+            .ConfigureAwait(false);
+    }
+
     [HttpGet]
     public async Task<Pagination<RoleBasicInfoResponse>> GetAllAsync(
         [FromQuery] Guid? appId,

@@ -166,7 +166,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             IsDefault = true,
                             Logo = "{\"ColorKey\":\"auth-web-api-logo-color.png\",\"LightKey\":\"auth-web-api-logo-light.png\",\"DarkKey\":\"auth-web-api-logo-dark.png\"}",
-                            Name = "Auth Provider Web Api",
+                            Name = "auth-provider-web-api",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         });
                 });
@@ -319,6 +319,16 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             IsPublic = true,
                             Key = "addpermission-role",
                             Name = "Can add permissions to role",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000002"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can remove permission of role",
+                            IsPublic = true,
+                            Key = "removepermission-role",
+                            Name = "Can remove permission of role",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
                         new
@@ -550,7 +560,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             Description = "Permissions over Auth Provider Web Api app",
                             IsDefault = false,
                             IsPublic = true,
-                            Name = "Auth Provider Web Api Owner",
+                            Name = "Auth Web API owner",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
                         new
@@ -634,6 +644,11 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         {
                             RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
                             PermissionId = new Guid("00000000-0000-0000-0000-000000000001")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("cf4a209a-8dbd-4dac-85d9-ed899424b49e"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000002")
                         },
                         new
                         {
