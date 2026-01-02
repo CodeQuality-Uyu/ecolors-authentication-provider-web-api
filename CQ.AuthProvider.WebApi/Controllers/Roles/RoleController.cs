@@ -42,14 +42,12 @@ public class RoleController(
     }
 
     [HttpPost("{id}/permissions")]
-    public async Task AddPermissionAsync(Guid id, AddPermissionRequest request)
+    public async Task AddPermissionAsync(Guid id, AddPermissionArgs request)
     {
-        var args = request.Map();
-
         await roleService
             .AddPermissionByIdAsync(
             id,
-            args)
+            request)
             .ConfigureAwait(false);
     }
 

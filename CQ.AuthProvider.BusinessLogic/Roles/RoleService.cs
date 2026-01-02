@@ -142,13 +142,29 @@ internal sealed class RoleService(
         Guid id,
         AddPermissionArgs args)
     {
+        await AssertAsync(
+            id,
+            args)
+            .ConfigureAwait(false);
+
+        await roleRepository
+            .AddPermissionsAsync(
+            id,
+            args.PermissionIds)
+            .ConfigureAwait(false);
+    }
+
+    private async Task AssertAsync(
+        Guid id,
+        AddPermissionArgs args)
+    {
         var role = await roleRepository
             .GetByIdAsync(id)
             .ConfigureAwait(false);
 
         var duplicatedPermissions = role
             .Permissions
-            .Where(p => args.PermissionsKeys.Contains(p.Key))
+            .Where(p => args.PermissionIds.Contains(p.Id))
             .Select(p => p.Key)
             .ToList();
         if (duplicatedPermissions.Count != 0)
@@ -156,11 +172,15 @@ internal sealed class RoleService(
             throw new InvalidOperationException($"The following permissions are duplicated in the role: {string.Join(",", duplicatedPermissions)}");
         }
 
-        await roleRepository
-            .AddPermissionsAsync(
-            id,
-            args.PermissionsKeys)
+        var permissions = await permissionRepository
+            .GetAllAsync(args.PermissionIds)
             .ConfigureAwait(false);
+        if (permissions.Count != args.PermissionIds.Count)
+        {
+            var foundIds = permissions.Select(p => p.Id).ToHashSet();
+            var notFoundIds = args.PermissionIds.Where(pid => !foundIds.Contains(pid)).ToList();
+            throw new InvalidOperationException($"The following permissions do not exist: {string.Join(",", notFoundIds)}");
+        }
     }
 
     public async Task RemovePermissionByIdAsync(

@@ -13,6 +13,8 @@ public interface IPermissionRepository
         int pageSize,
         AccountLogged accountLogged);
 
+    Task<IList<Permission>> GetAllAsync(IList<Guid> ids);
+
     Task<List<Permission>> GetAllByKeysAsync(
         List<(Guid appId, string key)> keys,
         AccountLogged accountLogged);

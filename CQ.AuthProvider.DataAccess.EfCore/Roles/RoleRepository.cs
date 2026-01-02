@@ -120,16 +120,13 @@ internal sealed class RoleRepository(
 
     public async Task AddPermissionsAsync(
         Guid id,
-        List<string> permissionsKeys)
+        List<Guid> permissionIds)
     {
-        var permissions = await permissionRepository
-            .GetAllAsync(p => permissionsKeys.Contains(p.Key))
-            .ConfigureAwait(false);
-
-        var rolePermissions = permissions.ConvertAll(p => new RolePermission
+        var rolePermissions = permissionIds
+        .ConvertAll(p => new RolePermission
         {
             RoleId = id,
-            PermissionId = p.Id
+            PermissionId = p
         });
 
         await rolePermissionRepository

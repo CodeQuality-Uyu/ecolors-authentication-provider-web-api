@@ -76,7 +76,7 @@ AuthDbContext _context,
         var query =
             Entities
             .Include(a => a.Roles.Where(r => r.AppId == appId || r.AppId == parentAppId))
-                .ThenInclude(r => r.Permissions.Where(p => p.AppId == appId || p.AppId == parentAppId))
+                .ThenInclude(r => r.Permissions)
             .Include(a => a.Tenant)
             .Include(a => a.Apps)
             .Where(a => a.Id == id)
