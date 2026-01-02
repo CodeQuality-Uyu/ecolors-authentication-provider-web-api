@@ -246,6 +246,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         var getAllRolesPermissionId = Guid.Parse("fc598ab0-1f14-4224-a187-4556a9926f6f");
         var addPermissionsPermissionId = Guid.Parse("c402e13f-40c4-4b97-b004-d5e616c3f82d");
         var createRoleBulkPermissionId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var removePermissionOfRolePermissionId = Guid.Parse("00000000-0000-0000-0000-000000000002");
 
         var createInvitationPermissionId = Guid.Parse("0b2f5e97-42f9-4e56-9ee2-40b033cff9e8");
         var getAllInvitationsPermissionId = Guid.Parse("40bc0960-8c55-488e-a014-f5b52db3d306");
@@ -333,6 +334,11 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
                     PermissionId = createRoleBulkPermissionId,
+                },
+                new RolePermission
+                {
+                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
+                    PermissionId = removePermissionOfRolePermissionId,
                 },
             #endregion Role
 
@@ -550,6 +556,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Can add permissions to role",
                     Description = "Can add permissions to role",
                     Key = "addpermission-role",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = AuthConstants.SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = removePermissionOfRolePermissionId,
+                    Name = "Can remove permission of role",
+                    Description = "Can remove permission of role",
+                    Key = "removepermission-role",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = AuthConstants.SEED_TENANT_ID,
                     IsPublic = true,

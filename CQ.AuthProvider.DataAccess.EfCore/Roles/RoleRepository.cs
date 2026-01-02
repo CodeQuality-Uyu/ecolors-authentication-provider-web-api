@@ -137,6 +137,15 @@ internal sealed class RoleRepository(
             .ConfigureAwait(false);
     }
 
+    public async Task RemovePermissionByIdAsync(
+        Guid id,
+        Guid permissionId)
+    {
+        await rolePermissionRepository
+            .DeleteAndSaveAsync(rp => rp.RoleId == id && rp.PermissionId == permissionId)
+            .ConfigureAwait(false);
+    }
+
     public async Task<Role?> GetDefaultOrDefaultByAppIdAndTenantIdAsync(
         Guid appId,
         Guid tenantId)

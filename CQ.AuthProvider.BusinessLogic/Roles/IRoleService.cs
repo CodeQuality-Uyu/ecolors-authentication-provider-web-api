@@ -23,6 +23,10 @@ public interface IRoleService
     Task AddPermissionByIdAsync(
         Guid id,
         AddPermissionArgs permissions);
+
+    Task RemovePermissionByIdAsync(
+        Guid id,
+        Guid permissionId);
 }
 
 internal interface IRoleInternalService

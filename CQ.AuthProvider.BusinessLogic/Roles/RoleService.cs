@@ -162,4 +162,15 @@ internal sealed class RoleService(
             args.PermissionsKeys)
             .ConfigureAwait(false);
     }
+
+    public async Task RemovePermissionByIdAsync(
+        Guid id,
+        Guid permissionId)
+    {
+        await roleRepository
+            .RemovePermissionByIdAsync(
+            id,
+            permissionId)
+            .ConfigureAwait(false);
+    }
 }
