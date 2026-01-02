@@ -46,7 +46,7 @@ internal sealed class SessionMapping
             .ForMember(
             dest => dest.Permissions,
             opt => opt.MapFrom(
-                src => src.Account.Roles.SelectMany(r => r.Permissions).ToList().ConvertAll(p => p.Key)))
+                src => src.Account.Roles.SelectMany(r => r.Permissions.ConvertAll(p => p.Key))))
             .ForMember(
             dest => dest.AppLogged,
             opt => opt.MapFrom(

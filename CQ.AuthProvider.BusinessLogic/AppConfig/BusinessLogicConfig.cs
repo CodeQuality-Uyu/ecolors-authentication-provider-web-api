@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CQ.AuthProvider.BusinessLogic.AppConfig;
 
-public static class ServicesConfig
+public static class BusinessLogicConfig
 {
     public static IServiceCollection ConfigureServices(
         this IServiceCollection services)

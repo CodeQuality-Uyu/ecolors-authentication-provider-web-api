@@ -39,6 +39,7 @@ internal sealed class SessionRepository(
                     LastName = s.Account.LastName,
                     FullName = s.Account.FullName,
                     Email = s.Account.Email,
+                    TenantId = s.Account.TenantId,
                     Tenant = s.Account.Tenant,
                     Apps = s.Account.Apps.ToList(),
                     Roles = s.Account.Roles
