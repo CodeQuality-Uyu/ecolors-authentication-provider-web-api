@@ -1,5 +1,6 @@
 ﻿using CQ.ApiElements;
 using CQ.AuthProvider.BusinessLogic.Accounts;
+using CQ.AuthProvider.BusinessLogic.Permissions;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using FluentValidation;
 using FluentValidation.Results;
@@ -16,7 +17,7 @@ internal sealed class CreateBulkRoleArgsValidator
     public CreateBulkRoleArgsValidator()
     {
         RuleForEach(a => a.Roles)
-            .SetValidator(new CreateRoleArgsValidator());
+            .SetValidator(new CreateBasicRoleArgsValidator());
 
         RuleFor(a => a.Roles)
             .Must(roles =>
@@ -30,6 +31,9 @@ internal sealed class CreateBulkRoleArgsValidator
                 return duplicatedNames.Count == 0;
             })
             .WithMessage("Duplicated names");
+
+        RuleFor(a => a.AppId)
+            .ValidId();
     }
 
     public ValidationResult? AfterValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
@@ -39,31 +43,20 @@ internal sealed class CreateBulkRoleArgsValidator
 
         var roles = args.Roles;
 
-        var appsIds = roles
-            .GroupBy(a => a.AppId)
-            .Select(g => g.Key)
-            .ToList();
-
-        var invalidAppsIds = appsIds
-            .Where(a => !accountLogged.AppsIds.Contains(a))
-            .ToList();
-        if (invalidAppsIds.Count != 0)
+        var invalidAppsIds = !accountLogged.AppsIds.Contains(args.AppId);
+        if (invalidAppsIds)
         {
             actionExecutingContext.ModelState.AddModelError(
                 "AppId",
-                $"Account doen't have this AppsIds ({string.Join(",", invalidAppsIds)})");
+                $"Account doeen't have this AppsIds ({args.AppId})");
         }
 
         var defaultRoles = args
         .Roles
         .Where(r => r.IsDefault)
-        .GroupBy(r => r.AppId)
         .ToList();
 
-        var duplicatedDefaultRolesInApp = defaultRoles
-            .Where(g => g.Count() > 1)
-            .ToList();
-        if (duplicatedDefaultRolesInApp.Count > 1)
+        if (defaultRoles.Count > 1)
         {
             actionExecutingContext.ModelState.AddModelError(
                 "IsDefault",
@@ -72,7 +65,7 @@ internal sealed class CreateBulkRoleArgsValidator
 
         var appIsAuth = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
         var isWebApiOwner = accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID);
-        var permissionToAuthApp = roles.Exists(r => r.AppId == AuthConstants.AUTH_WEB_API_APP_ID || r.AppId == Guid.Empty);
+        var permissionToAuthApp = args.AppId == AuthConstants.AUTH_WEB_API_APP_ID;
         var authorizedToAuth = appIsAuth && isWebApiOwner;
 
         if (!authorizedToAuth && permissionToAuthApp)
@@ -88,4 +81,33 @@ internal sealed class CreateBulkRoleArgsValidator
     public IValidationContext? BeforeValidation(
         ActionExecutingContext actionExecutingContext,
         IValidationContext validationContext) => null;
+}
+
+internal sealed class CreateBasicRoleArgsValidator
+    : AbstractValidator<CreateBasicRoleArgs>
+{
+    public CreateBasicRoleArgsValidator()
+    {
+        RuleFor(r => r.Name)
+            .Required();
+
+        RuleFor(r => r.Description)
+            .Required();
+
+        RuleFor(r => r.IsPublic)
+            .Required();
+
+        RuleFor(r => r.PermissionKeys)
+            .Must(permissionKeys =>
+            {
+                var duplicatedKeys = permissionKeys
+                .GroupBy(k => k)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+                return duplicatedKeys.Count == 0;
+            })
+            .WithMessage("Duplicated permission keys");
+    }
 }

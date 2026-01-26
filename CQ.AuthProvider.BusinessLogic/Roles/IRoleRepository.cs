@@ -13,7 +13,7 @@ public interface IRoleRepository
         AccountLogged accountLogged);
 
     Task RemoveDefaultsAsync(
-        List<Guid> appsIds,
+        Guid appId,
         AccountLogged accountLogged);
 
     Task CreateBulkAsync(List<Role> roles);
@@ -29,6 +29,7 @@ public interface IRoleRepository
         Guid permissionId);
 
     Task<Role> GetDefaultByTenantIdAsync(
+        Guid? roleId,
         Guid appId,
         Guid tenantId);
 
@@ -47,5 +48,5 @@ public interface IRoleRepository
 
     Task DeleteAndSaveByIdAsync(Guid id);
 
-    Task<List<(Guid AppId, string RoleName)>> GetAllByAppAndNamesAsync(List<(Guid AppId, string RoleName)> roles);
+    Task<List<string>> GetAllByAppAndNamesAsync(Guid appId, List<string> roles);
 }

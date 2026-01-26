@@ -77,7 +77,7 @@ internal sealed class AccountService(
             .ConfigureAwait(false);
 
         var role = await roleRepository
-                .GetDefaultByTenantIdAsync(app.Id, app.Tenant.Id)
+                .GetDefaultByTenantIdAsync(args.RoleId, app.Id, app.Tenant.Id)
                 .ConfigureAwait(false);
 
         var account = Account.New(

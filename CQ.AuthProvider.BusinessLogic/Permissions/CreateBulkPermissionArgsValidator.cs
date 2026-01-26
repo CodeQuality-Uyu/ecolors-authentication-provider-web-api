@@ -16,7 +16,7 @@ internal sealed class CreateBulkPermissionArgsValidator
     public CreateBulkPermissionArgsValidator()
     {
         RuleForEach(a => a.Permissions)
-            .SetValidator(new CreatePermissionArgsValidator());
+            .SetValidator(new CreateBasicPermissionArgsValidator());
 
         RuleFor(a => a.Permissions)
             .Must(permissions =>
@@ -30,6 +30,9 @@ internal sealed class CreateBulkPermissionArgsValidator
                 return duplicatedKeys.Count == 0;
             })
             .WithMessage("Duplicated permissions keys");
+
+        RuleFor(a => a.AppId)
+            .ValidId();
     }
 
     public ValidationResult? AfterValidation(
@@ -39,17 +42,8 @@ internal sealed class CreateBulkPermissionArgsValidator
         var accountLogged = (AccountLogged)actionExecutingContext.HttpContext.Items[ContextItem.AccountLogged];
         var args = (CreateBulkPermissionArgs)validationContext.InstanceToValidate;
 
-        var permissions = args.Permissions;
-
-        var appsIds = permissions
-                    .GroupBy(a => a.AppId)
-                    .Select(g => g.Key!)
-                    .ToList();
-
-        var invalidAppsIds = appsIds
-                        .Where(id => !accountLogged.AppsIds.Contains(id))
-                        .ToList();
-        if (invalidAppsIds.Count != 0)
+        var invalidAppsIds = !accountLogged.AppsIds.Contains(args.AppId);
+        if (invalidAppsIds)
         {
             actionExecutingContext.ModelState.AddModelError(
                 "AppId",
@@ -58,13 +52,58 @@ internal sealed class CreateBulkPermissionArgsValidator
 
         var appIsAuth = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
         var isWebApiOwner = accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID);
-        var permissionToAuthApp = permissions.Exists(p => p.AppId == AuthConstants.AUTH_WEB_API_APP_ID || p.AppId == Guid.Empty);
+        var permissionToAuthApp = args.AppId == AuthConstants.AUTH_WEB_API_APP_ID;
         var authorizedToAuth = appIsAuth && isWebApiOwner;
 
         if (!authorizedToAuth && permissionToAuthApp)
         {
             actionExecutingContext.ModelState.AddModelError(
                 "AppId",
+                $"Can't create to auth api app");
+        }
+
+        return null;
+    }
+
+    public IValidationContext? BeforeValidation(
+        ActionExecutingContext actionExecutingContext,
+        IValidationContext validationContext) => null;
+}
+
+internal sealed class CreateBasicPermissionArgsValidator
+    : AbstractValidator<CreateBasicPermissionArgs>,
+    IValidatorInterceptor
+{
+    public CreateBasicPermissionArgsValidator()
+    {
+        RuleFor(a => a.Name)
+            .Required();
+
+        RuleFor(a => a.Description)
+            .Required();
+
+        RuleFor(a => a.Key)
+            .Required();
+    }
+
+    public ValidationResult? AfterValidation(
+        ActionExecutingContext actionExecutingContext,
+        IValidationContext validationContext)
+    {
+        var httpCtx = actionExecutingContext.HttpContext;
+
+        var accountLogged = (AccountLogged)httpCtx.Items[ContextItem.AccountLogged];
+        var args = (CreateBasicPermissionArgs)validationContext.InstanceToValidate;
+
+        var appIsAuth = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
+        var isWebApiOwner = accountLogged.IsInRole(AuthConstants.AUTH_WEB_API_OWNER_ROLE_ID);
+
+        var authorizedToAuth = appIsAuth && isWebApiOwner;
+
+        if (!authorizedToAuth)
+        {
+            actionExecutingContext.ModelState.AddModelError(
+                "appId",
                 $"Can't create to auth api app");
         }
 
