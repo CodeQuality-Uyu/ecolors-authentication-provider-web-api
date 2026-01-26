@@ -5,7 +5,6 @@ public sealed record CreateAppArgs(
     bool IsDefault,
     Logo? Logo,
     Background? Background,
-    string? BackgroundCoverKey,
     bool RegisterToIt = false);
 
 public sealed record CreateClientAppArgs(

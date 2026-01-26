@@ -44,7 +44,7 @@ internal sealed class RoleService(
         AccountLogged accountLogged)
     {
         await CreateBulkAsync(
-            new CreateBulkRoleArgs([args]),
+            new CreateBulkRoleArgs([args], args.AppId),
             accountLogged)
             .ConfigureAwait(false);
     }
@@ -55,48 +55,48 @@ internal sealed class RoleService(
     {
         await AssertAsync(args)
             .ConfigureAwait(false);
-            
+
         var defaultRoles = args
             .Roles
-            .Where(r => r.IsDefault)
-            .ToList()
-            .ConvertAll(r => r.AppId);
+            .Any(r => r.IsDefault);
 
-        if (defaultRoles.Count != 0)
+        if (defaultRoles)
         {
             await roleRepository
                 .RemoveDefaultsAsync(
-                defaultRoles,
+                args.AppId,
                 accountLogged)
                 .ConfigureAwait(false);
         }
 
         var allPermissionsKeyes = args
             .Roles
-            .SelectMany(r => r.PermissionKeys.ConvertAll(p => (r.AppId, p)).Distinct())
+            .SelectMany(r => r.PermissionKeys)
+            .Distinct()
             .ToList();
 
         var permissions = await permissionRepository
             .GetAllByKeysAsync(
-            allPermissionsKeyes,
-            accountLogged)
+                args.AppId,
+                allPermissionsKeyes,
+                accountLogged)
             .ConfigureAwait(false);
         if (permissions.Count != allPermissionsKeyes.Count)
         {
             var missingPermissions = allPermissionsKeyes
-                .Where(pk => !permissions.Exists(p => p.App.Id == pk.Item1 && p.Key == pk.p))
+                .Where(pk => !permissions.Exists(p => p.Key == pk))
                 .ToList();
 
             throw new InvalidOperationException($"The following permissions do not exist: {string.Join(",", missingPermissions)}");
         }
 
+        var app = accountLogged.Apps.First(a => a.Id == args.AppId);
         var roles = args
             .Roles
             .ConvertAll(r =>
             {
-                var app = accountLogged.Apps.FirstOrDefault(a => a.Id == r.AppId);
                 var permissionsOfRole = permissions
-                    .Where(p => p.App.Id == r.AppId && r.PermissionKeys.Contains(p.Key))
+                    .Where(p => r.PermissionKeys.Contains(p.Key))
                     .ToList();
 
                 return new Role
@@ -125,11 +125,11 @@ internal sealed class RoleService(
     {
         var roles = args
         .Roles
-        .Select(r => (r.AppId, r.Name))
+        .Select(r => r.Name)
         .ToList();
 
         var rolesCreated = await roleRepository
-            .GetAllByAppAndNamesAsync(roles)
+            .GetAllByAppAndNamesAsync(args.AppId, roles)
             .ConfigureAwait(false);
 
         if (rolesCreated.Count != 0)

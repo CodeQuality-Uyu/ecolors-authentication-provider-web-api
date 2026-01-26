@@ -32,7 +32,7 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         AccountLogged accountLogged)
     {
         await CreateBulkAsync(
-            new CreateBulkPermissionArgs([args]),
+            new CreateBulkPermissionArgs([args], args.AppId),
             accountLogged)
             .ConfigureAwait(false);
     }
@@ -43,12 +43,13 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
     {
         var allPermissionsKeys = args
             .Permissions
-            .ConvertAll(a => (a.AppId, a.Key))
+            .ConvertAll(a => a.Key)
             .Distinct()
             .ToList();
 
         var duplicatedPermissions = await permissionRepository
             .GetAllByKeysAsync(
+            args.AppId,
             allPermissionsKeys,
             accountLogged)
             .ConfigureAwait(false);
@@ -60,19 +61,15 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
             throw new InvalidOperationException($"Duplicated keys exist {string.Join(",", permissionsSavedKeys)}");
         }
 
+        var app = accountLogged.Apps.First(a => a.Id == args.AppId);
         var permissions = args
             .Permissions
-            .ConvertAll(p =>
-        {
-            var app = accountLogged.Apps.First(a => a.Id == p.AppId);
-
-            return new Permission(
+            .ConvertAll(p => new Permission(
             p.Name,
             p.Description,
             p.IsPublic,
             p.Key,
-            app);
-        });
+            app));
 
         await permissionRepository
             .CreateBulkAndSaveAsync(permissions)

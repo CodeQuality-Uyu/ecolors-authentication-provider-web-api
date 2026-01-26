@@ -42,21 +42,19 @@ public sealed class AWSBlobService(
             }
             appName = appName.ToLower().Trim().Replace(" ", "-");
 
-            key = $"{blobOptions.TemporaryObject}/{tenantName}/{appName}";
+            var contentType = request.ContentType.Split("/")[1];
+            key = $"{blobOptions.TemporaryObject}/{tenantName}/{appName}/{Guid.NewGuid()}.{contentType}";
         }
 
-        var contentType = request.ContentType.Split("/")[1];
-        key = $"{key}/{Guid.NewGuid()}.{contentType}";
-
         var readUrl = GeneratePresignedUrl(
-            key,
+            key!,
             HttpVerb.GET);
         var writeUrl = GenerateUploadPresignedUrl(
-            key,
+            key!,
             request.ContentType);
 
         return new BlobReadWriteResponse(
-            key,
+            key!,
             readUrl,
             writeUrl);
     }

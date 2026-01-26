@@ -16,7 +16,8 @@ public interface IPermissionRepository
     Task<IList<Permission>> GetAllAsync(IList<Guid> ids);
 
     Task<List<Permission>> GetAllByKeysAsync(
-        List<(Guid appId, string key)> keys,
+        Guid appId,
+        List<string> keys,
         AccountLogged accountLogged);
 
     Task CreateBulkAndSaveAsync(List<Permission> permissions);
