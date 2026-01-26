@@ -29,6 +29,9 @@ internal sealed class CreateAccountArgsValidator
 
         RuleFor(a => a.AppId)
             .ValidId();
+
+        RuleFor(a => a.RoleId)
+            .ValidId();
     }
 }
 

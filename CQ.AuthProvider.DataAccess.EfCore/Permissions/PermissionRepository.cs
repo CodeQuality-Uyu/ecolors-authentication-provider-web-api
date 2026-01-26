@@ -50,14 +50,10 @@ internal sealed class PermissionRepository(
     }
 
     public async Task<List<Permission>> GetAllByKeysAsync(
-        List<(Guid appId, string key)> keys,
+        Guid appId,
+        List<string> keys,
         AccountLogged accountLogged)
     {
-        if (keys.Count == 0)
-        {
-            return [];
-        }
-
         //var keyesMapped = JsonConvert.SerializeObject(keys);
 
         //// Define raw SQL query
@@ -80,19 +76,10 @@ internal sealed class PermissionRepository(
         //    .ToListAsync()
         //    .ConfigureAwait(false);
 
-        var onlyKeyes = keys
-            .Select(k => k.key)
-            .Distinct()
-            .ToList();
-
-        var appsIds = keys
-            .Select(k => k.appId)
-            .Distinct()
-            .ToList();
 
         var permissions = await Entities
-            .Where(p => onlyKeyes.Any(k => p.Key == k))
-            .Where(p => appsIds.Any(a => p.AppId == a))
+            .Where(p => keys.Any(k => p.Key == k))
+            .Where(p => p.AppId == appId)
             .Where(p => p.TenantId == accountLogged.Tenant.Id)
             .ToListAsync()
             .ConfigureAwait(false);

@@ -43,12 +43,12 @@ internal sealed class RoleRepository(
     }
 
     public async Task RemoveDefaultsAsync(
-        List<Guid> appsIds,
+        Guid appId,
         AccountLogged accountLogged)
     {
         var query = Entities
             .Where(r => r.TenantId == accountLogged.Tenant.Id)
-            .Where(r => appsIds.Contains(r.AppId))
+            .Where(r => r.AppId == appId)
             .Where(r => r.IsDefault);
 
         var roles = await query
@@ -82,6 +82,7 @@ internal sealed class RoleRepository(
     }
 
     public async Task<Role> GetDefaultByTenantIdAsync(
+        Guid? roleId,
         Guid appId,
         Guid tenantId)
     {
@@ -89,7 +90,7 @@ internal sealed class RoleRepository(
             // TODO check in r.AppId and inheritence app
             //.Where(r => r.AppId == appId)
             .Where(r => r.TenantId == tenantId)
-            .Where(r => r.IsDefault);
+            .Where(r => (!roleId.HasValue && r.IsDefault) || r.Id == roleId);
 
         var role = await query
             .FirstOrDefaultAsync()
@@ -204,29 +205,19 @@ internal sealed class RoleRepository(
             .ConfigureAwait(false);
     }
 
-    public async Task<List<(Guid AppId, string RoleName)>> GetAllByAppAndNamesAsync(
-    List<(Guid AppId, string RoleName)> roles)
+    public async Task<List<string>> GetAllByAppAndNamesAsync(
+    Guid appId,
+    List<string> roles)
     {
-        var appIds = roles
-            .Select(r => r.AppId)
-            .Distinct()
-            .ToList();
-
         var entities = await Entities
             .AsNoTracking()
-            .Where(r => appIds.Contains(r.AppId))
-            .Select(r => new { r.AppId, RoleName = r.Name })
+            .Where(r => r.AppId == appId)
+            .Where(r => roles.Contains(r.Name))
+            .Select(r => r.Name)
             .ToListAsync()
             .ConfigureAwait(false);
 
-        var lookup = new HashSet<(Guid AppId, string RoleName)>(roles);
-
-        var result = entities
-            .Select(r => (r.AppId, r.RoleName))
-            .Where(lookup.Contains)
-            .ToList();
-
-        return result;
+        return entities;
     }
 
 }

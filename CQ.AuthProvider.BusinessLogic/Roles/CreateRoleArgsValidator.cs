@@ -28,14 +28,17 @@ internal sealed class CreateRoleArgsValidator
             .ValidId();
 
         RuleFor(r => r.PermissionKeys)
-            .NotNullWithMessage()
-            .NotEmpty()
-            .WithMessage("At least one permission key is required")
-            .Must(keys =>
+            .Must(permissionKeys =>
             {
-                return keys.Count == keys.Distinct(StringComparer.OrdinalIgnoreCase).Count();
+                var duplicatedKeys = permissionKeys
+                .GroupBy(k => k)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+                return duplicatedKeys.Count == 0;
             })
-            .WithMessage("Can't have duplicated permission keys");
+            .WithMessage("Duplicated permission keys");
     }
 
     public ValidationResult? AfterValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
