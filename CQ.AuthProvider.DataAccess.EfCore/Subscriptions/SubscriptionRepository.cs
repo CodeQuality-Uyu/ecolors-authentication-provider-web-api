@@ -22,6 +22,19 @@ internal sealed class SubscriptionRepository(
 
         await CreateAsync(subscriptionEfCore).ConfigureAwait(false);
 
+        IList<SubscriptionPermission> permissions = [
+            new SubscriptionPermission
+            {
+                SubscriptionId = subscriptionEfCore.Id,
+                PermissionId = AuthConstants.CREATE_CLIENT_APP_PERMISSION_ID,
+            }
+        ];
+
+        await context
+            .SubscriptionPermissions
+            .AddRangeAsync(permissions)
+            .ConfigureAwait(false);
+
         var subscription = mapper.Map<Subscription>(subscriptionEfCore);
         
         return subscription;
@@ -33,6 +46,7 @@ internal sealed class SubscriptionRepository(
             .AsNoTracking()
             .Where(s => s.Value == value)
             .Include(s => s.App)
+            .Include(s => s.Permissions)
             .AsSplitQuery()
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);

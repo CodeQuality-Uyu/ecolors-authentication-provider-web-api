@@ -23,4 +23,6 @@ public static class AuthConstants
     public static readonly Guid SEED_ACCOUNT_ID = Guid.Parse("0ee82ee9-f480-4b13-ad68-579dc83dfa0d");
 
     public static readonly Guid SEED_TENANT_ID = Guid.Parse("882a262c-e1a7-411d-a26e-40c61f3b810c");
+
+    public static readonly Guid CREATE_CLIENT_APP_PERMISSION_ID = Guid.Parse("87013d07-c8ba-48f1-bb8c-510b7836fe1f");
 }

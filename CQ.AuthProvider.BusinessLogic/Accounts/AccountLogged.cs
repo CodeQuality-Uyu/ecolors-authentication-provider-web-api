@@ -1,4 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Apps;
+using CQ.AuthProvider.BusinessLogic.Permissions;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using System.Security.Principal;
 
 namespace CQ.AuthProvider.BusinessLogic.Accounts;
@@ -42,13 +44,19 @@ public record class AccountLogged()
 
     public static AccountLogged NewSubscription(
         App appLogged,
-        string subscription)
+        string subscription,
+        List<Permission> permissions)
     {
         return new AccountLogged
         {
             Tenant = appLogged.Tenant,
             AppLogged = appLogged,
-            Token = subscription
+            Token = subscription,
+            Roles = [
+                    new Role
+                    {
+                        Permissions = permissions
+                    }]
         };
     }
 

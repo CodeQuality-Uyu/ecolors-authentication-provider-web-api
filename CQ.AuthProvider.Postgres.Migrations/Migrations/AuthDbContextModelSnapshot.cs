@@ -808,6 +808,21 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.ToTable("Subscriptions");
                 });
 
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionPermission", b =>
+                {
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("PermissionId", "SubscriptionId");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.ToTable("SubscriptionPermissions");
+                });
+
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1036,6 +1051,25 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         .IsRequired();
 
                     b.Navigation("App");
+                });
+
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionPermission", b =>
+                {
+                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", b =>

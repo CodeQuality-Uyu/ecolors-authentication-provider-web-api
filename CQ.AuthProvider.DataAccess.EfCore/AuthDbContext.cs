@@ -42,6 +42,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
 
     public DbSet<SubscriptionEfCore> Subscriptions { get; set; }
 
+    public DbSet<SubscriptionPermission> SubscriptionPermissions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TenantEfCore>(entity =>
@@ -267,7 +269,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         var getAllAppsPermissionId = Guid.Parse("6323b5da-b78c-4984-a56e-8206775d3e91");
         var updateColorsOfAppPermissionId = Guid.Parse("cfd3f238-a446-4f4f-81f0-f770974f0cc3");
 
-        var createClientPermissionId = Guid.Parse("87013d07-c8ba-48f1-bb8c-510b7836fe1f");
         var getAllClientsPermissionId = Guid.Parse("43da8440-39be-46cc-b8fe-da34961d2486");
 
         modelBuilder.Entity<RolePermission>(entity =>
@@ -432,7 +433,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.APP_OWNER_ROLE_ID,
-                    PermissionId = createClientPermissionId
+                    PermissionId = AuthConstants.CREATE_CLIENT_APP_PERMISSION_ID
                 },
                 new RolePermission
                 {
@@ -688,7 +689,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 },
                 new PermissionEfCore
                 {
-                    Id = createClientPermissionId,
+                    Id = AuthConstants.CREATE_CLIENT_APP_PERMISSION_ID,
                     Name = "Can create clients",
                     Description = "Can create clients of tenant",
                     Key = "createclient-app",
@@ -757,6 +758,14 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasOne(i => i.Tenant)
             .WithMany()
             .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SubscriptionEfCore>(entity =>
+        {
+            entity
+            .HasMany(s => s.Permissions)
+            .WithMany()
+            .UsingEntity<SubscriptionPermission>();
         });
     }
 }

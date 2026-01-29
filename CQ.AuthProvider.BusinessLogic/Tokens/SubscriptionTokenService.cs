@@ -20,7 +20,10 @@ internal sealed class SubscriptionTokenService(ISubscriptionRepository subscript
             .GetByValueAsync(value)
             .ConfigureAwait(false);
 
-        var subscriptionAccount = AccountLogged.NewSubscription(subscription.App, value);
+        var subscriptionAccount = AccountLogged.NewSubscription(
+            subscription.App,
+            value,
+            subscription.Permissions);
 
         return subscriptionAccount;
     }
