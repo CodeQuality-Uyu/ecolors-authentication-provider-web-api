@@ -7,7 +7,7 @@ public sealed record SubscriptionEfCore
 {
     public Guid Id { get; init; } = Guid.NewGuid();
 
-    public string Value { get; init; } = Guid.NewGuid().ToString("N");
+    public string Value { get; init; } = Guid.NewGuid().ToString();
 
     public DateTimeOffset CreatedAtUtc { get; init; } = DateTimeOffset.UtcNow;
 
