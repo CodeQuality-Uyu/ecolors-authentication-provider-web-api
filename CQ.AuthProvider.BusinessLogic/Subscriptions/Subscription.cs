@@ -1,8 +1,8 @@
 using CQ.AuthProvider.BusinessLogic.Apps;
 
-namespace CQ.AuthProvider.BusinessLogic.Suscriptions;
+namespace CQ.AuthProvider.BusinessLogic.Subscriptions;
 
-public sealed record Suscription
+public sealed record Subscription
 {
     public Guid Id { get; init; }
 

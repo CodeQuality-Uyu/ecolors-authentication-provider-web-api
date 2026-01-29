@@ -1,8 +1,8 @@
 using CQ.AuthProvider.DataAccess.EfCore.Apps;
 
-namespace CQ.AuthProvider.DataAccess.EfCore.Suscriptions;
+namespace CQ.AuthProvider.DataAccess.EfCore.Subscriptions;
 
-public sealed record SuscriptionEfCore
+public sealed record SubscriptionEfCore
 {
     public Guid Id { get; init; } = Guid.NewGuid();
 

@@ -31,7 +31,7 @@ public sealed class AppController(
     }
 
     [HttpPost("client")]
-    [SecureAuthentication(null, "Bearer", "Suscription")]
+    [SecureAuthentication(null, "Bearer", "Subscription")]
     [SecureAuthorization]
     public async Task<AppCreatedResponse> CreateClientAsync(CreateClientAppArgs request)
     {

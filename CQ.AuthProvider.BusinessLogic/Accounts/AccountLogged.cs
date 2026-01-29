@@ -40,15 +40,15 @@ public record class AccountLogged()
         Apps = account.Apps;
     }
 
-    public static AccountLogged NewSuscription(
+    public static AccountLogged NewSubscription(
         App appLogged,
-        string suscription)
+        string subscription)
     {
         return new AccountLogged
         {
             Tenant = appLogged.Tenant,
             AppLogged = appLogged,
-            Token = suscription
+            Token = subscription
         };
     }
 

@@ -785,7 +785,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Suscriptions.SuscriptionEfCore", b =>
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -805,7 +805,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 
                     b.HasIndex("AppId");
 
-                    b.ToTable("Suscriptions");
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
@@ -1027,7 +1027,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.Navigation("App");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Suscriptions.SuscriptionEfCore", b =>
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
                         .WithMany()

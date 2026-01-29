@@ -1,13 +1,13 @@
 using CQ.ApiElements;
 using CQ.AuthProvider.BusinessLogic.Accounts;
-using CQ.AuthProvider.BusinessLogic.Suscriptions;
+using CQ.AuthProvider.BusinessLogic.Subscriptions;
 
 namespace CQ.AuthProvider.BusinessLogic.Tokens;
 
-internal sealed class SuscriptionTokenService(ISuscriptionRepository suscriptionRepository)
+internal sealed class SubscriptionTokenService(ISubscriptionRepository subscriptionRepository)
     : ITokenService
 {
-    public string AuthorizationTypeHandled => "Suscription";
+    public string AuthorizationTypeHandled => "Subscription";
 
     public Task<string> CreateAsync(object item)
     {
@@ -16,13 +16,13 @@ internal sealed class SuscriptionTokenService(ISuscriptionRepository suscription
 
     public async Task<object?> GetOrDefaultAsync(string value)
     {
-        var suscription = await suscriptionRepository
+        var subscription = await subscriptionRepository
             .GetByValueAsync(value)
             .ConfigureAwait(false);
 
-        var suscriptionAccount = AccountLogged.NewSuscription(suscription.App, value);
+        var subscriptionAccount = AccountLogged.NewSubscription(subscription.App, value);
 
-        return suscriptionAccount;
+        return subscriptionAccount;
     }
 
     public Task<bool> IsValidAsync(string value)

@@ -1,6 +1,6 @@
 ﻿using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Blobs;
-using CQ.AuthProvider.BusinessLogic.Suscriptions;
+using CQ.AuthProvider.BusinessLogic.Subscriptions;
 using CQ.UnitOfWork.Abstractions;
 using CQ.UnitOfWork.Abstractions.Repositories;
 using CQ.Utility;
@@ -12,7 +12,7 @@ internal sealed class AppService(
     IAccountRepository accountRepository,
     IUnitOfWork unitOfWork,
     IBlobService blobService,
-    ISuscriptionRepository suscriptionRepository)
+    ISubscriptionRepository subscriptionRepository)
     : IAppInternalService
 {
     public async Task<App> CreateAsync(
@@ -89,7 +89,7 @@ internal sealed class AppService(
                .ConfigureAwait(false);
         }
 
-        var suscription = await suscriptionRepository
+        var subscription = await subscriptionRepository
             .CreateAsync(app)
             .ConfigureAwait(false);
 
@@ -158,7 +158,7 @@ internal sealed class AppService(
             .ConfigureAwait(false);
 
         
-        var suscription = await suscriptionRepository
+        var subscription = await subscriptionRepository
             .CreateAsync(app)
             .ConfigureAwait(false);
 
