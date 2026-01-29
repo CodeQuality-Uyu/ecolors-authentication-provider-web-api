@@ -7,6 +7,7 @@ using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
+using CQ.AuthProvider.DataAccess.EfCore.Suscriptions;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     public DbSet<AppEfCore> Apps { get; set; }
 
     public DbSet<InvitationEfCore> Invitations { get; set; }
+
+    public DbSet<SuscriptionEfCore> Suscriptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -688,7 +691,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Id = createClientPermissionId,
                     Name = "Can create clients",
                     Description = "Can create clients of tenant",
-                    Key = "create-client",
+                    Key = "createclient-app",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = AuthConstants.SEED_TENANT_ID,
                     IsPublic = true,

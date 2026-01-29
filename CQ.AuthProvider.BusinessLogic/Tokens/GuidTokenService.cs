@@ -6,8 +6,7 @@ using CQ.Utility;
 namespace CQ.AuthProvider.BusinessLogic.Tokens;
 
 public sealed class GuidTokenService(
-    ISessionRepository sessionRepository
-)
+    ISessionRepository sessionRepository)
     : ITokenService
 {
     public string AuthorizationTypeHandled => "Bearer";

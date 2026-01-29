@@ -3,7 +3,7 @@
 public sealed record CreateAppArgs(
     string Name,
     bool IsDefault,
-    Logo? Logo,
+    Logo Logo,
     Background? Background,
     bool RegisterToIt = false);
 

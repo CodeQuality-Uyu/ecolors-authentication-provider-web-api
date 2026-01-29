@@ -3,6 +3,7 @@ using System;
 using CQ.AuthProvider.DataAccess.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CQ.AuthProvider.Postgres.Migrations.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260129014829_UpdateCreateClientPermission")]
+    partial class UpdateCreateClientPermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -785,29 +788,6 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Suscriptions.SuscriptionEfCore", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AppId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppId");
-
-                    b.ToTable("Suscriptions");
-                });
-
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1023,17 +1003,6 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-
-                    b.Navigation("App");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Suscriptions.SuscriptionEfCore", b =>
-                {
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
-                        .WithMany()
-                        .HasForeignKey("AppId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("App");
                 });

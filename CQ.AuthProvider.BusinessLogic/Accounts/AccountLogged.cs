@@ -40,6 +40,19 @@ public record class AccountLogged()
         Apps = account.Apps;
     }
 
+    public static AccountLogged NewSuscription(
+        App appLogged,
+        string suscription)
+    {
+        return new AccountLogged
+        {
+            Tenant = appLogged.Tenant,
+            AppLogged = appLogged,
+            Token = suscription
+        };
+    }
+
+
     public bool IsInRole(string role)
     {
         var isRole = Roles.Exists(r =>

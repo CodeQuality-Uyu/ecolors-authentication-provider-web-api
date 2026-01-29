@@ -69,18 +69,4 @@ public sealed class SessionService(
             .DeleteByTokenAsync(accountLogged.Token)
             .ConfigureAwait(false);
     }
-
-    public async Task<object> GetByHeaderAsync(string value)
-    {
-        var session = await sessionRepository
-            .GetByTokenAsync(value)
-            .ConfigureAwait(false);
-
-        var account = new AccountLogged(
-            session.Account,
-            value,
-            session.App);
-
-        return account;
-    }
 }
