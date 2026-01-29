@@ -262,7 +262,6 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         var patchTenantNamePermissionId = Guid.Parse("06f5a862-9cfd-4c1f-a777-4c4b3adb916b");
 
         var getAllAccountsPermissionId = Guid.Parse("27c1378d-39df-4a57-b025-fc96963955a6");
-        var createCredentialsForPermissionId = Guid.Parse("046c65a8-d3c1-41d7-bda2-a96d393cc18e");
         var updateRolesOfAccountPermissionId = Guid.Parse("c0a55e4b-b24d-42a4-90e4-f828e2b8e098");
 
         var createAppPermissionId = Guid.Parse("2eab3c3a-792a-444a-97f3-01db00dffcab");
@@ -290,7 +289,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.SEED_ROLE_ID,
-                    PermissionId = createCredentialsForPermissionId,
+                    PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID,
                 },
                 new RolePermission
                 {
@@ -391,7 +390,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    PermissionId = createCredentialsForPermissionId
+                    PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID
                 },
                 new RolePermission
                 {
@@ -443,7 +442,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.APP_OWNER_ROLE_ID,
-                    PermissionId = createCredentialsForPermissionId
+                    PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID
                 },
                 #endregion App Owner
 
@@ -466,7 +465,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.CLIENT_OWNER_ROLE_ID,
-                    PermissionId = createCredentialsForPermissionId
+                    PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID
                 }
                 #endregion Client Owner
             );
@@ -712,7 +711,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 },
                 new PermissionEfCore
                 {
-                    Id = createCredentialsForPermissionId,
+                    Id = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID,
                     Name = "Can create accounts",
                     Description = "Can create accounts",
                     Key = "createcredentialsfor-account",

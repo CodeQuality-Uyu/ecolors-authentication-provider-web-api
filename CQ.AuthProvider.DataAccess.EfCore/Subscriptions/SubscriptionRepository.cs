@@ -27,6 +27,11 @@ internal sealed class SubscriptionRepository(
             {
                 SubscriptionId = subscriptionEfCore.Id,
                 PermissionId = AuthConstants.CREATE_CLIENT_APP_PERMISSION_ID,
+            },
+            new SubscriptionPermission
+            {
+                SubscriptionId = subscriptionEfCore.Id,
+                PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID,
             }
         ];
 
