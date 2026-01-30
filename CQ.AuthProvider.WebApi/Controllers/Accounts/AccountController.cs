@@ -32,7 +32,7 @@ public sealed class AccountController(
     }
 
     [HttpPost("credentials/for")]
-    [BearerAuthentication]
+    [SecureAuthentication(null, "Bearer", "Subscription")]
     [SecureAuthorization]
     public async Task<CreateCredentialsForResponse> CreateCredentialsForAsync(CreateAccountForArgs request)
     {

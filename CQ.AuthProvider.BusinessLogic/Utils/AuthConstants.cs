@@ -18,9 +18,13 @@ public static class AuthConstants
     #endregion Role
 
     public static readonly Guid AUTH_WEB_API_APP_ID = Guid.Parse("f4ad89eb-6a0b-427a-8aef-b6bc736884dc");
-    public static readonly string AUTH_WEB_API_APP_NAME = "auth-provider-web-api";
+    public static readonly string AUTH_WEB_API_APP_NAME = "Auth Provider Web API";
 
     public static readonly Guid SEED_ACCOUNT_ID = Guid.Parse("0ee82ee9-f480-4b13-ad68-579dc83dfa0d");
 
     public static readonly Guid SEED_TENANT_ID = Guid.Parse("882a262c-e1a7-411d-a26e-40c61f3b810c");
+
+    public static readonly Guid CREATE_CLIENT_APP_PERMISSION_ID = Guid.Parse("87013d07-c8ba-48f1-bb8c-510b7836fe1f");
+
+    public static readonly Guid CREATE_CREDENTIALS_FOR_PERMISSION_ID = Guid.Parse("046c65a8-d3c1-41d7-bda2-a96d393cc18e");
 }
