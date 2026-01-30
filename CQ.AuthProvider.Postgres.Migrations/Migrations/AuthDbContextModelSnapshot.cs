@@ -166,7 +166,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             Id = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             IsDefault = true,
                             Logo = "{\"ColorKey\":\"auth-web-api-logo-color.png\",\"LightKey\":\"auth-web-api-logo-light.png\",\"DarkKey\":\"auth-web-api-logo-dark.png\"}",
-                            Name = "auth-provider-web-api",
+                            Name = "Auth Provider Web API",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         });
                 });
@@ -437,7 +437,7 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                             AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
                             Description = "Can create clients of tenant",
                             IsPublic = true,
-                            Key = "create-client",
+                            Key = "createclient-app",
                             Name = "Can create clients",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
@@ -785,6 +785,44 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.ToTable("Sessions");
                 });
 
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppId");
+
+                    b.ToTable("Subscriptions");
+                });
+
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionPermission", b =>
+                {
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("PermissionId", "SubscriptionId");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.ToTable("SubscriptionPermissions");
+                });
+
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1002,6 +1040,36 @@ namespace CQ.AuthProvider.Postgres.Migrations.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("App");
+                });
+
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", b =>
+                {
+                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
+                        .WithMany()
+                        .HasForeignKey("AppId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("App");
+                });
+
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionPermission", b =>
+                {
+                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", b =>

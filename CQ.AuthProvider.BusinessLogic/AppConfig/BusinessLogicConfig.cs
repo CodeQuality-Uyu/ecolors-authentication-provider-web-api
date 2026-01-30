@@ -27,6 +27,7 @@ public static class BusinessLogicConfig
             .AddEmailServices()
 
             .AddTokenService<GuidTokenService>(LifeTime.Transient)
+            .AddTokenService<SubscriptionTokenService>(LifeTime.Transient)
 
             .AddValidators();
 

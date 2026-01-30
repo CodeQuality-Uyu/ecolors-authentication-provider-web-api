@@ -4,6 +4,7 @@ using CQ.AuthProvider.DataAccess.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260129135530_AddingSuscription")]
+    partial class AddingSuscription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -785,7 +788,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", b =>
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Suscriptions.SuscriptionEfCore", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -805,22 +808,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
 
                     b.HasIndex("AppId");
 
-                    b.ToTable("Subscriptions");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionPermission", b =>
-                {
-                    b.Property<Guid>("PermissionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SubscriptionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PermissionId", "SubscriptionId");
-
-                    b.HasIndex("SubscriptionId");
-
-                    b.ToTable("SubscriptionPermissions");
+                    b.ToTable("Suscriptions");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Tenants.TenantEfCore", b =>
@@ -1042,7 +1030,7 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                     b.Navigation("App");
                 });
 
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", b =>
+            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Suscriptions.SuscriptionEfCore", b =>
                 {
                     b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", "App")
                         .WithMany()
@@ -1051,25 +1039,6 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .IsRequired();
 
                     b.Navigation("App");
-                });
-
-            modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionPermission", b =>
-                {
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Permissions.PermissionEfCore", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CQ.AuthProvider.DataAccess.EfCore.Subscriptions.SubscriptionEfCore", "Subscription")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("CQ.AuthProvider.DataAccess.EfCore.Apps.AppEfCore", b =>

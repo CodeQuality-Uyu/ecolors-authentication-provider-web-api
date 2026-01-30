@@ -7,6 +7,7 @@ using CQ.AuthProvider.DataAccess.EfCore.Permissions;
 using CQ.AuthProvider.DataAccess.EfCore.ResetPasswords;
 using CQ.AuthProvider.DataAccess.EfCore.Roles;
 using CQ.AuthProvider.DataAccess.EfCore.Sessions;
+using CQ.AuthProvider.DataAccess.EfCore.Subscriptions;
 using CQ.AuthProvider.DataAccess.EfCore.Tenants;
 using CQ.UnitOfWork.EfCore.Core;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
     public DbSet<AppEfCore> Apps { get; set; }
 
     public DbSet<InvitationEfCore> Invitations { get; set; }
+
+    public DbSet<SubscriptionEfCore> Subscriptions { get; set; }
+
+    public DbSet<SubscriptionPermission> SubscriptionPermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -257,14 +262,12 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         var patchTenantNamePermissionId = Guid.Parse("06f5a862-9cfd-4c1f-a777-4c4b3adb916b");
 
         var getAllAccountsPermissionId = Guid.Parse("27c1378d-39df-4a57-b025-fc96963955a6");
-        var createCredentialsForPermissionId = Guid.Parse("046c65a8-d3c1-41d7-bda2-a96d393cc18e");
         var updateRolesOfAccountPermissionId = Guid.Parse("c0a55e4b-b24d-42a4-90e4-f828e2b8e098");
 
         var createAppPermissionId = Guid.Parse("2eab3c3a-792a-444a-97f3-01db00dffcab");
         var getAllAppsPermissionId = Guid.Parse("6323b5da-b78c-4984-a56e-8206775d3e91");
         var updateColorsOfAppPermissionId = Guid.Parse("cfd3f238-a446-4f4f-81f0-f770974f0cc3");
 
-        var createClientPermissionId = Guid.Parse("87013d07-c8ba-48f1-bb8c-510b7836fe1f");
         var getAllClientsPermissionId = Guid.Parse("43da8440-39be-46cc-b8fe-da34961d2486");
 
         modelBuilder.Entity<RolePermission>(entity =>
@@ -286,7 +289,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.SEED_ROLE_ID,
-                    PermissionId = createCredentialsForPermissionId,
+                    PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID,
                 },
                 new RolePermission
                 {
@@ -387,7 +390,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
-                    PermissionId = createCredentialsForPermissionId
+                    PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID
                 },
                 new RolePermission
                 {
@@ -429,7 +432,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.APP_OWNER_ROLE_ID,
-                    PermissionId = createClientPermissionId
+                    PermissionId = AuthConstants.CREATE_CLIENT_APP_PERMISSION_ID
                 },
                 new RolePermission
                 {
@@ -439,7 +442,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.APP_OWNER_ROLE_ID,
-                    PermissionId = createCredentialsForPermissionId
+                    PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID
                 },
                 #endregion App Owner
 
@@ -462,7 +465,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 new RolePermission
                 {
                     RoleId = AuthConstants.CLIENT_OWNER_ROLE_ID,
-                    PermissionId = createCredentialsForPermissionId
+                    PermissionId = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID
                 }
                 #endregion Client Owner
             );
@@ -685,10 +688,10 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 },
                 new PermissionEfCore
                 {
-                    Id = createClientPermissionId,
+                    Id = AuthConstants.CREATE_CLIENT_APP_PERMISSION_ID,
                     Name = "Can create clients",
                     Description = "Can create clients of tenant",
-                    Key = "create-client",
+                    Key = "createclient-app",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = AuthConstants.SEED_TENANT_ID,
                     IsPublic = true,
@@ -708,7 +711,7 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 },
                 new PermissionEfCore
                 {
-                    Id = createCredentialsForPermissionId,
+                    Id = AuthConstants.CREATE_CREDENTIALS_FOR_PERMISSION_ID,
                     Name = "Can create accounts",
                     Description = "Can create accounts",
                     Key = "createcredentialsfor-account",
@@ -754,6 +757,14 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             .HasOne(i => i.Tenant)
             .WithMany()
             .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SubscriptionEfCore>(entity =>
+        {
+            entity
+            .HasMany(s => s.Permissions)
+            .WithMany()
+            .UsingEntity<SubscriptionPermission>();
         });
     }
 }

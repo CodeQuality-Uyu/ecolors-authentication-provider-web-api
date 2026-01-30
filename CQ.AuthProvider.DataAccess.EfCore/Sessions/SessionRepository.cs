@@ -25,6 +25,7 @@ internal sealed class SessionRepository(
     public async Task<Session> GetByTokenAsync(string token)
     {
         var session = await Entities
+            .AsNoTracking()
             .Where(s => s.Token == token)
             .Select(s => new SessionEfCore
             {
@@ -57,7 +58,6 @@ internal sealed class SessionRepository(
             .AsSplitQuery()
             .FirstOrDefaultAsync()
             .ConfigureAwait(false);
-
 
         AssertNullEntity(session, token, nameof(Session.Token));
 
