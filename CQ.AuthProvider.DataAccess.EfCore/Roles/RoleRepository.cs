@@ -186,15 +186,21 @@ internal sealed class RoleRepository(
         List<Guid> authRoles = [AuthConstants.CLIENT_OWNER_ROLE_ID, AuthConstants.APP_OWNER_ROLE_ID, AuthConstants.TENANT_OWNER_ROLE_ID];
 
         var query = Entities
-            .Where(r => ids.Contains(r.Id))
+            .Where(r => ids.Contains(r.Id) && (authRoles.Contains(r.Id) || r.TenantId == tenantId))
             // TODO check in r.AppId and inheritence app
             //.Where(r => appIds.Contains(r.AppId))
-            .Where(r => ids.Intersect(authRoles).Any() || r.TenantId == tenantId)
             ;
 
         var roles = await query
             .ToListAsync()
             .ConfigureAwait(false);
+
+        if (roles.Count != ids.Count)
+        {
+            var foundIds = roles.Select(r => r.Id).ToList();
+            var notFoundIds = ids.Except(foundIds);
+            throw new KeyNotFoundException($"Roles not found for Ids: {string.Join(", ", notFoundIds)}");
+        }
 
         return mapper.Map<List<Role>>(roles);
     }
