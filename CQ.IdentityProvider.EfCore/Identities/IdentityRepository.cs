@@ -11,7 +11,7 @@ public sealed class IdentityRepository(
     : EfCoreRepository<Identity>(context),
     IIdentityRepository
 {
-    public async Task DeleteByIdAsync(Guid id)
+    public async Task DeleteAndSaveByIdAsync(Guid id)
     {
         await DeleteAndSaveAsync(i => i.Id == id).ConfigureAwait(false);
     }

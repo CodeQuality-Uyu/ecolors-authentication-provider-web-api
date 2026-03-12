@@ -47,7 +47,7 @@ internal sealed class CreateBulkPermissionArgsValidator
         {
             actionExecutingContext.ModelState.AddModelError(
                 "AppId",
-                $"Account doen't have this AppsIds ({string.Join(",", invalidAppsIds)})");
+                $"Account dosen't have this AppsIds ({string.Join(",", invalidAppsIds)})");
         }
 
         var appIsAuth = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;

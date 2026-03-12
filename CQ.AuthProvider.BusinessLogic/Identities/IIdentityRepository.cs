@@ -9,7 +9,7 @@ public interface IIdentityRepository
         string oldPassword,
         string newPassword);
 
-    Task DeleteByIdAsync(Guid id);
+    Task DeleteAndSaveByIdAsync(Guid id);
 
     Task<Identity> GetByCredentialsAsync(
         string email,

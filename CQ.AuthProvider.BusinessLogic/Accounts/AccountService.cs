@@ -117,7 +117,7 @@ internal sealed class AccountService(
         catch (Exception)
         {
             await identityRepository
-                .DeleteByIdAsync(account.Id)
+                .DeleteAndSaveByIdAsync(account.Id)
                 .ConfigureAwait(false);
 
             throw;
@@ -187,7 +187,7 @@ internal sealed class AccountService(
         catch (Exception)
         {
             await identityRepository
-                .DeleteByIdAsync(account.Id)
+                .DeleteAndSaveByIdAsync(account.Id)
                 .ConfigureAwait(false);
 
             throw;
@@ -217,18 +217,12 @@ internal sealed class AccountService(
                 .ConfigureAwait(false);
         }
 
-        await accountRepository
-            .RemoveRoleByIdAsync
-            (AuthConstants.SEED_ACCOUNT_ID,
-            AuthConstants.TENANT_OWNER_ROLE_ID)
+        await roleRepository
+            .DeleteAndSaveByIdAsync(AuthConstants.SEED_ROLE_ID)
             .ConfigureAwait(false);
 
         await identityRepository
-            .DeleteByIdAsync(AuthConstants.SEED_ACCOUNT_ID)
-            .ConfigureAwait(false);
-
-        await roleRepository
-            .DeleteAndSaveByIdAsync(AuthConstants.SEED_ROLE_ID)
+            .DeleteAndSaveByIdAsync(AuthConstants.SEED_ACCOUNT_ID)
             .ConfigureAwait(false);
 
         await accountRepository
@@ -274,7 +268,7 @@ internal sealed class AccountService(
         catch (Exception)
         {
             await identityRepository
-                .DeleteByIdAsync(account.Id)
+                .DeleteAndSaveByIdAsync(account.Id)
                 .ConfigureAwait(false);
 
             throw;
