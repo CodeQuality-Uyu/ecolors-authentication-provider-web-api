@@ -12,7 +12,6 @@ namespace CQ.AuthProvider.WebApi.Controllers.Me;
 
 [ApiController]
 [Route("me")]
-[BearerAuthentication]
 public sealed class MeController(
     IAccountService _accountService,
     ITenantService _tenantService,
@@ -20,6 +19,7 @@ public sealed class MeController(
     : ControllerBase
 {
     [HttpGet]
+    [SecureAuthentication(null, "Bearer", "Subscription")]
     public SessionCreatedResponse GetMeAsync()
     {
         var accountLogged = this.GetAccountLogged();
@@ -28,6 +28,7 @@ public sealed class MeController(
     }
 
     [HttpPatch("credentials-password")]
+    [BearerAuthentication]
     public async Task UpdatePasswordAsync(UpdatePasswordArgs request)
     {
         var accountLogged = this.GetAccountLogged();
@@ -38,6 +39,7 @@ public sealed class MeController(
     }
 
     [HttpPatch("tenants-owner")]
+    [BearerAuthentication]
     [SecureAuthorization]
     public async Task TransferTenantAsync(TransferTenantRequest request)
     {
@@ -52,6 +54,7 @@ public sealed class MeController(
     }
 
     [HttpPatch("tenants-name")]
+    [BearerAuthentication]
     [SecureAuthorization]
     public async Task UpdateTenantNameAsync(UpdateTenantNameRequest request)
     {
