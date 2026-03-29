@@ -167,7 +167,6 @@ internal sealed class AppService(
             .CreateAsync(app)
             .ConfigureAwait(false);
 
-        
         var subscription = await subscriptionRepository
             .CreateAsync(app)
             .ConfigureAwait(false);

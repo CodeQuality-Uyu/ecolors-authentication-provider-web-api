@@ -3,7 +3,7 @@ using CQ.AuthProvider.BusinessLogic.Blobs;
 using CQ.AuthProvider.WebApi.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CQ.AuthProvider.DataAccess.EfCore.Blobs;
+namespace CQ.AuthProvider.WebApi.Controllers.Blobs;
 
 [ApiController]
 [Route("blobs")]
@@ -25,9 +25,9 @@ public sealed class BlobController(
     }
 
     [HttpGet("{key}")]
-    public BlobReadResponse GetByKey(string key)
+    public async Task<BlobReadResponse> GetByKey(string key)
     {
-        var result = blobService.GetByKey(key);
+        var result = await blobService.GetByKeyAsync(key).ConfigureAwait(false);
 
         return result;
     }

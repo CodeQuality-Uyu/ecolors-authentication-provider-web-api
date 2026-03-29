@@ -129,7 +129,7 @@ internal sealed class InvitationService(
         catch (Exception)
         {
             await _identityRepository
-                .DeleteByIdAsync(account.Id)
+                .DeleteAndSaveByIdAsync(account.Id)
                 .ConfigureAwait(false);
         }
 
