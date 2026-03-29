@@ -48,7 +48,7 @@ internal sealed class CreateBulkRoleArgsValidator
         {
             actionExecutingContext.ModelState.AddModelError(
                 "AppId",
-                $"Account doeen't have this AppsIds ({args.AppId})");
+                $"Account dosen't have this AppsIds ({args.AppId})");
         }
 
         var defaultRoles = args

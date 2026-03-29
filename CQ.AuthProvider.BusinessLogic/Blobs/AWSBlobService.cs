@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using System.Threading.Tasks;
+using Amazon.S3;
 using Amazon.S3.Model;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
@@ -46,17 +47,43 @@ public sealed class AWSBlobService(
             key = $"{blobOptions.TemporaryObject}/{tenantName}/{appName}/{Guid.NewGuid()}.{contentType}";
         }
 
-        var readUrl = GeneratePresignedUrl(
+        var readUrl = await GeneratePresignedUrlAsync(
             key!,
-            HttpVerb.GET);
-        var writeUrl = GenerateUploadPresignedUrl(
+            HttpVerb.GET)
+            .ConfigureAwait(false);
+        var writeUrl = await GenerateUploadPresignedUrlAsync(
             key!,
-            request.ContentType);
+            request.ContentType).ConfigureAwait(false);
 
         return new BlobReadWriteResponse(
             key!,
             readUrl,
             writeUrl);
+    }
+
+    private async Task<string> GeneratePresignedUrlAsync(
+        string key,
+        HttpVerb verb,
+        string? contentType = null,
+        bool useServerSideEncryption = false)
+    {
+        var request = new GetPreSignedUrlRequest
+        {
+            BucketName = blobOptions.BucketName,
+            Key = key,
+            Verb = verb,
+            ContentType = contentType,
+            Expires = DateTime.UtcNow.AddMinutes(PresignedUrlExpirationMinutes),
+        };
+
+        if (useServerSideEncryption)
+        {
+            request.ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256;
+        }
+
+        return await client
+            .GetPreSignedURLAsync(request)
+            .ConfigureAwait(false);
     }
 
     private string GeneratePresignedUrl(
@@ -79,18 +106,30 @@ public sealed class AWSBlobService(
             request.ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256;
         }
 
-        return client.GetPreSignedURL(request);
+        return client
+            .GetPreSignedURL(request);
     }
 
-    private string GenerateUploadPresignedUrl(string key, string contentType)
-        => GeneratePresignedUrl(
+    private async Task<string> GenerateUploadPresignedUrlAsync(string key, string contentType)
+        => await GeneratePresignedUrlAsync(
             key: key,
             verb: HttpVerb.PUT,
             contentType: contentType,
-            useServerSideEncryption: true);
+            useServerSideEncryption: true).ConfigureAwait(false);
 
-    public BlobReadResponse GetByKey(
+    public async Task<BlobReadResponse> GetByKeyAsync(
         string key)
+    {
+        var readUrl = await GeneratePresignedUrlAsync(key, HttpVerb.GET).ConfigureAwait(false);
+
+        return new BlobReadResponse
+        {
+            Key = key,
+            Url = readUrl
+        };
+    }
+
+    public BlobReadResponse GetByKey(string key)
     {
         var readUrl = GeneratePresignedUrl(key, HttpVerb.GET);
 

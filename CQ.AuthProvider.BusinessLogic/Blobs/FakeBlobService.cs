@@ -4,7 +4,9 @@ namespace CQ.AuthProvider.BusinessLogic.Blobs;
 public sealed class FakeBlobService
     : IBlobService
 {
-    public Task<BlobReadWriteResponse> CreateAsync(CreateBlobRequest request, AccountLogged accountLogged)
+    public Task<BlobReadWriteResponse> CreateAsync(
+        CreateBlobRequest request,
+        AccountLogged accountLogged)
     {
         return Task.FromResult(
             new BlobReadWriteResponse(
@@ -20,6 +22,15 @@ public sealed class FakeBlobService
             Key = key,
             Url = "https://fake-read-url"
         };
+    }
+
+    public Task<BlobReadResponse> GetByKeyAsync(string key)
+    {
+        return Task.FromResult(new BlobReadResponse
+        {
+            Key = key,
+            Url = "https://fake-read-url"
+        });
     }
 
     public Task<string> MoveObjectAsync(

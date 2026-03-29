@@ -8,6 +8,8 @@ public interface IBlobService
         CreateBlobRequest request,
         AccountLogged accountLogged);
 
+    Task<BlobReadResponse> GetByKeyAsync(string key);
+
     BlobReadResponse GetByKey(string key);
 
     Task<string> MoveObjectAsync(
