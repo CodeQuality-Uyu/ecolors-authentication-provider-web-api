@@ -1,4 +1,5 @@
-﻿using Amazon.Runtime;
+﻿using System.Reflection;
+using Amazon.Runtime;
 using Amazon.S3;
 using AutoMapper;
 using CQ.ApiElements.AppConfig;
@@ -27,6 +28,7 @@ using CQ.UnitOfWork.EfCore.Core;
 using CQ.Utility;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace CQ.AuthProvider.WebApi.AppConfig;
@@ -79,6 +81,8 @@ internal static class AuthProviderWebApiConfig
 
             .AddMappings()
 
+            .ConfigureSwagger()
+
             .ConfigureServices()
 
             .ConfigureDbContext(
@@ -95,6 +99,33 @@ internal static class AuthProviderWebApiConfig
 
             .Configure<DatabaseEngineSection>(configuration.GetSection(DatabaseEngineSection.SectionName))
             ;
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureSwagger(
+        this IServiceCollection services)
+    {
+        services
+            .AddEndpointsApiExplorer()
+            .AddSwaggerGen(o =>
+            {
+                o.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "CQ Auth Provider Web API",
+                    Version = "v1",
+                    Description = "API documentation"
+                });
+
+                var xmlName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlName);
+                if (File.Exists(xmlPath))
+                {
+                    o.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+                }
+
+                o.CustomSchemaIds(t => t.FullName);
+            });
 
         return services;
     }
