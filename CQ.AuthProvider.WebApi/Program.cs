@@ -50,7 +50,20 @@ app.MapHealthChecks(
         ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
     });
 
+ConfigureSwagger(app);
+
 app.MapControllers();
 
 app.Run();
+
+static void ConfigureSwagger(WebApplication app)
+{
+    if (app.Environment.IsProduction())
+    {
+        return;
+    }
+
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
