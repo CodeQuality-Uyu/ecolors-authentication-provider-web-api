@@ -26,6 +26,11 @@ public interface IAppService
         Background args,
         AccountLogged accountLogged);
 
+    Task UpdateFatherByIdAsync(
+        Guid id,
+        UpdateAppFatherArgs args,
+        AccountLogged accountLogged);
+
     Task<List<App>> GetByEmailAccountAsync(string email);
 }
 

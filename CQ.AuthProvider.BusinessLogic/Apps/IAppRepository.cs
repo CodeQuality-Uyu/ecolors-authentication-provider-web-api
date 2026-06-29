@@ -28,5 +28,20 @@ public interface IAppRepository
         Guid id,
         Background updates);
 
+    Task UpdateAndSaveFatherByIdAsync(
+        Guid id,
+        Guid? fatherAppId,
+        Guid tenantId);
+
+    /// <summary>Returns the subset of <paramref name="appIds"/> that exist in the tenant.</summary>
+    Task<List<Guid>> GetExistingIdsInTenantAsync(
+        List<Guid> appIds,
+        Guid tenantId);
+
+    /// <summary>Returns the ids of the ancestor apps of <paramref name="appId"/> (walking the father chain).</summary>
+    Task<List<Guid>> GetAncestorIdsAsync(
+        Guid appId,
+        Guid tenantId);
+
     Task<List<App>> GetByEmailAccountAsync(string email);
 }

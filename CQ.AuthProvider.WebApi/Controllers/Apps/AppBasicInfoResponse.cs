@@ -3,4 +3,5 @@
 public sealed record AppBasicInfoResponse(
     Guid Id,
     string Name,
-    bool IsDefault);
+    bool IsDefault,
+    FatherAppBasicInfoResponse? FatherApp);

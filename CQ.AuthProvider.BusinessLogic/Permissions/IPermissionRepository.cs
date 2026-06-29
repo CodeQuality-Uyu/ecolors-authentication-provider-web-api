@@ -21,4 +21,13 @@ public interface IPermissionRepository
         AccountLogged accountLogged);
 
     Task CreateBulkAndSaveAsync(List<Permission> permissions);
+
+    Task UpdateAndSaveByIdAsync(
+        Guid id,
+        UpdatePermissionArgs args,
+        AccountLogged accountLogged);
+
+    Task UpdateBulkAndSaveAsync(
+        List<UpdatePermissionByIdArgs> permissions,
+        AccountLogged accountLogged);
 }

@@ -49,6 +49,7 @@ internal sealed class AppRepository(
     {
         var query = Entities
             .Include(a => a.Tenant)
+            .Include(a => a.FatherApp)
             .Where(a => a.Id == id);
 
         var app = await query
@@ -67,6 +68,7 @@ internal sealed class AppRepository(
         int pageSize)
     {
         var query = Entities
+            .Include(a => a.FatherApp)
             .Where(a => a.TenantId == tenantId)
             .Where(a => fatherAppId == null || fatherAppId == Guid.Empty || a.FatherAppId == fatherAppId);
 
@@ -106,6 +108,62 @@ internal sealed class AppRepository(
             .ExecuteUpdateAsync(setter => setter.SetProperty(a => a.Background, updates))
             .ConfigureAwait(false)
             ;
+    }
+
+    public async Task UpdateAndSaveFatherByIdAsync(
+        Guid id,
+        Guid? fatherAppId,
+        Guid tenantId)
+    {
+        await Entities
+            .Where(a => a.Id == id)
+            .Where(a => a.TenantId == tenantId)
+            .ExecuteUpdateAsync(setter => setter.SetProperty(a => a.FatherAppId, fatherAppId))
+            .ConfigureAwait(false);
+    }
+
+    public async Task<List<Guid>> GetExistingIdsInTenantAsync(
+        List<Guid> appIds,
+        Guid tenantId)
+    {
+        if (appIds.Count == 0)
+        {
+            return [];
+        }
+
+        return await Entities
+            .Where(a => a.TenantId == tenantId && appIds.Contains(a.Id))
+            .Select(a => a.Id)
+            .ToListAsync()
+            .ConfigureAwait(false);
+    }
+
+    public async Task<List<Guid>> GetAncestorIdsAsync(
+        Guid appId,
+        Guid tenantId)
+    {
+        var ancestors = new List<Guid>();
+        Guid? current = appId;
+
+        while (current.HasValue)
+        {
+            var father = await Entities
+                .Where(a => a.Id == current.Value && a.TenantId == tenantId)
+                .Select(a => a.FatherAppId)
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
+
+            // Stop at the root, or if existing data already contains a cycle.
+            if (!father.HasValue || father.Value == appId || ancestors.Contains(father.Value))
+            {
+                break;
+            }
+
+            ancestors.Add(father.Value);
+            current = father.Value;
+        }
+
+        return ancestors;
     }
 
     public async Task<List<App>> GetByEmailAccountAsync(string email)
