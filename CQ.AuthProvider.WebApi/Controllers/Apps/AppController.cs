@@ -91,4 +91,21 @@ public sealed class AppController(
             accountLogged)
             .ConfigureAwait(false);
     }
+
+    [HttpPut("{id:guid}/father")]
+    [BearerAuthentication]
+    [SecureAuthorization]
+    public async Task UpdateFatherAsync(
+        Guid id,
+        UpdateAppFatherArgs request)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        await appService
+            .UpdateFatherByIdAsync(
+            id,
+            request,
+            accountLogged)
+            .ConfigureAwait(false);
+    }
 }

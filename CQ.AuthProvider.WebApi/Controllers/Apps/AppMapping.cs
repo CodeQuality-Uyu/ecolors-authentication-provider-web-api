@@ -11,6 +11,10 @@ internal sealed class AppProfile
 {
     public AppProfile()
     {
+        #region Father app (basic info exposed on list & detail)
+        CreateMap<App, FatherAppBasicInfoResponse>();
+        #endregion
+
         #region Get all
         this.CreatePaginationMap<App, AppBasicInfoResponse>();
         #endregion
