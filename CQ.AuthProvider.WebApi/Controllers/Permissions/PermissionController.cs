@@ -42,6 +42,33 @@ public class PermissionController(
             .ConfigureAwait(false);
     }
 
+    [HttpPut("bulk")]
+    public async Task UpdateBulkAsync(UpdateBulkPermissionArgs request)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        await permissionService
+            .UpdateBulkAsync(
+            request,
+            accountLogged)
+            .ConfigureAwait(false);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task UpdateAsync(
+        Guid id,
+        UpdatePermissionArgs request)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        await permissionService
+            .UpdateAsync(
+            id,
+            request,
+            accountLogged)
+            .ConfigureAwait(false);
+    }
+
     [HttpGet]
     public async Task<Pagination<PermissionBasicInfoResponse>> GetAllAsync(
         [FromQuery] Guid? appId,

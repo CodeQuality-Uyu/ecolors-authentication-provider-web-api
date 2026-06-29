@@ -11,6 +11,8 @@ public readonly struct AppDetailInfoResponse
     public LogoResponse Logo { get; init; }
 
     public BackgroundResponse? Background { get; init; }
+
+    public FatherAppBasicInfoResponse? FatherApp { get; init; }
 }
 
 public readonly struct LogoResponse

@@ -20,6 +20,15 @@ public interface IPermissionService
     Task CreateBulkAsync(
         CreateBulkPermissionArgs args,
         AccountLogged accountLogged);
+
+    Task UpdateAsync(
+        Guid id,
+        UpdatePermissionArgs args,
+        AccountLogged accountLogged);
+
+    Task UpdateBulkAsync(
+        UpdateBulkPermissionArgs args,
+        AccountLogged accountLogged);
 }
 
 internal interface IPermissionInternalService

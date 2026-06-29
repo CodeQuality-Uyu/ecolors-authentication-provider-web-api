@@ -93,4 +93,53 @@ internal sealed class PermissionRepository(
 
         await CreateBulkAndSaveAsync(permissionsEfCore).ConfigureAwait(false);
     }
+
+    public async Task UpdateAndSaveByIdAsync(
+        Guid id,
+        UpdatePermissionArgs args,
+        AccountLogged accountLogged)
+    {
+        await Entities
+            .Where(p => p.Id == id)
+            .Where(p => p.TenantId == accountLogged.Tenant.Id)
+            .ExecuteUpdateAsync(setter => setter
+                .SetProperty(p => p.Name, args.Name)
+                .SetProperty(p => p.Description, args.Description)
+                .SetProperty(p => p.Key, args.Key)
+                .SetProperty(p => p.IsPublic, args.IsPublic)
+                .SetProperty(p => p.AppId, args.AppId))
+            .ConfigureAwait(false);
+    }
+
+    public async Task UpdateBulkAndSaveAsync(
+        List<UpdatePermissionByIdArgs> permissions,
+        AccountLogged accountLogged)
+    {
+        var tenantId = accountLogged.Tenant.Id;
+
+        // Each permission can move to a different app / key, so they are updated
+        // individually (per-row values can't be expressed in a single statement).
+        // The whole batch runs in one transaction so it's all-or-nothing.
+        await using var transaction = await context.Database
+            .BeginTransactionAsync()
+            .ConfigureAwait(false);
+
+        foreach (var permission in permissions)
+        {
+            await Entities
+                .Where(p => p.Id == permission.Id)
+                .Where(p => p.TenantId == tenantId)
+                .ExecuteUpdateAsync(setter => setter
+                    .SetProperty(p => p.Name, permission.Name)
+                    .SetProperty(p => p.Description, permission.Description)
+                    .SetProperty(p => p.Key, permission.Key)
+                    .SetProperty(p => p.IsPublic, permission.IsPublic)
+                    .SetProperty(p => p.AppId, permission.AppId))
+                .ConfigureAwait(false);
+        }
+
+        await transaction
+            .CommitAsync()
+            .ConfigureAwait(false);
+    }
 }

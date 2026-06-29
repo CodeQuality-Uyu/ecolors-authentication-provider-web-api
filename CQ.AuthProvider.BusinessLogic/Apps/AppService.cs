@@ -237,6 +237,46 @@ internal sealed class AppService(
             .ConfigureAwait(false);
     }
 
+    public async Task UpdateFatherByIdAsync(
+        Guid id,
+        UpdateAppFatherArgs args,
+        AccountLogged accountLogged)
+    {
+        var tenantId = accountLogged.Tenant.Id;
+
+        if (args.FatherAppId == id)
+        {
+            throw new InvalidOperationException("An app cannot be its own father");
+        }
+
+        if (args.FatherAppId.HasValue)
+        {
+            var fatherInTenant = await appRepository
+                .GetExistingIdsInTenantAsync([args.FatherAppId.Value], tenantId)
+                .ConfigureAwait(false);
+            if (fatherInTenant.Count == 0)
+            {
+                throw new InvalidOperationException("Father app doesn't belong to the tenant");
+            }
+
+            // Re-parenting under a descendant would create a cycle.
+            var fatherAncestors = await appRepository
+                .GetAncestorIdsAsync(args.FatherAppId.Value, tenantId)
+                .ConfigureAwait(false);
+            if (fatherAncestors.Contains(id))
+            {
+                throw new InvalidOperationException("Re-parenting would create a cycle");
+            }
+        }
+
+        await appRepository
+            .UpdateAndSaveFatherByIdAsync(
+            id,
+            args.FatherAppId,
+            tenantId)
+            .ConfigureAwait(false);
+    }
+
     public async Task<List<App>> GetByEmailAccountAsync(string email)
     {
         var apps = await appRepository
