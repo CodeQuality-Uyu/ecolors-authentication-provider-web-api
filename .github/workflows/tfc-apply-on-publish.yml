@@ -64,10 +64,38 @@ jobs:
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "Using tag: ${TAG}"
 
+      - name: Resolve PR URL for tag
+        id: pr
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE_TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          owner_repo="${GITHUB_REPOSITORY}"
+          api="https://api.github.com"
+          pr_url=""
+
+          tag_sha="$(git rev-list -n 1 "${IMAGE_TAG}" || true)"
+
+          if [[ -n "${tag_sha:-}" ]]; then
+            prs="$(curl -fsSL \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "${api}/repos/${owner_repo}/commits/${tag_sha}/pulls" || true)"
+
+            pr_url="$(echo "$prs" | jq -r '.[0].html_url // ""' || true)"
+          fi
+
+          echo "Resolved PR URL: ${pr_url:-<none>}"
+          echo "url=${pr_url}" >> "$GITHUB_OUTPUT"
+
       - name: Update Terraform Cloud var and apply
         shell: bash
         env:
           IMAGE_TAG: ${{ steps.tag.outputs.tag }}
+          PR_URL: ${{ steps.pr.outputs.url }}
         run: |
           set -euo pipefail
 
@@ -86,6 +114,8 @@ jobs:
           : "${TFC_WORKSPACE:?missing TFC_WORKSPACE}"
           : "${IMAGE_TAG:?missing IMAGE_TAG}"
 
+          TODAY=$(date +%Y-%m-%d)
+
           echo "→ Resolve workspace id: ${TFC_ORG}/${TFC_WORKSPACE}"
           ws=$(auth -X GET "${api}/organizations/${TFC_ORG}/workspaces/${TFC_WORKSPACE}")
           ws_id=$(echo "$ws" | jq -r '.data.id')
@@ -103,6 +133,41 @@ jobs:
             auth -X POST "${api}/workspaces/${ws_id}/vars" \
               --data @- <<<"$(jq -n --arg v "$IMAGE_TAG" \
                 '{data:{type:"vars",attributes:{key:"image_tag",value:$v,category:"terraform",hcl:false,sensitive:false}}}')"
+          fi
+
+          echo "→ Inject version into 'env' variable"
+          env_var=$(echo "$vars" | jq '.data[] | select(.attributes.key=="env")' || true)
+
+          if [[ -z "$env_var" || "$env_var" == "null" ]]; then
+            echo "✗ No existing 'env' variable found in workspace. Skipping env update."
+          else
+            env_var_id=$(echo "$env_var" | jq -r '.id')
+            env_value=$(echo "$env_var" | jq -r '.attributes.value')
+
+            echo "→ Current env value:"
+            echo "$env_value"
+
+            escaped_pr_url="$(printf '%s\n' "${PR_URL:-}" | sed -e 's/[\/&]/\\&/g')"
+            new_env_value="$env_value"
+
+            new_env_value="$(printf '%s\n' "$new_env_value" | \
+              sed -E "s/(Version__Version[[:space:]]*=[[:space:]]*\")[^\"]*(\")/\1${IMAGE_TAG}\2/")"
+
+            new_env_value="$(printf '%s\n' "$new_env_value" | \
+              sed -E "s/(Version__BuildDate[[:space:]]*=[[:space:]]*\")[^\"]*(\")/\1${TODAY}\2/")"
+
+            if [[ -n "${escaped_pr_url}" ]]; then
+              new_env_value="$(printf '%s\n' "$new_env_value" | \
+                sed -E "s/(Version__PrLink[[:space:]]*=[[:space:]]*\")[^\"]*(\")/\1${escaped_pr_url}\2/")"
+            fi
+
+            echo "→ New env value:"
+            echo "$new_env_value"
+
+            echo "→ PATCH env variable in Terraform Cloud"
+            auth -X PATCH "${api}/vars/${env_var_id}" \
+              --data @- <<<"$(jq -n --arg id "$env_var_id" --arg v "$new_env_value" \
+                '{data:{id:$id,type:"vars",attributes:{value:$v}}}')"
           fi
 
           echo "→ Create run (auto-apply)"
