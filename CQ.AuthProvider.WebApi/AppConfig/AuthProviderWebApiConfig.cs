@@ -20,6 +20,7 @@ using CQ.AuthProvider.WebApi.Controllers.Roles;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
 using CQ.AuthProvider.WebApi.Controllers.Tenants;
 using CQ.AuthProvider.WebApi.Filters;
+using CQ.AuthProvider.WebApi.Healths;
 using CQ.Extensions.Configuration;
 using CQ.Extensions.ServiceCollection;
 using CQ.IdentityProvider.EfCore;
@@ -315,9 +316,12 @@ internal static class AuthProviderWebApiConfig
         var databaseEngineAuth = configuration.GetSection<string>($"DatabaseEngine:Auth");
         var databaseEngineIdentity = configuration.GetSection<string>($"DatabaseEngine:Identity");
 
+        services.Configure<VersionSection>(configuration.GetSection("Version"));
+
         var healthCheck = services
-            .AddHealthChecks();
-        
+            .AddHealthChecks()
+            .AddCheck<VersionHealthCheck>("Version", tags: ["version"]);
+
         if (databaseEngineAuth == DatabaseEngineOption.Sql)
         {
             healthCheck = healthCheck
