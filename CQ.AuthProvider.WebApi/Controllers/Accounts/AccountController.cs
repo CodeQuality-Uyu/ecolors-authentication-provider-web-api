@@ -17,7 +17,7 @@ namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 public sealed class AccountController(
     IAccountService accountService,
     IAppService appService,
-    [FromKeyedServices(MapperKeyedService.Presentation)] IMapper _mapper)
+    [FromKeyedServices(MapperKeyedService.Presentation)] IMapper mapper)
     : ControllerBase
 {
     #region New accounts with tenant of account logged
@@ -28,7 +28,7 @@ public sealed class AccountController(
             .CreateAndSaveAsync(request)
             .ConfigureAwait(false);
 
-        return _mapper.Map<SessionCreatedResponse>(account);
+        return mapper.Map<SessionCreatedResponse>(account);
     }
 
     [HttpPost("credentials/for")]
@@ -42,7 +42,7 @@ public sealed class AccountController(
             .CreateAndSaveAsync(request, accountLogged)
             .ConfigureAwait(false);
 
-        return _mapper.Map<CreateCredentialsForResponse>(accountCreated);
+        return mapper.Map<CreateCredentialsForResponse>(accountCreated);
     }
     #endregion New accounts with tenant of account logged
 
@@ -54,7 +54,7 @@ public sealed class AccountController(
             .CreateAndSaveWithTenantAsync(request)
             .ConfigureAwait(false);
 
-        return _mapper.Map<SessionCreatedResponse>(account);
+        return mapper.Map<SessionCreatedResponse>(account);
     }
     #endregion New accounts with new tenant
 
@@ -71,7 +71,7 @@ public sealed class AccountController(
             .GetAllAsync(page, pageSize, accountLogged)
             .ConfigureAwait(false);
 
-        return _mapper.Map<Pagination<AccountBasicInfoResponse>>(accounts);
+        return mapper.Map<Pagination<AccountBasicInfoResponse>>(accounts);
     }
 
     [HttpPatch("{id}/roles")]
@@ -98,6 +98,6 @@ public sealed class AccountController(
             .GetByEmailAccountAsync(email)
             .ConfigureAwait(false);
 
-        return _mapper.Map<List<AppDetailInfoResponse>>(accounts);
+        return mapper.Map<List<AppDetailInfoResponse>>(accounts);
     }
 }
