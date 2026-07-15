@@ -28,6 +28,11 @@ public interface IAppRepository
         Guid id,
         Background updates);
 
+    Task UpdateAndSaveByIdAsync(
+        Guid id,
+        string name,
+        AccountDataSource? accountDataSource);
+
     Task UpdateAndSaveFatherByIdAsync(
         Guid id,
         Guid? fatherAppId,

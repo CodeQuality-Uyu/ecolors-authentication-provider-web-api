@@ -19,13 +19,22 @@ public sealed record class App()
 
     public App? FatherApp { get; init; } = null!;
 
+    /// <summary>
+    /// Optional source the auth provider calls right after login to fetch
+    /// app-specific data for the account (e.g. the teams a user belongs to in a
+    /// sports app). The blob it returns is forwarded opaquely in the login
+    /// response; the auth provider never interprets its shape.
+    /// </summary>
+    public AccountDataSource? AccountDataSource { get; init; }
+
     public App(
         string name,
         bool isDefault,
         Logo logo,
         Background? background,
         Tenant tenant,
-        App? fatherApp)
+        App? fatherApp,
+        AccountDataSource? accountDataSource = null)
         : this()
     {
         Name = Guard.Normalize(name);
@@ -34,7 +43,15 @@ public sealed record class App()
         Logo = logo;
         Background = background;
         FatherApp = fatherApp;
+        AccountDataSource = accountDataSource;
     }
+}
+
+public sealed record AccountDataSource
+{
+    public string Host { get; set; } = null!;
+
+    public string Endpoint { get; set; } = null!;
 }
 
 

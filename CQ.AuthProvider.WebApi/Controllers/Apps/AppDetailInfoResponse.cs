@@ -13,6 +13,15 @@ public readonly struct AppDetailInfoResponse
     public BackgroundResponse? Background { get; init; }
 
     public FatherAppBasicInfoResponse? FatherApp { get; init; }
+
+    public AccountDataSourceResponse? AccountDataSource { get; init; }
+}
+
+public readonly struct AccountDataSourceResponse
+{
+    public string Host { get; init; }
+
+    public string Endpoint { get; init; }
 }
 
 public readonly struct LogoResponse

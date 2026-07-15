@@ -25,6 +25,8 @@ internal sealed class AppProfile
             options => options.MapFrom<LogoMultimediaResolver>())
             .ForMember(destination => destination.Background,
             options => options.MapFrom<BackgroundMultimediaResolver>());
+
+        CreateMap<AccountDataSource, AccountDataSourceResponse>();
         #endregion
 
         #region Create

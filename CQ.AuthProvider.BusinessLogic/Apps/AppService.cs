@@ -63,7 +63,8 @@ internal sealed class AppService(
             args.Logo,
             args.Background,
             accountLogged.Tenant,
-            null);
+            null,
+            args.AccountDataSource);
 
         if (app.IsDefault)
         {
@@ -161,7 +162,8 @@ internal sealed class AppService(
             args.Logo ?? accountLogged.AppLogged.Logo,
             args.Background,
             accountLogged.Tenant,
-            accountLogged.AppLogged);
+            accountLogged.AppLogged,
+            args.AccountDataSource);
 
         await appRepository
             .CreateAsync(app)
@@ -234,6 +236,22 @@ internal sealed class AppService(
 
         await appRepository
             .UpdateAndSaveColorsByIdAsync(id, args)
+            .ConfigureAwait(false);
+    }
+
+    public async Task UpdateByIdAsync(
+        Guid id,
+        UpdateAppArgs args,
+        AccountLogged accountLogged)
+    {
+        var appIsNotOfAccount = !accountLogged.AppsIds.Contains(id);
+        if (appIsNotOfAccount)
+        {
+            throw new InvalidOperationException("Account doesn't belong to app");
+        }
+
+        await appRepository
+            .UpdateAndSaveByIdAsync(id, args.Name, args.AccountDataSource)
             .ConfigureAwait(false);
     }
 

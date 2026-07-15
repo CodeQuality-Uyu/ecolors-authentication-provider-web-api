@@ -5,7 +5,9 @@ using AutoMapper;
 using CQ.ApiElements.AppConfig;
 using CQ.AuthProvider.BusinessLogic.AppConfig;
 using CQ.AuthProvider.BusinessLogic.Blobs;
+using CQ.AuthProvider.BusinessLogic.Sessions;
 using CQ.AuthProvider.BusinessLogic.Utils;
+using CQ.AuthProvider.WebApi.Sessions;
 using CQ.AuthProvider.DataAccess.EfCore;
 using CQ.AuthProvider.DataAccess.EfCore.AppConfig;
 using CQ.AuthProvider.Postgres.Migrations;
@@ -85,6 +87,8 @@ internal static class AuthProviderWebApiConfig
             .ConfigureSwagger()
 
             .ConfigureServices()
+
+            .AddAccountDataEnrichment()
 
             .ConfigureDbContext(
             configuration,
@@ -175,6 +179,15 @@ internal static class AuthProviderWebApiConfig
                 .ConfigureIdentityProvider(configuration)
                 ;
         }
+
+        return services;
+    }
+
+    private static IServiceCollection AddAccountDataEnrichment(
+        this IServiceCollection services)
+    {
+        services
+            .AddScoped<IAccountDataEnricher, HttpAccountDataEnricher>();
 
         return services;
     }

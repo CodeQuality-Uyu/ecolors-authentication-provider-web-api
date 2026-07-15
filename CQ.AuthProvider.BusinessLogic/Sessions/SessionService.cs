@@ -12,6 +12,7 @@ public sealed class SessionService(
     IIdentityRepository identityRepository,
     IAccountRepository accountRepository,
     ITokenService tokenService,
+    IAccountDataEnricher accountDataEnricher,
     IUnitOfWork _unitOfWork)
     : ISessionInternalService
 {
@@ -40,7 +41,13 @@ public sealed class SessionService(
             .CommitChangesAsync()
             .ConfigureAwait(false);
 
-        return session;
+        // Enrich after commit: the app's data endpoint validates the token by
+        // calling back into this provider, so the session must already be persisted.
+        var appData = await accountDataEnricher
+            .GetAsync(app, session.Token)
+            .ConfigureAwait(false);
+
+        return session with { AppData = appData };
     }
 
     public async Task<Session> CreateAsync(

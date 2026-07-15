@@ -26,6 +26,13 @@ public readonly struct SessionCreatedResponse
     public SessionAppLoggedResponse AppLogged { get; init; }
 
     public TenantOfAccountBasicInfoResponse Tenant { get; init; }
+
+    /// <summary>
+    /// App-specific data fetched from the logged app's own API at login time.
+    /// Null when the app registered no data source or the fetch failed. Its
+    /// shape is defined entirely by the app, not by this provider.
+    /// </summary>
+    public object? AppData { get; init; }
 }
 
 public sealed record SessionAppLoggedResponse(
