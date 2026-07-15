@@ -92,7 +92,24 @@ public sealed class AppController(
             .ConfigureAwait(false);
     }
 
-    [HttpPut("{id:guid}/father")]
+    [HttpPut("{id:guid}")]
+    [BearerAuthentication]
+    [SecureAuthorization]
+    public async Task UpdateAsync(
+        Guid id,
+        UpdateAppArgs request)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        await appService
+            .UpdateByIdAsync(
+            id,
+            request,
+            accountLogged)
+            .ConfigureAwait(false);
+    }
+
+    [HttpPatch("{id:guid}/father")]
     [BearerAuthentication]
     [SecureAuthorization]
     public async Task UpdateFatherAsync(

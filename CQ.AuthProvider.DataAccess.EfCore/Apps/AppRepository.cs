@@ -110,6 +110,20 @@ internal sealed class AppRepository(
             ;
     }
 
+    public async Task UpdateAndSaveByIdAsync(
+        Guid id,
+        string name,
+        AccountDataSource? accountDataSource)
+    {
+        await Entities
+            .Where(a => a.Id == id)
+            .ExecuteUpdateAsync(setter => setter
+                .SetProperty(a => a.Name, name)
+                .SetProperty(a => a.AccountDataSource, accountDataSource))
+            .ConfigureAwait(false)
+            ;
+    }
+
     public async Task UpdateAndSaveFatherByIdAsync(
         Guid id,
         Guid? fatherAppId,

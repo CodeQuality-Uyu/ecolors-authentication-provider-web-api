@@ -132,6 +132,9 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AccountDataSource")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Background")
                         .HasColumnType("nvarchar(max)");
 
@@ -419,6 +422,16 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                             IsPublic = true,
                             Key = "updatecolors-app",
                             Name = "Can update colors of app",
+                            TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000003"),
+                            AppId = new Guid("f4ad89eb-6a0b-427a-8aef-b6bc736884dc"),
+                            Description = "Can update the name and account data source of an app in tenant",
+                            IsPublic = true,
+                            Key = "update-app",
+                            Name = "Can update app",
                             TenantId = new Guid("882a262c-e1a7-411d-a26e-40c61f3b810c")
                         },
                         new
@@ -713,6 +726,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         new
                         {
                             RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000003")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("4579a206-b6c7-4d58-9d36-c3e0923041b5"),
                             PermissionId = new Guid("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9")
                         },
                         new
@@ -739,6 +757,11 @@ namespace CQ.AuthProvider.DataAccess.EfCore.Migrations
                         {
                             RoleId = new Guid("01e55142-6b8c-4e7e-9d71-1e459d07796d"),
                             PermissionId = new Guid("cfd3f238-a446-4f4f-81f0-f770974f0cc3")
+                        },
+                        new
+                        {
+                            RoleId = new Guid("01e55142-6b8c-4e7e-9d71-1e459d07796d"),
+                            PermissionId = new Guid("00000000-0000-0000-0000-000000000003")
                         },
                         new
                         {

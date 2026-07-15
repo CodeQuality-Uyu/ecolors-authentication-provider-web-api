@@ -5,9 +5,11 @@ public sealed record CreateAppArgs(
     bool IsDefault,
     Logo Logo,
     Background? Background,
-    bool RegisterToIt = false);
+    bool RegisterToIt = false,
+    AccountDataSource? AccountDataSource = null);
 
 public sealed record CreateClientAppArgs(
     string Name,
     Logo? Logo,
-    Background? Background);
+    Background? Background,
+    AccountDataSource? AccountDataSource = null);

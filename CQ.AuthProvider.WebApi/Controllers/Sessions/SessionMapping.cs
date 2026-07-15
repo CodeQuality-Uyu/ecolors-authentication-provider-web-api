@@ -55,6 +55,10 @@ internal sealed class SessionMapping
             dest => dest.Tenant,
             opt => opt.MapFrom(
                 src => src.Account.Tenant))
+            .ForMember(
+            dest => dest.AppData,
+            opt => opt.MapFrom(
+                src => src.AppData))
             ;
 
         CreateMap<App, SessionAppLoggedResponse>();

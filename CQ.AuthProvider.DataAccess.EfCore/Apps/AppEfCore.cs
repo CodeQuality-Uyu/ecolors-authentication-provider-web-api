@@ -17,6 +17,8 @@ public sealed record class AppEfCore()
 
     public Background? Background { get; init; }
 
+    public AccountDataSource? AccountDataSource { get; init; }
+
     public Guid TenantId { get; init; }
 
     public TenantEfCore Tenant { get; init; } = null!;

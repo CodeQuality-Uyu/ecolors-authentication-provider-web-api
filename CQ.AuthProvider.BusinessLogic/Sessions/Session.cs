@@ -13,6 +13,14 @@ public sealed record class Session()
 
     public App App { get; init; } = null!;
 
+    /// <summary>
+    /// App-specific data fetched from the app's own API at login time, when the
+    /// app registered an <see cref="Apps.AccountDataSource"/>. Opaque to the auth
+    /// provider — forwarded as-is in the login response. Null when the app has no
+    /// source configured or the fetch failed.
+    /// </summary>
+    public object? AppData { get; init; }
+
     public Session(
     Account account,
     App app,
