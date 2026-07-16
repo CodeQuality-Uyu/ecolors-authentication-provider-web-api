@@ -9,6 +9,8 @@ public interface IPermissionRepository
         Guid? appId,
         bool? isPrivate,
         Guid? roleId,
+        string? name,
+        string? key,
         int page,
         int pageSize,
         AccountLogged accountLogged);
