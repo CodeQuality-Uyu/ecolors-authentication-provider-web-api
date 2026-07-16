@@ -74,6 +74,8 @@ public class PermissionController(
         [FromQuery] Guid? appId,
         [FromQuery] bool? isPrivate,
         [FromQuery] Guid? roleId,
+        [FromQuery] string? name,
+        [FromQuery] string? key,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
@@ -84,6 +86,8 @@ public class PermissionController(
             appId,
             isPrivate,
             roleId,
+            name,
+            key,
             page,
             pageSize,
             accountLogged)

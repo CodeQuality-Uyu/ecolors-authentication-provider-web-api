@@ -30,17 +30,26 @@ internal sealed class PermissionRepository(
         Guid? appId,
         bool? isPrivate,
         Guid? roleId,
+        string? name,
+        string? key,
         int page,
         int pageSize,
         AccountLogged accountLogged)
     {
         var appLoggedIsAuthWebApi = accountLogged.AppLogged.Id == AuthConstants.AUTH_WEB_API_APP_ID;
 
+        // Lowered here so the comparison is case insensitive on providers with a
+        // case sensitive collation (Postgres).
+        var nameFilter = string.IsNullOrWhiteSpace(name) ? null : name.Trim().ToLower();
+        var keyFilter = string.IsNullOrWhiteSpace(key) ? null : key.Trim().ToLower();
+
         var query = Entities
             .Where(p => (appLoggedIsAuthWebApi && p.AppId == AuthConstants.AUTH_WEB_API_APP_ID) || p.TenantId == accountLogged.Tenant.Id)
             .Where(p => isPrivate == null || p.IsPublic == !isPrivate)
             .Where(p => roleId == null || p.Roles.Any(r => r.Id == roleId))
-            .Where(p => appId == null || p.AppId == appId);
+            .Where(p => appId == null || p.AppId == appId)
+            .Where(p => nameFilter == null || p.Name.ToLower().Contains(nameFilter))
+            .Where(p => keyFilter == null || p.Key.ToLower().Contains(keyFilter));
 
         var permissions = await query
             .ToPaginateAsync(page, pageSize)
