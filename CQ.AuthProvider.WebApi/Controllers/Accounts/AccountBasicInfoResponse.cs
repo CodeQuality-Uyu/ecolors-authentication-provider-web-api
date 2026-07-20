@@ -1,9 +1,16 @@
-﻿namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
+namespace CQ.AuthProvider.WebApi.Controllers.Accounts;
 
-public sealed record AccountBasicInfoResponse(
-    Guid Id,
-    string FirstName,
-    string LastName,
-    string FullName,
-    string Email,
-    string? ProfilePictureId);
+public readonly struct AccountBasicInfoResponse
+{
+    public Guid Id { get; init; }
+
+    public string FirstName { get; init; }
+
+    public string LastName { get; init; }
+
+    public string FullName { get; init; }
+
+    public string Email { get; init; }
+
+    public string? ProfilePictureKey { get; init; }
+}

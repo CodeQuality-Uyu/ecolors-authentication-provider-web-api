@@ -301,12 +301,13 @@ internal sealed class AccountService(
     }
 
     public async Task<Pagination<Account>> GetAllAsync(
+        Guid? appId,
         int page,
         int pageSize,
         AccountLogged accountLogged)
     {
         var accounts = await accountRepository
-            .GetAllAsync(accountLogged.Tenant.Id, page, pageSize)
+            .GetAllAsync(accountLogged.Tenant.Id, appId, page, pageSize)
             .ConfigureAwait(false);
 
         return accounts;

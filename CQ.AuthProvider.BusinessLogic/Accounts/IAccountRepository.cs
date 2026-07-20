@@ -37,6 +37,7 @@ public interface IAccountRepository
 
     Task<Pagination<Account>> GetAllAsync(
         Guid tenantId,
+        Guid? appId,
         int page,
         int pageSize);
 
