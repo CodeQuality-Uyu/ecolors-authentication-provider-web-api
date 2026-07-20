@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CQ.AuthProvider.BusinessLogic.Accounts;
 using CQ.AuthProvider.BusinessLogic.Blobs;
+using CQ.AuthProvider.BusinessLogic.Roles;
 using CQ.AuthProvider.BusinessLogic.Utils;
 using CQ.AuthProvider.WebApi.Controllers.Sessions;
 
@@ -12,6 +13,8 @@ internal sealed class AccountProfile
     public AccountProfile()
     {
         this.CreatePaginationMap<Account, AccountBasicInfoResponse>();
+
+        CreateMap<Role, AccountRoleResponse>();
 
         #region Create
         CreateMap<CreateAccountResult, SessionCreatedResponse>()
