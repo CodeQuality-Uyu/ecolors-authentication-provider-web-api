@@ -164,8 +164,10 @@ AuthDbContext _context,
         int pageSize)
     {
         var query = Entities
+            .Include(a => a.Roles)
             .Where(a => a.TenantId == tenantId)
-            .Where(a => appId == null || a.Apps.Any(app => app.Id == appId));
+            .Where(a => appId == null || a.Apps.Any(app => app.Id == appId))
+            .AsSplitQuery();
 
         var paginated = await query
             .ToPaginateAsync(page, pageSize)

@@ -13,4 +13,10 @@ public readonly struct AccountBasicInfoResponse
     public string Email { get; init; }
 
     public string? ProfilePictureKey { get; init; }
+
+    public List<AccountRoleResponse> Roles { get; init; }
 }
+
+public sealed record AccountRoleResponse(
+    Guid Id,
+    string Name);
