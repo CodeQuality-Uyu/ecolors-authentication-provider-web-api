@@ -159,11 +159,13 @@ AuthDbContext _context,
 
     public async Task<Pagination<Account>> GetAllAsync(
         Guid tenantId,
+        Guid? appId,
         int page,
         int pageSize)
     {
         var query = Entities
-            .Where(a => a.TenantId == tenantId);
+            .Where(a => a.TenantId == tenantId)
+            .Where(a => appId == null || a.Apps.Any(app => app.Id == appId));
 
         var paginated = await query
             .ToPaginateAsync(page, pageSize)

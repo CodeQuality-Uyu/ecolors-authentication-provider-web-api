@@ -17,6 +17,7 @@ public interface IAccountService
         AccountLogged accountLogged);
 
     Task<Pagination<Account>> GetAllAsync(
+        Guid? appId,
         int page,
         int pageSize,
         AccountLogged accountLogged);

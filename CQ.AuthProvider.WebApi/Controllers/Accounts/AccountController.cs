@@ -62,13 +62,14 @@ public sealed class AccountController(
     [BearerAuthentication]
     [SecureAuthorization]
     public async Task<Pagination<AccountBasicInfoResponse>> GetAllAsync(
+        [FromQuery] Guid? appId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
         var accountLogged = this.GetAccountLogged();
 
         var accounts = await accountService
-            .GetAllAsync(page, pageSize, accountLogged)
+            .GetAllAsync(appId, page, pageSize, accountLogged)
             .ConfigureAwait(false);
 
         return _mapper.Map<Pagination<AccountBasicInfoResponse>>(accounts);
