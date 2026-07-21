@@ -22,6 +22,10 @@ public interface IAccountService
         int pageSize,
         AccountLogged accountLogged);
 
+    Task<Account> GetByIdAsync(
+        Guid id,
+        AccountLogged accountLogged);
+
     Task UpdateRolesAsync
         (Guid id,
         UpdateRolesArgs args,

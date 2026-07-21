@@ -75,6 +75,20 @@ public sealed class AccountController(
         return _mapper.Map<Pagination<AccountBasicInfoResponse>>(accounts);
     }
 
+    [HttpGet("{id:guid}")]
+    [BearerAuthentication]
+    [SecureAuthorization("getall-account")]
+    public async Task<AccountDetailResponse> GetByIdAsync(Guid id)
+    {
+        var accountLogged = this.GetAccountLogged();
+
+        var account = await accountService
+            .GetByIdAsync(id, accountLogged)
+            .ConfigureAwait(false);
+
+        return _mapper.Map<AccountDetailResponse>(account);
+    }
+
     [HttpPatch("{id}/roles")]
     [BearerAuthentication]
     [SecureAuthorization]
