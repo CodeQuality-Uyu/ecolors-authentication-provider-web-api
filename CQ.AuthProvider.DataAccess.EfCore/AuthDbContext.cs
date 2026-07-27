@@ -252,6 +252,8 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
         var createPermissionPermissionId = Guid.Parse("32b32564-459f-4e74-8456-83147bd03c9e");
         var getAllPermissionsPermissionId = Guid.Parse("bcb925af-f4be-4782-978c-c496b044609f");
         var createPermissionBulkPermissionId = Guid.Parse("e38a9a3a-dea3-46d5-a7a8-d5e9ea882e15");
+        var updatePermissionPermissionId = Guid.Parse("00000000-0000-0000-0000-000000000004");
+        var updatePermissionBulkPermissionId = Guid.Parse("00000000-0000-0000-0000-000000000005");
 
         var createRolePermissionId = Guid.Parse("ec6141a0-d0f7-4102-b41c-c8d50a86e3a9");
         var getAllRolesPermissionId = Guid.Parse("fc598ab0-1f14-4224-a187-4556a9926f6f");
@@ -321,6 +323,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                 {
                     RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
                     PermissionId = createPermissionBulkPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
+                    PermissionId = updatePermissionPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = AuthConstants.TENANT_OWNER_ROLE_ID,
+                    PermissionId = updatePermissionBulkPermissionId
                 },
             #endregion Permission
 
@@ -421,6 +433,16 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
             #endregion Tenant Owner
 
             #region App Owner
+                new RolePermission
+                {
+                    RoleId = AuthConstants.APP_OWNER_ROLE_ID,
+                    PermissionId = updatePermissionPermissionId
+                },
+                new RolePermission
+                {
+                    RoleId = AuthConstants.APP_OWNER_ROLE_ID,
+                    PermissionId = updatePermissionBulkPermissionId
+                },
                 new RolePermission
                 {
                     RoleId = AuthConstants.APP_OWNER_ROLE_ID,
@@ -533,6 +555,26 @@ public sealed class AuthDbContext(DbContextOptions<AuthDbContext> options)
                     Name = "Create permission in bulk",
                     Description = "Can create several permissions at once",
                     Key = "createbulk-permission",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = AuthConstants.SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = updatePermissionPermissionId,
+                    Name = "Update permission",
+                    Description = "Can update permissions",
+                    Key = "update-permission",
+                    AppId = AuthConstants.AUTH_WEB_API_APP_ID,
+                    TenantId = AuthConstants.SEED_TENANT_ID,
+                    IsPublic = true,
+                },
+                new PermissionEfCore
+                {
+                    Id = updatePermissionBulkPermissionId,
+                    Name = "Update permission in bulk",
+                    Description = "Can update several permissions at once",
+                    Key = "updatebulk-permission",
                     AppId = AuthConstants.AUTH_WEB_API_APP_ID,
                     TenantId = AuthConstants.SEED_TENANT_ID,
                     IsPublic = true,
