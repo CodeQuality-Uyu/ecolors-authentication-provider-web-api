@@ -313,6 +313,17 @@ internal sealed class AccountService(
         return accounts;
     }
 
+    public async Task<Account> GetByIdAsync(
+        Guid id,
+        AccountLogged accountLogged)
+    {
+        var account = await accountRepository
+            .GetByIdAsync(id, accountLogged.AppLogged.Id)
+            .ConfigureAwait(false);
+
+        return account;
+    }
+
     public async Task UpdateRolesAsync(
         Guid id,
         UpdateRolesArgs args,
